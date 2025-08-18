@@ -12,6 +12,9 @@
   <!-- Reading mode styles -->
   <link rel="stylesheet" href="reading-styles.css">
   
+  <!-- Expand sidebar styles (sidebar concept) -->
+  <link rel="stylesheet" href="expand-sidebar.css">
+  
   <!-- Wikidata widget styles -->
   <link rel="stylesheet" href="wikidata-widget.css">
   
@@ -211,7 +214,7 @@
 
           <!-- Tools / Help -->
           <div class="group tight">
-            <button class="btn" id="addSectionBtn" title="Add section"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Add section</span></button>
+            <button class="btn" id="addSectionBtn" title="Open expand panel"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Expand panel</span></button>
             <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
             <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
           </div>
@@ -247,130 +250,40 @@
     </button>
   </div>
 
-  <!-- Section Wizard Overlay -->
-  <div class="wizard-overlay" id="sectionWizard" style="display: none;">
-    <div class="wizard-backdrop"></div>
-    <div class="wizard-container">
-      <!-- Header with stepper -->
-      <div class="wizard-header">
-        <div class="wizard-header-left">
-          <h2 class="wizard-title">Add a section</h2>
-          <div class="wizard-stepper">
-            <div class="stepper-item active">
-              <span class="stepper-number">1</span>
-              <span class="stepper-label">Pick</span>
-            </div>
-            <div class="stepper-arrow">→</div>
-            <div class="stepper-item">
-              <span class="stepper-number">2</span>
-              <span class="stepper-label">Sources</span>
-            </div>
-            <div class="stepper-arrow">→</div>
-            <div class="stepper-item">
-              <span class="stepper-number">3</span>
-              <span class="stepper-label">Review</span>
-            </div>
-          </div>
-        </div>
-        <button class="wizard-close" id="wizardClose" title="Close wizard">×</button>
-      </div>
-
-      <!-- Context row -->
-      <div class="wizard-context">
-        <span class="context-page-title">Katie Bouman</span>
-        <span class="context-article-type">Biography</span>
-        <span class="context-blp-badge">BLP</span>
-      </div>
-
-      <!-- Main content area -->
-      <div class="wizard-content">
-        <!-- Step 1: Pick a section -->
-        <div class="wizard-step" id="step1">
-          <h3 class="step-title">Step 1 · Pick a section</h3>
-          
-          <div class="section-suggestions">
-            <div class="section-card" data-section="personal-life">
-              <h4 class="section-card-title">Personal life</h4>
-              <p class="section-card-why">Readers want to know about her background and what inspired her career</p>
-            </div>
-
-            <div class="section-card" data-section="awards-honors">
-              <h4 class="section-card-title">Awards and honors</h4>
-              <p class="section-card-why">Her groundbreaking work has earned significant recognition</p>
-            </div>
-
-            <div class="section-card" data-section="technical-innovations">
-              <h4 class="section-card-title">Technical innovations</h4>
-              <p class="section-card-why">Her specific contributions to imaging algorithms deserve detailed explanation</p>
-            </div>
-
-            <div class="section-card custom-section" data-section="custom">
-              <h4 class="section-card-title">Custom section</h4>
-              <p class="section-card-why">Create your own section with a custom name</p>
-              <div class="custom-section-input" style="display: none;">
-                <input type="text" placeholder="Enter section name..." class="custom-section-name">
+  <!-- Expand Sidebar (sidebar concept) -->
+  <div class="expand-sidebar" id="expandSidebar" style="display: none;">
+    <div class="expand-sidebar__header">
+      <h3 class="expand-sidebar__title">Expand this article</h3>
+      <button class="expand-sidebar__close" id="expandSidebarClose" title="Close">×</button>
+    </div>
+    <div class="expand-sidebar__content">
+      <section class="expand-section">
+        <h4 class="expand-section__title">Suggested improvements</h4>
+        <ul class="expand-suggestions">
+          <li class="expand-suggestion">
+            <div class="expand-suggestion__icon">🧩</div>
+            <div class="expand-suggestion__content">
+              <h5>Add Awards and honors</h5>
+              <p class="expand-suggestion__why">Recognition details are missing from the biography.</p>
+              <div class="expand-suggestion__actions">
+                <button class="expand-suggestion__action expand-suggestion__action--primary">Insert section</button>
+                <button class="expand-suggestion__action">View sources</button>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Sources -->
-        <div class="wizard-step" id="step2" style="display: none;">
-          <h3 class="step-title">Step 2 · Sources</h3>
-          
-          <div class="chosen-section">
-            <span class="chosen-section-label">Section: </span>
-            <span class="chosen-section-name" id="chosenSectionName"></span>
-          </div>
-
-          <div class="source-input-area">
-            <div class="source-input-group">
-              <input type="url" placeholder="Paste a source URL..." class="source-url-input" id="sourceUrlInput">
-              <button class="add-source-btn" id="addSourceBtn">Add</button>
+          </li>
+          <li class="expand-suggestion">
+            <div class="expand-suggestion__icon">📚</div>
+            <div class="expand-suggestion__content">
+              <h5>Strengthen lead paragraph</h5>
+              <p>Add 1–2 sentences summarizing CHIRP contributions.</p>
+              <div class="expand-suggestion__actions">
+                <button class="expand-suggestion__action expand-suggestion__action--primary">Add text</button>
+                <button class="expand-suggestion__action">Citations</button>
+              </div>
             </div>
-          </div>
-
-          <div class="sources-list" id="sourcesList">
-            <!-- Added sources will appear here -->
-          </div>
-
-          <div class="sources-nudge" id="sourcesNudge" style="display: none;">
-            <p>💡 Consider adding at least one reliable source to support your content.</p>
-          </div>
-        </div>
-
-        <!-- Step 3: Review -->
-        <div class="wizard-step" id="step3" style="display: none;">
-          <h3 class="step-title">Step 3 · Review</h3>
-          
-          <div class="chosen-section">
-            <span class="chosen-section-label">Section: </span>
-            <span class="chosen-section-name" id="chosenSectionName3"></span>
-          </div>
-
-          <div class="review-checks" id="reviewChecks">
-            <!-- Review issues will appear here -->
-          </div>
-
-          <div class="review-preview" id="reviewPreview">
-            <!-- Final preview of the section -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="wizard-footer">
-        <div class="wizard-footer-left">
-          <a href="#" class="help-link">Help / policies</a>
-        </div>
-        <div class="wizard-footer-right">
-          <button class="wizard-btn-back" id="wizardBack" style="display: none;">Back</button>
-          <button class="wizard-btn-skip" id="wizardSkip" style="display: none;">Skip for now</button>
-          <button class="wizard-btn-cancel" id="wizardCancel">Cancel</button>
-          <button class="wizard-btn-continue" id="wizardContinue" disabled>Continue</button>
-          <button class="wizard-btn-insert" id="wizardInsert" style="display: none;" disabled>Finish</button>
-        </div>
-      </div>
+          </li>
+        </ul>
+      </section>
     </div>
   </div>
 

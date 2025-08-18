@@ -332,6 +332,12 @@ function enterEditMode() {
   
   // Show smart widget for suggestions
   document.getElementById('smartWidget').style.display = 'block';
+
+  // Show expand sidebar (sidebar concept branch)
+  const expandSidebar = document.getElementById('expandSidebar');
+  if (expandSidebar) {
+    expandSidebar.style.display = 'block';
+  }
   
   // Initialize Quill editor if not already done
   if (!quill) {
@@ -353,6 +359,12 @@ function exitEditMode() {
   
   // Hide smart widget
   document.getElementById('smartWidget').style.display = 'none';
+
+  // Hide expand sidebar if present
+  const expandSidebar = document.getElementById('expandSidebar');
+  if (expandSidebar) {
+    expandSidebar.style.display = 'none';
+  }
   
   // Update tab state in main interface - activate Read tab
   document.querySelectorAll('.action-tab:not(.star)').forEach(b => b.classList.remove('active'));
@@ -664,8 +676,12 @@ function setupSharedHandlers() {
   // Add section button - opens wizard
   const addSectionBtn = document.getElementById('addSectionBtn');
   if (addSectionBtn) {
+    // In this branch, open the right-side expand sidebar instead of wizard
     addSectionBtn.onclick = () => {
-      openSectionWizard();
+      const sidebar = document.getElementById('expandSidebar');
+      if (sidebar) {
+        sidebar.style.display = 'block';
+      }
     };
   }
   
@@ -674,6 +690,15 @@ function setupSharedHandlers() {
   if (wizardClose) {
     wizardClose.onclick = () => {
       closeSectionWizard();
+    };
+  }
+
+  // Expand sidebar close button (sidebar concept)
+  const expandSidebarClose = document.getElementById('expandSidebarClose');
+  if (expandSidebarClose) {
+    expandSidebarClose.onclick = () => {
+      const sidebar = document.getElementById('expandSidebar');
+      if (sidebar) sidebar.style.display = 'none';
     };
   }
   
@@ -1283,4 +1308,3 @@ function showToast(message) {
     }, 300);
   }, 3000);
 }
-
