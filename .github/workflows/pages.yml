@@ -1,0 +1,119 @@
+name: Deploy GitHub Pages (aggregate concepts)
+
+on:
+  push:
+    branches:
+      - main
+      - concept-editor
+      - concept-selection
+      - concept-creation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Fetch other concept branches
+        run: |
+          git fetch origin concept-editor:concept-editor || true
+          git fetch origin concept-selection:concept-selection || true
+          git fetch origin concept-creation:concept-creation || true
+
+      - name: Prepare site dirs
+        run: |
+          rm -rf site
+          mkdir -p site/expansion/concept1 site/expansion/concept2 site/creation
+
+      - name: Copy concept-editor → expansion/concept1 (overlay wizard)
+        run: |
+          git checkout concept-editor
+          rsync -a --delete --exclude '.git' ./ site/expansion/concept1/
+
+      - name: Copy concept-selection → expansion/concept2 (sidebar panel)
+        run: |
+          git checkout concept-selection
+          rsync -a --delete --exclude '.git' ./ site/expansion/concept2/
+
+      - name: Copy concept-creation → creation (source-based)
+        run: |
+          git checkout concept-creation
+          rsync -a --delete --exclude '.git' ./ site/creation/
+
+      - name: Aggregate landing index
+        run: |
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <title>VE Concepts — Aggregated</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 40px 20px; }
+              .container { max-width: 800px; margin: 0 auto; }
+              h1 { font-size: 1.8rem; font-weight: 600; margin: 0 0 16px; }
+              h2 { font-size: 1.2rem; margin: 24px 0 8px; }
+              ul { padding-left: 18px; }
+              li { margin: 8px 0; }
+              a { color: #0645ad; text-decoration: none; }
+              a:hover { text-decoration: underline; }
+              .note { color: #555; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>VisualEditor Concepts — Demo Hub</h1>
+              <p class="note">All concepts are published from their branches into subfolders here.</p>
+
+              <h2>Section Expansion</h2>
+              <ul>
+                <li><a href="expansion/concept1/expansions.html">Concept 1 — Overlay Wizard</a></li>
+                <li><a href="expansion/concept2/expansions.html">Concept 2 — Sidebar Panel</a></li>
+              </ul>
+
+              <h2>Article Creation</h2>
+              <ul>
+                <li><a href="creation/creation.html">Source-based Creation (split view)</a></li>
+              </ul>
+
+              <h2>Direct Links (for convenience)</h2>
+              <ul>
+                <li><a href="expansion/concept1/index.html">Concept 1 — Branch root</a></li>
+                <li><a href="expansion/concept2/index.html">Concept 2 — Branch root</a></li>
+                <li><a href="creation/index.html">Creation — Branch root</a></li>
+              </ul>
+            </div>
+          </body>
+          </html>
+          HTML
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
