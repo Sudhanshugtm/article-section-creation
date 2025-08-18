@@ -145,6 +145,13 @@
         <strong>New article draft</strong>
         <span class="badge">Source-based creation mock</span>
       </div>
+      <div class="creation-controls">
+        <input id="draftTitle" class="title-input" type="text" placeholder="Proposed title (e.g., Jane Doe)">
+        <div class="dest" role="group" aria-label="Destination">
+          <label><input type="radio" name="dest" value="draft" checked> Draft (recommended)</label>
+          <label><input type="radio" name="dest" value="main"> Main article</label>
+        </div>
+      </div>
       <div class="draft">
         <section class="editor-wrap">
           <div id="creationEditor" class="editor"></div>

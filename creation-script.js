@@ -2,6 +2,14 @@
 
 let quillCreation;
 let sources = [];
+let insertedTexts = [];
+const KNOWN_ARTICLES = [
+  'Katie Bouman',
+  'John Langford',
+  'Henri Gouraud',
+  'Eduardo R. Caianiello',
+  'Patrick McHale'
+];
 
 document.addEventListener('DOMContentLoaded', () => {
   // Init editor
@@ -31,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = sources.length + 1;
     const title = guessTitleFromURL(url) || `Source ${id}`;
     const domain = new URL(safeUrl(url)).hostname.replace(/^www\./,'');
-    const source = { id, url, title, domain };
+    const source = classifySource({ id, url, title, domain });
     sources.push(source);
     list.appendChild(renderSource(source));
     urlInput.value = '';
@@ -54,6 +62,11 @@ function renderSource(src) {
     <div class="source-meta">
       <p class="source-title">${escapeHTML(src.title)}</p>
       <p class="source-url">${escapeHTML(src.url)}</p>
+      <div class="source-badges">
+        <span class="source-badge ${src.kind}">${src.kindLabel}</span>
+        ${src.tier ? `<span class="source-badge ${src.tier}">${src.tierLabel}</span>` : ''}
+        ${src.independent ? `<span class="source-badge secondary">independent</span>` : `<span class="source-badge primary">not independent</span>`}
+      </div>
       <div class="extracted" id="extracted-${src.id}" style="display:none">
         <h5>Extracted statements</h5>
         <div class="facts"></div>
@@ -90,6 +103,7 @@ function insertStatement(text, sourceId) {
   quillCreation.focus();
   const range = quillCreation.getSelection(true) || { index: quillCreation.getLength(), length: 0 };
   quillCreation.insertText(range.index, text + citeMark + '\n');
+  insertedTexts.push(text);
   updateChecks();
 }
 
@@ -103,17 +117,45 @@ function insertCitation(sourceId) {
 function updateChecks() {
   const text = quillCreation.getText().trim();
   const checksEl = document.getElementById('checks');
-  const hasLead = text.length >= 80; // simple heuristic
-  const hasHeader = /\n#|\n==|\n.{0,100}\n/.test(text) || quillCreation.getContents().ops.some(op => op.attributes && op.attributes.header);
+  const hasLead = text.length >= 120;
+  const hasHeader = quillCreation.getContents().ops.some(op => op.attributes && op.attributes.header);
   const hasCite = /\[[0-9]+\]/.test(text);
   const hasSource = sources.length > 0;
 
+  const independentReliable = sources.filter(s => s.independent && (s.kind === 'secondary') && (s.tier === 'good' || s.tier === 'gov' || s.tier === 'edu'));
+  const independentCount = independentReliable.length;
+  const notabilityPass = independentCount >= 2;
+
+  const promoWords = ['leading','innovative','world-class','pioneer','premier','award-winning','cutting-edge','revolutionary','renowned','iconic','visionary'];
+  const promoHit = promoWords.some(w => new RegExp(`\\b${w}\\b`, 'i').test(text));
+
+  let overlap = 0;
+  insertedTexts.forEach(t => { const m = text.indexOf(t); if (m !== -1) overlap += t.length; });
+  const riskRatio = text.length ? (overlap / text.length) : 0;
+  const copyvioLow = riskRatio < 0.2;
+
+  const title = (document.getElementById('draftTitle').value || '').trim();
+  const clashing = KNOWN_ARTICLES.some(a => a.toLowerCase() === title.toLowerCase());
+
+  const dest = (document.querySelector('input[name="dest"]:checked') || {}).value || 'draft';
+  const mainEligible = notabilityPass && hasLead && hasHeader && hasCite && copyvioLow && !promoHit && !clashing;
+  const publishBtn = document.getElementById('publish');
+  if (publishBtn) {
+    if (dest === 'main') publishBtn.disabled = !mainEligible;
+    else publishBtn.disabled = text.length === 0;
+  }
+
   checksEl.innerHTML = `
-    <h4>Draft checks</h4>
+    <h4>Preflight checks</h4>
     <div class="check ${hasSource?'ok':'fail'}">At least one source added</div>
-    <div class="check ${hasLead?'ok':'fail'}">Lead paragraph is reasonably descriptive</div>
-    <div class="check ${hasHeader?'ok':'fail'}">Has at least one heading/structure</div>
+    <div class="check ${notabilityPass?'ok':'fail'}">≥ 2 independent, reliable secondary sources (${independentCount})</div>
+    <div class="check ${hasLead?'ok':'fail'}">Lead paragraph is clear and descriptive</div>
+    <div class="check ${hasHeader?'ok':'fail'}">Has headings/structure</div>
     <div class="check ${hasCite?'ok':'fail'}">Contains inline citations [n]</div>
+    <div class="check ${copyvioLow?'ok':'fail'}">Low copying from sources (${(riskRatio*100)|0}%)</div>
+    <div class="check ${!promoHit?'ok':'fail'}">Neutral tone (no promotional language)</div>
+    <div class="check ${!clashing?'ok':'fail'}">Title not already used</div>
+    <div class="note">Mainspace publish enables only after all checks pass. Draft submission allowed anytime.</div>
   `;
 }
 
@@ -333,6 +375,31 @@ function mockExtractFacts(src) {
     `Notable contribution described by ${base}.`,
     `Timeline and context summarized in ${base}.`
   ];
+}
+
+function classifySource(s) {
+  const domain = s.domain.toLowerCase();
+  const gov = /\.(gov|gov\.[a-z]{2})$/.test(domain);
+  const edu = /\.(edu|ac\.[a-z]{2})$/.test(domain);
+  const press = /(prnewswire|businesswire|globenewswire|newswire|press)/.test(domain);
+  const wiki = /(wikipedia\.org|wikimedia\.org)/.test(domain);
+  const blog = /(medium\.com|substack\.com|blogspot|wordpress)/.test(domain);
+  const social = /(twitter\.com|x\.com|facebook\.com|instagram\.com|tiktok\.com|linkedin\.com)/.test(domain);
+  const news = /(nytimes|theguardian|bbc|bloomberg|reuters|apnews|washingtonpost|wsj|ft\.com|nature\.com|sciencemag|arstechnica|theverge|wired|nbcnews|cbsnews|abcnews|latimes|telegraph|economist|aljazeera|lemonde|zeit|spiegel|hindu|indiatimes|ndtv|hindustantimes)/.test(domain);
+
+  let kind = 'secondary', kindLabel = 'secondary';
+  let independent = true;
+  let tier = '', tierLabel = '';
+
+  if (gov) { tier = 'gov'; tierLabel = 'gov'; }
+  else if (edu) { tier = 'edu'; tierLabel = 'edu'; }
+  else if (news) { tier = 'good'; tierLabel = 'news'; }
+  else if (press) { kind = 'primary'; kindLabel = 'press release'; independent = false; tier = 'warn'; tierLabel = 'primary'; }
+  else if (wiki || social) { kind = 'primary'; kindLabel = wiki? 'wiki' : 'social'; independent = false; tier = 'bad'; tierLabel = 'not reliable'; }
+  else if (blog) { kind = 'primary'; kindLabel = 'blog'; independent = false; tier = 'warn'; tierLabel = 'self-published'; }
+  else { tier = 'warn'; tierLabel = 'unclassified'; }
+
+  return { ...s, kind, kindLabel, independent, tier, tierLabel };
 }
 
 function guessTitleFromURL(url) {
