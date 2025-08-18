@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Article Creator — Reference Chip Concept</title>
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+  <link rel="stylesheet" href="reading-styles.css">
+  <style>
+    .creator-wrap { max-width: 1100px; margin: 0 auto; padding: 16px 20px; }
+    .editor-shell { border: 1px solid var(--border-color-subtle, #eaecf0); border-radius: 4px; background: #fff; padding: 16px; }
+    .title-input { width: 100%; font-size: 18px; padding: 8px 0; border: none; border-bottom: 2px solid #a2a9b1; }
+    .title-input:focus { outline: none; border-bottom-color: #36c; }
+    .chip-row { display: flex; gap: 8px; align-items: center; margin: 12px 0; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #a2a9b1; border-radius: 12px; font-size: 12px; cursor: pointer; background: #f8f9fa; }
+    .chip.reference { border-color: #36c; color: #36c; background: #eef3ff; }
+    .editor { min-height: 260px; outline: none; }
+    .editor[contenteditable="true"]:empty:before { content: attr(data-placeholder); color: #72777d; }
+    .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
+    .verify-note.show { display: block; }
+    .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
+    .ref-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border: 1px solid #eaecf0; border-radius: 8px; width: 520px; max-width: 92vw; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .ref-row { margin-bottom: 12px; }
+    .ref-row label { display: block; font-size: 13px; margin-bottom: 6px; color: #202122; }
+    .ref-row input { width: 100%; height: 34px; border: 1px solid #c8ccd1; border-radius: 4px; padding: 6px 10px; font: inherit; }
+    .ref-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+    .badge { display:inline-block; font-size:10px; padding:2px 6px; border-radius:10px; border:1px solid #c8ccd1; color:#72777d; }
+    .badge.good { color:#14866d; border-color:#14866d; }
+    .badge.warn { color:#ac6600; border-color:#ac6600; }
+  </style>
+</head>
+<body>
+  <header class="container page-header" role="banner">
+    <h1 class="firstHeading">New Article</h1>
+    <div class="page-tabs-wrapper">
+      <nav class="ns-tabs" aria-label="Namespace tabs">
+        <button class="ns-tab active">Article</button>
+        <button class="ns-tab">Talk</button>
+      </nav>
+      <nav class="page-actions" aria-label="Page actions">
+        <button class="action-tab"><span class="action-tab-text">Read</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span></button>
+        <button class="action-tab active" id="editTabVE"><span class="action-tab-text">Edit</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span></button>
+        <button class="action-tab"><span class="action-tab-text">View history</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span></button>
+        <button class="action-tab star"><span class="action-tab-text">⭐</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="ve-strip" role="region" aria-label="Editing toolbar">
+    <div class="ve-bar">
+      <div class="mobile-toolbar">
+        <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+        <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+        <div class="dropdown" id="dd-style-mobile">
+          <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+          <span class="caret" aria-hidden="true"></span>
+          <div class="menu" id="menu-style-mobile">
+            <button data-style="bold">Bold</button>
+            <button data-style="italic">Italic</button>
+            <button data-style="underline">Underline</button>
+            <button data-style="strike">Strikethrough</button>
+            <button data-style="clean">Clear styling</button>
+          </div>
+        </div>
+        <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+        <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+        <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
+      </div>
+      <div class="desktop-toolbar">
+        <div class="group tight">
+          <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+        </div>
+        <div class="group">
+          <div class="dropdown" id="dd-paragraph">
+            <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
+            <span class="cdx-button__label">Paragraph</span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-paragraph">
+              <button data-header="">Paragraph</button>
+              <button data-header="1">Heading 1</button>
+              <button data-header="2">Heading 2</button>
+              <button data-header="3">Heading 3</button>
+            </div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="dropdown" id="dd-style">
+            <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+            <span class="cdx-button__label">A</span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-style">
+              <button data-style="bold">Bold</button>
+              <button data-style="italic">Italic</button>
+              <button data-style="underline">Underline</button>
+              <button data-style="strike">Strikethrough</button>
+              <button data-style="clean">Clear styling</button>
+            </div>
+          </div>
+        </div>
+        <div class="group tight">
+          <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+          <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+        </div>
+        <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
+          <button class="btn publish-btn" id="publish" disabled>Publish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="ve-content-wrap">
+    <p class="tagline">From Wikipedia, the free encyclopedia</p>
+    <div class="surface">
+      <div class="creator-wrap">
+        <input id="title" class="title-input" placeholder="Proposed title (e.g., Jane Doe)">
+        <div class="chip-row">
+          <span class="chip reference" id="openRef">Reference</span>
+          <span id="refBadges"></span>
+        </div>
+        <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead…"></div>
+        <div id="verify" class="verify-note">Add citations (Reference) to verify statements.</div>
+      </div>
+      <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Reference chip mock</span></div>
+    </div>
+  </main>
+
+  <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
+    <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
+      <div class="ref-row"><strong id="refTitle">Add reference</strong> <span id="refHint" class="badge">unclassified</span></div>
+      <div class="ref-row"><label for="refUrl">Source URL</label><input id="refUrl" type="url" placeholder="https://example.com/article"></div>
+      <div class="ref-row"><label for="refTitleInput">Title (optional)</label><input id="refTitleInput" type="text" placeholder="Article title"></div>
+      <div class="ref-actions">
+        <button class="btn" id="refCancel">Cancel</button>
+        <button class="btn primary" id="refInsert">Insert cite</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function applyIcons(){
+      function setIcon(n, path){ n.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">'+path+'</svg>'; }
+      var map={cdxIconArticle:'<path d="M4 2h12v2H4V2zm0 4h12v2H4V6zm0 4h12v2H4v-2zm0 4h8v2H4v-2z"/>',cdxIconEdit:'<path d="M3 14.25V17h2.75l8.086-8.086-2.75-2.75L3 14.25zM17.207 6.043a1 1 0 0 0 0-1.414l-1.836-1.836a1 1 0 0 0-1.414 0l-1.121 1.121 3.25 3.25 1.121-1.121z"/>',cdxIconHistory:'<path d="M10 2a8 8 0 1 0 8 8h-2a6 6 0 1 1-6-6v2l3-3-3-3v2z"/>',cdxIconStar:'<path d="M10 2l2.39 4.84L18 8l-4 3.9L15.18 18 10 15.27 4.82 18 6 11.9 2 8l5.61-1.16L10 2z"/>',cdxIconClose:'<path d="M4.293 4.293 10 10l5.707-5.707 1.414 1.414L11.414 11.414l5.707 5.707-1.414 1.414L10 12.828l-5.707 5.707-1.414-1.414 5.707-5.707-5.707-5.707z"/>',cdxIconUndo:'<path d="M4 10H1l4-4 4 4H6a4 4 0 1 1-4 4H0a6 6 0 1 0 6-6H4z"/>',cdxIconRedo:'<path d="M16 10h3l-4-4-4 4h3a4 4 0 1 0 4 4h2a6 6 0 1 1-6-6h2z"/>',cdxIconTextHeading:'<path d="M4 3h2v6h8V3h2v14h-2v-6H6v6H4V3z"/>',cdxIconTextStyle:'<path d="M4 16h12v2H4v-2zm6-14l6 12H4L10 2z"/>',cdxIconListNumbered:'<path d="M3 4h2v2H3V4zm0 5h2v2H3V9zm0 5h2v2H3v-2zM7 4h10v2H7V4zm0 5h10v2H7V9zm0 5h10v2H7v-2z"/>',cdxIconListBullet:'<path d="M4 5.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM4 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM4 17.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM7 4h10v2H7V4zm0 5h10v2H7V9zm0 5h10v2H7v-2z"/>'};
+      Array.from(document.querySelectorAll('.cdx-icon[data-icon]')).forEach(function(n){ var k=n.getAttribute('data-icon'); if(map[k]) setIcon(n, map[k]); });
+    })();
+    var openBtn=document.getElementById('openRef');
+    var backdrop=document.getElementById('refBackdrop');
+    var cancelBtn=document.getElementById('refCancel');
+    var insertBtn=document.getElementById('refInsert');
+    var urlInput=document.getElementById('refUrl');
+    var hint=document.getElementById('refHint');
+    var editor=document.getElementById('editor');
+    var verify=document.getElementById('verify');
+    var refBadges=document.getElementById('refBadges');
+    function classify(url){ try{ var h=new URL(url).hostname; if(/\.(gov|gov\.[a-z]{2})$/i.test(h)) return {label:'gov',cls:'good'}; if(/\.(edu|ac\.[a-z]{2})$/i.test(h)) return {label:'edu',cls:'good'}; if(/(reuters|apnews|bbc|nytimes|guardian|bloomberg|washingtonpost|ft\.com)/i.test(h)) return {label:'news',cls:'good'}; if(/(prnewswire|businesswire|globenewswire|newswire|press)/i.test(h)) return {label:'press release',cls:'warn'}; return {label:'unclassified',cls:''}; }catch(e){ return {label:'unclassified',cls:''}; } }
+    function openDialog(){ backdrop.style.display='block'; urlInput.focus(); }
+    function closeDialog(){ backdrop.style.display='none'; }
+    openBtn.onclick=openDialog; cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
+    urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
+    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); verify.classList.remove('show'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
+    editor.addEventListener('input',function(){ if(editor.textContent.trim().length>0){ verify.classList.add('show'); }});
+  </script>
+</body>
+</html>
