@@ -11,7 +11,7 @@
 html, body { height: 100%; }
 body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; color: var(--text); background: var(--bg); }
 
-.layout { display: flex; height: 100vh; }
+.layout { display: flex; }
 
 /* Left: Sources panel */
 .sources-pane { width: 360px; min-width: 300px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
@@ -49,7 +49,7 @@ body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; col
 .creation-controls .dest { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--subtle); }
 .creation-controls .dest label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
 .creation-controls .dest input { accent-color: #36c; }
-.draft { display: flex; gap: 16px; padding: 16px; height: calc(100vh - 54px); box-sizing: border-box; }
+.draft { display: flex; gap: 16px; padding: 16px; box-sizing: border-box; }
 .editor-wrap { flex: 2; display: flex; flex-direction: column; min-width: 0; }
 .editor { flex: 1; border: 1px solid #c8ccd1; border-radius: 4px; }
 .checks { width: 320px; border: 1px solid #c8ccd1; border-radius: 4px; padding: 12px; height: fit-content; }
