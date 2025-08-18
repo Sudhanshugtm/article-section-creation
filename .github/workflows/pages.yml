@@ -88,7 +88,8 @@ jobs:
 
               <h2>Article Creation</h2>
               <ul>
-                <li><a href="creation/creation.html">Source-based Creation (split view)</a></li>
+                <li><a href="creation/creation.html">Concept A — Source-based split view</a></li>
+                <li><a href="creation/article-creator.html">Concept B — Reference chip flow</a></li>
               </ul>
 
               <h2>Direct Links (for convenience)</h2>
