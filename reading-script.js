@@ -332,12 +332,6 @@ function enterEditMode() {
   
   // Show smart widget for suggestions
   document.getElementById('smartWidget').style.display = 'block';
-
-  // Show expand sidebar (sidebar concept branch)
-  const expandSidebar = document.getElementById('expandSidebar');
-  if (expandSidebar) {
-    expandSidebar.style.display = 'block';
-  }
   
   // Initialize Quill editor if not already done
   if (!quill) {
@@ -363,6 +357,7 @@ function exitEditMode() {
   // Hide expand sidebar if present
   const expandSidebar = document.getElementById('expandSidebar');
   if (expandSidebar) {
+    expandSidebar.classList.remove('open');
     expandSidebar.style.display = 'none';
   }
   
@@ -464,9 +459,15 @@ function setupMobileHandlers() {
   const quoteBtn = document.getElementById('quote');
   if (quoteBtn) {
     quoteBtn.onclick = () => {
-      const sel = quill.getSelection(true);
-      if (sel) {
-        quill.formatText(sel.index, sel.length, 'blockquote', true);
+      // On mobile, use Quote button to open the expand sidebar drawer
+      const sidebar = document.getElementById('expandSidebar');
+      if (sidebar && window.matchMedia('(max-width: 768px)').matches) {
+        sidebar.style.display = 'block';
+        requestAnimationFrame(() => sidebar.classList.add('open'));
+      } else {
+        // Fallback to original quote behavior on larger screens
+        const sel = quill.getSelection(true);
+        if (sel) quill.formatText(sel.index, sel.length, 'blockquote', true);
       }
     };
   }
@@ -698,7 +699,11 @@ function setupSharedHandlers() {
   if (expandSidebarClose) {
     expandSidebarClose.onclick = () => {
       const sidebar = document.getElementById('expandSidebar');
-      if (sidebar) sidebar.style.display = 'none';
+      if (sidebar) {
+        sidebar.classList.remove('open');
+        // Wait for transition on mobile, then hide
+        setTimeout(() => { sidebar.style.display = 'none'; }, 200);
+      }
     };
   }
   
