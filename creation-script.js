@@ -53,6 +53,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Toolbar handlers and icons
   setupToolbarHandlers();
   applyIcons();
+
+  // Match tab toggles to other pages (visual only)
+  document.querySelectorAll('.ns-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ns-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.page-actions .action-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!btn.classList.contains('star')) {
+        document.querySelectorAll('.page-actions .action-tab:not(.star)')
+          .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+    });
+  });
 });
 
 function renderSource(src) {
