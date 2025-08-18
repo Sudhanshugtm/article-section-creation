@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Expand an Article — Wikipedia</title>
+
+  <!-- Codex tokens + CSS (design system) -->
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+
+  <!-- Article selection styles -->
+  <link rel="stylesheet" href="article-selection-styles.css">
+</head>
+<body>
+  <div class="article-selector">
+    <header class="article-selector__header">
+      <div class="container">
+        <h1 class="article-selector__title">Expand an Article</h1>
+        <p class="article-selector__subtitle">Help improve Wikipedia by adding missing information</p>
+      </div>
+    </header>
+
+    <main class="article-selector__main">
+      <div class="container">
+        <div class="article-selection">
+          <h2 class="article-selection__title">Select an article to expand</h2>
+          
+          <!-- Katie Bouman - Computer Science -->
+          <div class="article-card" data-article="katie-bouman">
+            <div class="article-card__image">
+              <div class="article-card__image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="40" r="39" stroke="#c8ccd1" stroke-width="2"/>
+                  <path d="M40 25C33.373 25 28 30.373 28 37C28 43.627 33.373 49 40 49C46.627 49 52 43.627 52 37C52 30.373 46.627 25 40 25Z" fill="#c8ccd1"/>
+                  <path d="M40 52C30 52 22 56 22 65V70H58V65C58 56 50 52 40 52Z" fill="#c8ccd1"/>
+                </svg>
+              </div>
+            </div>
+            <div class="article-card__content">
+              <h3 class="article-card__title">Katie Bouman</h3>
+              <p class="article-card__description">American computer scientist and engineer</p>
+              <div class="article-card__meta">
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⭐</span>
+                  Computer Science
+                </span>
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⚠</span>
+                  Missing key sections
+                </span>
+              </div>
+              <div class="article-card__stats">
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">4</span>
+                  <span class="article-card__stat-label">Sections</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">2</span>
+                  <span class="article-card__stat-label">Missing facts</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">2</span>
+                  <span class="article-card__stat-label">New sections</span>
+                </div>
+              </div>
+              <button class="article-card__button" onclick="selectArticle('katie-bouman')">
+                Expand this article
+              </button>
+            </div>
+          </div>
+
+          <!-- John Langford - Machine Learning -->
+          <div class="article-card" data-article="john-langford">
+            <div class="article-card__image">
+              <div class="article-card__image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="40" r="39" stroke="#c8ccd1" stroke-width="2"/>
+                  <path d="M40 25C33.373 25 28 30.373 28 37C28 43.627 33.373 49 40 49C46.627 49 52 43.627 52 37C52 30.373 46.627 25 40 25Z" fill="#c8ccd1"/>
+                  <path d="M40 52C30 52 22 56 22 65V70H58V65C58 56 50 52 40 52Z" fill="#c8ccd1"/>
+                </svg>
+              </div>
+            </div>
+            <div class="article-card__content">
+              <h3 class="article-card__title">John Langford</h3>
+              <p class="article-card__description">American machine learning researcher</p>
+              <div class="article-card__meta">
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⭐</span>
+                  Machine Learning
+                </span>
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⚠</span>
+                  Needs expansion
+                </span>
+              </div>
+              <div class="article-card__stats">
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">1</span>
+                  <span class="article-card__stat-label">Sections</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">Missing facts</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">New sections</span>
+                </div>
+              </div>
+              <button class="article-card__button" onclick="selectArticle('john-langford')">
+                Expand this article
+              </button>
+            </div>
+          </div>
+
+          <!-- Henri Gouraud - Computer Graphics -->
+          <div class="article-card" data-article="henri-gouraud">
+            <div class="article-card__image">
+              <div class="article-card__image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="40" r="39" stroke="#c8ccd1" stroke-width="2"/>
+                  <path d="M40 25C33.373 25 28 30.373 28 37C28 43.627 33.373 49 40 49C46.627 49 52 43.627 52 37C52 30.373 46.627 25 40 25Z" fill="#c8ccd1"/>
+                  <path d="M40 52C30 52 22 56 22 65V70H58V65C58 56 50 52 40 52Z" fill="#c8ccd1"/>
+                </svg>
+              </div>
+            </div>
+            <div class="article-card__content">
+              <h3 class="article-card__title">Henri Gouraud</h3>
+              <p class="article-card__description">French computer graphics pioneer</p>
+              <div class="article-card__meta">
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⭐</span>
+                  Computer Graphics
+                </span>
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⚠</span>
+                  Short biography
+                </span>
+              </div>
+              <div class="article-card__stats">
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">2</span>
+                  <span class="article-card__stat-label">Sections</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">Missing facts</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">2</span>
+                  <span class="article-card__stat-label">New sections</span>
+                </div>
+              </div>
+              <button class="article-card__button" onclick="selectArticle('henri-gouraud')">
+                Expand this article
+              </button>
+            </div>
+          </div>
+
+          <!-- Eduardo Caianiello - Physics -->
+          <div class="article-card" data-article="eduardo-caianiello">
+            <div class="article-card__image">
+              <div class="article-card__image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="40" r="39" stroke="#c8ccd1" stroke-width="2"/>
+                  <path d="M40 25C33.373 25 28 30.373 28 37C28 43.627 33.373 49 40 49C46.627 49 52 43.627 52 37C52 30.373 46.627 25 40 25Z" fill="#c8ccd1"/>
+                  <path d="M40 52C30 52 22 56 22 65V70H58V65C58 56 50 52 40 52Z" fill="#c8ccd1"/>
+                </svg>
+              </div>
+            </div>
+            <div class="article-card__content">
+              <h3 class="article-card__title">Eduardo R. Caianiello</h3>
+              <p class="article-card__description">Italian theoretical physicist</p>
+              <div class="article-card__meta">
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⭐</span>
+                  Physics
+                </span>
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⚠</span>
+                  Stub article
+                </span>
+              </div>
+              <div class="article-card__stats">
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">1</span>
+                  <span class="article-card__stat-label">Sections</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">Missing facts</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">New sections</span>
+                </div>
+              </div>
+              <button class="article-card__button" onclick="selectArticle('eduardo-caianiello')">
+                Expand this article
+              </button>
+            </div>
+          </div>
+
+          <!-- Patrick McHale - Arts/Animation -->
+          <div class="article-card" data-article="patrick-mchale">
+            <div class="article-card__image">
+              <div class="article-card__image-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="40" r="39" stroke="#c8ccd1" stroke-width="2"/>
+                  <path d="M40 25C33.373 25 28 30.373 28 37C28 43.627 33.373 49 40 49C46.627 49 52 43.627 52 37C52 30.373 46.627 25 40 25Z" fill="#c8ccd1"/>
+                  <path d="M40 52C30 52 22 56 22 65V70H58V65C58 56 50 52 40 52Z" fill="#c8ccd1"/>
+                </svg>
+              </div>
+            </div>
+            <div class="article-card__content">
+              <h3 class="article-card__title">Patrick McHale</h3>
+              <p class="article-card__description">American animator and musician</p>
+              <div class="article-card__meta">
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">⭐</span>
+                  Arts & Animation
+                </span>
+                <span class="article-card__meta-item">
+                  <span class="meta-icon">✓</span>
+                  Well-developed
+                </span>
+              </div>
+              <div class="article-card__stats">
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">11</span>
+                  <span class="article-card__stat-label">Sections</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">3</span>
+                  <span class="article-card__stat-label">Missing facts</span>
+                </div>
+                <div class="article-card__stat">
+                  <span class="article-card__stat-value">1</span>
+                  <span class="article-card__stat-label">New sections</span>
+                </div>
+              </div>
+              <button class="article-card__button" onclick="selectArticle('patrick-mchale')">
+                Expand this article
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Article data with full content
+    const articleData = {
+      'katie-bouman': {
+        title: 'Katie Bouman',
+        description: 'American computer scientist and engineer',
+        content: `'''Katherine Louise Bouman''' (born 1989) is an American [[engineer]] and [[computer scientist]] working in the field of [[computational imaging]]. She led the development of an [[algorithm]] for imaging [[black hole]]s, known as [[CHIRP (algorithm)|Continuous High-resolution Image Reconstruction using Patch priors]] (CHIRP), and was a member of the [[Event Horizon Telescope]] team that captured the first image of a black hole.
+
+== Early life and education ==
+Bouman grew up in [[West Lafayette, Indiana]]. Her father, [[Charles Bouman]], is a professor of [[electrical and computer engineering]] and [[biomedical engineering]] at [[Purdue University]].
+
+== Research and career ==
+After earning her doctorate, Bouman joined [[Harvard University]] as a [[postdoctoral fellow]] on the Event Horizon Telescope Imaging team. She led the development of an algorithm for imaging black holes, known as [[CHIRP (algorithm)|Continuous High-resolution Image Reconstruction using Patch priors]] (CHIRP).
+
+== Recognition ==
+She was recognized as one of the [[BBC]]'s [[100 Women (BBC)#2019|100 women of 2019]]. In 2024, Bouman was awarded a [[Sloan Research Fellowship]].`
+      },
+      'john-langford': {
+        title: 'John Langford',
+        description: 'American machine learning researcher',
+        content: `'''John Langford''' (born January 2, 1975) is a [[computer scientist]] working in [[machine learning]] and [[Computational learning theory|learning theory]], a field that he says, "is shifting from an academic discipline to an industrial tool".
+
+He is well known for work on the [[Isomap]] embedding algorithm, [[CAPTCHA]] challenges, [[Cover tree|Cover Trees]] for nearest neighbor search, [[Multi-armed bandit#Contextual bandit|Contextual Bandits]] (which he coined) for [[reinforcement learning]] applications, and learning reductions.`
+      },
+      'henri-gouraud': {
+        title: 'Henri Gouraud',
+        description: 'French computer graphics pioneer',
+        content: `'''Henri Gouraud''' (born 1944) is a French [[computer scientist]]. He is the [[inventor]] of [[Gouraud shading]] used in [[computer graphics]]. He is the great-nephew of general [[Henri Gouraud (soldier)|Henri Gouraud]].
+
+During 1964–1967, he studied at [[École Centrale Paris]]. He received his Ph.D. from the [[University of Utah College of Engineering]] in 1971, working with [[David C. Evans (computer scientist)|Dave Evans]] and [[Ivan Sutherland]], with his dissertation titled ''Computer Display of Curved Surfaces''.`
+      },
+      'eduardo-caianiello': {
+        title: 'Eduardo R. Caianiello',
+        description: 'Italian theoretical physicist',
+        content: `'''Eduardo Renato Caianiello''' (June 25, 1921 – October 22, 1993) was an Italian [[physicist]]. He contributed to scientific research, especially in [[Quantum mechanics|quantum theory]] and [[cybernetics]]. He was also a pioneer in the theory of [[neural networks]].
+
+Caianiello founded and directed the Institute of Theoretical Physics of the [[University of Naples]]; the Laboratory of Cybernetics of the [[Consiglio Nazionale delle Ricerche]] at Arco Felice (Naples), the Faculty of Mathematical, Physical and Natural Sciences of the [[University of Salerno]].`
+      },
+      'patrick-mchale': {
+        title: 'Patrick McHale',
+        description: 'American animator and musician',
+        content: `'''Patrick Nolen McHale''' (born November 17, 1983) is an American animator, storyboard artist, screenwriter, director, and musician. He is well known for creating the animated television miniseries ''[[Over the Garden Wall]]''.
+
+== Life and career ==
+
+=== Early career ===
+McHale graduated from the [[California Institute of the Arts]] in [[Santa Clarita, California|Santa Clarita]] in 2006 with a [[Bachelor of Fine Arts|BFA]] in [[character animation]]. He began his professional career at [[Cartoon Network Studios]] in 2007, as a writer and [[storyboard]] artist on [[Thurop Van Orman]]'s ''[[The Marvelous Misadventures of Flapjack]]''.
+
+=== ''Over the Garden Wall'' ===
+In October 2011, he began to make the eight-minute animated short ''[[Tome of the Unknown]]'', which was produced as part of Cartoon Network's shorts development program. The short became the basis for a ten-part [[miniseries]] ''Over the Garden Wall'', which premiered over five consecutive nights in November 2014.`
+      }
+    };
+
+    function selectArticle(articleId) {
+      const article = articleData[articleId];
+      if (article) {
+        // Store article data for the selected article page
+        sessionStorage.setItem('selectedArticle', JSON.stringify({
+          id: articleId,
+          title: article.title,
+          description: article.description,
+          content: article.content
+        }));
+        
+        // Navigate to the article page (we'll create individual pages for each)
+        window.location.href = `${articleId}.html`;
+      }
+    }
+  </script>
+</body>
+</html>

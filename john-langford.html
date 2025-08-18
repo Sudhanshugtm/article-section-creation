@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>John Langford — Wikipedia</title>
+
+  <!-- Codex tokens + CSS (design system) -->
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+
+  <!-- Reading mode styles -->
+  <link rel="stylesheet" href="reading-styles.css">
+  
+  <!-- Wikidata widget styles -->
+  <link rel="stylesheet" href="wikidata-widget.css">
+  
+  <!-- Wizard overlay styles -->
+  <link rel="stylesheet" href="wizard-overlay.css">
+  
+</head>
+<body>
+
+  <header class="container page-header" role="banner">
+    <h1 class="firstHeading">John Langford</h1>
+    <div class="page-tabs-wrapper">
+      <nav class="ns-tabs" aria-label="Namespace tabs">
+        <button class="ns-tab active">Article</button>
+        <button class="ns-tab">Talk</button>
+      </nav>
+      <nav class="page-actions" aria-label="Page actions">
+        <button class="action-tab active">
+          <span class="action-tab-text">Read</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
+        </button>
+        <button class="action-tab" id="editTab">
+          <span class="action-tab-text">Edit</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
+        </button>
+        <button class="action-tab">
+          <span class="action-tab-text">View history</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span>
+        </button>
+        <button class="action-tab star">
+          <span class="action-tab-text">⭐</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Reading Mode Content -->
+  <main class="content-wrap" id="readingContent">
+    <p class="tagline">From Wikipedia, the free encyclopedia</p>
+    <article class="article-content" id="articleBody">
+      <!-- Article content will be loaded here -->
+    </article>
+  </main>
+
+  <!-- Visual Editor (hidden by default) -->
+  <div class="ve-interface" id="veInterface" style="display: none;">
+    
+    <!-- Page header (duplicated for VE mode) -->
+    <header class="container page-header" role="banner">
+      <h1 class="firstHeading">John Langford</h1>
+      <div class="page-tabs-wrapper">
+        <nav class="ns-tabs" aria-label="Namespace tabs">
+          <button class="ns-tab active">Article</button>
+          <button class="ns-tab">Talk</button>
+        </nav>
+        <nav class="page-actions" aria-label="Page actions">
+          <button class="action-tab">Read</button>
+          <button class="action-tab active" id="editTabVE">Edit</button>
+          <button class="action-tab">View history</button>
+          <button class="action-tab star">⭐</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- VE toolbar (positioned below tabs) -->
+    <div class="ve-strip" role="region" aria-label="Editing toolbar">
+      <div class="ve-bar">
+
+        <!-- Mobile toolbar -->
+        <div class="mobile-toolbar">
+          <!-- Close -->
+          <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+          
+          <!-- Undo -->
+          <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          
+          <!-- Text Style (A with dropdown) -->
+          <div class="dropdown" id="dd-style-mobile">
+            <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-style-mobile">
+              <button data-style="bold">Bold</button>
+              <button data-style="italic">Italic</button>
+              <button data-style="underline">Underline</button>
+              <button data-style="strike">Strikethrough</button>
+              <button data-style="script-sup">Superscript</button>
+              <button data-style="script-sub">Subscript</button>
+              <button data-style="clean">Clear styling</button>
+            </div>
+          </div>
+          
+          <!-- Quote -->
+          <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+          
+          <!-- Link -->
+          <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+          
+          <!-- Edit with dropdown -->
+          <div class="dropdown" id="dd-edit-mobile">
+            <span class="cdx-icon" data-icon="cdxIconEdit"></span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-edit-mobile">
+              <button data-insert="image">Media…</button>
+              <button data-insert="template">Template… (mock)</button>
+              <button data-insert="math">Math… (mock)</button>
+              <button data-insert="table">Table… (mock)</button>
+            </div>
+          </div>
+          
+          <!-- Submit (next icon) -->
+          <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"></path></svg></span></button>
+        </div>
+
+        <!-- Desktop toolbar (hidden on mobile) -->
+        <div class="desktop-toolbar">
+          <!-- History -->
+          <div class="group tight">
+            <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+            <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          </div>
+
+          <!-- Paragraph -->
+          <div class="group">
+            <div class="dropdown" id="dd-paragraph">
+              <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
+              <span class="cdx-button__label">Paragraph</span>
+              <span class="caret" aria-hidden="true"></span>
+              <div class="menu" id="menu-paragraph">
+                <button data-header="">Paragraph</button>
+                <button data-header="1">Heading 1</button>
+                <button data-header="2">Heading 2</button>
+                <button data-header="3">Heading 3</button>
+                <button data-header="4">Heading 4</button>
+                <button data-header="5">Heading 5</button>
+                <button data-header="6">Heading 6</button>
+                <button data-header="code">Preformatted</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styles -->
+          <div class="group">
+            <div class="dropdown" id="dd-style">
+              <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+              <span class="cdx-button__label">A</span>
+              <span class="caret" aria-hidden="true"></span>
+              <div class="menu" id="menu-style">
+                <button data-style="bold">Bold</button>
+                <button data-style="italic">Italic</button>
+                <button data-style="underline">Underline</button>
+                <button data-style="strike">Strikethrough</button>
+                <button data-style="script-sup">Superscript</button>
+                <button data-style="script-sub">Subscript</button>
+                <button data-style="clean">Clear styling</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lists -->
+          <div class="group tight">
+            <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+            <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+          </div>
+
+          <!-- Cite / Insert -->
+          <div class="group">
+            <button class="btn" id="btn-link" title="Add link">
+              <span class="cdx-icon" data-icon="cdxIconLink"></span>
+              <span class="cdx-button__label">Link</span>
+            </button>
+
+            <div class="dropdown" id="dd-cite">
+              <span class="cdx-icon" data-icon="cdxIconReference"></span>
+              <span class="cdx-button__label">Cite</span>
+              <span class="caret"></span>
+              <div class="menu" id="menu-cite">
+                <button data-cite="web">Cite web… (mock)</button>
+                <button data-cite="book">Cite book… (mock)</button>
+                <button data-cite="news">Cite news… (mock)</button>
+              </div>
+            </div>
+
+            <div class="dropdown" id="dd-insert">
+              <span class="cdx-icon" data-icon="cdxIconAdd"></span>
+              <span class="cdx-button__label">Insert</span>
+              <span class="caret"></span>
+              <div class="menu" id="menu-insert">
+                <button data-insert="image">Media…</button>
+                <button data-insert="template">Template… (mock)</button>
+                <button data-insert="math">Math… (mock)</button>
+                <button data-insert="table">Table… (mock)</button>
+                <button data-insert="char">Special character…</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tools / Help -->
+          <div class="group tight">
+            <button class="btn" id="addSectionBtn" title="Add section"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Add section</span></button>
+            <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
+            <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
+          </div>
+
+          <!-- Publish -->
+          <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
+            <button class="btn publish-btn" id="publish" disabled>Publish</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VE Content -->
+    <main class="ve-content-wrap">
+      <p class="tagline">From Wikipedia, the free encyclopedia</p>
+      <div class="surface">
+        <div id="editor"></div>
+        <div class="status">
+          <span>Changes are preview‑only in this demo.</span>
+          <span class="badge">VE toolbar mock (Codex icons)</span>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Smart Widget (for section expansion) -->
+  <div class="smart-widget" id="smartWidget" style="display: none;">
+    <button class="smart-widget__trigger" id="smartWidgetTrigger">
+      <span class="smart-widget__icon">💡</span>
+      <span class="smart-widget__text">What to improve?</span>
+    </button>
+  </div>
+
+  <!-- Section Wizard Overlay -->
+  <div class="wizard-overlay" id="sectionWizard" style="display: none;">
+    <div class="wizard-backdrop"></div>
+    <div class="wizard-container">
+      <!-- Header with stepper -->
+      <div class="wizard-header">
+        <div class="wizard-header-left">
+          <h2 class="wizard-title">Add a section</h2>
+          <div class="wizard-stepper">
+            <div class="stepper-item active">
+              <span class="stepper-number">1</span>
+              <span class="stepper-label">Pick</span>
+            </div>
+            <div class="stepper-arrow">→</div>
+            <div class="stepper-item">
+              <span class="stepper-number">2</span>
+              <span class="stepper-label">Sources</span>
+            </div>
+            <div class="stepper-arrow">→</div>
+            <div class="stepper-item">
+              <span class="stepper-number">3</span>
+              <span class="stepper-label">Review</span>
+            </div>
+          </div>
+        </div>
+        <button class="wizard-close" id="wizardClose" title="Close wizard">×</button>
+      </div>
+
+      <!-- Context row -->
+      <div class="wizard-context">
+        <span class="context-page-title">John Langford</span>
+        <span class="context-article-type">Biography</span>
+      </div>
+
+      <!-- Main content area -->
+      <div class="wizard-content">
+        <!-- Step 1: Pick a section -->
+        <div class="wizard-step" id="step1">
+          <h3 class="step-title">Step 1 · Pick a section</h3>
+          
+          <div class="section-suggestions">
+            <div class="section-card" data-section="academic-career">
+              <h4 class="section-card-title">Academic career</h4>
+              <p class="section-card-why">Detail his progression through various academic institutions</p>
+            </div>
+
+            <div class="section-card" data-section="publications">
+              <h4 class="section-card-title">Selected publications</h4>
+              <p class="section-card-why">His influential papers and books deserve highlighting</p>
+            </div>
+
+            <div class="section-card" data-section="awards-recognition">
+              <h4 class="section-card-title">Awards and recognition</h4>
+              <p class="section-card-why">His contributions have earned significant recognition in ML</p>
+            </div>
+
+            <div class="section-card custom-section" data-section="custom">
+              <h4 class="section-card-title">Custom section</h4>
+              <p class="section-card-why">Create your own section with a custom name</p>
+              <div class="custom-section-input" style="display: none;">
+                <input type="text" placeholder="Enter section name..." class="custom-section-name">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Sources -->
+        <div class="wizard-step" id="step2" style="display: none;">
+          <h3 class="step-title">Step 2 · Sources</h3>
+          
+          <div class="chosen-section">
+            <span class="chosen-section-label">Section: </span>
+            <span class="chosen-section-name" id="chosenSectionName"></span>
+          </div>
+
+          <div class="source-input-area">
+            <div class="source-input-group">
+              <input type="url" placeholder="Paste a source URL..." class="source-url-input" id="sourceUrlInput">
+              <button class="add-source-btn" id="addSourceBtn">Add</button>
+            </div>
+          </div>
+
+          <div class="sources-list" id="sourcesList">
+            <!-- Added sources will appear here -->
+          </div>
+
+          <div class="sources-nudge" id="sourcesNudge" style="display: none;">
+            <p>💡 Consider adding at least one reliable source to support your content.</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Review -->
+        <div class="wizard-step" id="step3" style="display: none;">
+          <h3 class="step-title">Step 3 · Review</h3>
+          
+          <div class="chosen-section">
+            <span class="chosen-section-label">Section: </span>
+            <span class="chosen-section-name" id="chosenSectionName3"></span>
+          </div>
+
+          <div class="review-checks" id="reviewChecks">
+            <!-- Review issues will appear here -->
+          </div>
+
+          <div class="review-preview" id="reviewPreview">
+            <!-- Final preview of the section -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="wizard-footer">
+        <div class="wizard-footer-left">
+          <a href="#" class="help-link">Help / policies</a>
+        </div>
+        <div class="wizard-footer-right">
+          <button class="wizard-btn-back" id="wizardBack" style="display: none;">Back</button>
+          <button class="wizard-btn-skip" id="wizardSkip" style="display: none;">Skip for now</button>
+          <button class="wizard-btn-cancel" id="wizardCancel">Cancel</button>
+          <button class="wizard-btn-continue" id="wizardContinue" disabled>Continue</button>
+          <button class="wizard-btn-insert" id="wizardInsert" style="display: none;" disabled>Finish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Source Palette (appears during writing) -->
+  <div class="source-palette" id="sourcePalette" style="display: none;">
+    <div class="source-palette-header">
+      <span class="source-palette-title">Sources</span>
+      <button class="source-palette-close" id="sourcePaletteClose" title="Close">×</button>
+    </div>
+    <div class="source-palette-content" id="sourcePaletteContent">
+      <!-- Source statements will appear here -->
+    </div>
+  </div>
+
+  <!-- Load scripts -->
+  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+  <script>
+    // John Langford article data
+    const articleData = {
+      id: 'john-langford',
+      title: 'John Langford',
+      description: 'American machine learning researcher',
+      content: `'''John Langford''' (born January 2, 1975) is a [[computer scientist]] working in [[machine learning]] and [[Computational learning theory|learning theory]], a field that he says, "is shifting from an academic discipline to an industrial tool".
+
+He is well known for work on the [[Isomap]] embedding algorithm, [[CAPTCHA]] challenges, [[Cover tree|Cover Trees]] for nearest neighbor search, [[Multi-armed bandit#Contextual bandit|Contextual Bandits]] (which he coined) for [[reinforcement learning]] applications, and learning reductions.
+
+John is the author of the [[blog]] [http://www.hunch.net/ hunch.net] and the principal developer of [[Vowpal Wabbit]]. He works at [[Microsoft Research]] New York, of which he was one of the founding members, and was previously affiliated with Yahoo! Research, [[Toyota Technological Institute at Chicago]], and [[IBM]]'s Watson Research Center.`
+    };
+  </script>
+  <script src="reading-script.js"></script>
+  <script src="wikidata-widget.js"></script>
+</body>
+</html>
