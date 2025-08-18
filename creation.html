@@ -149,7 +149,15 @@
             </div>
           </div>
         </div>
-        <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
+        <!-- Creation-specific controls inline with toolbar -->
+        <div class="group" style="margin-left:auto;">
+          <input id="draftTitle" class="title-input-toolbar" type="text" placeholder="Proposed title" aria-label="Proposed title">
+          <select id="destSelect" class="dest-select" aria-label="Destination">
+            <option value="draft" selected>Draft</option>
+            <option value="main">Main</option>
+          </select>
+        </div>
+        <div class="group" style="border-left:none;padding-right:0">
           <button class="btn publish-btn" id="publish" disabled>Publish</button>
         </div>
       </div>
@@ -174,13 +182,6 @@
         </aside>
 
         <section class="draft-pane" aria-label="Draft">
-          <div class="creation-controls">
-            <input id="draftTitle" class="title-input" type="text" placeholder="Proposed title (e.g., Jane Doe)">
-            <div class="dest" role="group" aria-label="Destination">
-              <label><input type="radio" name="dest" value="draft" checked> Draft (recommended)</label>
-              <label><input type="radio" name="dest" value="main"> Main article</label>
-            </div>
-          </div>
           <div class="draft">
             <section class="editor-wrap">
               <div id="creationEditor" class="editor"></div>

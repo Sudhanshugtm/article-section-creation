@@ -152,10 +152,10 @@ function updateChecks() {
   const riskRatio = text.length ? (overlap / text.length) : 0;
   const copyvioLow = riskRatio < 0.2;
 
-  const title = (document.getElementById('draftTitle').value || '').trim();
+  const title = (document.getElementById('draftTitle')?.value || '').trim();
   const clashing = KNOWN_ARTICLES.some(a => a.toLowerCase() === title.toLowerCase());
 
-  const dest = (document.querySelector('input[name="dest"]:checked') || {}).value || 'draft';
+  const dest = (document.getElementById('destSelect')?.value) || (document.querySelector('input[name="dest"]:checked') || {}).value || 'draft';
   const mainEligible = notabilityPass && hasLead && hasHeader && hasCite && copyvioLow && !promoHit && !clashing;
   const publishBtn = document.getElementById('publish');
   if (publishBtn) {

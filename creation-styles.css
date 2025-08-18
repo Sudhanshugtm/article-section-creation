@@ -14,12 +14,12 @@ body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; col
 .layout { display: flex; }
 
 /* Left: Sources panel */
-.sources-pane { width: 320px; min-width: 280px; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
-.sources-header { padding: 12px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 1; }
+.sources-pane { width: 320px; min-width: 280px; display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; }
+.sources-header { padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: #fff; }
 .title { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
 .subtitle { margin: 0; color: var(--subtle); font-size: 13px; }
 
-.add-source { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 49px; background: #fff; z-index: 1; }
+.add-source { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: #fff; }
 .add-source input { flex: 1; height: 34px; padding: 6px 10px; border: 1px solid #c8ccd1; border-radius: 4px; font: inherit; }
 .add-source button { height: 34px; padding: 0 12px; border: 1px solid var(--progressive); background: var(--progressive); color: #fff; border-radius: 4px; cursor: pointer; }
 .add-source button:disabled { opacity: .6; cursor: not-allowed; }
@@ -51,8 +51,8 @@ body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; col
 .creation-controls .dest input { accent-color: #36c; }
 .draft { display: flex; gap: 16px; padding: 16px; box-sizing: border-box; }
 .editor-wrap { flex: 2; display: flex; flex-direction: column; min-width: 0; }
-.editor { flex: 1; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
-.checks { width: 320px; border: 1px solid var(--border); border-radius: 4px; padding: 12px; height: fit-content; background: #fff; }
+.editor { flex: 1; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; }
+.checks { width: 320px; border: 1px solid var(--border-soft); border-radius: 4px; padding: 12px; height: fit-content; background: #fff; }
 .checks h4 { margin: 0 0 8px; }
 .check { font-size: 13px; margin: 6px 0; }
 .check.ok { color: #14866d; }
@@ -82,3 +82,5 @@ body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; col
   .draft { flex-direction: column; padding: 12px; }
   .checks { width: 100%; }
 }
+.group .title-input-toolbar { height: 32px; padding: 0 10px; border: 1px solid var(--border-soft); border-radius: 4px; font: inherit; min-width: 200px; }
+.group .dest-select { height: 32px; padding: 0 8px; border: 1px solid var(--border-soft); border-radius: 4px; font: inherit; }
