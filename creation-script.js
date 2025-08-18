@@ -6,7 +6,10 @@ let sources = [];
 document.addEventListener('DOMContentLoaded', () => {
   // Init editor
   quillCreation = new Quill('#creationEditor', {
-    modules: { toolbar: [['bold','italic','underline'], [{'header':[1,2,false]}], [{'list':'ordered'},{'list':'bullet'}], ['link','blockquote']] },
+    modules: { 
+      toolbar: false,
+      history: { delay: 250, maxStack: 100, userOnly: true }
+    },
     placeholder: 'Start a neutral, well-sourced lead…',
     theme: 'snow'
   });
@@ -38,6 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Checks whenever content changes
   quillCreation.on('text-change', updateChecks);
+
+  // Toolbar handlers and icons
+  setupToolbarHandlers();
+  applyIcons();
 });
 
 function renderSource(src) {
@@ -110,6 +117,215 @@ function updateChecks() {
   `;
 }
 
+// ===== Toolbar behavior (mirrors VE look) =====
+function setupToolbarHandlers() {
+  function closeMenus() { document.querySelectorAll('.menu').forEach(m => m.classList.remove('open')); }
+  document.addEventListener('click', e => { if (!e.target.closest('.dropdown')) closeMenus(); });
+
+  // Undo/Redo
+  const undoBtn = document.getElementById('undo');
+  const redoBtn = document.getElementById('redo');
+  const undoDesktopBtn = document.getElementById('undo-desktop');
+  if (undoBtn) undoBtn.onclick = () => quillCreation.history.undo();
+  if (redoBtn) redoBtn.onclick = () => quillCreation.history.redo();
+  if (undoDesktopBtn) undoDesktopBtn.onclick = () => quillCreation.history.undo();
+
+  // Close -> back to concepts
+  const closeBtn = document.getElementById('close');
+  if (closeBtn) closeBtn.onclick = () => { window.location.href = 'index.html'; };
+
+  // Mobile style dropdown
+  const ddStyleMobile = document.getElementById('dd-style-mobile');
+  const menuStyleMobile = document.getElementById('menu-style-mobile');
+  if (ddStyleMobile && menuStyleMobile) {
+    ddStyleMobile.onclick = (e) => { e.stopPropagation(); closeMenus(); menuStyleMobile.classList.add('open'); };
+    menuStyleMobile.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const action = e.target.getAttribute('data-style');
+      if (action === 'clean') {
+        const sel = quillCreation.getSelection(true);
+        if (sel) quillCreation.removeFormat(sel.index, sel.length);
+      } else if (action === 'script-sup') {
+        quillCreation.format('script', 'super');
+      } else if (action === 'script-sub') {
+        quillCreation.format('script', 'sub');
+      } else {
+        quillCreation.format(action, !quillCreation.getFormat()[action]);
+      }
+      closeMenus();
+    });
+  }
+
+  // Mobile link
+  const linkMobile = document.getElementById('btn-link-mobile');
+  if (linkMobile) linkMobile.onclick = () => {
+    const sel = quillCreation.getSelection(true);
+    if (!sel) return;
+    const url = prompt('Enter URL');
+    if (url) quillCreation.format('link', url);
+  };
+
+  // Mobile quote
+  const quoteBtn = document.getElementById('quote');
+  if (quoteBtn) quoteBtn.onclick = () => {
+    const sel = quillCreation.getSelection(true);
+    if (sel) quillCreation.formatText(sel.index, sel.length, 'blockquote', true);
+  };
+
+  // Mobile edit dropdown
+  const ddEditMobile = document.getElementById('dd-edit-mobile');
+  const menuEditMobile = document.getElementById('menu-edit-mobile');
+  if (ddEditMobile && menuEditMobile) {
+    ddEditMobile.onclick = (e) => { e.stopPropagation(); closeMenus(); menuEditMobile.classList.add('open'); };
+    menuEditMobile.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const t = e.target.getAttribute('data-insert');
+      if (t === 'image') {
+        const url = prompt('Image URL');
+        if (url) {
+          const range = quillCreation.getSelection(true) || { index: quillCreation.getLength() };
+          quillCreation.insertEmbed(range.index, 'image', url, 'user');
+        }
+      } else {
+        alert('This insert is mocked in the demo.');
+      }
+      closeMenus();
+    });
+  }
+
+  // Paragraph dropdown
+  const ddPara = document.getElementById('dd-paragraph');
+  const menuPara = document.getElementById('menu-paragraph');
+  if (ddPara && menuPara) {
+    ddPara.onclick = (e) => { e.stopPropagation(); closeMenus(); menuPara.classList.add('open'); };
+    menuPara.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const val = e.target.getAttribute('data-header');
+      if (val === 'code') {
+        quillCreation.format('code-block', true);
+      } else {
+        quillCreation.format('header', val ? parseInt(val) : false);
+      }
+      ddPara.querySelector('.cdx-button__label').textContent = val ? ('Heading ' + val) : 'Paragraph';
+      closeMenus();
+    });
+  }
+
+  // Style dropdown (desktop)
+  const ddStyle = document.getElementById('dd-style');
+  const menuStyle = document.getElementById('menu-style');
+  if (ddStyle && menuStyle) {
+    ddStyle.onclick = (e) => { e.stopPropagation(); closeMenus(); menuStyle.classList.add('open'); };
+    menuStyle.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const action = e.target.getAttribute('data-style');
+      if (action === 'clean') {
+        const sel = quillCreation.getSelection(true);
+        if (sel) quillCreation.removeFormat(sel.index, sel.length);
+      } else if (action === 'script-sup') {
+        quillCreation.format('script', 'super');
+      } else if (action === 'script-sub') {
+        quillCreation.format('script', 'sub');
+      } else {
+        quillCreation.format(action, !quillCreation.getFormat()[action]);
+      }
+      closeMenus();
+    });
+  }
+
+  // Lists
+  const olBtn = document.querySelector('[data-cmd="ol"]');
+  const ulBtn = document.querySelector('[data-cmd="ul"]');
+  if (olBtn) olBtn.onclick = () => quillCreation.format('list', 'ordered');
+  if (ulBtn) ulBtn.onclick = () => quillCreation.format('list', 'bullet');
+
+  // Link (desktop)
+  const linkBtn = document.getElementById('btn-link');
+  if (linkBtn) linkBtn.onclick = () => {
+    const sel = quillCreation.getSelection(true);
+    if (!sel) return;
+    const url = prompt('Enter URL');
+    if (url) quillCreation.format('link', url);
+  };
+
+  // Cite dropdown (mock)
+  const ddCite = document.getElementById('dd-cite');
+  const menuCite = document.getElementById('menu-cite');
+  if (ddCite && menuCite) {
+    ddCite.onclick = (e) => { e.stopPropagation(); closeMenus(); menuCite.classList.add('open'); };
+    menuCite.addEventListener('click', () => { alert('Citations are mocked in this demo.'); closeMenus(); });
+  }
+
+  // Insert dropdown
+  const ddIns = document.getElementById('dd-insert');
+  const menuIns = document.getElementById('menu-insert');
+  if (ddIns && menuIns) {
+    ddIns.onclick = (e) => { e.stopPropagation(); closeMenus(); menuIns.classList.add('open'); };
+    menuIns.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+      const t = e.target.getAttribute('data-insert');
+      if (t === 'image') {
+        const url = prompt('Image URL');
+        if (url) {
+          const range = quillCreation.getSelection(true) || { index: quillCreation.getLength() };
+          quillCreation.insertEmbed(range.index, 'image', url, 'user');
+        }
+      } else if (t === 'char') {
+        alert('Special characters dialog is mocked.');
+      } else {
+        alert('This insert is mocked in the demo.');
+      }
+      closeMenus();
+    });
+  }
+
+  // Enable publish when user types
+  quillCreation.on('text-change', (delta, oldDelta, source) => {
+    if (source === 'user') {
+      const publishBtn = document.getElementById('publish');
+      if (publishBtn && publishBtn.disabled) {
+        publishBtn.disabled = false;
+        publishBtn.textContent = 'Publish draft';
+      }
+    }
+  });
+
+  // Publish button
+  const publishBtn = document.getElementById('publish');
+  if (publishBtn) publishBtn.onclick = () => alert('Publishing disabled in this demo.');
+}
+
+// ===== Codex icon loader (from MW API) =====
+function loadCodexIcons(iconNames) {
+  const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
+    '&names=' + encodeURIComponent(iconNames.join('|'));
+  return fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      const out = {}; const map = data?.query?.codexicons || {};
+      for (const k of Object.keys(map)) {
+        const entry = map[k];
+        const path = typeof entry === 'string' ? entry : (entry.ltr || entry.default || Object.values(entry.langCodeMap || {})[0] || '');
+        out[k] = path;
+      }
+      return out;
+    });
+}
+
+function applyIcons() {
+  const nodes = Array.from(document.querySelectorAll('.cdx-icon[data-icon]'));
+  const names = Array.from(new Set(nodes.map(n => n.getAttribute('data-icon'))));
+  loadCodexIcons(names).then(paths => {
+    nodes.forEach(n => {
+      const name = n.getAttribute('data-icon');
+      const p = paths[name];
+      if (p) {
+        n.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">' + p + '</svg>';
+      }
+    });
+  }).catch(() => {/* ignore icon load errors in offline */});
+}
+
 function mockExtractFacts(src) {
   const base = src.domain.replace(/\..+$/, '');
   return [
@@ -135,4 +351,3 @@ function safeUrl(url) {
 
 function escapeHTML(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
 function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
