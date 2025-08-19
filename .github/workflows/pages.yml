@@ -44,17 +44,17 @@ jobs:
       - name: Copy concept-editor → expansion/concept1 (overlay wizard)
         run: |
           git checkout concept-editor
-          rsync -a --delete --exclude '.git' ./ site/expansion/concept1/
+          rsync -a --delete --exclude '.git' --exclude 'site' --exclude '.github' ./ site/expansion/concept1/
 
       - name: Copy concept-selection → expansion/concept2 (sidebar panel)
         run: |
           git checkout concept-selection
-          rsync -a --delete --exclude '.git' ./ site/expansion/concept2/
+          rsync -a --delete --exclude '.git' --exclude 'site' --exclude '.github' ./ site/expansion/concept2/
 
       - name: Copy concept-creation → creation (source-based)
         run: |
           git checkout concept-creation
-          rsync -a --delete --exclude '.git' ./ site/creation/
+          rsync -a --delete --exclude '.git' --exclude 'site' --exclude '.github' ./ site/creation/
 
       - name: Normalize back links to hub (no intermediate choosers)
         run: |
@@ -101,14 +101,14 @@ jobs:
                   <h3>Concept 1 — Overlay Wizard</h3>
                   <p>A step-by-step overlay that helps pick a section, add sources, and review before insertion.</p>
                   <div class="links">
-                    <a href="expansion/concept1/articles-concept1.html">Open article list</a>
+                    <a href="expansion/concept1/index.html">Open article list</a>
                   </div>
                 </div>
                 <div class="card">
                   <h3>Concept 2 — Sidebar Panel</h3>
                   <p>A right-side panel with suggestions; on mobile it opens as a bottom drawer.</p>
                   <div class="links">
-                    <a href="expansion/concept2/articles-concept2.html">Open article list</a>
+                    <a href="expansion/concept2/index.html">Open article list</a>
                   </div>
                 </div>
               </div>
