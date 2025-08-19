@@ -46,12 +46,15 @@
     if (!listEl) return; // keep fallback
 
     // Fetch suggestions.json relative to the page (works on GitHub Pages aggregation)
-    fetch('suggestions.json', { cache: 'no-store' })
+    // Add a cache-busting query to avoid CDN/browser caching
+    const url = 'suggestions.json?ts=' + Date.now();
+    fetch(url, { cache: 'no-store' })
       .then(resp => resp.ok ? resp.json() : Promise.reject(new Error('HTTP ' + resp.status)))
       .then(data => {
         // data is expected to be an object keyed by article id
         const items = data && data[articleId];
         if (!items || !items.length) return; // keep fallback
+        try { console.log('[suggestions]', articleId, 'items:', items.length); } catch (_) {}
         renderSuggestions(listEl, items);
       })
       .catch(() => { /* noop: preserve inline fallback */ });
@@ -63,4 +66,3 @@
     document.addEventListener('DOMContentLoaded', init);
   }
 })();
-
