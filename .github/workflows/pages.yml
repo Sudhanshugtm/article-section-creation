@@ -127,35 +127,6 @@ jobs:
           HTML
 
 
-      - name: Inject simple back-to-hub nav into all concept pages
-        run: |
-          cat > site/.inject-nav.js <<'JS'
-(function(){try{
-  var path=window.location.pathname;
-  function pre(){ if(path.indexOf('/expansion/')!==-1) return '../../'; if(path.indexOf('/creation/')!==-1) return '../'; return ''; }
-  var p=pre();
-  var wrap=document.createElement('div');
-  wrap.style.cssText='position:fixed;right:12px;bottom:12px;z-index:4000;background:#fff;border:1px solid #eaecf0;padding:6px 10px;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.06);font: 13px/1.2 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;';
-  function link(h,t){ var a=document.createElement('a'); a.href=h; a.textContent=t; a.style.cssText='color:#0645ad;text-decoration:none;margin:0 6px'; a.onmouseenter=function(){a.style.textDecoration='underline';}; a.onmouseleave=function(){a.style.textDecoration='none';}; return a; }
-  wrap.appendChild(link(p+'index.html','Home'));
-  wrap.appendChild(document.createTextNode(' · '));
-  wrap.appendChild(link(p+'expansion/concept1/articles-concept1.html','Expansion C1'));
-  wrap.appendChild(document.createTextNode(' · '));
-  wrap.appendChild(link(p+'expansion/concept2/articles-concept2.html','Expansion C2'));
-  wrap.appendChild(document.createTextNode(' · '));
-  wrap.appendChild(link(p+'creation/creation.html','Creation A'));
-  wrap.appendChild(document.createTextNode(' · '));
-  wrap.appendChild(link(p+'creation/article-creator.html','Creation B'));
-  if(path.match(/\/expansion\//) || path.match(/\/creation\//)) document.body.appendChild(wrap);
-}catch(e){}})();
-
-          JS
-          find site/expansion site/creation -type f -name '*.html' -print0 | while IFS= read -r -d '' f; do
-            printf '\n<script>' >> "$f"
-            cat site/.inject-nav.js >> "$f"
-            printf '</script>\n' >> "$f"
-          done
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
