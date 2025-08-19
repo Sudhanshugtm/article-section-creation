@@ -30,10 +30,73 @@
     .badge.warn { color:#ac6600; border-color:#ac6600; }
   
     .chip.guidance { border-color: #c8ccd1; background: #fff; }
-    .ac-steps { max-width: 800px; margin: 0 auto; }
+    .ac-steps { max-width: 1100px; margin: 0 auto; }
     .ac-step { display: none; border: 1px solid var(--border-color-subtle, #eaecf0); background: #fff; border-radius: 6px; padding: 16px; }
     .ac-step.active { display: block; }
     .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
+    
+    /* Center Step 1 in viewport */
+    #step1.ac-step {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      max-width: 600px;
+      width: 90%;
+      z-index: 100;
+    }
+    
+    /* Responsive positioning for mobile with keyboard */
+    @media (max-height: 600px) {
+      #step1.ac-step {
+        position: fixed;
+        top: 30%;
+        transform: translate(-50%, -30%);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      #step1.ac-step {
+        width: 95%;
+        padding: 20px;
+      }
+      
+      /* Adjust for mobile keyboard */
+      @media (max-height: 500px) {
+        #step1.ac-step {
+          top: 20%;
+          transform: translate(-50%, -20%);
+        }
+      }
+    }
+    
+    /* Center Step 2 in viewport */
+    #step2.ac-step {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      max-width: 700px;
+      width: 90%;
+      z-index: 100;
+    }
+    
+    /* Responsive positioning for Step 2 */
+    @media (max-width: 768px) {
+      #step2.ac-step {
+        width: 95%;
+        padding: 20px;
+        top: 45%;
+        transform: translate(-50%, -45%);
+      }
+    }
+    
     .ac-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
     .ac-actions .btn { height: 34px; padding: 0 12px; border: 1px solid #c8ccd1; border-radius: 4px; background: #fff; cursor: pointer; }
     .ac-actions .btn.primary { background: #36c; color: #fff; border-color: #36c; }
@@ -42,27 +105,66 @@
     .category-item:hover { background: #f8f9fa; }
     .category-item.selected { border-color: #36c; box-shadow: 0 0 0 2px #eaf3ff; }
     .hint { font-size: 12px; color: #72777d; margin-top: 6px; }
+    /* Hide the VE chrome by default - show when Step 3 is active */
+    .ve-in-step3 #veHeader,
+    .ve-in-step3 #veToolbar {
+      display: block !important;
+    }
+    
+    /* Clean layout for Step 3 */
+    .ve-in-step3 .creator-wrap {
+      max-width: none;
+      padding: 0;
+    }
+    
+    .ve-in-step3 #step3 {
+      border: none;
+      background: transparent;
+      padding: 0;
+    }
+    
+    .ve-in-step3 #editor {
+      border: none;
+      background: transparent;
+      min-height: 400px;
+      padding: 16px 0;
+    }
   </style>
 </head>
 <body>
-  <header class="container page-header" role="banner">
-    <h1 class="firstHeading">New Article</h1>
+  <!-- Wikipedia-style header (hidden by default, shown in Step 3) -->
+  <header class="container page-header" id="veHeader" role="banner" style="display: none;">
+    <h1 class="firstHeading" id="veTitle">New Article</h1>
     <div class="page-tabs-wrapper">
       <nav class="ns-tabs" aria-label="Namespace tabs">
         <button class="ns-tab active">Article</button>
         <button class="ns-tab">Talk</button>
       </nav>
       <nav class="page-actions" aria-label="Page actions">
-        <button class="action-tab"><span class="action-tab-text">Read</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span></button>
-        <button class="action-tab active" id="editTabVE"><span class="action-tab-text">Edit</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span></button>
-        <button class="action-tab"><span class="action-tab-text">View history</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span></button>
-        <button class="action-tab star"><span class="action-tab-text">⭐</span><span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span></button>
+        <button class="action-tab">
+          <span class="action-tab-text">Read</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
+        </button>
+        <button class="action-tab active">
+          <span class="action-tab-text">Edit</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
+        </button>
+        <button class="action-tab">
+          <span class="action-tab-text">View history</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span>
+        </button>
+        <button class="action-tab star">
+          <span class="action-tab-text">⭐</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span>
+        </button>
       </nav>
     </div>
   </header>
 
-  <div class="ve-strip" role="region" aria-label="Editing toolbar">
+  <!-- VE toolbar (hidden by default, shown in Step 3) -->
+  <div class="ve-strip" id="veToolbar" role="region" aria-label="Editing toolbar" style="display: none;">
     <div class="ve-bar">
+      <!-- Mobile toolbar -->
       <div class="mobile-toolbar">
         <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
         <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
@@ -81,6 +183,8 @@
         <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
         <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
+
+      <!-- Desktop toolbar -->
       <div class="desktop-toolbar">
         <div class="group tight">
           <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
@@ -96,6 +200,10 @@
               <button data-header="1">Heading 1</button>
               <button data-header="2">Heading 2</button>
               <button data-header="3">Heading 3</button>
+              <button data-header="4">Heading 4</button>
+              <button data-header="5">Heading 5</button>
+              <button data-header="6">Heading 6</button>
+              <button data-header="code">Preformatted</button>
             </div>
           </div>
         </div>
@@ -117,6 +225,39 @@
           <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
           <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
         </div>
+        <div class="group">
+          <button class="btn" id="btn-link" title="Add link">
+            <span class="cdx-icon" data-icon="cdxIconLink"></span>
+            <span class="cdx-button__label">Link</span>
+          </button>
+          <div class="dropdown" id="dd-cite">
+            <span class="cdx-icon" data-icon="cdxIconReference"></span>
+            <span class="cdx-button__label">Cite</span>
+            <span class="caret"></span>
+            <div class="menu" id="menu-cite">
+              <button data-cite="web">Cite web… (mock)</button>
+              <button data-cite="book">Cite book… (mock)</button>
+              <button data-cite="news">Cite news… (mock)</button>
+            </div>
+          </div>
+          <div class="dropdown" id="dd-insert">
+            <span class="cdx-icon" data-icon="cdxIconAdd"></span>
+            <span class="cdx-button__label">Insert</span>
+            <span class="caret"></span>
+            <div class="menu" id="menu-insert">
+              <button data-insert="image">Media…</button>
+              <button data-insert="template">Template… (mock)</button>
+              <button data-insert="math">Math… (mock)</button>
+              <button data-insert="table">Table… (mock)</button>
+              <button data-insert="char">Special character…</button>
+            </div>
+          </div>
+        </div>
+        <div class="group tight">
+          <button class="btn" id="addSectionBtn" title="Add section"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Add section</span></button>
+          <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
+          <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
+        </div>
         <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
           <button class="btn publish-btn" id="publish" disabled>Publish</button>
         </div>
@@ -125,7 +266,6 @@
   </div>
 
   <main class="ve-content-wrap">
-    <p class="tagline">From Wikipedia, the free encyclopedia</p>
     <div class="surface">
       <div class="creator-wrap">
         <div class="ac-steps">
@@ -140,13 +280,12 @@
             <h3>Assign a topic category</h3>
             <div class="category-list" id="categoryList">
               <div class="category-item" data-cat="person">Person / Biography</div>
+              <div class="category-item" data-cat="place">Geographic Location</div>
+              <div class="category-item" data-cat="species">Species / Biology</div>
               <div class="category-item" data-cat="organization">Organization</div>
-              <div class="category-item" data-cat="software">Software / Project</div>
-              <div class="category-item" data-cat="place">Place</div>
+              <div class="category-item" data-cat="academic">Academic / Concept</div>
+              <div class="category-item" data-cat="creative">Creative Work</div>
               <div class="category-item" data-cat="event">Event</div>
-              <div class="category-item" data-cat="book">Book / Publication</div>
-              <div class="category-item" data-cat="film">Film / Media</div>
-              <div class="category-item" data-cat="science">Science / Technology</div>
             </div>
             <div class="hint">This helps us suggest the right structure and policies.</div>
             <div class="ac-actions">
@@ -155,19 +294,12 @@
             </div>
           </section>
           <section class="ac-step" id="step3">
-            <div class="chip-row">
-              <span class="chip guidance" data-insert="intro">Introduction</span>
-              <span class="chip guidance" data-insert="fact">Fact</span>
-              <span class="chip guidance" data-insert="more">More</span>
-              <span class="chip reference" id="openRef">Reference</span>
-              <span id="refBadges"></span>
-            </div>
             <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
-            <div id="verify" class="verify-note">Add citations (Reference) to verify statements.</div>
+            <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
           </section>
         </div>
       </div>
-      <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Reference chip mock</span></div>
+      
     </div>
   </main>
 
@@ -184,10 +316,37 @@
   </div>
 
   <script>
-    (function applyIcons(){
-      function setIcon(n, path){ n.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">'+path+'</svg>'; }
-      var map={cdxIconArticle:'<path d="M4 2h12v2H4V2zm0 4h12v2H4V6zm0 4h12v2H4v-2zm0 4h8v2H4v-2z"/>',cdxIconEdit:'<path d="M3 14.25V17h2.75l8.086-8.086-2.75-2.75L3 14.25zM17.207 6.043a1 1 0 0 0 0-1.414l-1.836-1.836a1 1 0 0 0-1.414 0l-1.121 1.121 3.25 3.25 1.121-1.121z"/>',cdxIconHistory:'<path d="M10 2a8 8 0 1 0 8 8h-2a6 6 0 1 1-6-6v2l3-3-3-3v2z"/>',cdxIconStar:'<path d="M10 2l2.39 4.84L18 8l-4 3.9L15.18 18 10 15.27 4.82 18 6 11.9 2 8l5.61-1.16L10 2z"/>',cdxIconClose:'<path d="M4.293 4.293 10 10l5.707-5.707 1.414 1.414L11.414 11.414l5.707 5.707-1.414 1.414L10 12.828l-5.707 5.707-1.414-1.414 5.707-5.707-5.707-5.707z"/>',cdxIconUndo:'<path d="M4 10H1l4-4 4 4H6a4 4 0 1 1-4 4H0a6 6 0 1 0 6-6H4z"/>',cdxIconRedo:'<path d="M16 10h3l-4-4-4 4h3a4 4 0 1 0 4 4h2a6 6 0 1 1-6-6h2z"/>',cdxIconTextHeading:'<path d="M4 3h2v6h8V3h2v14h-2v-6H6v6H4V3z"/>',cdxIconTextStyle:'<path d="M4 16h12v2H4v-2zm6-14l6 12H4L10 2z"/>',cdxIconListNumbered:'<path d="M3 4h2v2H3V4zm0 5h2v2H3V9zm0 5h2v2H3v-2zM7 4h10v2H7V4zm0 5h10v2H7V9zm0 5h10v2H7v-2z"/>',cdxIconListBullet:'<path d="M4 5.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM4 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM4 17.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM7 4h10v2H7V4zm0 5h10v2H7V9zm0 5h10v2H7v-2z"/>'};
-      Array.from(document.querySelectorAll('.cdx-icon[data-icon]')).forEach(function(n){ var k=n.getAttribute('data-icon'); if(map[k]) setIcon(n, map[k]); });
+    // === Codex Icons via MW API ===
+    async function loadCodexIcons(iconNames) {
+      const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
+        '&names=' + encodeURIComponent(iconNames.join('|'));
+      const res = await fetch(url);
+      const data = await res.json();
+      const out = {};
+      const map = data?.query?.codexicons || {};
+      
+      for (const k of Object.keys(map)) {
+        const entry = map[k];
+        const path = typeof entry === 'string' ? entry : (entry.ltr || entry.default || Object.values(entry.langCodeMap || {})[0] || '');
+        out[k] = path;
+      }
+      return out;
+    }
+
+    // Apply icons on load
+    (function applyIcons() {
+      const nodes = Array.from(document.querySelectorAll('.cdx-icon[data-icon]'));
+      const names = Array.from(new Set(nodes.map(n => n.getAttribute('data-icon'))));
+      
+      loadCodexIcons(names).then(paths => {
+        nodes.forEach(n => {
+          const name = n.getAttribute('data-icon');
+          const p = paths[name];
+          if (p) {
+            n.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">' + p + '</svg>';
+          }
+        });
+      }).catch(console.error);
     })();
     // Steps
     var titleInput=document.getElementById('title');
@@ -201,19 +360,48 @@
     var selectedCat=null;
 
     titleInput.addEventListener('input', function(){ toStep2.disabled = !(titleInput.value.trim().length>0); });
-    toStep2.onclick=function(){ step1.classList.remove('active'); step2.classList.add('active'); };
+    toStep2.onclick=function(){ 
+      step1.classList.remove('active'); 
+      step2.classList.add('active'); 
+      
+      // Update Step 2 title with the entered topic
+      var step2Title = step2.querySelector('h3');
+      var userTopic = titleInput.value.trim();
+      if (step2Title && userTopic) {
+        step2Title.textContent = 'What is "' + userTopic + '"?';
+      }
+    };
     backTo1 && (backTo1.onclick=function(){ step2.classList.remove('active'); step1.classList.add('active'); });
     categoryList && categoryList.addEventListener('click', function(e){
       var item=e.target.closest('.category-item'); if(!item) return;
       Array.from(categoryList.querySelectorAll('.category-item')).forEach(function(n){n.classList.remove('selected');});
       item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); toStep3.disabled=false;
     });
-    toStep3 && (toStep3.onclick=function(){ step2.classList.remove('active'); step3.classList.add('active');
-      var ed=document.getElementById('editor'); var t=titleInput.value.trim();
-      ed.setAttribute('data-placeholder', (t if False else t)+); });
+    toStep3 && (toStep3.onclick=function(){
+      step2.classList.remove('active');
+      step3.classList.add('active');
+      
+      // Activate VE interface
+      document.body.classList.add('ve-in-step3');
+      
+      var ed = document.getElementById('editor');
+      var t = titleInput.value.trim();
+      var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      
+      // Update VE header title
+      var veTitle = document.getElementById('veTitle');
+      if (veTitle) veTitle.textContent = safeTitle;
+      
+      // Initialize editor with just placeholder and cursor
+      ed.innerHTML = '';
+      ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      
+      // Focus editor to show blinking cursor
+      ed.focus();
+    });
 
     // Reference dialog
-    var openBtn=null,
+    var openBtn=null;
     var backdrop=document.getElementById('refBackdrop');
     var cancelBtn=document.getElementById('refCancel');
     var insertBtn=document.getElementById('refInsert');
