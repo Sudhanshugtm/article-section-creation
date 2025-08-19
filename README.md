@@ -33,6 +33,11 @@ The GitHub Actions workflow aggregates these branches into a single Pages site.
 2. In GitHub → Settings → Pages → Source = GitHub Actions.
 3. The workflow `.github/workflows/pages.yml` builds `/site` and deploys.
 
+### Deploy cadence
+
+- Auto: runs every 5 minutes via scheduled workflow and picks up concept-branch changes.
+- Immediate: push to `main` or use Actions → “Run workflow”.
+
 ## Notes
 
 - External assets (Codex CSS, Quill) load from CDNs; offline fallback renders but with reduced visuals.
