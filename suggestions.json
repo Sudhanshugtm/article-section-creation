@@ -1,0 +1,162 @@
+{
+  "john-langford": [
+    {
+      "icon": "",
+      "title": "Detail research highlights",
+      "why": "Add context on contextual bandits and learning reductions.",
+      "content": "Langford's research spans learning reductions and contextual bandits, focusing on practical algorithms for interactive learning settings.<ref name=wikiJL>https://en.wikipedia.org/wiki/John_Langford_(scientist)</ref> He has contributed to efficient large‑scale learning systems and online learning frameworks.<ref name=vw>https://vowpalwabbit.org/</ref> His applied work bridges theory and production ML systems at industrial research labs.<ref name=msrNYC>https://www.microsoft.com/en-us/research/lab/microsoft-research-new-york/</ref>",
+      "sources": [
+        {"name": "John Langford — Wikipedia", "url": "https://en.wikipedia.org/wiki/John_Langford_(scientist)"},
+        {"name": "Vowpal Wabbit", "url": "https://vowpalwabbit.org/"},
+        {"name": "Microsoft Research NYC", "url": "https://www.microsoft.com/en-us/research/lab/microsoft-research-new-york/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    }
+  ],
+
+  "eduardo-caianiello": [
+    {
+      "icon": "",
+      "title": "Education",
+      "why": "Add academic background and early training.",
+      "content": "Caianiello studied physics in Naples and completed advanced training that oriented his work toward theoretical physics and cybernetics.<ref name=wikiERC>https://en.wikipedia.org/wiki/Eduardo_R._Caianiello</ref> Early fellowships and collaborations in Europe helped shape his interest in information processing and neural models.<ref name=treccani>https://www.treccani.it/enciclopedia/</ref>",
+      "sources": [
+        {"name": "Eduardo R. Caianiello — Wikipedia", "url": "https://en.wikipedia.org/wiki/Eduardo_R._Caianiello"},
+        {"name": "Treccani Encyclopedia (IT)", "url": "https://www.treccani.it/enciclopedia/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Career",
+      "why": "Summarize appointments and institutional roles.",
+      "content": "He held professorships in theoretical physics and helped develop cybernetics research programs in Italy.<ref name=wikiERC/> He worked within national research bodies to promote interdisciplinary studies spanning physics and computation.<ref name=cnr>https://www.cnr.it/</ref>",
+      "sources": [
+        {"name": "Eduardo R. Caianiello — Wikipedia", "url": "https://en.wikipedia.org/wiki/Eduardo_R._Caianiello"},
+        {"name": "CNR — National Research Council of Italy", "url": "https://www.cnr.it/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Research contributions",
+      "why": "Outline core scientific results and impact.",
+      "content": "Caianiello proposed early formal models of neural activity and memory, contributing to the foundations of neural networks and cybernetics.<ref name=wikiERC/> His theoretical work introduced equations and frameworks that influenced later computational neuroscience and AI research.<ref name=natureNN>https://www.nature.com/subjects/neural-networks</ref>",
+      "sources": [
+        {"name": "Eduardo R. Caianiello — Wikipedia", "url": "https://en.wikipedia.org/wiki/Eduardo_R._Caianiello"},
+        {"name": "Nature — Neural networks topic page", "url": "https://www.nature.com/subjects/neural-networks"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Selected publications",
+      "why": "List major works for further reading.",
+      "content": "Key works address theoretical models of memory and information processing in neural systems.<ref name=wikiERC/> Representative publications illustrate the evolution from foundational concepts in cybernetics to early neural network theory.<ref name=scholar>https://scholar.google.com/</ref>",
+      "sources": [
+        {"name": "Eduardo R. Caianiello — Wikipedia", "url": "https://en.wikipedia.org/wiki/Eduardo_R._Caianiello"},
+        {"name": "Google Scholar — Caianiello", "url": "https://scholar.google.com/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    }
+  ],
+
+  "patrick-mchale": [
+    {
+      "icon": "",
+      "title": "Awards",
+      "why": "Summarize notable honors and nominations.",
+      "content": "McHale and projects he led have received industry recognition, including major television and animation awards.<ref name=wikiPM>https://en.wikipedia.org/wiki/Patrick_McHale</ref> His work has been acknowledged for creative direction, storytelling, and music integration.<ref name=emmys>https://www.emmys.com/</ref>",
+      "sources": [
+        {"name": "Patrick McHale — Wikipedia", "url": "https://en.wikipedia.org/wiki/Patrick_McHale"},
+        {"name": "Television Academy (Emmys)", "url": "https://www.emmys.com/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Personal life",
+      "why": "Add concise, well‑sourced biographical details.",
+      "content": "Publicly available profiles note personal background relevant to his creative career; only material with reliable sourcing should be included.<ref name=wikiPM/> Biographical details are limited to what is verifiable and non‑intrusive per living persons policy.<ref name=blp>https://en.wikipedia.org/wiki/Wikipedia:Biographies_of_living_persons</ref>",
+      "sources": [
+        {"name": "Patrick McHale — Wikipedia", "url": "https://en.wikipedia.org/wiki/Patrick_McHale"},
+        {"name": "Wikipedia:BLP policy", "url": "https://en.wikipedia.org/wiki/Wikipedia:Biographies_of_living_persons"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    }
+  ],
+
+  "henri-gouraud": [
+    {
+      "icon": "",
+      "title": "Publications",
+      "why": "List seminal papers (e.g., shading).",
+      "content": "Gouraud's work on smooth shading of curved surfaces introduced an interpolation technique that became a standard in 3D graphics.<ref name=wikiHG>https://en.wikipedia.org/wiki/Gouraud_shading</ref> His publications from the early 1970s document methods that improved realism while remaining computationally efficient.<ref name=utahCHPC>https://www.cs.utah.edu/</ref>",
+      "sources": [
+        {"name": "Gouraud shading — Wikipedia", "url": "https://en.wikipedia.org/wiki/Gouraud_shading"},
+        {"name": "University of Utah CS (historical context)", "url": "https://www.cs.utah.edu/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Career",
+      "why": "Outline affiliations and research roles.",
+      "content": "He contributed to the formative years of computer graphics research, working with institutions known for graphics innovation.<ref name=wikiHG2>https://en.wikipedia.org/wiki/Henri_Gouraud_(computer_scientist)</ref> His career highlights center on rendering techniques that influenced hardware and software pipelines.<ref name=acmDL>https://dl.acm.org/</ref>",
+      "sources": [
+        {"name": "Henri Gouraud — Wikipedia", "url": "https://en.wikipedia.org/wiki/Henri_Gouraud_(computer_scientist)"},
+        {"name": "ACM Digital Library", "url": "https://dl.acm.org/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    }
+  ],
+
+  "katie-bouman": [
+    {
+      "icon": "",
+      "title": "Selected publications",
+      "why": "Surface representative peer‑reviewed work.",
+      "content": "Bouman's publications cover computational imaging and inverse problems, including work associated with the Event Horizon Telescope.<ref name=caltechKB>https://www.katiebouman.caltech.edu/</ref> Selected papers highlight methods for robust image reconstruction and multi‑modal sensing.<ref name=scholarKB>https://scholar.google.com/citations?user=0nJfPY0AAAAJ</ref>",
+      "sources": [
+        {"name": "Caltech — Katie Bouman (profile/publications)", "url": "https://www.katiebouman.caltech.edu/"},
+        {"name": "Google Scholar — Bouman", "url": "https://scholar.google.com/citations?user=0nJfPY0AAAAJ"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Professional affiliations",
+      "why": "List institutions and collaborations.",
+      "content": "Bouman is affiliated with Caltech and collaborates with the Event Horizon Telescope team across multiple institutions.<ref name=caltechKB/> Her roles bridge electrical engineering, computing, and astronomy collaborations.<ref name=eht>https://eventhorizontelescope.org/</ref>",
+      "sources": [
+        {"name": "Caltech — Katie Bouman", "url": "https://www.katiebouman.caltech.edu/"},
+        {"name": "Event Horizon Telescope", "url": "https://eventhorizontelescope.org/"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    },
+    {
+      "icon": "",
+      "title": "Recognition",
+      "why": "Document notable honors and lists.",
+      "content": "She has been recognized in prominent awards and lists highlighting early‑career contributions to imaging and data science.<ref name=bbc100>https://www.bbc.com/news/world-50556280</ref> Fellowships and prizes reflect impact across disciplines.<ref name=sloan>https://sloan.org/fellowships/2024-Fellows</ref>",
+      "sources": [
+        {"name": "BBC — 100 Women (2019)", "url": "https://www.bbc.com/news/world-50556280"},
+        {"name": "Sloan Research Fellows — 2024", "url": "https://sloan.org/fellowships/2024-Fellows"}
+      ],
+      "primaryAction": "Insert section",
+      "secondaryAction": "View sources"
+    }
+  ]
+}
+
