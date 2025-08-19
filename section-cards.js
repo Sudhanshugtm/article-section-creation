@@ -53,11 +53,14 @@
 
   function init() {
     const articleId = getArticleId();
+    try { console.log('[section-cards] init', { articleId }); } catch (_) {}
     if (!articleId) return;
     const container = document.querySelector('.wizard-overlay .section-suggestions');
+    try { console.log('[section-cards] container found:', !!container); } catch (_) {}
     if (!container) return;
 
     const url = 'suggestions.json?ts=' + Date.now();
+    try { console.log('[section-cards] fetching', url); } catch (_) {}
     fetch(url, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
       .then(data => {
@@ -66,7 +69,7 @@
         try { console.log('[section-cards]', articleId, 'items:', items.length); } catch (_) {}
         renderCards(container, items);
       })
-      .catch(() => { /* keep fallback */ });
+      .catch((err) => { try { console.warn('[section-cards] fetch error', err); } catch (_) {} /* keep fallback */ });
   }
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -75,4 +78,3 @@
     document.addEventListener('DOMContentLoaded', init);
   }
 })();
-
