@@ -998,15 +998,16 @@ function updateWizardButtons() {
   const skipBtn = document.getElementById('wizardSkip');
   const continueBtn = document.getElementById('wizardContinue');
   const insertBtn = document.getElementById('wizardInsert');
+  const cancelBtn = document.getElementById('wizardCancel');
   
   // Show/hide back button
   if (backBtn) {
     backBtn.style.display = currentWizardStep > 1 ? 'inline-block' : 'none';
   }
   
-  // Show/hide skip button (only on step 2)
+  // Simplify navigation: never show Skip on Sources step
   if (skipBtn) {
-    skipBtn.style.display = currentWizardStep === 2 ? 'inline-block' : 'none';
+    skipBtn.style.display = 'none';
   }
   
   // Show/hide continue button
@@ -1017,7 +1018,8 @@ function updateWizardButtons() {
     if (currentWizardStep === 1) {
       continueBtn.disabled = !wizardState.selectedSection;
     } else if (currentWizardStep === 2) {
-      continueBtn.disabled = false; // Can continue even without sources
+      continueBtn.disabled = false; // Keep enabled
+      continueBtn.textContent = 'Next';
     }
   }
   
@@ -1025,6 +1027,11 @@ function updateWizardButtons() {
   if (insertBtn) {
     insertBtn.style.display = currentWizardStep === 3 ? 'inline-block' : 'none';
     insertBtn.disabled = false; // Always allow finishing
+  }
+
+  // Hide Cancel on Sources step to reduce clutter
+  if (cancelBtn) {
+    cancelBtn.style.display = currentWizardStep === 2 ? 'none' : 'inline-block';
   }
 }
 
@@ -1283,4 +1290,3 @@ function showToast(message) {
     }, 300);
   }, 3000);
 }
-
