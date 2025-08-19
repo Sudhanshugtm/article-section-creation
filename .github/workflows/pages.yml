@@ -148,11 +148,9 @@ jobs:
           })();
           JS
           find site/expansion site/creation -type f -name '*.html' -print0 | while IFS= read -r -d '' f; do
-            printf "
-<script>" >> "$f"
+            printf '\n<script>' >> "$f"
             cat site/.inject-nav.js >> "$f"
-            printf "</script>
-" >> "$f"
+            printf '</script>\n' >> "$f"
           done
 
       - name: Upload artifact
