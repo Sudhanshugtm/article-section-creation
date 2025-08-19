@@ -111,6 +111,39 @@
       display: block !important;
     }
     
+    /* Mobile-only: Hide header and show footer instead */
+    @media (max-width: 768px) {
+      .ve-in-step3 #veHeader {
+        display: none !important;
+      }
+      
+      .ve-in-step3 #veFooter {
+        display: block !important;
+      }
+      
+      /* Footer styling - mobile only */
+      .ve-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid var(--border-color-subtle, #eaecf0);
+        padding: 8px 16px;
+        font-size: 12px;
+        color: var(--color-subtle, #54595d);
+        z-index: 10;
+      }
+      
+      .ve-footer .status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+    }
+    
     /* Clean layout for Step 3 */
     .ve-in-step3 .creator-wrap {
       max-width: none;
@@ -129,9 +162,22 @@
       min-height: 400px;
       padding: 16px 0;
     }
+    
+    /* Primary button styling for publish/submit buttons */
+    .btn.primary {
+      background: #36c !important;
+      color: #fff !important;
+      border-color: #36c !important;
+    }
+    
+    .btn.primary:hover {
+      background: #2a4b8d !important;
+      border-color: #2a4b8d !important;
+    }
   </style>
 </head>
 <body>
+
   <!-- Wikipedia-style header (hidden by default, shown in Step 3) -->
   <header class="container page-header" id="veHeader" role="banner" style="display: none;">
     <h1 class="firstHeading" id="veTitle">New Article</h1>
@@ -295,13 +341,17 @@
           </section>
           <section class="ac-step" id="step3">
             <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
-            <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
           </section>
         </div>
       </div>
       
     </div>
   </main>
+
+  <!-- Footer status (shown only in Step 3) -->
+  <footer class="ve-footer" id="veFooter" style="display: none;">
+    <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
+  </footer>
 
   <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
     <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
@@ -398,6 +448,49 @@
       
       // Focus editor to show blinking cursor
       ed.focus();
+      
+      // Add input listener to activate publish/submit buttons when user starts typing
+      ed.addEventListener('input', function() {
+        var publishBtn = document.getElementById('publish');
+        var submitBtn = document.getElementById('submit');
+        
+        if (ed.textContent.trim().length > 0) {
+          // Desktop publish button
+          if (publishBtn) {
+            publishBtn.disabled = false;
+            publishBtn.classList.add('primary');
+            publishBtn.textContent = 'Publish changes';
+          }
+          
+          // Mobile submit button  
+          if (submitBtn) {
+            submitBtn.classList.add('primary');
+            submitBtn.style.background = '#36c';
+            submitBtn.style.color = '#fff';
+            submitBtn.style.borderColor = '#36c';
+            // Make the icon white too
+            var icon = submitBtn.querySelector('.cdx-icon svg');
+            if (icon) icon.style.color = '#fff';
+          }
+        } else {
+          // Reset buttons when content is empty
+          if (publishBtn) {
+            publishBtn.disabled = true;
+            publishBtn.classList.remove('primary');
+            publishBtn.textContent = 'Publish';
+          }
+          
+          if (submitBtn) {
+            submitBtn.classList.remove('primary');
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
+            submitBtn.style.borderColor = '';
+            // Reset icon color too
+            var icon = submitBtn.querySelector('.cdx-icon svg');
+            if (icon) icon.style.color = '';
+          }
+        }
+      });
     });
 
     // Reference dialog
@@ -415,18 +508,7 @@
     function closeDialog(){ backdrop.style.display='none'; }
     function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
     urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
-    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); verify.classList.remove('show'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
-    editor.addEventListener('input',function(){ if(editor.textContent.trim().length>0){ verify.classList.add('show'); }});
-    step3.addEventListener('click', function(e){
-      var chip=e.target.closest('.chip.guidance'); if(!chip) return;
-      var type=chip.getAttribute('data-insert'); var t=titleInput.value.trim();
-      var snippet='';
-      if(type==='intro') snippet=(t? (t+ ' is ') : 'This is ') + '... ';
-      if(type==='fact') snippet='A verifiable fact about '+(t||'the topic')+': ... ';
-      if(type==='more') snippet='For more information, see ... ';
-      if(document.activeElement!==editor) editor.focus();
-      document.execCommand('insertText', false, snippet);
-    });
+    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
   </script>
 </body>
 </html>
