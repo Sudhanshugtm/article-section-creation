@@ -93,6 +93,23 @@ jobs:
           <body>
             <div class="container">
               <h1>Article creation and Section expansion prototype</h1>
+              
+              <div class="group">
+                <h2>Article Creation</h2>
+                <div class="card">
+                  <h3>Concept A — Reference chip flow</h3>
+                  <div class="links">
+                    <a href="creation/article-creator.html">Open concept</a>
+                  </div>
+                </div>
+                <div class="card">
+                  <h3>Concept B — Source-based split view</h3>
+                  <div class="links">
+                    <a href="creation/creation.html">Open concept</a>
+                  </div>
+                </div>
+              </div>
+
               <div class="group">
                 <h2>Section Expansion</h2>
                 <div class="card">
@@ -108,22 +125,7 @@ jobs:
                   </div>
                 </div>
               </div>
-
-              <div class="group">
-                <h2>Article Creation</h2>
-                <div class="card">
-                  <h3>Concept A — Source-based split view</h3>
-                  <div class="links">
-                    <a href="creation/creation.html">Open concept</a>
-                  </div>
-                </div>
-                <div class="card">
-                  <h3>Concept B — Reference chip flow</h3>
-                  <div class="links">
-                    <a href="creation/article-creator.html">Open concept</a>
-                  </div>
-                </div>
-              </div>
+              
             </div>
           </body>
           </html>
