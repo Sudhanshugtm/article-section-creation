@@ -1185,6 +1185,59 @@
           }
         }
       });
+      
+      // Fix superscript formatting sticking after references
+      ed.addEventListener('keyup', function(e) {
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          var range = selection.getRangeAt(0);
+          var container = range.commonAncestorContainer;
+          
+          // Check if cursor is right after a superscript element
+          if (container.nodeType === Node.TEXT_NODE) {
+            var parent = container.parentNode;
+            if (parent && parent.tagName === 'SUP') {
+              // We're inside a sup element, move cursor outside
+              var newRange = document.createRange();
+              newRange.setStartAfter(parent);
+              newRange.collapse(true);
+              selection.removeAllRanges();
+              selection.addRange(newRange);
+              
+              // Insert a zero-width space to break formatting
+              document.execCommand('insertText', false, '\u200B');
+            }
+          } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
+            // We're at the end of a sup element
+            var newRange = document.createRange();
+            newRange.setStartAfter(container);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+            
+            // Insert a zero-width space to break formatting
+            document.execCommand('insertText', false, '\u200B');
+          }
+        }
+      });
+      
+      // Also fix on input to handle pasting
+      ed.addEventListener('input', function(e) {
+        // Remove any lingering blue color from non-superscript text
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          var range = selection.getRangeAt(0);
+          var container = range.commonAncestorContainer;
+          
+          if (container.nodeType === Node.TEXT_NODE) {
+            var parent = container.parentNode;
+            // If we're in a span with blue color but not in a sup, remove the color
+            if (parent && parent.style && parent.style.color === 'rgb(6, 69, 173)' && parent.tagName !== 'SUP') {
+              parent.style.color = '';
+            }
+          }
+        }
+      });
     });
 
     // Reference dialog
@@ -1321,6 +1374,29 @@
       bindSourceButton();
     }
 
+    // Clean up extra breaks and empty elements that cause visual separators
+    function cleanupExtraBreaks() {
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+      
+      var content = editor.innerHTML;
+      
+      // Remove multiple consecutive BR tags
+      content = content.replace(/<br\s*\/?>\s*<br\s*\/?>/g, '<br>');
+      
+      // Remove BR tags that appear right before H2 elements (causing extra separators)
+      content = content.replace(/<br\s*\/?>\s*(<h2)/g, '$1');
+      
+      // Remove empty divs that might contain only whitespace or BR tags
+      content = content.replace(/<div[^>]*>(\s|<br\s*\/?>)*<\/div>/g, '');
+      
+      // Remove empty paragraphs but PRESERVE those with data-placeholder attribute
+      content = content.replace(/<p(?![^>]*data-placeholder)[^>]*>(\s|<br\s*\/?>|&nbsp;)*<\/p>/g, '');
+      
+      // Update editor content
+      editor.innerHTML = content;
+    }
+
     // Add section to editor
     function addSectionToEditor(sectionName) {
       if (addedSections.indexOf(sectionName) !== -1) return; // Already added
@@ -1348,23 +1424,46 @@
       sectionHTML += '">' + sectionName + '</h2>';
       sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d;" data-placeholder="Start writing about ' + sectionName.toLowerCase() + '...">&nbsp;</p>'; // Placeholder text
       
-      if (hasContent) {
+      // Check if References section exists and insert before it
+      var referencesMatch = currentContent.match(/<h2[^>]*id="References"[^>]*>/);
+      if (referencesMatch && hasContent) {
+        var beforeReferences = currentContent.substring(0, referencesMatch.index);
+        var referencesAndAfter = currentContent.substring(referencesMatch.index);
+        editor.innerHTML = beforeReferences + sectionHTML + referencesAndAfter;
+      } else if (hasContent) {
         editor.innerHTML = currentContent + sectionHTML;
       } else {
         editor.innerHTML = sectionHTML;
       }
 
-      // Position cursor in the new paragraph with blinking cursor
+      // Clean up any extra BR tags or empty divs that might create visual separators
+      cleanupExtraBreaks();
+
+      // Position cursor in the newly added section's paragraph
       editor.focus();
       var range = document.createRange();
       var sel = window.getSelection();
-      var paragraphs = editor.querySelectorAll('p');
-      var lastP = paragraphs[paragraphs.length - 1];
       
-      if (lastP) {
+      // Find the specific paragraph for the newly added section
+      var newSectionId = sectionName.replace(/\s+/g, '_');
+      var newSection = editor.querySelector('#' + newSectionId);
+      var newSectionP = null;
+      
+      if (newSection) {
+        // Find the paragraph immediately after this section heading
+        var nextElement = newSection.nextElementSibling;
+        while (nextElement && nextElement.tagName.toLowerCase() !== 'p') {
+          nextElement = nextElement.nextElementSibling;
+        }
+        if (nextElement && nextElement.tagName.toLowerCase() === 'p') {
+          newSectionP = nextElement;
+        }
+      }
+      
+      if (newSectionP) {
         // Clear the non-breaking space, show placeholder, and position cursor
-        lastP.innerHTML = '';
-        lastP.setAttribute('data-placeholder', 'Start writing about ' + sectionName.toLowerCase() + '...');
+        newSectionP.innerHTML = '';
+        newSectionP.setAttribute('data-placeholder', 'Start writing about ' + sectionName.toLowerCase() + '...');
         
         // Add CSS for placeholder if not already present
         if (!document.getElementById('placeholder-style')) {
@@ -1374,7 +1473,7 @@
           document.head.appendChild(style);
         }
         
-        range.setStart(lastP, 0);
+        range.setStart(newSectionP, 0);
         range.collapse(true);
         sel.removeAllRanges();
         sel.addRange(range);
@@ -1972,25 +2071,34 @@
         // Add content paragraph with proper styling
         sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6;">' + content + '</p>';
         
-        // Add minimal draft notice
-        sectionHTML += '<p style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic;">Draft content • Expand with analysis</p>';
+        // Add minimal draft notice (non-editable)
+        sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
         
-        // Add References section as proper Wikipedia section
-        sectionHTML += '<h2 id="References" style="';
-        sectionHTML += 'font-family: Georgia, serif; ';
-        sectionHTML += 'font-size: 1.5em; ';
-        sectionHTML += 'font-weight: normal; ';
-        sectionHTML += 'margin: 2em 0 0.25em 0; ';
-        sectionHTML += 'padding: 0; ';
-        sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
-        sectionHTML += 'padding-bottom: 0.25em;';
-        sectionHTML += '">References</h2>';
+        // Check if References section already exists
+        var referencesExists = currentContent.includes('<h2') && currentContent.includes('id="References"');
         
-        // Add citation if exists
-        if (citation) {
+        if (!referencesExists) {
+          // Add References section as proper Wikipedia section
+          sectionHTML += '<h2 id="References" style="';
+          sectionHTML += 'font-family: Georgia, serif; ';
+          sectionHTML += 'font-size: 1.5em; ';
+          sectionHTML += 'font-weight: normal; ';
+          sectionHTML += 'margin: 2em 0 0.25em 0; ';
+          sectionHTML += 'padding: 0; ';
+          sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+          sectionHTML += 'padding-bottom: 0.25em;';
+          sectionHTML += '">References</h2>';
+          
+          // Add citation content
           sectionHTML += '<div style="margin: 0.75em 0; font-size: 0.9em;">';
-          sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>'; // Remove [1] prefix
-          sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          if (citation) {
+            sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>'; // Remove [1] prefix
+            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          } else {
+            // Fallback content if citation parsing failed
+            sectionHTML += '<p style="margin: 0.25em 0;">1. "Context and Development". ' + domain.charAt(0).toUpperCase() + domain.slice(1) + '. Retrieved ' + new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '.</p>';
+            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          }
           sectionHTML += '</div>';
         }
         
@@ -2000,11 +2108,53 @@
           editor.innerHTML = sectionHTML;
         }
         
+        // Clean up any extra BR tags or empty elements
+        cleanupExtraBreaks();
+        
+        // Add event listener to hide source notice when user starts editing
+        addSourceNoticeHideListener();
+        
         editor.focus();
       }
       
       // Reset source area
       resetSidebarSource();
+    }
+
+    // Add event listener to hide source notice when user starts editing content
+    function addSourceNoticeHideListener() {
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+      
+      // Simple approach: hide source notices after any meaningful editing
+      var inputCount = 0;
+      var hideNoticesOnEdit = function(event) {
+        inputCount++;
+        
+        // Hide notices after 3 input events (typing 3 characters)
+        if (inputCount >= 3) {
+          var sourceNotices = editor.querySelectorAll('.source-notice');
+          sourceNotices.forEach(function(notice) {
+            if (notice && notice.parentNode) {
+              notice.style.transition = 'opacity 0.3s ease';
+              notice.style.opacity = '0';
+              setTimeout(function() {
+                if (notice.parentNode) {
+                  notice.parentNode.removeChild(notice);
+                }
+              }, 300);
+            }
+          });
+          
+          // Remove the listener after hiding
+          editor.removeEventListener('input', hideNoticesOnEdit);
+        }
+      };
+      
+      // Add the global listener with a small delay to ensure DOM is ready
+      setTimeout(function() {
+        editor.addEventListener('input', hideNoticesOnEdit);
+      }, 100);
     }
 
     // Reset sidebar source verification
