@@ -88,9 +88,90 @@ jobs:
               .card p { margin: 0 0 8px; color: #555; }
               .links { display: flex; gap: 12px; flex-wrap: wrap; }
               .badge { display:inline-block; font-size: 12px; padding: 2px 8px; border:1px solid #c8ccd1; border-radius: 999px; color:#555; }
+              
+              /* Work in Progress Banners */
+              .wip-banner {
+                position: fixed;
+                padding: 8px 40px;
+                background: #ff6b6b;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: rotate(-45deg);
+                transform-origin: center;
+              }
+              
+              .wip-left {
+                top: 30px;
+                left: -40px;
+              }
+              
+              .wip-right {
+                top: 30px;
+                right: -40px;
+                transform: rotate(45deg);
+              }
+              
+              /* Mobile adjustments */
+              @media (max-width: 768px) {
+                .wip-banner {
+                  font-size: 11px;
+                  padding: 5px 30px;
+                }
+                .wip-left {
+                  top: 20px;
+                  left: -35px;
+                }
+                .wip-right {
+                  top: 20px;
+                  right: -35px;
+                }
+                body {
+                  padding-top: 60px;
+                }
+              }
+              
+              /* Alternative mobile-only banner */
+              .wip-mobile-banner {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #ff6b6b;
+                color: white;
+                text-align: center;
+                padding: 8px;
+                font-weight: bold;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                z-index: 1000;
+              }
+              
+              @media (max-width: 480px) {
+                .wip-left, .wip-right {
+                  display: none;
+                }
+                .wip-mobile-banner {
+                  display: block;
+                }
+                body {
+                  padding-top: 70px;
+                }
+              }
             </style>
           </head>
           <body>
+            <!-- Work in Progress Banners -->
+            <div class="wip-banner wip-left">Work in Progress</div>
+            <div class="wip-banner wip-right">Work in Progress</div>
+            <div class="wip-mobile-banner">🚧 Work in Progress 🚧</div>
+            
             <div class="container">
               <h1>Article creation and Section expansion prototype</h1>
               
