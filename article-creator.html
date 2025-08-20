@@ -317,6 +317,132 @@
       padding: 20px;
     }
     
+    /* Section suggestion buttons */
+    .section-button {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #fff;
+      color: #202122;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .section-button:hover {
+      background: #f8f9fa;
+      border-color: #a2a9b1;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .section-button.added {
+      background: #eaf3ff;
+      border-color: #36c;
+      color: #36c;
+      cursor: default;
+    }
+    
+    .section-button.added::after {
+      content: " ✓";
+      float: right;
+    }
+    
+    .section-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    
+    .section-description {
+      font-size: 12px;
+      color: #72777d;
+      line-height: 1.3;
+      display: block;
+      margin-bottom: 6px;
+    }
+    
+    /* Example dropdown */
+    .examples-dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      margin-top: 4px;
+    }
+    
+    .examples-toggle {
+      background: #f8f9fa;
+      border: 1px solid #c8ccd1;
+      border-radius: 3px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #36c;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .examples-toggle:hover {
+      background: #eaecf0;
+    }
+    
+    .examples-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #c8ccd1;
+      border-radius: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 1000;
+      padding: 8px;
+      margin-top: 2px;
+    }
+    
+    .examples-dropdown.open .examples-content {
+      display: block;
+    }
+    
+    .example-item {
+      font-size: 11px;
+      color: #54595d;
+      margin-bottom: 4px;
+      padding: 3px 0;
+      border-bottom: 1px solid #eaecf0;
+      font-style: italic;
+    }
+    
+    .example-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    /* Mobile responsive dropdown */
+    @media (max-width: 768px) {
+      .examples-content {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 12px 12px 0 0;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+    }
+    
+    .guide-note {
+      font-size: 12px;
+      color: #72777d;
+      margin: 12px 0 16px 0;
+      font-style: italic;
+    }
+    
     /* Hide modal on desktop */
     @media (min-width: 769px) {
       .guide-modal-backdrop {
@@ -504,33 +630,8 @@
       <h3>Writing guidance</h3>
       <button class="close-btn" id="closeSidebar" title="Close">×</button>
     </div>
-    <div class="guide-content">
-      <div class="guide-section">
-        <h4>✨ Getting started</h4>
-        <ul>
-          <li>Start with a clear opening sentence that defines your topic</li>
-          <li>Include key facts in the first paragraph</li>
-          <li>Use reliable sources throughout</li>
-        </ul>
-      </div>
-      <div class="guide-section">
-        <h4>📝 Structure suggestions</h4>
-        <ul>
-          <li><strong>Lead:</strong> Brief overview and key points</li>
-          <li><strong>Background:</strong> Context and history</li>
-          <li><strong>Main content:</strong> Detailed information</li>
-          <li><strong>References:</strong> Cite your sources</li>
-        </ul>
-      </div>
-      <div class="guide-section">
-        <h4>💡 Writing tips</h4>
-        <ul>
-          <li>Write in a neutral, encyclopedic tone</li>
-          <li>Avoid first-person language (I, we, you)</li>
-          <li>Use present tense for current facts</li>
-          <li>Keep sentences clear and concise</li>
-        </ul>
-      </div>
+    <div class="guide-content" id="guideContent">
+      <!-- Content will be dynamically loaded here -->
     </div>
   </div>
 
@@ -541,33 +642,8 @@
         <h3>Writing guidance</h3>
         <button class="close-btn" id="closeModalDrawer" title="Close">×</button>
       </div>
-      <div class="guide-modal-content">
-        <div class="guide-section">
-          <h4>✨ Getting started</h4>
-          <ul>
-            <li>Start with a clear opening sentence that defines your topic</li>
-            <li>Include key facts in the first paragraph</li>
-            <li>Use reliable sources throughout</li>
-          </ul>
-        </div>
-        <div class="guide-section">
-          <h4>📝 Structure suggestions</h4>
-          <ul>
-            <li><strong>Lead:</strong> Brief overview and key points</li>
-            <li><strong>Background:</strong> Context and history</li>
-            <li><strong>Main content:</strong> Detailed information</li>
-            <li><strong>References:</strong> Cite your sources</li>
-          </ul>
-        </div>
-        <div class="guide-section">
-          <h4>💡 Writing tips</h4>
-          <ul>
-            <li>Write in a neutral, encyclopedic tone</li>
-            <li>Avoid first-person language (I, we, you)</li>
-            <li>Use present tense for current facts</li>
-            <li>Keep sentences clear and concise</li>
-          </ul>
-        </div>
+      <div class="guide-modal-content" id="guideModalContent">
+        <!-- Content will be dynamically loaded here -->
       </div>
     </div>
   </div>
@@ -650,6 +726,9 @@
       var item=e.target.closest('.category-item'); if(!item) return;
       Array.from(categoryList.querySelectorAll('.category-item')).forEach(function(n){n.classList.remove('selected');});
       item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); toStep3.disabled=false;
+      
+      // Update guide content when category changes
+      setTimeout(updateGuideContent, 100);
     });
     toStep3 && (toStep3.onclick=function(){
       step2.classList.remove('active');
@@ -741,14 +820,206 @@
     var guideMeMobileBtn = document.getElementById('guideMeMobile');
     var closeSidebarBtn = document.getElementById('closeSidebar');
     var closeModalBtn = document.getElementById('closeModalDrawer');
+    var guideContent = document.getElementById('guideContent');
+    var guideModalContent = document.getElementById('guideModalContent');
+    var addedSections = [];
+    var suggestionsData = null;
 
     // Function to check if we're on mobile
     function isMobile() {
       return window.innerWidth <= 768;
     }
 
+    // Load suggestions data
+    async function loadSuggestions() {
+      try {
+        const response = await fetch('article-creation-suggestions.json');
+        suggestionsData = await response.json();
+      } catch (error) {
+        console.error('Failed to load suggestions:', error);
+        suggestionsData = null;
+      }
+    }
+
+    // Generate guide content based on selected category
+    function generateGuideContent() {
+      if (!selectedCat || !suggestionsData || !suggestionsData[selectedCat]) {
+        return getDefaultGuideContent();
+      }
+
+      const categoryData = suggestionsData[selectedCat];
+      let content = '<div class="guide-section">';
+      content += '<h4>📝 Suggested sections</h4>';
+      content += '<p class="guide-note">' + categoryData.note + '</p>';
+      
+      // Show all sections (only 3, no References)
+      categoryData.sections.forEach(function(section, index) {
+        const sectionName = typeof section === 'string' ? section : section.name;
+        const sectionDesc = typeof section === 'string' ? '' : section.description;
+        const sectionExamples = typeof section === 'string' ? [] : (section.examples || []);
+        const isAdded = addedSections.indexOf(sectionName) !== -1;
+        const className = isAdded ? 'section-button added' : 'section-button';
+        
+        content += '<button class="' + className + '" data-section="' + sectionName + '">';
+        content += '<span class="section-name">' + sectionName + '</span>';
+        if (sectionDesc) {
+          content += '<span class="section-description">' + sectionDesc + '</span>';
+        }
+        
+        // Add examples dropdown if examples exist
+        if (sectionExamples.length > 0) {
+          content += '<div class="examples-dropdown" data-section="' + sectionName + '">';
+          content += '<span class="examples-toggle">See examples ↓</span>';
+          content += '<div class="examples-content">';
+          sectionExamples.forEach(function(example) {
+            content += '<div class="example-item">' + example + '</div>';
+          });
+          content += '</div>';
+          content += '</div>';
+        }
+        
+        content += '</button>';
+      });
+
+      content += '</div>';
+      return content;
+    }
+
+    // Default content when no category is selected
+    function getDefaultGuideContent() {
+      return '<div class="guide-section">' +
+        '<h4>✨ Getting started</h4>' +
+        '<ul>' +
+        '<li>Start with a clear opening sentence that defines your topic</li>' +
+        '<li>Include key facts in the first paragraph</li>' +
+        '<li>Use reliable sources throughout</li>' +
+        '</ul>' +
+        '<p class="guide-note">Select a category in Step 2 to see specific section suggestions for your article type.</p>' +
+        '</div>';
+    }
+
+    // Update guide content in both sidebar and modal
+    function updateGuideContent() {
+      const content = generateGuideContent();
+      if (guideContent) guideContent.innerHTML = content;
+      if (guideModalContent) guideModalContent.innerHTML = content;
+      
+      // Add click handlers to section buttons
+      bindSectionButtons();
+    }
+
+    // Add section to editor
+    function addSectionToEditor(sectionName) {
+      if (addedSections.indexOf(sectionName) !== -1) return; // Already added
+      
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+
+      // Add section to tracking
+      addedSections.push(sectionName);
+
+      // Create Wikipedia-style heading with proper styling
+      var currentContent = editor.innerHTML;
+      var hasContent = currentContent.trim() !== '';
+      
+      // Create section with Wikipedia-style formatting (no extra breaks)
+      var sectionHTML = '';
+      sectionHTML += '<h2 id="' + sectionName.replace(/\s+/g, '_') + '" style="';
+      sectionHTML += 'font-family: Georgia, serif; ';
+      sectionHTML += 'font-size: 1.5em; ';
+      sectionHTML += 'font-weight: normal; ';
+      sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; '; // More top margin if content exists
+      sectionHTML += 'padding: 0; ';
+      sectionHTML += 'border-bottom: 1px solid #eaecf0; '; // Lighter gray separator
+      sectionHTML += 'padding-bottom: 0.25em;';
+      sectionHTML += '">' + sectionName + '</h2>';
+      sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d;" data-placeholder="Start writing about ' + sectionName.toLowerCase() + '...">&nbsp;</p>'; // Placeholder text
+      
+      if (hasContent) {
+        editor.innerHTML = currentContent + sectionHTML;
+      } else {
+        editor.innerHTML = sectionHTML;
+      }
+
+      // Position cursor in the new paragraph with blinking cursor
+      editor.focus();
+      var range = document.createRange();
+      var sel = window.getSelection();
+      var paragraphs = editor.querySelectorAll('p');
+      var lastP = paragraphs[paragraphs.length - 1];
+      
+      if (lastP) {
+        // Clear the non-breaking space, show placeholder, and position cursor
+        lastP.innerHTML = '';
+        lastP.setAttribute('data-placeholder', 'Start writing about ' + sectionName.toLowerCase() + '...');
+        
+        // Add CSS for placeholder if not already present
+        if (!document.getElementById('placeholder-style')) {
+          var style = document.createElement('style');
+          style.id = 'placeholder-style';
+          style.textContent = 'p[data-placeholder]:empty:before { content: attr(data-placeholder); color: #a2a9b1; font-style: italic; }';
+          document.head.appendChild(style);
+        }
+        
+        range.setStart(lastP, 0);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+
+      // Update content to show new state
+      updateGuideContent();
+    }
+
+    // Bind click handlers to section buttons and dropdowns
+    function bindSectionButtons() {
+      var buttons = document.querySelectorAll('.section-button:not(.added)');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+          // Don't add section if clicking on dropdown
+          if (e.target.closest('.examples-dropdown')) {
+            e.stopPropagation();
+            return;
+          }
+          var sectionName = this.getAttribute('data-section');
+          addSectionToEditor(sectionName);
+        });
+      });
+      
+      // Bind dropdown toggles
+      var toggles = document.querySelectorAll('.examples-toggle');
+      toggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var dropdown = this.closest('.examples-dropdown');
+          
+          // Close other dropdowns
+          document.querySelectorAll('.examples-dropdown.open').forEach(function(openDropdown) {
+            if (openDropdown !== dropdown) {
+              openDropdown.classList.remove('open');
+            }
+          });
+          
+          // Toggle current dropdown
+          dropdown.classList.toggle('open');
+        });
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.examples-dropdown')) {
+          document.querySelectorAll('.examples-dropdown.open').forEach(function(dropdown) {
+            dropdown.classList.remove('open');
+          });
+        }
+      });
+    }
+
     // Function to show guide interface
     function showGuide() {
+      // Update content before showing
+      updateGuideContent();
+      
       if (isMobile()) {
         guideModalBackdrop.classList.add('open');
       } else {
@@ -797,6 +1068,12 @@
         }
       });
     }
+
+    // Initialize suggestions on page load
+    loadSuggestions().then(function() {
+      updateGuideContent();
+    });
+
   </script>
 </body>
 </html>
