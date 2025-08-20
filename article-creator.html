@@ -174,6 +174,155 @@
       background: #2a4b8d !important;
       border-color: #2a4b8d !important;
     }
+    
+    /* Guide Me Sidebar */
+    .guide-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: #fff;
+      border-left: 1px solid var(--border-color-subtle, #eaecf0);
+      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+    
+    .guide-sidebar.open {
+      right: 0;
+    }
+    
+    .guide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
+      background: #f8f9fa;
+    }
+    
+    .guide-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #72777d;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    
+    .close-btn:hover {
+      background: #eaecf0;
+      color: #202122;
+    }
+    
+    .guide-content {
+      padding: 20px;
+    }
+    
+    .guide-section {
+      margin-bottom: 24px;
+    }
+    
+    .guide-section h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .guide-section ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style-type: disc;
+    }
+    
+    .guide-section li {
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #54595d;
+    }
+    
+    .guide-section li strong {
+      color: #202122;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .guide-sidebar {
+        display: none; /* Hide sidebar on mobile, use modal instead */
+      }
+    }
+    
+    /* Guide Me Modal Drawer (Mobile) */
+    .guide-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+    }
+    
+    .guide-modal-backdrop.open {
+      display: block;
+    }
+    
+    .guide-modal-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      max-height: 70vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .guide-modal-backdrop.open .guide-modal-drawer {
+      transform: translateY(0);
+    }
+    
+    .guide-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
+      background: #f8f9fa;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    
+    .guide-modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .guide-modal-content {
+      padding: 20px;
+    }
+    
+    /* Hide modal on desktop */
+    @media (min-width: 769px) {
+      .guide-modal-backdrop {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -227,6 +376,7 @@
         </div>
         <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
         <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+        <button class="btn" id="guideMeMobile" title="Get writing suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
         <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
 
@@ -300,7 +450,7 @@
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" id="addSectionBtn" title="Add section"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Add section</span></button>
+          <button class="btn" id="addSectionBtn" title="Get writing suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Guide me</span></button>
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
@@ -347,6 +497,80 @@
       
     </div>
   </main>
+
+  <!-- Guide Me Sidebar -->
+  <div class="guide-sidebar" id="guideSidebar">
+    <div class="guide-header">
+      <h3>Writing guidance</h3>
+      <button class="close-btn" id="closeSidebar" title="Close">×</button>
+    </div>
+    <div class="guide-content">
+      <div class="guide-section">
+        <h4>✨ Getting started</h4>
+        <ul>
+          <li>Start with a clear opening sentence that defines your topic</li>
+          <li>Include key facts in the first paragraph</li>
+          <li>Use reliable sources throughout</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h4>📝 Structure suggestions</h4>
+        <ul>
+          <li><strong>Lead:</strong> Brief overview and key points</li>
+          <li><strong>Background:</strong> Context and history</li>
+          <li><strong>Main content:</strong> Detailed information</li>
+          <li><strong>References:</strong> Cite your sources</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h4>💡 Writing tips</h4>
+        <ul>
+          <li>Write in a neutral, encyclopedic tone</li>
+          <li>Avoid first-person language (I, we, you)</li>
+          <li>Use present tense for current facts</li>
+          <li>Keep sentences clear and concise</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide Me Modal Drawer (Mobile) -->
+  <div class="guide-modal-backdrop" id="guideModalBackdrop">
+    <div class="guide-modal-drawer" id="guideModalDrawer">
+      <div class="guide-modal-header">
+        <h3>Writing guidance</h3>
+        <button class="close-btn" id="closeModalDrawer" title="Close">×</button>
+      </div>
+      <div class="guide-modal-content">
+        <div class="guide-section">
+          <h4>✨ Getting started</h4>
+          <ul>
+            <li>Start with a clear opening sentence that defines your topic</li>
+            <li>Include key facts in the first paragraph</li>
+            <li>Use reliable sources throughout</li>
+          </ul>
+        </div>
+        <div class="guide-section">
+          <h4>📝 Structure suggestions</h4>
+          <ul>
+            <li><strong>Lead:</strong> Brief overview and key points</li>
+            <li><strong>Background:</strong> Context and history</li>
+            <li><strong>Main content:</strong> Detailed information</li>
+            <li><strong>References:</strong> Cite your sources</li>
+          </ul>
+        </div>
+        <div class="guide-section">
+          <h4>💡 Writing tips</h4>
+          <ul>
+            <li>Write in a neutral, encyclopedic tone</li>
+            <li>Avoid first-person language (I, we, you)</li>
+            <li>Use present tense for current facts</li>
+            <li>Keep sentences clear and concise</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer status (shown only in Step 3) -->
   <footer class="ve-footer" id="veFooter" style="display: none;">
@@ -509,6 +733,70 @@
     function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
     urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
     insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
+
+    // Guide Me functionality - Desktop Sidebar & Mobile Modal
+    var guideSidebar = document.getElementById('guideSidebar');
+    var guideModalBackdrop = document.getElementById('guideModalBackdrop');
+    var addSectionBtn = document.getElementById('addSectionBtn');
+    var guideMeMobileBtn = document.getElementById('guideMeMobile');
+    var closeSidebarBtn = document.getElementById('closeSidebar');
+    var closeModalBtn = document.getElementById('closeModalDrawer');
+
+    // Function to check if we're on mobile
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
+
+    // Function to show guide interface
+    function showGuide() {
+      if (isMobile()) {
+        guideModalBackdrop.classList.add('open');
+      } else {
+        guideSidebar.classList.add('open');
+      }
+    }
+
+    // Function to hide guide interface
+    function hideGuide() {
+      guideSidebar.classList.remove('open');
+      guideModalBackdrop.classList.remove('open');
+    }
+
+    // Desktop Guide me button
+    if (addSectionBtn) {
+      addSectionBtn.addEventListener('click', showGuide);
+    }
+
+    // Mobile Guide me button
+    if (guideMeMobileBtn) {
+      guideMeMobileBtn.addEventListener('click', showGuide);
+    }
+
+    // Close buttons
+    if (closeSidebarBtn) {
+      closeSidebarBtn.addEventListener('click', hideGuide);
+    }
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', hideGuide);
+    }
+
+    // Hide sidebar when clicking outside of it (desktop only)
+    document.addEventListener('click', function(e) {
+      if (!isMobile() && guideSidebar.classList.contains('open') && 
+          !guideSidebar.contains(e.target) && 
+          !addSectionBtn.contains(e.target)) {
+        hideGuide();
+      }
+    });
+
+    // Hide modal when clicking backdrop (mobile only)
+    if (guideModalBackdrop) {
+      guideModalBackdrop.addEventListener('click', function(e) {
+        if (e.target === guideModalBackdrop) {
+          hideGuide();
+        }
+      });
+    }
   </script>
 </body>
 </html>
