@@ -2,6 +2,22 @@
   "person": {
     "label": "Biography",
     "note": "Most biography articles include these sections to give readers a complete picture of the person's life and significance:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Marie Curie",
+          "text": "Marie Curie (born Maria Salomea Skłodowska; 7 November 1867 – 4 July 1934) was a Polish and naturalized-French physicist and chemist who conducted pioneering research on radioactivity."
+        },
+        {
+          "title": "Nelson Mandela", 
+          "text": "Nelson Rolihlahla Mandela (18 July 1918 – 5 December 2013) was a South African anti-apartheid activist and politician who served as the first president of South Africa from 1994 to 1999."
+        },
+        {
+          "title": "Leonardo da Vinci",
+          "text": "Leonardo di ser Piero da Vinci (15 April 1452 – 2 May 1519) was an Italian polymath of the High Renaissance who was active as a painter, draughtsman, engineer, scientist, theorist, sculptor, and architect."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Early life", 
@@ -35,6 +51,22 @@
   "place": {
     "label": "Geographic Location", 
     "note": "Location articles help readers understand both the physical place and human activity there:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Paris",
+          "text": "Paris is the capital and most populous city of France. With an official estimated population of 2,102,650 residents as of 1 January 2023 in an area of more than 105 km2 (41 sq mi), Paris is the fourth-most populated city in the European Union and the 30th most densely populated city in the world in 2022."
+        },
+        {
+          "title": "Mount Everest",
+          "text": "Mount Everest is Earth's highest mountain above sea level, located in the Mahalangur Himal sub-range of the Himalayas. The China–Nepal border runs across its summit point. Its elevation (snow height) of 8,848.86 m (29,031.7 ft) was most recently established in 2020 by the Chinese and Nepali authorities."
+        },
+        {
+          "title": "Amazon Rainforest",
+          "text": "The Amazon rainforest, also called Amazon jungle or Amazonia, is a moist broadleaf tropical rainforest in the Amazon biome that covers most of the Amazon basin of South America. This basin encompasses 7,000,000 km2 (2,700,000 sq mi), of which 5,500,000 km2 (2,100,000 sq mi) are covered by the rainforest."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Geography", 
@@ -68,6 +100,22 @@
   "species": {
     "label": "Species",
     "note": "Species articles help readers identify and understand the organism in its natural context:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Giant Panda",
+          "text": "The giant panda (Ailuropoda melanoleuca), sometimes called a panda bear or simply panda, is a bear species endemic to China. It is characterised by its black-and-white coat and rotund body. The name \"giant panda\" is sometimes used to distinguish it from the red panda, a neighboring musteloid."
+        },
+        {
+          "title": "Blue Whale",
+          "text": "The blue whale (Balaenoptera musculus) is a marine mammal and a baleen whale. Reaching a maximum confirmed length of 29.9 metres (98 ft) and weighing up to 199 tonnes (196 long tons; 219 short tons), it is the largest animal known ever to have lived on Earth."
+        },
+        {
+          "title": "Monarch Butterfly",
+          "text": "The monarch butterfly or simply monarch (Danaus plexippus) is a milkweed butterfly (subfamily Danainae) in the family Nymphalidae. Other common names, depending on region, include milkweed, common tiger, wanderer, and black-veined brown."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Description", 
@@ -101,6 +149,22 @@
   "organization": {
     "label": "Organization",
     "note": "Organization articles explain what the group does and how it operates:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "World Health Organization",
+          "text": "The World Health Organization (WHO) is a specialized agency of the United Nations responsible for international public health. It is headquartered in Geneva, Switzerland, and has six regional offices and 150 field offices worldwide."
+        },
+        {
+          "title": "Red Cross",
+          "text": "The International Red Cross and Red Crescent Movement is a humanitarian network comprising the International Committee of the Red Cross (ICRC), the International Federation of Red Cross and Red Crescent Societies (IFRC), and 192 National Societies."
+        },
+        {
+          "title": "NASA",
+          "text": "The National Aeronautics and Space Administration (NASA) is an independent agency of the US federal government responsible for the civil space program, aeronautics research, and space research. Established in 1958, NASA succeeded the National Advisory Committee for Aeronautics (NACA)."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "History", 
@@ -134,6 +198,22 @@
   "academic": {
     "label": "Academic Concept",
     "note": "Academic articles explain complex ideas clearly for readers at different knowledge levels:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Quantum Mechanics",
+          "text": "Quantum mechanics is a fundamental theory in physics that describes the physical properties of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science."
+        },
+        {
+          "title": "Machine Learning",
+          "text": "Machine learning (ML) is a field of study in artificial intelligence concerned with the development and study of statistical algorithms that can learn from data and generalize to unseen data, and thus perform tasks without explicit instructions."
+        },
+        {
+          "title": "Climate Change",
+          "text": "In common usage, climate change describes global warming—the ongoing increase in global average temperature—and its effects on Earth's climate system. Climate change in a broader sense also includes previous long-term changes to Earth's climate."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Definition", 
@@ -167,6 +247,22 @@
   "creative": {
     "label": "Creative Work",
     "note": "Creative work articles cover both the content and the story behind its creation:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "The Beatles - Abbey Road",
+          "text": "Abbey Road is the eleventh studio album by the English rock band the Beatles, released on 26 September 1969. It is the last album the four members recorded together, although Let It Be was the last album completed before the band's break-up in April 1970."
+        },
+        {
+          "title": "The Great Gatsby",
+          "text": "The Great Gatsby is a 1925 novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on prosperous Long Island and in New York City during the summer of 1922, the novel follows the tragic story of Jay Gatsby and his obsession with Daisy Buchanan."
+        },
+        {
+          "title": "The Godfather",
+          "text": "The Godfather is a 1972 American epic crime film directed by Francis Ford Coppola, who co-wrote the screenplay with Mario Puzo, based on Puzo's best-selling 1969 novel of the same title. The film stars Marlon Brando, Al Pacino, James Caan, Richard Castellano, Robert Duvall, Sterling Hayden, John Marley, Richard Conte, and Diane Keaton."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Plot", 
@@ -200,6 +296,22 @@
   "event": {
     "label": "Event",
     "note": "Event articles help readers understand what happened and why it mattered:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Moon Landing",
+          "text": "The Apollo 11 mission was the spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969, at 20:17 UTC, and Armstrong became the first person to step onto the Moon's surface six hours and 39 minutes later, on July 21 at 02:56 UTC."
+        },
+        {
+          "title": "Fall of the Berlin Wall",
+          "text": "The fall of the Berlin Wall was a pivotal event in world history which marked the falling of the Iron Curtain and the start of the fall of communism in Eastern and Central Europe. The wall came down on 9 November 1989, ending the 28-year division of Berlin and leading to German reunification in 1990."
+        },
+        {
+          "title": "2004 Indian Ocean Tsunami",
+          "text": "The 2004 Indian Ocean earthquake and tsunami occurred at 07:58:53 local time (UTC+7) on 26 December 2004, with an epicentre off the west coast of northern Sumatra, Indonesia. It was an undersea megathrust earthquake that registered a magnitude of 9.1–9.3, making it the third-largest earthquake ever recorded on a seismograph."
+        }
+      ]
+    },
     "sections": [
       {
         "name": "Background", 

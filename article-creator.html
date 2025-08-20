@@ -1293,7 +1293,36 @@
 
       const categoryData = suggestionsData[selectedCat];
       let content = '<div class="guide-section">';
-      content += '<h4>📝 Suggested sections</h4>';
+      
+      // Introduction Accordion
+      content += '<div class="accordion-item">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Introduction</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
+      
+      // Show introduction examples if available
+      if (categoryData.introduction && categoryData.introduction.examples) {
+        content += '<p class="guide-note" style="margin-top: 12px; font-weight: 500;">Examples from Wikipedia:</p>';
+        categoryData.introduction.examples.forEach(function(example) {
+          content += '<div class="intro-example" style="background: #f8f9fa; border-left: 3px solid #0645ad; padding: 10px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
+          content += '<div class="example-title" style="font-weight: bold; color: #0645ad; margin-bottom: 4px;">' + example.title + '</div>';
+          content += '<div class="example-text" style="color: #222;">' + example.text + '</div>';
+          content += '</div>';
+        });
+      }
+      content += '</div>';
+      content += '</div>';
+      
+      // Suggested Sections Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Suggested sections</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
       content += '<p class="guide-note">' + categoryData.note + '</p>';
       
       // Show all sections (only 3, no References)
@@ -1324,12 +1353,16 @@
         
         content += '</button>';
       });
-
+      content += '</div>';
       content += '</div>';
       
-      // Add source tool section
-      content += '<div class="guide-section" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #eaecf0;">';
-      content += '<h4>📰 Add from source</h4>';
+      // Add from Source Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Add from source</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
       content += '<p class="guide-note">Helper for citing reliable sources</p>';
       content += '<div id="sourceVerificationArea">';
       content += '<div class="source-input-group">';
@@ -1343,6 +1376,9 @@
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
       content += '</div>';
+      content += '</div>';
+      content += '</div>';
+      
       content += '</div>';
       
       return content;
@@ -1372,6 +1408,20 @@
       
       // Bind source button
       bindSourceButton();
+    }
+
+    // Toggle accordion sections
+    function toggleAccordion(header) {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('.accordion-icon');
+      
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        content.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+      }
     }
 
     // Clean up extra breaks and empty elements that cause visual separators
