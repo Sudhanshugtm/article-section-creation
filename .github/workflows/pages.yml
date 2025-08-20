@@ -93,20 +93,16 @@ jobs:
           <body>
             <div class="container">
               <h1>Article creation and Section expansion prototype</h1>
-              <p class="lead">All concepts are published from their branches into subfolders here.</p>
-
               <div class="group">
                 <h2>Section Expansion</h2>
                 <div class="card">
                   <h3>Concept 1 — Overlay Wizard</h3>
-                  <p>A step-by-step overlay that helps pick a section, add sources, and review before insertion.</p>
                   <div class="links">
                     <a href="expansion/concept1/articles-concept1.html">Open article list</a>
                   </div>
                 </div>
                 <div class="card">
                   <h3>Concept 2 — Sidebar Panel</h3>
-                  <p>A right-side panel with suggestions; on mobile it opens as a bottom drawer.</p>
                   <div class="links">
                     <a href="expansion/concept2/articles-concept2.html">Open article list</a>
                   </div>
@@ -117,14 +113,12 @@ jobs:
                 <h2>Article Creation</h2>
                 <div class="card">
                   <h3>Concept A — Source-based split view</h3>
-                  <p>Split layout: add sources on the left, compose the draft on the right, with preflight checks.</p>
                   <div class="links">
                     <a href="creation/creation.html">Open concept</a>
                   </div>
                 </div>
                 <div class="card">
                   <h3>Concept B — Reference chip flow</h3>
-                  <p>Start with a title and category, then use chips (Introduction, Fact, More, Reference) while drafting.</p>
                   <div class="links">
                     <a href="creation/article-creator.html">Open concept</a>
                   </div>
