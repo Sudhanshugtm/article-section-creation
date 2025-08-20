@@ -1,0 +1,53 @@
+{
+  "approved_sources": {
+    "news": {
+      "domains": ["bbc.com", "bbc.co.uk", "reuters.com", "apnews.com", "npr.org", "theguardian.com", "nytimes.com", "washingtonpost.com", "wsj.com", "ft.com", "economist.com"],
+      "label": "Established news organization",
+      "reliability": "Generally reliable"
+    },
+    "academic": {
+      "domains": ["nature.com", "science.org", "sciencedirect.com", "jstor.org", "pubmed.ncbi.nlm.nih.gov", "scholar.google.com", "arxiv.org", "plos.org", "springer.com", "wiley.com"],
+      "suffixes": [".edu"],
+      "label": "Academic source",
+      "reliability": "Generally reliable for academic content"
+    },
+    "government": {
+      "suffixes": [".gov", ".gov.uk", ".gc.ca", ".gov.au", ".europa.eu"],
+      "label": "Government source",
+      "reliability": "Official government information"
+    },
+    "reference": {
+      "domains": ["britannica.com", "oxforddictionaries.com", "merriam-webster.com", "cambridge.org"],
+      "label": "Reference work",
+      "reliability": "Generally reliable for definitions and overview"
+    }
+  },
+  "questionable_sources": {
+    "domains": ["wikipedia.org", "medium.com", "blogspot.com", "wordpress.com", "facebook.com", "twitter.com", "instagram.com", "tiktok.com", "reddit.com"],
+    "label": "User-generated content",
+    "warning": "Requires additional verification"
+  },
+  "draft_templates": {
+    "news": {
+      "stub": "According to [SOURCE], \"[TITLE]\" was reported on [DATE].[1] The article discusses [TOPIC].",
+      "citation": "[1] [AUTHOR]. \"[TITLE]\". [SOURCE]. [DATE]. Retrieved [TODAY]."
+    },
+    "academic": {
+      "stub": "Research published in [SOURCE] indicates that [TOPIC] has been studied in the context of [FIELD].[1]",
+      "citation": "[1] [AUTHOR]. \"[TITLE]\". [SOURCE]. [DATE]. Retrieved [TODAY]."
+    },
+    "government": {
+      "stub": "Official information from [SOURCE] states that [TOPIC] is defined as part of [CONTEXT].[1]",
+      "citation": "[1] [SOURCE]. \"[TITLE]\". [URL]. [DATE]. Retrieved [TODAY]."
+    },
+    "default": {
+      "stub": "Information from [SOURCE] indicates that [TOPIC] relates to the subject of this article.[1]",
+      "citation": "[1] \"[TITLE]\". [SOURCE]. [DATE]. Retrieved [TODAY]."
+    }
+  },
+  "warning_messages": {
+    "draft_notice": "This is a DRAFT stub created from source metadata. Please expand with your own analysis and additional sources before publishing.",
+    "review_required": "Always verify information and add context from multiple reliable sources.",
+    "not_ai": "This tool extracts basic citation information only. Human editing is required."
+  }
+}

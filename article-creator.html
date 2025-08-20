@@ -436,11 +436,346 @@
       }
     }
     
+    /* Source button styling */
+    .source-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #f8f9fa;
+      color: #202122;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      gap: 10px;
+    }
+    
+    .source-button:hover {
+      background: #eaecf0;
+      border-color: #a2a9b1;
+    }
+    
+    .source-button-icon {
+      font-size: 16px;
+    }
+    
+    .source-button-text {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    /* Source modal styling */
+    .source-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+    }
+    
+    .source-modal-backdrop[aria-hidden="false"] {
+      display: block;
+    }
+    
+    .source-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 1px solid #eaecf0;
+      border-radius: 8px;
+      width: 600px;
+      max-width: 92vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    
+    .source-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eaecf0;
+      background: #f8f9fa;
+    }
+    
+    .source-modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .source-modal-content {
+      padding: 20px;
+    }
+    
+    .source-input-section label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #202122;
+    }
+    
+    .source-input-section input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font: inherit;
+      margin-bottom: 12px;
+    }
+    
+    .source-note {
+      font-size: 12px;
+      color: #ac6600;
+      background: #fef6e7;
+      border: 1px solid #fc3;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 20px;
+    }
+    
+    .source-verification h4,
+    .draft-preview h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .verification-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    
+    .step-icon {
+      font-size: 14px;
+      width: 16px;
+    }
+    
+    .verification-step.completed .step-icon {
+      color: #14866d;
+    }
+    
+    .verification-step.completed .step-text {
+      color: #14866d;
+    }
+    
+    .source-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .source-badge.reliable {
+      background: #d5fdf4;
+      color: #14866d;
+      border: 1px solid #14866d;
+    }
+    
+    .source-badge.questionable {
+      background: #fef6e7;
+      color: #ac6600;
+      border: 1px solid #fc3;
+    }
+    
+    .reliability-note {
+      font-size: 12px;
+      color: #54595d;
+    }
+    
+    .draft-warning {
+      background: #fef6e7;
+      border: 1px solid #fc3;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #ac6600;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    
+    .draft-content {
+      background: #f8f9fa;
+      border: 1px solid #eaecf0;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .source-modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 16px 20px;
+      border-top: 1px solid #eaecf0;
+      background: #f8f9fa;
+    }
+    
     .guide-note {
       font-size: 12px;
       color: #72777d;
       margin: 12px 0 16px 0;
       font-style: italic;
+    }
+    
+    /* Sidebar source verification styles */
+    .source-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .source-url-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    
+    .source-url-input:focus {
+      border-color: #36c;
+      outline: none;
+      box-shadow: inset 0 0 0 1px #36c;
+    }
+    
+    .source-check-btn {
+      padding: 8px 16px;
+      background: #36c;
+      color: white;
+      border: 1px solid #36c;
+      border-radius: 2px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .source-check-btn:hover {
+      background: #2a4b8d;
+      border-color: #2a4b8d;
+    }
+    
+    .source-check-btn:disabled {
+      background: #a2a9b1;
+      border-color: #a2a9b1;
+      cursor: not-allowed;
+    }
+    
+    .source-warning {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    
+    .sidebar-verification-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    
+    .sidebar-step-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #eaecf0;
+      color: #72777d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+    
+    .sidebar-step-icon.active {
+      background: #36c;
+      color: white;
+    }
+    
+    .sidebar-step-icon.completed {
+      background: #00af89;
+      color: white;
+    }
+    
+    .sidebar-source-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .sidebar-source-badge.reliable {
+      background: #d5fdf4;
+      color: #00af89;
+      border: 1px solid #00af89;
+    }
+    
+    .sidebar-source-badge.questionable {
+      background: #fef6e7;
+      color: #ac6600;
+      border: 1px solid #fc3;
+    }
+    
+    .sidebar-draft-content {
+      background: #f8f9fa;
+      border: 1px solid #eaecf0;
+      border-radius: 2px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .sidebar-action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .sidebar-action-btn {
+      padding: 6px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      background: white;
+      color: #202122;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .sidebar-action-btn.primary {
+      background: #36c;
+      color: white;
+      border-color: #36c;
+    }
+    
+    .sidebar-action-btn:hover {
+      background: #f8f9fa;
+    }
+    
+    .sidebar-action-btn.primary:hover {
+      background: #2a4b8d;
+      border-color: #2a4b8d;
     }
     
     /* Hide modal on desktop */
@@ -652,6 +987,62 @@
   <footer class="ve-footer" id="veFooter" style="display: none;">
     <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
   </footer>
+
+  <!-- Source verification modal -->
+  <div class="source-modal-backdrop" id="sourceModalBackdrop" aria-hidden="true">
+    <div class="source-modal" role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle">
+      <div class="source-modal-header">
+        <h3 id="sourceModalTitle">Add content from a reliable source</h3>
+        <button class="close-btn" id="closeSourceModal" title="Close">×</button>
+      </div>
+      <div class="source-modal-content">
+        <div class="source-input-section">
+          <label for="sourceUrl">Source URL</label>
+          <input type="url" id="sourceUrl" placeholder="https://example.com/article" />
+          <div class="source-note">
+            ⚠️ Note: This creates a DRAFT based on source metadata.<br>
+            Always review and edit before publishing.
+          </div>
+        </div>
+        
+        <div class="source-verification" id="sourceVerification" style="display: none;">
+          <h4>Source verification</h4>
+          <div class="verification-steps" id="verificationSteps">
+            <div class="verification-step" id="step1">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Checking domain...</span>
+            </div>
+            <div class="verification-step" id="step2">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Verifying reliability...</span>
+            </div>
+            <div class="verification-step" id="step3">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Checking HTTPS security...</span>
+            </div>
+          </div>
+          <div class="source-result" id="sourceResult" style="display: none;">
+            <div class="source-badge" id="sourceBadge"></div>
+            <div class="reliability-note" id="reliabilityNote"></div>
+          </div>
+        </div>
+        
+        <div class="draft-preview" id="draftPreview" style="display: none;">
+          <h4>Draft content preview</h4>
+          <div class="draft-warning">
+            ⚠️ DRAFT: This content requires human review and editing
+          </div>
+          <div class="draft-content" id="draftContent"></div>
+        </div>
+      </div>
+      <div class="source-modal-actions">
+        <button class="btn" id="cancelSource">Cancel</button>
+        <button class="btn" id="checkSourceBtn">Check source</button>
+        <button class="btn primary" id="generateDraftBtn" style="display: none;">Create draft from source</button>
+        <button class="btn primary" id="insertDraftBtn" style="display: none;">Insert as draft</button>
+      </div>
+    </div>
+  </div>
 
   <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
     <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
@@ -882,6 +1273,25 @@
       });
 
       content += '</div>';
+      
+      // Add source tool section
+      content += '<div class="guide-section" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #eaecf0;">';
+      content += '<h4>📰 Add from source</h4>';
+      content += '<p class="guide-note">Helper for citing reliable sources</p>';
+      content += '<div id="sourceVerificationArea">';
+      content += '<div class="source-input-group">';
+      content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
+      content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
+      content += '</div>';
+      content += '<div class="source-warning" style="margin-top: 8px; padding: 8px; background: #fef6e7; border: 1px solid #fc3; border-radius: 2px; font-size: 12px; color: #ac6600;">';
+      content += '⚠️ This creates a DRAFT based on source metadata. Always review and edit before publishing.';
+      content += '</div>';
+      content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
+      content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
+      content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
+      content += '</div>';
+      content += '</div>';
+      
       return content;
     }
 
@@ -906,6 +1316,9 @@
       
       // Add click handlers to section buttons
       bindSectionButtons();
+      
+      // Bind source button
+      bindSourceButton();
     }
 
     // Add section to editor
@@ -1069,9 +1482,629 @@
       });
     }
 
-    // Initialize suggestions on page load
-    loadSuggestions().then(function() {
+    // Source verification functionality
+    var reliableSourcesData = null;
+    var sourceModalBackdrop = document.getElementById('sourceModalBackdrop');
+    var sourceUrl = document.getElementById('sourceUrl');
+    var checkSourceBtn = document.getElementById('checkSourceBtn');
+    var generateDraftBtn = document.getElementById('generateDraftBtn');
+    var insertDraftBtn = document.getElementById('insertDraftBtn');
+    var closeSourceModal = document.getElementById('closeSourceModal');
+    var cancelSource = document.getElementById('cancelSource');
+    
+    // Load reliable sources data
+    async function loadReliableSources() {
+      try {
+        const response = await fetch('reliable-sources.json');
+        reliableSourcesData = await response.json();
+      } catch (error) {
+        console.error('Failed to load reliable sources:', error);
+        reliableSourcesData = null;
+      }
+    }
+    
+    // Open source modal
+    function openSourceModal() {
+      sourceModalBackdrop.setAttribute('aria-hidden', 'false');
+      sourceUrl.focus();
+      resetSourceModal();
+    }
+    
+    // Close source modal
+    function closeSourceModalDialog() {
+      sourceModalBackdrop.setAttribute('aria-hidden', 'true');
+      resetSourceModal();
+    }
+    
+    // Reset modal to initial state
+    function resetSourceModal() {
+      sourceUrl.value = '';
+      document.getElementById('sourceVerification').style.display = 'none';
+      document.getElementById('draftPreview').style.display = 'none';
+      checkSourceBtn.style.display = 'inline-block';
+      generateDraftBtn.style.display = 'none';
+      insertDraftBtn.style.display = 'none';
+    }
+    
+    // Check source reliability
+    function checkSource() {
+      var url = sourceUrl.value.trim();
+      if (!url) return;
+      
+      // Show verification section
+      document.getElementById('sourceVerification').style.display = 'block';
+      checkSourceBtn.style.display = 'none';
+      
+      // Simulate verification steps
+      performVerificationSteps(url);
+    }
+    
+    // Simulate verification animation
+    function performVerificationSteps(url) {
+      var steps = ['step1', 'step2'];
+      var currentStep = 0;
+      
+      function processStep() {
+        if (currentStep < steps.length) {
+          var stepElement = document.getElementById(steps[currentStep]);
+          var icon = stepElement.querySelector('.step-icon');
+          var text = stepElement.querySelector('.step-text');
+          
+          // Update icon to checkmark and mark as completed
+          setTimeout(function() {
+            icon.textContent = '✓';
+            stepElement.classList.add('completed');
+            
+            // Update text based on step
+            if (currentStep === 0) {
+              text.textContent = 'Domain verified: ' + extractDomain(url);
+            } else if (currentStep === 1) {
+              text.textContent = 'Source reliability checked';
+            }
+            
+            currentStep++;
+            if (currentStep < steps.length) {
+              setTimeout(processStep, 800);
+            } else {
+              setTimeout(showSourceResult, 500);
+            }
+          }, 1000);
+        }
+      }
+      
+      processStep();
+    }
+    
+    // Show source verification result
+    function showSourceResult() {
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = classifySource(domain);
+      
+      var resultDiv = document.getElementById('sourceResult');
+      var badgeDiv = document.getElementById('sourceBadge');
+      var noteDiv = document.getElementById('reliabilityNote');
+      
+      if (sourceType.reliable) {
+        badgeDiv.className = 'source-badge reliable';
+        badgeDiv.textContent = '✓ ' + sourceType.label;
+        noteDiv.textContent = sourceType.reliability;
+      } else {
+        badgeDiv.className = 'source-badge questionable';
+        badgeDiv.textContent = '⚠️ ' + sourceType.label;
+        noteDiv.textContent = sourceType.warning;
+      }
+      
+      resultDiv.style.display = 'block';
+      generateDraftBtn.style.display = 'inline-block';
+    }
+    
+    // Extract domain from URL
+    function extractDomain(url) {
+      try {
+        return new URL(url).hostname.replace('www.', '');
+      } catch (e) {
+        return url.split('/')[0];
+      }
+    }
+    
+    // Classify source based on domain
+    function classifySource(domain) {
+      if (!reliableSourcesData) {
+        return {reliable: true, label: 'External source', reliability: 'Source checking available'};
+      }
+      
+      var sources = reliableSourcesData.approved_sources;
+      
+      // Check each source category
+      for (var category in sources) {
+        var categoryData = sources[category];
+        
+        // Check domains
+        if (categoryData.domains && categoryData.domains.some(d => domain.includes(d))) {
+          return {
+            reliable: true,
+            label: categoryData.label,
+            reliability: categoryData.reliability
+          };
+        }
+        
+        // Check suffixes
+        if (categoryData.suffixes && categoryData.suffixes.some(s => domain.endsWith(s))) {
+          return {
+            reliable: true,
+            label: categoryData.label,
+            reliability: categoryData.reliability
+          };
+        }
+      }
+      
+      // Check questionable sources
+      var questionable = reliableSourcesData.questionable_sources;
+      if (questionable.domains && questionable.domains.some(d => domain.includes(d))) {
+        return {
+          reliable: false,
+          label: questionable.label,
+          warning: questionable.warning
+        };
+      }
+      
+      // Default to external source
+      return {
+        reliable: true,
+        label: 'External source',
+        reliability: 'Source information extracted'
+      };
+    }
+    
+    // Generate draft content
+    function generateDraft() {
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = getSourceTypeForTemplate(domain);
+      
+      var templates = reliableSourcesData ? reliableSourcesData.draft_templates : null;
+      var template = templates && templates[sourceType] ? templates[sourceType] : templates.default;
+      
+      // Create mock draft content
+      var title = generateMockTitle(domain);
+      var today = new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+      
+      var draftContent = template.stub
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[TITLE]', title)
+        .replace('[DATE]', today)
+        .replace('[TOPIC]', 'this subject')
+        .replace('[FIELD]', 'relevant field');
+        
+      var citation = template.citation
+        .replace('[AUTHOR]', 'Author Name')
+        .replace('[TITLE]', title)
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[DATE]', today)
+        .replace('[TODAY]', today)
+        .replace('[URL]', url);
+      
+      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+                     draftContent + '\n\n' +
+                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     citation;
+      
+      document.getElementById('draftContent').textContent = fullDraft;
+      document.getElementById('draftPreview').style.display = 'block';
+      generateDraftBtn.style.display = 'none';
+      insertDraftBtn.style.display = 'inline-block';
+    }
+    
+    // Generate mock title based on domain
+    function generateMockTitle(domain) {
+      var titles = [
+        'Recent Developments in Subject Area',
+        'Analysis of Current Topic',
+        'Overview of Related Field',
+        'Background Information on Subject',
+        'Context and Development'
+      ];
+      return titles[Math.floor(Math.random() * titles.length)];
+    }
+    
+    // Get source type for template
+    function getSourceTypeForTemplate(domain) {
+      if (!reliableSourcesData) return 'default';
+      
+      var sources = reliableSourcesData.approved_sources;
+      for (var category in sources) {
+        var categoryData = sources[category];
+        if (categoryData.domains && categoryData.domains.some(d => domain.includes(d))) {
+          return category;
+        }
+        if (categoryData.suffixes && categoryData.suffixes.some(s => domain.endsWith(s))) {
+          return category;
+        }
+      }
+      return 'default';
+    }
+    
+    // Insert draft into editor
+    function insertDraft() {
+      var draftText = document.getElementById('draftContent').textContent;
+      var editor = document.getElementById('editor');
+      
+      if (editor) {
+        var currentContent = editor.innerHTML;
+        var draftHTML = draftText.replace(/\n/g, '<br>');
+        
+        if (currentContent.trim() === '') {
+          editor.innerHTML = '<div style="margin-bottom: 2em;">' + draftHTML + '</div>';
+        } else {
+          editor.innerHTML = currentContent + '<div style="margin-top: 2em;">' + draftHTML + '</div>';
+        }
+        
+        editor.focus();
+      }
+      
+      closeSourceModalDialog();
+    }
+
+    // Bind source button click handlers for sidebar
+    function bindSourceButton() {
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      if (checkBtn) {
+        checkBtn.addEventListener('click', function() {
+          checkSidebarSource();
+        });
+      }
+    }
+
+    // Check source in sidebar
+    function checkSidebarSource() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      
+      if (!sourceUrl || !sourceUrl.value.trim()) {
+        return;
+      }
+      
+      // Disable button and show loading
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'Checking...';
+      
+      // Show verification steps
+      performSidebarVerificationSteps(sourceUrl.value.trim());
+    }
+
+    // Perform verification steps in sidebar
+    function performSidebarVerificationSteps(url) {
+      var stepsDiv = document.getElementById('sidebarVerificationSteps');
+      var steps = [
+        'Checking domain...',
+        'Verifying source reliability...'
+      ];
+      
+      var stepsHTML = '';
+      steps.forEach(function(step, index) {
+        stepsHTML += '<div class="sidebar-verification-step" id="sidebarStep' + index + '">';
+        stepsHTML += '<div class="sidebar-step-icon" id="sidebarStepIcon' + index + '">' + (index + 1) + '</div>';
+        stepsHTML += '<span class="sidebar-step-text" id="sidebarStepText' + index + '">' + step + '</span>';
+        stepsHTML += '</div>';
+      });
+      
+      stepsDiv.innerHTML = stepsHTML;
+      stepsDiv.style.display = 'block';
+      
+      var currentStep = 0;
+      
+      function processStep() {
+        if (currentStep < steps.length) {
+          var stepElement = document.getElementById('sidebarStep' + currentStep);
+          var icon = document.getElementById('sidebarStepIcon' + currentStep);
+          var text = document.getElementById('sidebarStepText' + currentStep);
+          
+          // Mark current step as active
+          icon.classList.add('active');
+          
+          // Update icon to checkmark and mark as completed
+          setTimeout(function() {
+            icon.textContent = '✓';
+            icon.classList.remove('active');
+            icon.classList.add('completed');
+            
+            // Update text based on step
+            if (currentStep === 0) {
+              text.textContent = 'Domain verified: ' + extractDomain(url);
+            } else if (currentStep === 1) {
+              text.textContent = 'Source reliability checked';
+            }
+            
+            currentStep++;
+            if (currentStep < steps.length) {
+              setTimeout(processStep, 800);
+            } else {
+              setTimeout(showSidebarSourceResult, 500);
+            }
+          }, 1000);
+        }
+      }
+      
+      processStep();
+    }
+
+    // Show source verification result in sidebar
+    function showSidebarSourceResult() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      var resultDiv = document.getElementById('sidebarSourceResult');
+      
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = classifySource(domain);
+      
+      var resultHTML = '';
+      if (sourceType.reliable) {
+        resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + sourceType.label + '</div>';
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.reliability + '</p>';
+      } else {
+        resultHTML += '<div class="sidebar-source-badge questionable">⚠️ ' + sourceType.label + '</div>';
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.warning + '</p>';
+      }
+      
+      resultHTML += '<div class="sidebar-action-buttons">';
+      resultHTML += '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Generate draft</button>';
+      resultHTML += '</div>';
+      
+      resultDiv.innerHTML = resultHTML;
+      resultDiv.style.display = 'block';
+      
+      // Re-enable check button
+      checkBtn.disabled = false;
+      checkBtn.textContent = 'Check source';
+      
+      // Bind generate button
+      var generateBtn = document.getElementById('sidebarGenerateBtn');
+      if (generateBtn) {
+        generateBtn.addEventListener('click', function() {
+          generateSidebarDraft(url);
+        });
+      }
+    }
+
+    // Generate draft in sidebar
+    function generateSidebarDraft(url) {
+      var domain = extractDomain(url);
+      var sourceType = getSourceTypeForTemplate(domain);
+      
+      var templates = reliableSourcesData ? reliableSourcesData.draft_templates : null;
+      var template = templates && templates[sourceType] ? templates[sourceType] : templates.default;
+      
+      // Create mock draft content
+      var title = generateMockTitle(domain);
+      var today = new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+      
+      var draftContent = template.stub
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[TITLE]', title)
+        .replace('[DATE]', today)
+        .replace('[TOPIC]', 'this subject')
+        .replace('[FIELD]', 'relevant field');
+        
+      var citation = template.citation
+        .replace('[AUTHOR]', 'Author Name')
+        .replace('[TITLE]', title)
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[DATE]', today)
+        .replace('[TODAY]', today)
+        .replace('[URL]', url);
+      
+      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+                     draftContent + '\n\n' +
+                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     citation;
+      
+      var previewDiv = document.getElementById('sidebarDraftPreview');
+      var previewHTML = '';
+      previewHTML += '<div class="sidebar-draft-content">' + fullDraft + '</div>';
+      previewHTML += '<div class="sidebar-action-buttons">';
+      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarInsertBtn">Insert into article</button>';
+      previewHTML += '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>';
+      previewHTML += '</div>';
+      
+      previewDiv.innerHTML = previewHTML;
+      previewDiv.style.display = 'block';
+      
+      // Bind action buttons
+      var insertBtn = document.getElementById('sidebarInsertBtn');
+      var cancelBtn = document.getElementById('sidebarCancelBtn');
+      
+      if (insertBtn) {
+        insertBtn.addEventListener('click', function() {
+          insertSidebarDraft(fullDraft);
+        });
+      }
+      
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+          resetSidebarSource();
+        });
+      }
+    }
+
+    // Insert draft from sidebar into editor
+    function insertSidebarDraft(draftText) {
+      var editor = document.getElementById('editor');
+      
+      if (editor) {
+        var currentContent = editor.innerHTML;
+        var hasContent = currentContent.trim() !== '';
+        
+        var domain = extractDomain(document.getElementById('sidebarSourceUrl').value);
+        var sourceType = classifySource(domain);
+        var sectionTitle = 'Section title';
+        
+        // Create realistic Wikipedia content with references
+        var content = 'This is where the content from the verified source would appear in the article. ';
+        content += 'The information extracted from ' + domain + ' provides additional context and details that support the main article topic.<sup style="color: #0645ad;">[1]</sup> ';
+        content += 'Key facts and data points from the source can be integrated here to enhance the encyclopedic coverage. ';
+        content += 'This demonstrates how external sources contribute to comprehensive article development.<sup style="color: #0645ad;">[2]</sup>';
+        
+        // Get citation from original draft
+        var lines = draftText.split('\n');
+        var citation = '';
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line.startsWith('[1]')) {
+            citation = line;
+            break;
+          }
+        }
+        
+        // Create Wikipedia-style section with proper formatting
+        var sectionHTML = '';
+        sectionHTML += '<h2 id="Section_title" style="';
+        sectionHTML += 'font-family: Georgia, serif; ';
+        sectionHTML += 'font-size: 1.5em; ';
+        sectionHTML += 'font-weight: normal; ';
+        sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; ';
+        sectionHTML += 'padding: 0; ';
+        sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+        sectionHTML += 'padding-bottom: 0.25em;';
+        sectionHTML += '">' + sectionTitle + '</h2>';
+        
+        // Add content paragraph with proper styling
+        sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6;">' + content + '</p>';
+        
+        // Add minimal draft notice
+        sectionHTML += '<p style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic;">Draft content • Expand with analysis</p>';
+        
+        // Add References section as proper Wikipedia section
+        sectionHTML += '<h2 id="References" style="';
+        sectionHTML += 'font-family: Georgia, serif; ';
+        sectionHTML += 'font-size: 1.5em; ';
+        sectionHTML += 'font-weight: normal; ';
+        sectionHTML += 'margin: 2em 0 0.25em 0; ';
+        sectionHTML += 'padding: 0; ';
+        sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+        sectionHTML += 'padding-bottom: 0.25em;';
+        sectionHTML += '">References</h2>';
+        
+        // Add citation if exists
+        if (citation) {
+          sectionHTML += '<div style="margin: 0.75em 0; font-size: 0.9em;">';
+          sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>'; // Remove [1] prefix
+          sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          sectionHTML += '</div>';
+        }
+        
+        if (hasContent) {
+          editor.innerHTML = currentContent + sectionHTML;
+        } else {
+          editor.innerHTML = sectionHTML;
+        }
+        
+        editor.focus();
+      }
+      
+      // Reset source area
+      resetSidebarSource();
+    }
+
+    // Reset sidebar source verification
+    function resetSidebarSource() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var stepsDiv = document.getElementById('sidebarVerificationSteps');
+      var resultDiv = document.getElementById('sidebarSourceResult');
+      var previewDiv = document.getElementById('sidebarDraftPreview');
+      
+      if (sourceUrl) sourceUrl.value = '';
+      if (stepsDiv) stepsDiv.style.display = 'none';
+      if (resultDiv) resultDiv.style.display = 'none';
+      if (previewDiv) previewDiv.style.display = 'none';
+    }
+
+    // Open source verification modal
+    function openSourceModalDialog() {
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      var sourceUrl = document.getElementById('sourceUrl');
+      var checkBtn = document.getElementById('checkSourceBtn');
+      var generateBtn = document.getElementById('generateDraftBtn');
+      var insertBtn = document.getElementById('insertDraftBtn');
+      var stepsDiv = document.getElementById('verificationSteps');
+      var resultDiv = document.getElementById('sourceResult');
+      var previewDiv = document.getElementById('draftPreview');
+      
+      // Reset modal state
+      if (sourceUrl) sourceUrl.value = '';
+      if (checkBtn) checkBtn.style.display = 'inline-block';
+      if (generateBtn) generateBtn.style.display = 'none';
+      if (insertBtn) insertBtn.style.display = 'none';
+      if (stepsDiv) stepsDiv.style.display = 'none';
+      if (resultDiv) resultDiv.style.display = 'none';
+      if (previewDiv) previewDiv.style.display = 'none';
+      
+      backdrop.classList.add('open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      
+      // Focus on URL input
+      setTimeout(function() {
+        if (sourceUrl) sourceUrl.focus();
+      }, 100);
+    }
+
+    // Close source verification modal
+    function closeSourceModalDialog() {
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      backdrop.classList.remove('open');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    // Initialize source modal event handlers
+    function initializeSourceModal() {
+      var closeBtn = document.getElementById('closeSourceModal');
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      var checkBtn = document.getElementById('checkSourceBtn');
+      var generateBtn = document.getElementById('generateDraftBtn');
+      var insertBtn = document.getElementById('insertDraftBtn');
+      
+      // Close button
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeSourceModalDialog);
+      }
+      
+      // Backdrop click to close
+      if (backdrop) {
+        backdrop.addEventListener('click', function(e) {
+          if (e.target === backdrop) {
+            closeSourceModalDialog();
+          }
+        });
+      }
+      
+      // Escape key to close
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && backdrop && backdrop.classList.contains('open')) {
+          closeSourceModalDialog();
+        }
+      });
+      
+      // Check source button
+      if (checkBtn) {
+        checkBtn.addEventListener('click', checkSource);
+      }
+      
+      // Generate draft button
+      if (generateBtn) {
+        generateBtn.addEventListener('click', generateDraft);
+      }
+      
+      // Insert draft button
+      if (insertBtn) {
+        insertBtn.addEventListener('click', insertDraft);
+      }
+    }
+
+    // Initialize suggestions and sources on page load
+    Promise.all([loadSuggestions(), loadReliableSources()]).then(function() {
       updateGuideContent();
+      initializeSourceModal();
     });
 
   </script>
