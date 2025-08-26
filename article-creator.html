@@ -1239,6 +1239,12 @@
           }
         }
       });
+
+      // Open guidance automatically when entering editing (Step 3)
+      // Desktop only; delay to avoid immediate close from the click event
+      if (!isMobile()) {
+        setTimeout(function(){ showGuide(); }, 50);
+      }
     });
 
     // Reference dialog
