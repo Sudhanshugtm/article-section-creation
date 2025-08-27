@@ -82,9 +82,6 @@ function convertArticleToQuillFormat(article) {
   // Enhanced conversion from MediaWiki to Quill format with proper links
   let content = [];
   
-  // Add title
-  content.push({ insert: article.title + '\n', attributes: { header: 1 } });
-  
   // Parse the content line by line
   const lines = article.content.split('\n');
   
@@ -332,6 +329,13 @@ function enterEditMode() {
   
   // Show smart widget for suggestions
   document.getElementById('smartWidget').style.display = 'block';
+
+  // Open the expand sidebar by default in edit mode
+  const sidebar = document.getElementById('expandSidebar');
+  if (sidebar) {
+    sidebar.style.display = 'block';
+    sidebar.classList.add('open');
+  }
   
   // Initialize Quill editor if not already done
   if (!quill) {
@@ -402,6 +406,9 @@ function initializeQuillEditor() {
 
   // Setup VE functionality
   setupVEHandlers();
+
+  // Setup inline hints (placeholder + smart chips)
+  setupInlineHints();
 }
 
 function loadContentIntoEditor() {
@@ -415,7 +422,7 @@ function loadContentIntoEditor() {
   
   quill.setContents(content);
   
-  // Position cursor at the beginning of the article title (index 0)
+  // Position cursor at the beginning of the content (index 0)
   setTimeout(() => {
     quill.focus();
     quill.setSelection(0, 0);
@@ -425,6 +432,89 @@ function loadContentIntoEditor() {
       editor.focus();
     }
   }, 200);
+}
+
+// Inline hints: show placeholder + chips on empty new line (prototype UI)
+function setupInlineHints() {
+  const container = document.getElementById('editor');
+  if (!container || !quill) return;
+
+  // Overlay element positioned to look inline at caret
+  let hints = document.getElementById('inlineHints');
+  if (!hints) {
+    hints = document.createElement('div');
+    hints.id = 'inlineHints';
+    hints.className = 'inline-hints';
+    hints.style.display = 'none';
+    hints.innerHTML = `
+      <span class="inline-placeholder-inline">Add more details...</span>
+    `;
+    container.appendChild(hints);
+  }
+
+  function hideHints() {
+    hints.style.display = 'none';
+  }
+
+  function isLineEmpty(line, lineEl) {
+    try {
+      if (line && typeof line.length === 'function') return line.length() <= 1;
+    } catch (e) {}
+    if (lineEl) return lineEl.textContent.trim() === '';
+    return false;
+  }
+
+  function showHintsAt(range) {
+    if (!range || range.length !== 0) return hideHints();
+    const info = quill.getLine(range.index);
+    if (!info) return hideHints();
+    const line = info[0];
+    const lineEl = line && line.domNode ? line.domNode : null;
+    // Only show on empty paragraphs, not headers or other blocks
+    if (!lineEl) return hideHints();
+    const tag = (lineEl.tagName || '').toUpperCase();
+    if (tag && tag.startsWith('H')) return hideHints();
+    if (tag !== 'P') return hideHints();
+    if (!isLineEmpty(line, lineEl)) return hideHints();
+
+    // Position just after caret
+    const bounds = quill.getBounds(range.index);
+    hints.style.left = bounds.left + 'px';
+    hints.style.top = (bounds.top + bounds.height + 4) + 'px';
+    hints.style.display = 'inline-flex';
+  }
+
+  quill.on('selection-change', (range) => {
+    if (!range) return hideHints();
+    showHintsAt(range);
+  });
+
+  quill.on('text-change', (delta, oldDelta, source) => {
+    if (source === 'user') {
+      hideHints();
+    }
+    const sel = quill.getSelection();
+    if (!sel) return hideHints();
+    showHintsAt(sel);
+  });
+
+  // Hide hints immediately on keydown for typing/navigation
+  const editorRoot = container.querySelector('.ql-editor');
+  if (editorRoot) {
+    editorRoot.addEventListener('keydown', (e) => {
+      const nonWritingKeys = new Set(['Shift','Alt','Control','Meta','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Escape','Tab','CapsLock']);
+      if (!nonWritingKeys.has(e.key)) {
+        hideHints();
+      }
+    });
+  }
+
+  // Clicking outside editor removes hints
+  document.addEventListener('click', (e) => {
+    if (!container.contains(e.target)) hideHints();
+  });
+
+  // No chip actions (chips hidden for now)
 }
 
 function setupVEHandlers() {

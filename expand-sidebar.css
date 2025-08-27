@@ -82,7 +82,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   color: #202122;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.5px;
 }
 
@@ -157,6 +157,14 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
+}
+
+.example-snippet {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.75rem;
+  color: #202122;
+  white-space: pre-wrap;
+  margin: 0;
 }
 
 .outline-items {

@@ -263,7 +263,7 @@ class WikidataWidget {
 
     content.innerHTML = `
       <div class="suggestions-intro">
-        <p>Based on Wikidata analysis of "<strong>${this.currentArticle.title}</strong>", here are suggested improvements:</p>
+        <p>Based on Wikidata analysis of "<strong>${this.currentArticle.title}</strong>", here are Suggested Improvements:</p>
       </div>
       <div class="suggestions-list">
         ${suggestionsHtml}

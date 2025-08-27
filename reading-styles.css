@@ -614,8 +614,9 @@ body {
     padding: 18px 0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     color: var(--text);
+    position: relative; /* for inline hints */
   }
 
   #editor.ql-container {
@@ -630,9 +631,77 @@ body {
     outline: none !important;
     font-family: inherit !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
+    line-height: 1.45 !important;
     color: var(--text) !important;
     padding: 0 !important;
+  }
+
+  /* Inline hints (placeholder + smart chips) */
+  .inline-hints {
+    position: absolute;
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 6px 8px;
+    min-width: 220px;
+    max-width: 360px;
+    z-index: 5;
+  }
+  .inline-placeholder {
+    font-size: 12px;
+    color: #72777d;
+    margin-bottom: 6px;
+  }
+  .inline-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .inline-chips .chip {
+    appearance: none;
+    border: 1px solid #c8ccd1;
+    background: #f8f9fa;
+    color: #202122;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .inline-chips .chip:hover {
+    background: #eaecf0;
+  }
+
+  /* Inline (in-flow) variant */
+  .inline-hints-inline {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 0 4px;
+    border-radius: 6px;
+    background: transparent;
+  }
+  .inline-placeholder-inline {
+    font-size: 12px;
+    color: #72777d;
+  }
+  .inline-chips-inline {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .inline-chips-inline .chip {
+    display: inline-block;
+    border: 1px solid #c8ccd1;
+    background: #f8f9fa;
+    color: #202122;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .inline-chips-inline .chip:hover {
+    background: #eaecf0;
   }
 
   .ql-editor:focus {
@@ -676,9 +745,9 @@ body {
   }
 
   .ql-editor p {
-    margin: 0 0 12px 0 !important;
+    margin: 0 0 8px 0 !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important;
     color: var(--text) !important;
   }
 
@@ -701,13 +770,13 @@ body {
 
   /* Lists in mobile editor */
   .ql-editor ul, .ql-editor ol {
-    margin: 8px 0 16px 0 !important;
+    margin: 6px 0 12px 0 !important;
     padding-left: 30px !important;
   }
 
   .ql-editor li {
-    margin: 4px 0 !important;
-    line-height: 1.6 !important;
+    margin: 2px 0 !important;
+    line-height: 1.5 !important;
   }
 }
 
@@ -835,8 +904,9 @@ body {
     padding: 18px 0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     color: var(--text);
+    position: relative; /* for inline hints */
   }
 
   #editor.ql-container {
@@ -851,9 +921,45 @@ body {
     outline: none !important;
     font-family: inherit !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
+    line-height: 1.45 !important;
     color: var(--text) !important;
     padding: 0 !important;
+  }
+
+  /* Inline hints (placeholder + smart chips) */
+  .inline-hints {
+    position: absolute;
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 6px 8px;
+    min-width: 220px;
+    max-width: 360px;
+    z-index: 5;
+  }
+  .inline-placeholder {
+    font-size: 12px;
+    color: #72777d;
+    margin-bottom: 6px;
+  }
+  .inline-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .inline-chips .chip {
+    appearance: none;
+    border: 1px solid #c8ccd1;
+    background: #f8f9fa;
+    color: #202122;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .inline-chips .chip:hover {
+    background: #eaecf0;
   }
 
   .ql-editor:focus {
@@ -897,9 +1003,9 @@ body {
   }
 
   .ql-editor p {
-    margin: 0 0 12px 0 !important;
+    margin: 0 0 8px 0 !important;
     font-size: 14px !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important;
     color: var(--text) !important;
   }
 
@@ -922,13 +1028,13 @@ body {
 
   /* Lists in editor */
   .ql-editor ul, .ql-editor ol {
-    margin: 8px 0 16px 0 !important;
+    margin: 6px 0 12px 0 !important;
     padding-left: 30px !important;
   }
 
   .ql-editor li {
-    margin: 4px 0 !important;
-    line-height: 1.6 !important;
+    margin: 2px 0 !important;
+    line-height: 1.5 !important;
   }
 
   .status {
@@ -961,6 +1067,53 @@ body {
 
 .cdx-button__label {
   font-size: 13px;
+}
+
+/* Inline editor hints (global, both mobile and desktop) */
+.ve-interface #editor .inline-hints {
+  position: absolute;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  z-index: 5;
+  pointer-events: none; /* don't block clicks on headings */
+}
+.inline-hints-inline {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: transparent;
+}
+.inline-placeholder-inline {
+  font-size: 12px;
+  color: #72777d;
+}
+.inline-chips-inline {
+  display: block; /* place chips under placeholder */
+  margin-top: 4px;
+}
+.inline-chips-inline .chip {
+  display: inline-block;
+  border: 1px solid #c8ccd1;
+  background: #f8f9fa;
+  color: #202122;
+  font-size: 12px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 6px;
+  pointer-events: auto; /* chips remain clickable */
+}
+.inline-chips-inline .chip:hover {
+  background: #eaecf0;
 }
 
 /* Menus */

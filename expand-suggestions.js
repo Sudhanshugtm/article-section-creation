@@ -18,17 +18,29 @@
       const icon = item.icon ? String(item.icon) : '';
       const title = item.title ? String(item.title) : '';
       const why = item.why ? String(item.why) : '';
+      const reference = item.reference ? String(item.reference) : '';
+      const example = item.example ? String(item.example) : '';
       const primary = item.primaryAction ? String(item.primaryAction) : '';
-      const secondary = item.secondaryAction ? String(item.secondaryAction) : '';
       return (
         '<li class="expand-suggestion">' +
           '<div class="expand-suggestion__icon">' + icon + '</div>' +
           '<div class="expand-suggestion__content">' +
             '<h5>' + title + '</h5>' +
             '<p>' + why + '</p>' +
+            (reference ? (
+              '<div class="expand-suggestion__outline">' +
+                '<span class="outline-label">Reference</span>' +
+                '<div>' + reference + '</div>' +
+              '</div>'
+            ) : '') +
+            (example ? (
+              '<div class="expand-suggestion__outline">' +
+                '<span class="outline-label">Example</span>' +
+                '<pre class="example-snippet">' + example + '</pre>' +
+              '</div>'
+            ) : '') +
             '<div class="expand-suggestion__actions">' +
               (primary ? '<button class="expand-suggestion__action expand-suggestion__action--primary">' + primary + '</button>' : '') +
-              (secondary ? '<button class="expand-suggestion__action">' + secondary + '</button>' : '') +
             '</div>' +
           '</div>' +
         '</li>'
