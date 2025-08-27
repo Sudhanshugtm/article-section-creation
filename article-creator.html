@@ -365,76 +365,6 @@
       margin-bottom: 6px;
     }
     
-    /* Example dropdown */
-    .examples-dropdown {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      margin-top: 4px;
-    }
-    
-    .examples-toggle {
-      background: #f8f9fa;
-      border: 1px solid #c8ccd1;
-      border-radius: 3px;
-      padding: 4px 8px;
-      font-size: 11px;
-      color: #36c;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-    }
-    
-    .examples-toggle:hover {
-      background: #eaecf0;
-    }
-    
-    .examples-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid #c8ccd1;
-      border-radius: 3px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      z-index: 1000;
-      padding: 8px;
-      margin-top: 2px;
-    }
-    
-    .examples-dropdown.open .examples-content {
-      display: block;
-    }
-    
-    .example-item {
-      font-size: 11px;
-      color: #54595d;
-      margin-bottom: 4px;
-      padding: 3px 0;
-      border-bottom: 1px solid #eaecf0;
-      font-style: italic;
-    }
-    
-    .example-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    
-    /* Mobile responsive dropdown */
-    @media (max-width: 768px) {
-      .examples-content {
-        position: fixed;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-radius: 12px 12px 0 0;
-        max-height: 50vh;
-        overflow-y: auto;
-      }
-    }
     
     /* Source button styling */
     .source-button {
@@ -1355,7 +1285,7 @@
       categoryData.sections.forEach(function(section, index) {
         const sectionName = typeof section === 'string' ? section : section.name;
         const sectionDesc = typeof section === 'string' ? '' : section.description;
-        const sectionExamples = typeof section === 'string' ? [] : (section.examples || []);
+        const sectionInclude = typeof section === 'string' ? [] : (section.include || []);
         const isAdded = addedSections.indexOf(sectionName) !== -1;
         const className = isAdded ? 'section-button added' : 'section-button';
         
@@ -1365,15 +1295,15 @@
           content += '<span class="section-description">' + sectionDesc + '</span>';
         }
         
-        // Add examples dropdown if examples exist
-        if (sectionExamples.length > 0) {
-          content += '<div class="examples-dropdown" data-section="' + sectionName + '">';
-          content += '<span class="examples-toggle">See examples ↓</span>';
-          content += '<div class="examples-content">';
-          sectionExamples.forEach(function(example) {
-            content += '<div class="example-item">' + example + '</div>';
+        // Add "What to Include" guidance if include items exist
+        if (sectionInclude.length > 0) {
+          content += '<div class="include-guidance" style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 3px; border: 1px solid #eaecf0;">';
+          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">What to include:</div>';
+          content += '<ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #54595d; line-height: 1.4;">';
+          sectionInclude.forEach(function(item) {
+            content += '<li>' + item + '</li>';
           });
-          content += '</div>';
+          content += '</ul>';
           content += '</div>';
         }
         
@@ -1675,47 +1605,14 @@
       updateGuideContent();
     }
 
-    // Bind click handlers to section buttons and dropdowns
+    // Bind click handlers to section buttons
     function bindSectionButtons() {
       var buttons = document.querySelectorAll('.section-button:not(.added)');
       buttons.forEach(function(button) {
         button.addEventListener('click', function(e) {
-          // Don't add section if clicking on dropdown
-          if (e.target.closest('.examples-dropdown')) {
-            e.stopPropagation();
-            return;
-          }
           var sectionName = this.getAttribute('data-section');
           addSectionToEditor(sectionName);
         });
-      });
-      
-      // Bind dropdown toggles
-      var toggles = document.querySelectorAll('.examples-toggle');
-      toggles.forEach(function(toggle) {
-        toggle.addEventListener('click', function(e) {
-          e.stopPropagation();
-          var dropdown = this.closest('.examples-dropdown');
-          
-          // Close other dropdowns
-          document.querySelectorAll('.examples-dropdown.open').forEach(function(openDropdown) {
-            if (openDropdown !== dropdown) {
-              openDropdown.classList.remove('open');
-            }
-          });
-          
-          // Toggle current dropdown
-          dropdown.classList.toggle('open');
-        });
-      });
-      
-      // Close dropdowns when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.examples-dropdown')) {
-          document.querySelectorAll('.examples-dropdown.open').forEach(function(dropdown) {
-            dropdown.classList.remove('open');
-          });
-        }
       });
     }
 

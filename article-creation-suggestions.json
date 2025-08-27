@@ -14,19 +14,21 @@
       {
         "name": "Early life", 
         "description": "Birth, childhood, education, and formative experiences",
-        "examples": [
-          "Smith was born on [date] in [location]...",
-          "[Name] grew up in a family of musicians...",
-          "After graduating from [university], [name] pursued..."
+        "include": [
+          "Birth date and location",
+          "Family background and upbringing", 
+          "Education and early influences",
+          "Formative childhood experiences"
         ]
       },
       {
         "name": "Career", 
         "description": "Professional achievements and major work",
-        "examples": [
-          "In [year], [name] joined [organization] as...",
-          "[Name]'s breakthrough came when...",
-          "Throughout the 1990s, [name] established..."
+        "include": [
+          "Major jobs and positions held",
+          "Key achievements and breakthroughs",
+          "Important works or contributions",
+          "Career timeline and progression"
         ]
       }
     ]
@@ -46,19 +48,21 @@
       {
         "name": "Geography", 
         "description": "Physical features, climate, and natural characteristics",
-        "examples": [
-          "[Location] is located in [region] at coordinates...",
-          "The area features [terrain type] with...",
-          "The climate is characterized by..."
+        "include": [
+          "Exact location and coordinates",
+          "Physical terrain and landscape features",
+          "Climate and weather patterns",
+          "Natural resources and environment"
         ]
       },
       {
         "name": "History", 
         "description": "How the area developed over time",
-        "examples": [
-          "The area was first settled in [year] by...",
-          "During the [period], [location] became known for...",
-          "The modern city was established when..."
+        "include": [
+          "First settlement and founding date",
+          "Major historical periods and events",
+          "Key developments and changes",
+          "Important historical figures"
         ]
       }
     ]
@@ -78,19 +82,21 @@
       {
         "name": "Description", 
         "description": "Physical appearance and distinguishing features",
-        "examples": [
-          "The [species] is a [size] [type] measuring...",
-          "Adults are characterized by [distinctive features]...",
-          "The species can be distinguished from similar species by..."
+        "include": [
+          "Size and physical measurements",
+          "Distinctive physical characteristics",
+          "How to identify this species",
+          "Differences from similar species"
         ]
       },
       {
         "name": "Habitat", 
         "description": "Where the species lives and environmental needs",
-        "examples": [
-          "[Species] inhabits [habitat type] across [geographic range]...",
-          "The species prefers [environmental conditions]...",
-          "It is commonly found in [specific locations]..."
+        "include": [
+          "Geographic range and distribution",
+          "Preferred environmental conditions",
+          "Specific habitat types",
+          "Environmental requirements for survival"
         ]
       }
     ]
@@ -110,19 +116,21 @@
       {
         "name": "History", 
         "description": "How and why the organization was founded",
-        "examples": [
-          "[Organization] was founded in [year] by [founder]...",
-          "The organization was established to address...",
-          "It grew out of [previous organization/movement]..."
+        "include": [
+          "Founding date and founders",
+          "Original mission and goals",
+          "Circumstances that led to creation",
+          "Early development and growth"
         ]
       },
       {
         "name": "Activities", 
         "description": "Main work, programs, and services",
-        "examples": [
-          "[Organization] operates [number] programs focusing on...",
-          "The organization provides [services] to [target group]...",
-          "Key initiatives include [program names]..."
+        "include": [
+          "Core programs and services",
+          "Target audience or beneficiaries",
+          "Key initiatives and campaigns",
+          "Impact and achievements"
         ]
       }
     ]
@@ -142,19 +150,21 @@
       {
         "name": "Definition", 
         "description": "Clear explanation of what the concept means",
-        "examples": [
-          "[Concept] is defined as [definition]...",
-          "In [field], [concept] refers to...",
-          "The term was first coined by [person] to describe..."
+        "include": [
+          "Clear, simple definition",
+          "Key characteristics and features",
+          "How it differs from related concepts",
+          "Context within its field"
         ]
       },
       {
         "name": "Background", 
         "description": "Historical development and key contributors",
-        "examples": [
-          "The concept emerged in [period] when [context]...",
-          "Early work by [researcher] established...",
-          "The theory developed through [progression]..."
+        "include": [
+          "When and how it was first developed",
+          "Key researchers and contributors",
+          "Major milestones in development",
+          "Evolution of understanding over time"
         ]
       }
     ]
@@ -174,19 +184,21 @@
       {
         "name": "Plot", 
         "description": "Story summary without major spoilers",
-        "examples": [
-          "[Work] follows [character] as they [main conflict]...",
-          "The story is set in [setting] and centers on...",
-          "The narrative explores themes of [themes]..."
+        "include": [
+          "Main characters and setting",
+          "Central conflict or premise",
+          "Key themes explored",
+          "General story arc (no spoilers)"
         ]
       },
       {
         "name": "Production", 
         "description": "How the work was created or developed",
-        "examples": [
-          "Production began in [year] when [creator]...",
-          "The work was developed over [timeframe] with...",
-          "Filming took place in [locations] using..."
+        "include": [
+          "Creator(s) and key personnel",
+          "Development timeline",
+          "Production locations and methods",
+          "Notable production details"
         ]
       }
     ]
@@ -206,19 +218,21 @@
       {
         "name": "Background", 
         "description": "Circumstances leading up to the event",
-        "examples": [
-          "The event was precipitated by [causes]...",
-          "Tensions had been building since [prior events]...",
-          "The situation developed when [trigger]..."
+        "include": [
+          "Underlying causes and factors",
+          "Prior events that led to this",
+          "Key people and organizations involved",
+          "Context and setting"
         ]
       },
       {
         "name": "Timeline", 
         "description": "Key moments and how events unfolded",
-        "examples": [
-          "On [date], [initial event] occurred...",
-          "The situation escalated when [development]...",
-          "By [time period], [outcome] had become clear..."
+        "include": [
+          "Chronological sequence of events",
+          "Key dates and milestones",
+          "Major developments and turning points",
+          "Immediate outcomes and results"
         ]
       }
     ]
@@ -238,19 +252,21 @@
       {
         "name": "Background",
         "description": "Context, history, or foundational information",
-        "examples": [
-          "The concept first emerged in [time period]...",
-          "This topic has its roots in [historical context]...",
-          "Research in this area began when [initial development]..."
+        "include": [
+          "Historical context and origins",
+          "How this topic developed",
+          "Important foundational concepts",
+          "Why this topic is significant"
         ]
       },
       {
         "name": "Overview", 
         "description": "Main aspects, components, or key characteristics",
-        "examples": [
-          "The main components include [key elements]...",
-          "Key characteristics are [defining features]...",
-          "[Topic] encompasses several areas: [areas]..."
+        "include": [
+          "Key components and elements",
+          "Main characteristics and features",
+          "Different aspects or categories",
+          "How everything fits together"
         ]
       }
     ]
