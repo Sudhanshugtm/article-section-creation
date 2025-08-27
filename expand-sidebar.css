@@ -255,7 +255,7 @@
 }
 
 .include-guidance__title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #54595d;
   margin: 0 0 6px 0;
@@ -264,7 +264,7 @@
 .include-guidance__list {
   margin: 0;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 14px;
   color: #202122;
   line-height: 1.5;
 }
@@ -272,6 +272,67 @@
 .include-guidance__list li {
   margin: 4px 0;
 }
+
+/* Wikipedia-like styling for examples */
+.wiki-link {
+  color: #0645ad;
+  text-decoration: none;
+  cursor: default;
+}
+.wiki-link:hover {
+  text-decoration: underline;
+}
+.wiki-examples {
+  margin-top: 10px;
+}
+.wiki-example { margin-bottom: 12px; }
+.wiki-example__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.wiki-example__excerpt {
+  font-size: 13px;
+  color: #54595d;
+  margin-top: 2px;
+  line-height: 1.45;
+}
+
+/* Tips block without grey background; use divider */
+.tips-guidance {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eaecf0;
+}
+.tips-guidance__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #54595d;
+  margin: 0 0 6px 0;
+}
+.tips-guidance__list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: #202122;
+  line-height: 1.5;
+}
+
+/* Focus header with detached back link */
+.focus-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+.focus-title { margin: 0; }
+.focus-back-link {
+  font-size: 13px;
+  color: #0645ad;
+  text-decoration: none;
+}
+.focus-back-link:hover { text-decoration: underline; }
 
 .include-guidance__link {
   display: inline-block;

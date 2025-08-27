@@ -809,10 +809,19 @@ function setupSharedHandlers() {
       return;
     }
     const card = btn.closest('.expand-suggestion');
+    const btnTitle = btn.getAttribute('data-title');
     const titleEl = card ? card.querySelector('.expand-suggestion__content h5') : null;
-    const sectionTitle = titleEl ? titleEl.textContent.trim() : 'New section';
-    insertSectionIntoEditor(sectionTitle);
+    const sectionTitle = (btnTitle || (titleEl ? titleEl.textContent : '') || 'New section').trim();
+    const includeAttr = btn.getAttribute('data-include') || '';
+    const includeItems = includeAttr ? includeAttr.split('||').map(s => s.trim()).filter(Boolean) : [];
+    insertSectionIntoEditor(sectionTitle, includeItems);
+    // Tell sidebar to switch to Focus Mode for this section
+    try {
+      document.dispatchEvent(new CustomEvent('sidebar:focusSection', { detail: { title: sectionTitle, include: includeItems } }));
+    } catch (_) {}
   });
+
+  // (Removed) example overlay handler
 
   
   // Close wizard when clicking backdrop
@@ -933,43 +942,104 @@ function setupSharedHandlers() {
 }
 
 // Insert a new section (H2) with a placeholder paragraph at current caret (or end)
-function insertSectionIntoEditor(title) {
+function insertSectionIntoEditor(title, includeItems = []) {
   if (!quill) return;
   const safeTitle = String(title || 'New section');
 
-  // Always append at the end to preserve existing content
-  let index = quill.getLength();
+  // If section already exists (by exact title line), jump there instead of duplicating
+  let index = findExistingSectionStartIndex(safeTitle);
+  if (index !== -1) {
+    // Move caret just after the heading line
+    index = index + safeTitle.length + 1; // title + newline
+  } else {
+    // Append at end
+    index = quill.getLength();
+    try {
+      const prev1 = index > 0 ? quill.getText(index - 1, 1) : '\n';
+      if (prev1 !== '\n') { quill.insertText(index, '\n', 'user'); index += 1; }
+    } catch (_) {}
+    // Insert heading and format
+    quill.insertText(index, safeTitle, 'user');
+    quill.insertText(index + safeTitle.length, '\n', 'user');
+    quill.formatLine(index, 1, 'header', 2, 'user');
+    index += safeTitle.length + 1;
+    // Insert placeholder paragraph below heading and remember caret pos here
+    const placeholder = 'Start adding ' + safeTitle.toLowerCase() + '…';
+    quill.insertText(index, placeholder, { italic: true }, 'user');
+    const caretAfterPlaceholder = index + placeholder.length; // caret should blink here
+    quill.insertText(caretAfterPlaceholder, '\n', 'user');
+    index = caretAfterPlaceholder + 1;
+  }
 
-  // Ensure there is a blank line before the new section
+  // Do not auto-insert guidance bullets; sidebar provides this context now
+
+  // Place caret back next to the placeholder to encourage typing there
   try {
-    const prev1 = index > 0 ? quill.getText(index - 1, 1) : '\n';
-    const prev2 = index > 1 ? quill.getText(index - 2, 1) : '\n';
-    if (prev1 !== '\n') {
-      quill.insertText(index, '\n', 'user');
-      index += 1;
-    }
-    // Optional extra spacing: keep a single blank line before sections
-    if (prev1 === '\n' && prev2 !== '\n') {
-      // one newline already, that's fine
+    const caretPos = findExistingSectionStartIndex(safeTitle);
+    if (caretPos !== -1) {
+      const pos = caretPos + safeTitle.length + 1; // after heading newline
+      const phText = 'Start adding ' + safeTitle.toLowerCase() + '…';
+      quill.setSelection(pos + phText.length, 0, 'user');
+    } else {
+      quill.setSelection(0, 0, 'user');
     }
   } catch (_) {}
-
-  // Insert heading line and format as H2
-  quill.insertText(index, safeTitle, 'user');
-  quill.insertText(index + safeTitle.length, '\n', 'user');
-  // Format just this line as header level 2
-  quill.formatLine(index, 1, 'header', 2, 'user');
-  index += safeTitle.length + 1;
-
-  // Insert placeholder paragraph below heading
-  const placeholder = 'Start adding ' + safeTitle.toLowerCase() + '…';
-  quill.insertText(index, placeholder, { italic: true }, 'user');
-  quill.insertText(index + placeholder.length, '\n', 'user');
-
-  // Place caret at start of the new paragraph and scroll into view
-  quill.setSelection(index, 0, 'user');
   try { quill.scrollIntoView && quill.scrollIntoView(); } catch (_) {}
 }
+
+// Find the index of an existing H2 line that matches title (by plain text line)
+function findExistingSectionStartIndex(title) {
+  try {
+    const full = quill.getText();
+    const lines = full.split('\n');
+    let acc = 0;
+    for (const line of lines) {
+      if (line.trim().toLowerCase() === String(title).trim().toLowerCase()) {
+        return acc; // start index of that line
+      }
+      acc += line.length + 1; // include newline
+    }
+  } catch (_) {}
+  return -1;
+}
+
+// Sidebar-driven editor actions
+document.addEventListener('editor:jumpToHeading', (ev) => {
+  const d = ev && ev.detail || {};
+  if (!d.title || !quill) return;
+  const idx = findExistingSectionStartIndex(d.title);
+  if (idx !== -1) {
+    const pos = idx + String(d.title).length + 1; // after heading newline
+    quill.setSelection(pos, 0, 'user');
+    try { quill.scrollIntoView && quill.scrollIntoView(); } catch (_) {}
+  }
+});
+
+document.addEventListener('editor:insertOutline', (ev) => {
+  const d = ev && ev.detail || {};
+  if (!d.title || !Array.isArray(d.include) || !quill) return;
+  const idx = findExistingSectionStartIndex(d.title);
+  if (idx === -1) return;
+  let index = idx + String(d.title).length + 1; // after heading newline
+  // Insert guidance label
+  const guidanceText = 'Suggested items to include (reference):';
+  quill.insertText(index, guidanceText, { italic: true }, 'user');
+  try { quill.formatText(index, guidanceText.length, { color: '#72777d' }, 'user'); } catch (_) {}
+  quill.insertText(index + guidanceText.length, '\n', 'user');
+  index += guidanceText.length + 1;
+  // Insert bullets
+  for (const it of d.include) {
+    const txt = String(it || '').trim();
+    if (!txt) continue;
+    quill.insertText(index, txt, { italic: true }, 'user');
+    try { quill.formatText(index, txt.length, { color: '#72777d' }, 'user'); } catch (_) {}
+    quill.insertText(index + txt.length, '\n', 'user');
+    quill.formatLine(index, 1, 'list', 'bullet', 'user');
+    index += txt.length + 1;
+  }
+  quill.setSelection(index, 0, 'user');
+  try { quill.scrollIntoView && quill.scrollIntoView(); } catch (_) {}
+});
 
 // Insert a grey image placeholder (SVG data URI) with a caption line
 function insertImagePlaceholder() {
@@ -1006,6 +1076,8 @@ function insertImagePlaceholder() {
   // Place caret at caption line
   quill.setSelection(index, 0, 'user');
 }
+
+// (Removed) example overlay implementation
 
 function addSourceToList() {
   const urlInput = document.getElementById('sourceUrlInput');
