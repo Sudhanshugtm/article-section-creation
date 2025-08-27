@@ -3,20 +3,418 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Article Creation Concepts — Source-based</title>
-  <!-- Codex tokens + CSS (design system) for toolbar icons -->
+  <title>Article Creator — Source-based Concept</title>
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
-  <!-- Reuse VE toolbar styling -->
   <link rel="stylesheet" href="reading-styles.css">
-  <!-- Page-specific layout/styles -->
-  <link rel="stylesheet" href="creation-styles.css">
-  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css">
+  <style>
+    .creator-wrap { max-width: 1100px; margin: 0 auto; padding: 16px 20px; }
+    .editor-shell { border: 1px solid var(--border-color-subtle, #eaecf0); border-radius: 4px; background: #fff; padding: 16px; }
+    .title-input { width: 100%; font-size: 18px; padding: 8px 0; border: none; border-bottom: 2px solid #a2a9b1; }
+    .title-input:focus { outline: none; border-bottom-color: #36c; }
+    .chip-row { display: flex; gap: 8px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #a2a9b1; border-radius: 12px; font-size: 12px; cursor: pointer; background: #f8f9fa; }
+    .chip.reference { border-color: #36c; color: #36c; background: #eef3ff; }
+    .editor { min-height: 260px; outline: none; }
+    .editor[contenteditable="true"]:empty:before { content: attr(data-placeholder); color: #72777d; }
+    .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
+    .verify-note.show { display: block; }
+    .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
+    .ref-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border: 1px solid #eaecf0; border-radius: 8px; width: 520px; max-width: 92vw; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .ref-row { margin-bottom: 12px; }
+    .ref-row label { display: block; font-size: 13px; margin-bottom: 6px; color: #202122; }
+    .ref-row input { width: 100%; height: 34px; border: 1px solid #c8ccd1; border-radius: 4px; padding: 6px 10px; font: inherit; }
+    .ref-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+    .badge { display:inline-block; font-size:10px; padding:2px 6px; border-radius:10px; border:1px solid #c8ccd1; color:#72777d; }
+    .badge.good { color:#14866d; border-color:#14866d; }
+    .badge.warn { color:#ac6600; border-color:#ac6600; }
+  
+    .chip.guidance { border-color: #c8ccd1; background: #fff; }
+    .ac-steps { max-width: 1100px; margin: 0 auto; }
+    .ac-step { display: none; border: 1px solid var(--border-color-subtle, #eaecf0); background: #fff; border-radius: 6px; padding: 16px; }
+    .ac-step.active { display: block; }
+    .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
+    
+    /* Center Step 1 in viewport */
+    #step1.ac-step {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      max-width: 600px;
+      width: 90%;
+      z-index: 100;
+    }
+    
+    .step1-title {
+      font-size: 1.8rem;
+      color: var(--color-base);
+      margin: 0 0 20px 0;
+      text-align: center;
+    }
+    
+    .topic-description {
+      text-align: center;
+      font-size: 14px;
+      color: var(--color-subtle);
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+    
+    .start-section {
+      margin: 16px 0;
+    }
+    
+    /* Navigation section */
+    .nav-section {
+      border-top: 1px solid #eaecf0;
+      padding-top: 16px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    
+    .nav-section p {
+      color: #72777d;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    
+    .nav-section .link {
+      color: #36c;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    
+    .nav-section .link:hover {
+      text-decoration: underline;
+    }
+
+    /* Topic categories */
+    .category-row {
+      margin: 20px 0;
+    }
+    
+    .category-row label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #202122;
+    }
+    
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    
+    .category-option {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    
+    .category-option:hover {
+      background: #eaecf0;
+      border-color: #a2a9b1;
+    }
+    
+    .category-option.selected {
+      background: #eef3ff;
+      border-color: #36c;
+      color: #36c;
+    }
+    
+    .category-option input[type="radio"] {
+      margin: 0 12px 0 0;
+      accent-color: #36c;
+    }
+    
+    .category-label {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    /* Continue button section */
+    .continue-section {
+      text-align: center;
+      margin-top: 32px;
+    }
+    
+    .btn-continue {
+      background: #36c;
+      color: #fff;
+      border: 1px solid #36c;
+      border-radius: 4px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    
+    .btn-continue:hover:not(:disabled) {
+      background: #2a4b8d;
+      border-color: #2a4b8d;
+    }
+    
+    .btn-continue:disabled {
+      background: #eaecf0;
+      color: #a2a9b1;
+      border-color: #eaecf0;
+      cursor: not-allowed;
+    }
+    
+    /* Step 2 specific */
+    #step2.ac-step { padding: 24px; }
+    
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eaecf0;
+    }
+    
+    .step-back {
+      background: none;
+      border: 1px solid #c8ccd1;
+      color: #36c;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    .step-back:hover {
+      background: #f8f9fa;
+    }
+    
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .draft-status {
+      font-size: 13px;
+      color: #72777d;
+    }
+
+    /* Guide Sidebar */
+    .guide-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 360px;
+      height: 100vh;
+      background: #fff;
+      border-left: 1px solid #eaecf0;
+      z-index: 1000;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    }
+
+    .guide-sidebar.open {
+      right: 0;
+    }
+
+    .guide-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eaecf0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f9fa;
+    }
+
+    .guide-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: #202122;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #72777d;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: #202122;
+    }
+
+    .guide-content {
+      padding: 20px;
+    }
+
+    .guide-note {
+      font-size: 14px;
+      color: #54595d;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    /* Section suggestions */
+    .section-button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .section-button:hover {
+      background: #eaecf0;
+      border-color: #a2a9b1;
+    }
+
+    .section-button.added {
+      background: #eef3ff;
+      border-color: #36c;
+      color: #36c;
+    }
+
+    .section-button.added::after {
+      content: " ✓";
+      color: #14866d;
+    }
+
+    .section-name {
+      display: block;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .section-description {
+      display: block;
+      font-size: 12px;
+      color: #72777d;
+      line-height: 1.3;
+    }
+
+    /* Mobile guide modal */
+    .guide-modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+    }
+
+    .guide-modal {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 2001;
+    }
+
+    .guide-modal-backdrop.show .guide-modal {
+      transform: translateY(0);
+    }
+
+    /* Action buttons in sidebar */
+    .sidebar-action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .sidebar-action-btn {
+      padding: 6px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      background: white;
+      color: #202122;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .sidebar-action-btn.primary {
+      background: #36c;
+      color: white;
+      border-color: #36c;
+    }
+    
+    .sidebar-action-btn:hover {
+      background: #f8f9fa;
+    }
+    
+    .sidebar-action-btn.primary:hover {
+      background: #2a4b8d;
+      border-color: #2a4b8d;
+    }
+    
+    /* Eligibility checker styles */
+    .eligibility-options {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .eligibility-btn {
+      padding: 6px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      background: #f8f9fa;
+      color: #222;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    
+    .eligibility-btn:hover {
+      background: #eaecf0;
+    }
+    
+    .eligibility-btn.selected {
+      background: #36c;
+      color: white;
+      border-color: #36c;
+    }
+
+    /* Hide modal on desktop */
+    @media (min-width: 769px) {
+      .guide-modal-backdrop {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Page header to match VE pages -->
-  <header class="container page-header" role="banner">
-    <h1 class="firstHeading">New Article</h1>
+
+  <!-- Wikipedia-style header (hidden by default, shown in Step 3) -->
+  <header class="container page-header" id="veHeader" role="banner" style="display: none;">
+    <h1 class="firstHeading" id="veTitle">New Article</h1>
     <div class="page-tabs-wrapper">
       <nav class="ns-tabs" aria-label="Namespace tabs">
         <button class="ns-tab active">Article</button>
@@ -27,7 +425,7 @@
           <span class="action-tab-text">Read</span>
           <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
         </button>
-        <button class="action-tab active" id="editTabVE">
+        <button class="action-tab active">
           <span class="action-tab-text">Edit</span>
           <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
         </button>
@@ -43,161 +441,878 @@
     </div>
   </header>
 
-  <!-- VE toolbar (same as section expansion) -->
-  <div class="ve-strip" role="region" aria-label="Editing toolbar">
+  <!-- VE toolbar (hidden by default, shown in Step 3) -->
+  <div class="ve-strip" id="veToolbar" role="region" aria-label="Editing toolbar" style="display: none;">
     <div class="ve-bar">
       <!-- Mobile toolbar -->
       <div class="mobile-toolbar">
-        <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
-        <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
-        <div class="dropdown" id="dd-style-mobile">
+        <button class="btn" id="closeMobile" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+        <button class="btn" disabled title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+        <div class="dropdown">
           <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
           <span class="caret" aria-hidden="true"></span>
-          <div class="menu" id="menu-style-mobile">
-            <button data-style="bold">Bold</button>
-            <button data-style="italic">Italic</button>
-            <button data-style="underline">Underline</button>
-            <button data-style="strike">Strikethrough</button>
-            <button data-style="script-sup">Superscript</button>
-            <button data-style="script-sub">Subscript</button>
-            <button data-style="clean">Clear styling</button>
+          <div class="menu">
+            <button>Bold</button>
+            <button>Italic</button>
           </div>
         </div>
-        <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
-        <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
-        <div class="dropdown" id="dd-edit-mobile">
+        <button class="btn" disabled title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+        <button class="btn" id="openRefMobile" title="Reference"><span style="font-size: 14px; filter: brightness(0.7);">¹²</span></button>
+        <div class="dropdown">
           <span class="cdx-icon" data-icon="cdxIconEdit"></span>
           <span class="caret" aria-hidden="true"></span>
-          <div class="menu" id="menu-edit-mobile">
-            <button data-insert="image">Media…</button>
-            <button data-insert="template">Template… (mock)</button>
-            <button data-insert="math">Math… (mock)</button>
-            <button data-insert="table">Table… (mock)</button>
+          <div class="menu">
+            <button>Media…</button>
           </div>
         </div>
-        <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"></path></svg></span></button>
+        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
       </div>
 
       <!-- Desktop toolbar -->
       <div class="desktop-toolbar">
         <div class="group tight">
-          <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
-          <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          <button class="btn" disabled title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          <button class="btn" disabled title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
         </div>
         <div class="group">
-          <div class="dropdown" id="dd-paragraph">
+          <div class="dropdown">
             <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
             <span class="cdx-button__label">Paragraph</span>
             <span class="caret" aria-hidden="true"></span>
-            <div class="menu" id="menu-paragraph">
-              <button data-header="">Paragraph</button>
-              <button data-header="1">Heading 1</button>
-              <button data-header="2">Heading 2</button>
-              <button data-header="3">Heading 3</button>
-              <button data-header="4">Heading 4</button>
-              <button data-header="5">Heading 5</button>
-              <button data-header="6">Heading 6</button>
-              <button data-header="code">Preformatted</button>
+            <div class="menu">
+              <button>Paragraph</button>
+              <button>Heading</button>
+              <button>Subheading 1</button>
+              <button>Subheading 2</button>
+              <button>Subheading 3</button>
+              <button>Subheading 4</button>
             </div>
           </div>
         </div>
         <div class="group">
-          <div class="dropdown" id="dd-style">
+          <div class="dropdown">
             <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
             <span class="cdx-button__label">A</span>
             <span class="caret" aria-hidden="true"></span>
-            <div class="menu" id="menu-style">
-              <button data-style="bold">Bold</button>
-              <button data-style="italic">Italic</button>
-              <button data-style="underline">Underline</button>
-              <button data-style="strike">Strikethrough</button>
-              <button data-style="script-sup">Superscript</button>
-              <button data-style="script-sub">Subscript</button>
-              <button data-style="clean">Clear styling</button>
+            <div class="menu">
+              <button>Bold</button>
+              <button>Italic</button>
+              <button>Superscript</button>
+              <button>Subscript</button>
+              <button>Strikethrough</button>
+              <button>Code</button>
+              <button>Underline</button>
+              <button>Language</button>
+              <button>Big</button>
+              <button>Small</button>
+              <button>Clear styling</button>
             </div>
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
-          <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+          <button class="btn" disabled title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+          <button class="btn" disabled title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+          <button class="btn" disabled title="Decrease indentation"><span class="cdx-icon" data-icon="cdxIconOutdent"></span></button>
+          <button class="btn" disabled title="Increase indentation"><span class="cdx-icon" data-icon="cdxIconIndent"></span></button>
         </div>
         <div class="group">
-          <button class="btn" id="btn-link" title="Add link">
+          <button class="btn" disabled title="Link">
             <span class="cdx-icon" data-icon="cdxIconLink"></span>
             <span class="cdx-button__label">Link</span>
           </button>
-          <div class="dropdown" id="dd-cite">
-            <span class="cdx-icon" data-icon="cdxIconReference"></span>
+          <button class="btn" id="openRef" title="Reference">
+            <span style="font-size: 14px; filter: brightness(0.7); margin-right: 6px;">¹²</span>
             <span class="cdx-button__label">Cite</span>
-            <span class="caret"></span>
-            <div class="menu" id="menu-cite">
-              <button data-cite="web">Cite web… (mock)</button>
-              <button data-cite="book">Cite book… (mock)</button>
-              <button data-cite="news">Cite news… (mock)</button>
-            </div>
-          </div>
-          <div class="dropdown" id="dd-insert">
+          </button>
+          <div class="dropdown">
             <span class="cdx-icon" data-icon="cdxIconAdd"></span>
             <span class="cdx-button__label">Insert</span>
-            <span class="caret"></span>
-            <div class="menu" id="menu-insert">
-              <button data-insert="image">Media…</button>
-              <button data-insert="template">Template… (mock)</button>
-              <button data-insert="math">Math… (mock)</button>
-              <button data-insert="table">Table… (mock)</button>
-              <button data-insert="char">Special character…</button>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu">
+              <button>Media…</button>
+              <button>Template…</button>
+              <button>Table…</button>
+              <button>Math formula…</button>
+              <button>Chemical formula…</button>
+              <button>Gallery…</button>
+              <button>Hieroglyphs…</button>
+              <button>Musical notation…</button>
+              <button>Special character…</button>
             </div>
           </div>
         </div>
-        <!-- Creation-specific controls inline with toolbar -->
-        <div class="group" style="margin-left:auto;">
-          <input id="draftTitle" class="title-input-toolbar" type="text" placeholder="Proposed title" aria-label="Proposed title">
-          <select id="destSelect" class="dest-select" aria-label="Destination">
-            <option value="draft" selected>Draft</option>
-            <option value="main">Main</option>
-          </select>
-        </div>
-        <div class="group" style="border-left:none;padding-right:0">
-          <button class="btn publish-btn" id="publish" disabled>Publish</button>
+        <div class="group tight">
+          <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
+          <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
+          <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- VE content wrapper to match section expansion pages -->
-  <main class="ve-content-wrap">
-    <p class="tagline">Create a well-sourced, neutral article</p>
-    <div class="surface">
-      <div class="layout">
-        <aside class="sources-pane" aria-label="Sources">
-      <div class="sources-header">
-        <h2 class="title">Sources</h2>
-        <p class="subtitle">Add reliable links, extract statements, and cite</p>
-      </div>
-      <div class="add-source">
-        <input id="sourceUrl" type="url" placeholder="Paste a source URL…">
-        <button id="addSource" disabled>Add</button>
-      </div>
-      <div class="sources-list" id="sourcesList"></div>
-        </aside>
-
-        <section class="draft-pane" aria-label="Draft">
-          <div class="draft">
-            <section class="editor-wrap">
-              <div id="creationEditor" class="editor"></div>
-            </section>
-            <aside class="checks" id="checks"></aside>
+  <!-- Main container -->
+  <div class="ac-steps" id="articleCreator">
+    
+    <!-- Step 1: Topic Selection -->
+    <div class="ac-step active" id="step1">
+      <div class="step1-content">
+        <h1 class="step1-title">Create a new article</h1>
+        <p class="topic-description">What topic would you like to write about? Choose a category to get specific guidance for your article structure.</p>
+        
+        <div class="category-row">
+          <label for="categorySelect">What type of article are you creating?</label>
+          <div class="category-grid">
+            <div class="category-option" data-category="person">
+              <input type="radio" name="category" value="person" id="cat-person">
+              <label for="cat-person" class="category-label">Biography</label>
+            </div>
+            <div class="category-option" data-category="place">
+              <input type="radio" name="category" value="place" id="cat-place">
+              <label for="cat-place" class="category-label">Geographic Location</label>
+            </div>
+            <div class="category-option" data-category="species">
+              <input type="radio" name="category" value="species" id="cat-species">
+              <label for="cat-species" class="category-label">Species</label>
+            </div>
+            <div class="category-option" data-category="organization">
+              <input type="radio" name="category" value="organization" id="cat-organization">
+              <label for="cat-organization" class="category-label">Organization</label>
+            </div>
+            <div class="category-option" data-category="academic">
+              <input type="radio" name="category" value="academic" id="cat-academic">
+              <label for="cat-academic" class="category-label">Academic Concept</label>
+            </div>
+            <div class="category-option" data-category="creative">
+              <input type="radio" name="category" value="creative" id="cat-creative">
+              <label for="cat-creative" class="category-label">Creative Work</label>
+            </div>
+            <div class="category-option" data-category="event">
+              <input type="radio" name="category" value="event" id="cat-event">
+              <label for="cat-event" class="category-label">Event</label>
+            </div>
+            <div class="category-option" data-category="other">
+              <input type="radio" name="category" value="other" id="cat-other">
+              <label for="cat-other" class="category-label">Other Topic</label>
+            </div>
           </div>
-        </section>
-      </div>
-      <div class="status">
-        <span>Changes are preview‑only in this demo.</span>
-        <span class="badge">VE toolbar mock (Codex icons)</span>
+        </div>
+        
+        <div class="continue-section">
+          <button class="btn-continue" id="continueBtn" disabled>Continue</button>
+        </div>
+        
+        <div class="nav-section">
+          <p>Exploring article creation concepts</p>
+          <a href="index.html" class="link">← Back to concepts overview</a>
+        </div>
       </div>
     </div>
-  </main>
+    
+    <!-- Step 2: Title Entry -->
+    <div class="ac-step" id="step2">
+      <div class="step-nav">
+        <button class="step-back" id="backBtn">← Back</button>
+        <h2 class="step-title">Article title</h2>
+        <span class="draft-status">Draft</span>
+      </div>
+      
+      <div class="start-section">
+        <label for="articleTitle" style="display: block; font-weight: 500; margin-bottom: 8px;">What is the title of your article?</label>
+        <input type="text" id="articleTitle" class="title-input" placeholder="Enter article title..." autocomplete="off">
+        <p style="font-size: 13px; color: #72777d; margin: 8px 0 0 0;">Choose a clear, specific title that follows Wikipedia naming conventions.</p>
+      </div>
+      
+      <div class="continue-section">
+        <button class="btn-continue" id="startWritingBtn" disabled>Start writing</button>
+      </div>
+    </div>
+    
+    <!-- Step 3: Article Writing -->
+    <div class="ac-step" id="step3">
+      <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
+    </div>
+    
+  </div>
 
-  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
-  <script src="creation-script.js"></script>
+  <!-- Guide Sidebar (Desktop) -->
+  <div class="guide-sidebar" id="guideSidebar">
+    <div class="guide-header">
+      <h3 class="guide-title">Article guidance</h3>
+      <button class="close-btn" id="closeSidebar">&times;</button>
+    </div>
+    <div class="guide-content" id="guideContent">
+      <!-- Content will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Guide Modal (Mobile) -->
+  <div class="guide-modal-backdrop" id="guideModalBackdrop">
+    <div class="guide-modal">
+      <div class="guide-header">
+        <h3 class="guide-title">Article guidance</h3>
+        <button class="close-btn" id="closeModalDrawer">&times;</button>
+      </div>
+      <div class="guide-content" id="guideModalContent">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference dialog -->
+  <div class="ref-dialog-backdrop" id="refDialogBackdrop">
+    <div class="ref-dialog">
+      <div class="ref-row">
+        <label for="refUrl">Reference URL</label>
+        <input type="url" id="refUrl" placeholder="https://example.com/article">
+        <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+          <div style="font-size: 12px; color: #72777d;">Source type:</div>
+          <span class="badge" id="refHint">Enter URL to classify</span>
+        </div>
+        <div id="refBadges" style="margin-top: 6px;"></div>
+      </div>
+      <div class="ref-actions">
+        <button id="cancelRef" style="background: #f8f9fa; border: 1px solid #c8ccd1; color: #202122; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+        <button id="insertRef" style="background: #36c; border: 1px solid #36c; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Article creation state
+    let selectedCategory = '';
+    let articleTitle = '';
+    let addedSections = [];
+
+    // Initialize the article creator
+    document.addEventListener('DOMContentLoaded', function() {
+      setupCategorySelection();
+      setupTitleEntry(); 
+      setupEditor();
+      loadArticleSuggestions();
+      setupGuideInterface();
+      setupReferenceDialog();
+      setupNavigation();
+    });
+
+    // Category selection in Step 1
+    function setupCategorySelection() {
+      const categoryOptions = document.querySelectorAll('.category-option');
+      const continueBtn = document.getElementById('continueBtn');
+
+      categoryOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // Remove selected class from all options
+          categoryOptions.forEach(opt => opt.classList.remove('selected'));
+          
+          // Add selected class to clicked option
+          this.classList.add('selected');
+          
+          // Check the radio button
+          const radio = this.querySelector('input[type="radio"]');
+          radio.checked = true;
+          
+          // Store selected category
+          selectedCategory = radio.value;
+          
+          // Enable continue button
+          continueBtn.disabled = false;
+        });
+      });
+
+      // Continue button
+      continueBtn.addEventListener('click', function() {
+        if (selectedCategory) {
+          showStep('step2');
+        }
+      });
+    }
+
+    // Title entry in Step 2
+    function setupTitleEntry() {
+      const titleInput = document.getElementById('articleTitle');
+      const startBtn = document.getElementById('startWritingBtn');
+      const backBtn = document.getElementById('backBtn');
+
+      titleInput.addEventListener('input', function() {
+        articleTitle = this.value.trim();
+        startBtn.disabled = !articleTitle;
+      });
+
+      startBtn.addEventListener('click', function() {
+        if (articleTitle) {
+          startWritingMode();
+        }
+      });
+
+      backBtn.addEventListener('click', function() {
+        showStep('step1');
+      });
+    }
+
+    // Start writing mode - Step 3
+    function startWritingMode() {
+      showStep('step3');
+      
+      // Show VE header and toolbar
+      document.getElementById('veHeader').style.display = 'block';
+      document.getElementById('veToolbar').style.display = 'block';
+      document.getElementById('veTitle').textContent = articleTitle;
+      
+      // Add class to body for step 3 styling
+      document.body.classList.add('ve-in-step3');
+      
+      // Focus the editor
+      const editor = document.getElementById('editor');
+      editor.focus();
+
+      // Show guide sidebar on desktop automatically
+      if (window.innerWidth > 768) {
+        const guideSidebar = document.getElementById('guideSidebar');
+        guideSidebar.classList.add('open');
+      }
+    }
+
+    // Show specific step
+    function showStep(stepId) {
+      // Hide all steps
+      document.querySelectorAll('.ac-step').forEach(step => {
+        step.classList.remove('active');
+      });
+      
+      // Show requested step
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    // Editor setup
+    function setupEditor() {
+      const editor = document.getElementById('editor');
+      
+      // Handle keydown for better formatting behavior
+      editor.addEventListener('keydown', function(e) {
+        // Handle Enter key for better paragraph behavior
+        if (e.key === 'Enter') {
+          const selection = window.getSelection();
+          if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const container = range.startContainer;
+            
+            // Check if we're inside a superscript element
+            if (container.nodeType === Node.TEXT_NODE && container.parentNode.tagName === 'SUP') {
+              e.preventDefault();
+              
+              // Move cursor after the sup element
+              const supElement = container.parentNode;
+              const newRange = document.createRange();
+              newRange.setStartAfter(supElement);
+              newRange.collapse(true);
+              selection.removeAllRanges();
+              selection.addRange(newRange);
+              
+              // Insert a zero-width space to break formatting
+              document.execCommand('insertText', false, '\u200B');
+            } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
+              // We're at the end of a sup element
+              e.preventDefault();
+              
+              const newRange = document.createRange();
+              newRange.setStartAfter(container);
+              newRange.collapse(true);
+              selection.removeAllRanges();
+              selection.addRange(newRange);
+              
+              // Insert a zero-width space to break formatting
+              document.execCommand('insertText', false, '\u200B');
+            }
+          }
+        }
+      });
+    }
+
+    // Setup navigation
+    function setupNavigation() {
+      const closeMobileBtn = document.getElementById('closeMobile');
+      
+      if (closeMobileBtn) {
+        closeMobileBtn.addEventListener('click', function() {
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // Reference dialog functionality
+    let refDialogBackdrop, refDialogUrlInput, refDialogCancelBtn, refDialogInsertBtn, refDialogHint, refDialogBadges;
+
+    function setupReferenceDialog() {
+      refDialogBackdrop = document.getElementById('refDialogBackdrop');
+      refDialogUrlInput = document.getElementById('refUrl');
+      refDialogCancelBtn = document.getElementById('cancelRef');
+      refDialogInsertBtn = document.getElementById('insertRef');
+      refDialogHint = document.getElementById('refHint');
+      refDialogBadges = document.getElementById('refBadges');
+
+      function openDialog() { refDialogBackdrop.style.display = 'block'; refDialogUrlInput.focus(); }
+      function closeDialog() { refDialogBackdrop.style.display = 'none'; }
+
+      let openBtn = document.getElementById('openRef');
+      function bindRef() { openBtn = document.getElementById('openRef'); if (openBtn) { openBtn.onclick = openDialog; } } 
+      bindRef(); 
+      
+      refDialogCancelBtn.onclick = closeDialog; 
+      refDialogBackdrop.addEventListener('click', function(e) { if (e.target === refDialogBackdrop) closeDialog(); });
+      
+      refDialogUrlInput.addEventListener('input', function() { 
+        var c = classify(refDialogUrlInput.value.trim()); 
+        refDialogHint.textContent = c.label; 
+        refDialogHint.className = 'badge ' + (c.cls || ''); 
+      });
+      
+      refDialogInsertBtn.onclick = function() { 
+        var url = refDialogUrlInput.value.trim(); 
+        if (!url) return; 
+        
+        const editor = document.getElementById('editor');
+        if (document.activeElement !== editor) editor.focus(); 
+        document.execCommand('insertText', false, ' [1]'); 
+        var c = classify(url); 
+        refDialogBadges.innerHTML = '<span class="badge ' + (c.cls || '') + '">' + c.label + '</span>'; 
+        closeDialog(); 
+      };
+    }
+
+    // Source classification
+    function classify(url) {
+      if (!url) return { label: 'Enter URL to classify', cls: '' };
+      try {
+        const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+        if (/\.(gov|gov\.[a-z]{2})$/.test(domain)) return { label: 'Government source', cls: 'good' };
+        if (/\.(edu|ac\.[a-z]{2})$/.test(domain)) return { label: 'Academic source', cls: 'good' };
+        if (/(wikipedia|wikimedia)/.test(domain)) return { label: 'Wikipedia (not reliable)', cls: 'warn' };
+        if (/(twitter|facebook|instagram|tiktok|linkedin)/.test(domain)) return { label: 'Social media', cls: 'warn' };
+        if (/(nytimes|theguardian|bbc|bloomberg|reuters|apnews|washingtonpost|wsj|ft\.com)/.test(domain)) return { label: 'News source', cls: 'good' };
+        if (/(medium|substack|blogspot|wordpress)/.test(domain)) return { label: 'Blog/Self-published', cls: 'warn' };
+        return { label: 'General source', cls: '' };
+      } catch {
+        return { label: 'Invalid URL', cls: 'warn' };
+      }
+    }
+
+    // Load article suggestions data
+    let suggestionsData = {};
+    
+    function loadArticleSuggestions() {
+      fetch('article-creation-suggestions.json')
+        .then(response => response.json())
+        .then(data => {
+          suggestionsData = data;
+        })
+        .catch(error => {
+          console.error('Error loading suggestions:', error);
+        });
+    }
+
+    // Guide interface (sidebar/modal)
+    function setupGuideInterface() {
+      const guideSidebar = document.getElementById('guideSidebar');
+      const guideModalBackdrop = document.getElementById('guideModalBackdrop');
+      const addSectionBtn = document.getElementById('addSectionBtn');
+      const guideMeMobileBtn = document.getElementById('guideMeMobile');
+      const closeSidebarBtn = document.getElementById('closeSidebar');
+      const closeModalBtn = document.getElementById('closeModalDrawer');
+
+      function showGuide() {
+        updateGuideContent();
+        
+        if (window.innerWidth <= 768) {
+          guideModalBackdrop.classList.add('show');
+          guideModalBackdrop.style.display = 'block';
+        } else {
+          guideSidebar.classList.add('open');
+        }
+      }
+
+      function hideGuide() {
+        guideSidebar.classList.remove('open');
+        guideModalBackdrop.classList.remove('show');
+        setTimeout(() => {
+          if (!guideModalBackdrop.classList.contains('show')) {
+            guideModalBackdrop.style.display = 'none';
+          }
+        }, 300);
+      }
+
+      if (addSectionBtn) {
+        addSectionBtn.addEventListener('click', showGuide);
+      }
+
+      if (guideMeMobileBtn) {
+        guideMeMobileBtn.addEventListener('click', showGuide);
+      }
+
+      if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener('click', hideGuide);
+      }
+
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', hideGuide);
+      }
+
+      if (guideModalBackdrop) {
+        guideModalBackdrop.addEventListener('click', function(e) {
+          if (e.target === guideModalBackdrop) {
+            hideGuide();
+          }
+        });
+      }
+    }
+
+    // Update guide content
+    function updateGuideContent() {
+      const categoryData = suggestionsData[selectedCategory];
+      if (!categoryData) return;
+
+      let content = '';
+      content += '<div class="accordion-item">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Suggested sections</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">' + categoryData.note + '</p>';
+      
+      // Show all sections
+      categoryData.sections.forEach(function(section, index) {
+        const sectionName = typeof section === 'string' ? section : section.name;
+        const sectionDesc = typeof section === 'string' ? '' : section.description;
+        const sectionInclude = typeof section === 'string' ? [] : (section.include || []);
+        const isAdded = addedSections.indexOf(sectionName) !== -1;
+        const className = isAdded ? 'section-button added' : 'section-button';
+        
+        content += '<button class="' + className + '" data-section="' + sectionName + '">';
+        content += '<span class="section-name">' + sectionName + '</span>';
+        if (sectionDesc) {
+          content += '<span class="section-description">' + sectionDesc + '</span>';
+        }
+        
+        // Add "What to Include" guidance if include items exist
+        if (sectionInclude.length > 0) {
+          content += '<div class="include-guidance" style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 3px; border: 1px solid #eaecf0;">';
+          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">What to include:</div>';
+          content += '<ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #54595d; line-height: 1.4;">';
+          sectionInclude.forEach(function(item) {
+            content += '<li>' + item + '</li>';
+          });
+          content += '</ul>';
+          content += '</div>';
+        }
+        
+        content += '</button>';
+      });
+      content += '</div>';
+      content += '</div>';
+      
+      // Article Eligibility Check Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Article eligibility check</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">Quick check: Does your topic have what Wikipedia needs?</p>';
+      
+      content += '<div class="eligibility-questions">';
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Has your topic been covered in newspapers or magazines?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Are these sources about your topic specifically?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="specific" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="specific" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="specific" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Were these written by independent journalists (not press releases)?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Do you have at least 2 different sources?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div id="eligibilityResult" style="margin-top: 16px; padding: 12px; border-radius: 4px; font-size: 14px; display: none;"></div>';
+      
+      content += '</div>';
+      content += '</div>';
+
+      // Update both desktop and mobile content
+      document.getElementById('guideContent').innerHTML = content;
+      document.getElementById('guideModalContent').innerHTML = content;
+
+      bindSectionButtons();
+      bindEligibilityChecker();
+    }
+
+    // Toggle accordion sections
+    function toggleAccordion(header) {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('.accordion-icon');
+      
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        content.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+      }
+    }
+
+    // Get contextual writing prompt for section based on category
+    function getWritingPromptForSection(sectionName, category) {
+      var prompts = {
+        'person': {
+          'Early life': 'When and where was this person born? What was their childhood like? What about their education and early influences?',
+          'Career': 'What is this person known for professionally? What were their major achievements, works, or contributions?',
+          'Background': 'What\'s important to know about this person\'s background? Include birth, education, and early experiences.',
+          'Overview': 'What are this person\'s main accomplishments? What makes them notable or significant?'
+        },
+        'place': {
+          'Geography': 'Where exactly is this place located? What are its physical features, climate, and natural characteristics?',
+          'History': 'How did this place develop over time? When was it founded or first settled? What major events happened here?',
+          'Background': 'What\'s the historical context of this place? How did it come to be what it is today?',
+          'Overview': 'What are the key facts about this place? What makes it notable or significant?'
+        },
+        'species': {
+          'Description': 'What does this species look like? What are its distinctive physical features that help identify it?',
+          'Habitat': 'Where does this species live? What kind of environment does it need to survive?',
+          'Background': 'What\'s the scientific context of this species? How was it discovered or classified?',
+          'Overview': 'What are the key characteristics of this species? What makes it unique or important?'
+        },
+        'organization': {
+          'History': 'When and why was this organization founded? Who started it and what were the original goals?',
+          'Activities': 'What does this organization actually do? What programs, services, or work does it carry out?',
+          'Background': 'What led to the creation of this organization? What problem was it trying to solve?',
+          'Overview': 'What are the main things this organization does? What impact does it have?'
+        },
+        'academic': {
+          'Definition': 'What exactly does this concept mean? How would you explain it clearly to someone new to the topic?',
+          'Background': 'How did this concept develop? Who were the key people involved in discovering or developing it?',
+          'Overview': 'What are the main aspects of this concept? Why is it important in its field?'
+        },
+        'creative': {
+          'Plot': 'What is this work about? Summarize the main story or content without giving away major spoilers.',
+          'Production': 'How was this work created? Who made it, when, and what was the creative process like?',
+          'Background': 'What inspired this work? What\'s the story behind its creation?',
+          'Overview': 'What is this creative work and what makes it significant or notable?'
+        },
+        'event': {
+          'Background': 'What led up to this event? What were the circumstances and causes that made it happen?',
+          'Timeline': 'What actually happened during this event? Walk through the key moments in chronological order.',
+          'Overview': 'What was this event and why was it important? What were the main outcomes?'
+        },
+        'other': {
+          'Background': 'What\'s the context or history behind this topic? How did it come about or develop?',
+          'Overview': 'What are the main aspects or components of this topic? What should readers know about it?'
+        }
+      };
+
+      // Get category-specific prompts, fallback to 'other' if category not found
+      var categoryPrompts = prompts[category] || prompts['other'];
+      
+      // Return specific prompt for section, or a generic one if not found
+      return categoryPrompts[sectionName] || 'Click here to start writing about ' + sectionName.toLowerCase() + '. What should readers know?';
+    }
+
+    // Add section to editor
+    function addSectionToEditor(sectionName) {
+      if (addedSections.indexOf(sectionName) !== -1) return; // Already added
+      
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+
+      // Add section to tracking
+      addedSections.push(sectionName);
+
+      // Create Wikipedia-style heading with proper styling
+      var currentContent = editor.innerHTML;
+      var hasContent = currentContent.trim() !== '';
+      
+      // Get contextual writing prompt based on section and category
+      var writingPrompt = getWritingPromptForSection(sectionName, selectedCategory);
+      
+      // Create section with Wikipedia-style formatting (no extra breaks)
+      var sectionHTML = '';
+      sectionHTML += '<h2 id="' + sectionName.replace(/\s+/g, '_') + '" style="';
+      sectionHTML += 'font-family: Georgia, serif; ';
+      sectionHTML += 'font-size: 1.5em; ';
+      sectionHTML += 'font-weight: normal; ';
+      sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; '; // More top margin if content exists
+      sectionHTML += 'padding: 0; ';
+      sectionHTML += 'border-bottom: 1px solid #eaecf0; '; // Lighter gray separator
+      sectionHTML += 'padding-bottom: 0.25em;';
+      sectionHTML += '">' + sectionName + '</h2>';
+      sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d; font-style: italic;" data-placeholder="' + writingPrompt + '">' + writingPrompt + '</p>';
+      
+      // Check if References section exists and insert before it
+      var referencesMatch = currentContent.match(/<h2[^>]*id="References"[^>]*>/);
+      if (referencesMatch && hasContent) {
+        var beforeReferences = currentContent.substring(0, referencesMatch.index);
+        var referencesAndAfter = currentContent.substring(referencesMatch.index);
+        editor.innerHTML = beforeReferences + sectionHTML + referencesAndAfter;
+      } else if (hasContent) {
+        editor.innerHTML = currentContent + sectionHTML;
+      } else {
+        editor.innerHTML = sectionHTML;
+      }
+
+      // Position cursor in the newly added section's paragraph
+      editor.focus();
+      var range = document.createRange();
+      var sel = window.getSelection();
+      
+      // Find the specific paragraph for the newly added section
+      var newSectionId = sectionName.replace(/\s+/g, '_');
+      var newSection = editor.querySelector('#' + newSectionId);
+      var newSectionP = null;
+      
+      if (newSection) {
+        // Find the paragraph immediately after this section heading
+        var nextElement = newSection.nextElementSibling;
+        while (nextElement && nextElement.tagName.toLowerCase() !== 'p') {
+          nextElement = nextElement.nextElementSibling;
+        }
+        if (nextElement && nextElement.tagName.toLowerCase() === 'p') {
+          newSectionP = nextElement;
+        }
+      }
+      
+      if (newSectionP) {
+        // Set up click handler to clear writing prompt when user clicks to write
+        newSectionP.addEventListener('click', function() {
+          if (this.style.fontStyle === 'italic' && this.style.color === 'rgb(114, 119, 125)') {
+            this.innerHTML = '';
+            this.style.color = '';
+            this.style.fontStyle = '';
+            
+            // Position cursor at start
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(this, 0);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        });
+        
+        range.setStart(newSectionP, 0);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+
+      // Update content to show new state
+      updateGuideContent();
+    }
+
+    // Bind click handlers to section buttons
+    function bindSectionButtons() {
+      var buttons = document.querySelectorAll('.section-button:not(.added)');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function(e) {
+          var sectionName = this.getAttribute('data-section');
+          addSectionToEditor(sectionName);
+        });
+      });
+    }
+
+    // Bind eligibility checker
+    function bindEligibilityChecker() {
+      const buttons = document.querySelectorAll('.eligibility-btn');
+      const result = document.getElementById('eligibilityResult');
+      let answers = {};
+
+      buttons.forEach(button => {
+        button.addEventListener('click', function() {
+          const question = this.dataset.question;
+          const answer = this.dataset.answer;
+          
+          // Remove selected class from other buttons in same question
+          document.querySelectorAll(`[data-question="${question}"]`).forEach(btn => {
+            btn.classList.remove('selected');
+          });
+          
+          // Add selected class to clicked button
+          this.classList.add('selected');
+          
+          // Store answer
+          answers[question] = answer;
+          
+          // Check if all questions answered
+          const requiredQuestions = ['coverage', 'specific', 'independent', 'multiple'];
+          const allAnswered = requiredQuestions.every(q => answers[q]);
+          
+          if (allAnswered) {
+            showEligibilityResult(answers, result);
+          }
+        });
+      });
+    }
+
+    function showEligibilityResult(answers, resultEl) {
+      const yesCount = Object.values(answers).filter(a => a === 'yes').length;
+      const noCount = Object.values(answers).filter(a => a === 'no').length;
+      
+      let message = '';
+      let className = '';
+      
+      if (yesCount >= 3) {
+        message = '✅ Great! Your topic likely meets Wikipedia\'s inclusion criteria. You have reliable, independent sources that provide significant coverage.';
+        className = 'good';
+      } else if (noCount >= 2) {
+        message = '❌ Your topic may not meet Wikipedia\'s standards yet. Consider finding more independent, reliable sources that focus specifically on your topic.';
+        className = 'warn';
+      } else {
+        message = '⚠️ Your topic might be suitable, but gather stronger sources. Look for newspaper articles, magazine features, or academic papers that discuss your topic in detail.';
+        className = 'neutral';
+      }
+      
+      resultEl.innerHTML = message;
+      resultEl.className = className;
+      resultEl.style.display = 'block';
+      
+      if (className === 'good') {
+        resultEl.style.backgroundColor = '#d4edda';
+        resultEl.style.borderColor = '#c3e6cb';
+        resultEl.style.color = '#155724';
+      } else if (className === 'warn') {
+        resultEl.style.backgroundColor = '#f8d7da';
+        resultEl.style.borderColor = '#f5c6cb';
+        resultEl.style.color = '#721c24';
+      } else {
+        resultEl.style.backgroundColor = '#fff3cd';
+        resultEl.style.borderColor = '#ffeaa7';
+        resultEl.style.color = '#856404';
+      }
+    }
+
+  </script>
+
 </body>
 </html>
