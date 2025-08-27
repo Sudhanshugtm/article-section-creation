@@ -51,7 +51,80 @@ body { margin: 0; font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto; col
 .creation-controls .dest input { accent-color: #36c; }
 .draft { display: flex; gap: 16px; padding: 16px; box-sizing: border-box; }
 .editor-wrap { flex: 2; display: flex; flex-direction: column; min-width: 0; }
-.editor { flex: 1; border: 1px solid var(--border-soft); border-radius: 4px; background: #fff; }
+.editor { 
+  flex: 1; 
+  background: #fff; 
+  border: none;
+  border-radius: 0;
+  min-height: 400px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 16px 0;
+}
+
+/* Quill editor content styling to match Wikipedia */
+.ql-editor {
+  font-family: Georgia, serif !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  color: #202122;
+}
+
+/* Wikipedia-style headings in Quill */
+.ql-editor h1 {
+  font-family: Georgia, serif !important;
+  font-size: 2em !important;
+  font-weight: normal !important;
+  margin: 1.5em 0 0.5em 0 !important;
+  padding: 0 !important;
+  border-bottom: 3px solid #eaecf0 !important;
+  padding-bottom: 0.25em !important;
+}
+
+.ql-editor h2 {
+  font-family: Georgia, serif !important;
+  font-size: 1.5em !important;
+  font-weight: normal !important;
+  margin: 2em 0 0.25em 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #eaecf0 !important;
+  padding-bottom: 0.25em !important;
+}
+
+.ql-editor h3 {
+  font-family: Georgia, serif !important;
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+  margin: 1.5em 0 0.25em 0 !important;
+  padding: 0 !important;
+}
+
+.ql-editor p {
+  margin: 0.75em 0 !important;
+  line-height: 1.6 !important;
+}
+
+/* Hide or minimize Quill toolbar to match VE look */
+.ql-toolbar {
+  display: none !important;
+}
+
+/* Style the container to look more like Wikipedia article */
+.ql-container {
+  border: none !important;
+  font-family: Georgia, serif !important;
+}
+
+/* Placeholder styling */
+.ql-editor.ql-blank::before {
+  font-style: italic !important;
+  color: #72777d !important;
+  font-family: Georgia, serif !important;
+}
 .checks { width: 320px; border: 1px solid var(--border-soft); border-radius: 4px; padding: 12px; height: fit-content; background: #fff; }
 .checks h4 { margin: 0 0 8px; }
 .check { font-size: 13px; margin: 6px 0; }

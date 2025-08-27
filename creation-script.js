@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toolbar: false,
       history: { delay: 250, maxStack: 100, userOnly: true }
     },
-    placeholder: 'Start a neutral, well-sourced lead…',
+    placeholder: 'Type the lead...',
     theme: 'snow'
   });
 
