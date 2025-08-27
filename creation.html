@@ -15,8 +15,131 @@
     .chip-row { display: flex; gap: 8px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
     .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #a2a9b1; border-radius: 12px; font-size: 12px; cursor: pointer; background: #f8f9fa; }
     .chip.reference { border-color: #36c; color: #36c; background: #eef3ff; }
-    .editor { min-height: 260px; outline: none; }
+    .editor { 
+      min-height: 260px; 
+      outline: none; 
+      position: relative;
+    }
     .editor[contenteditable="true"]:empty:before { content: attr(data-placeholder); color: #72777d; }
+
+    /* Smart chips that appear below cursor */
+    .smart-chips-container {
+      position: absolute;
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      z-index: 100;
+      max-width: 400px;
+    }
+
+    .smart-chips-container.show {
+      display: flex;
+    }
+
+    .smart-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: 1px solid #c8ccd1;
+      border-radius: 12px;
+      background: #f8f9fa;
+      color: #36c;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .smart-chip:hover {
+      background: #eaecf0;
+      border-color: #a2a9b1;
+    }
+
+    .smart-chip.primary {
+      background: #eef3ff;
+      border-color: #36c;
+      color: #36c;
+    }
+
+    .smart-chip-icon {
+      font-size: 11px;
+    }
+
+    /* Template insertion popup */
+    .template-popup {
+      position: absolute;
+      display: none;
+      background: white;
+      border: 1px solid #eaecf0;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 8px 0;
+      min-width: 200px;
+      max-width: 320px;
+      z-index: 200;
+    }
+
+    .template-popup.show {
+      display: block;
+    }
+
+    .template-option {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: white;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      color: #202122;
+    }
+
+    .template-option:hover {
+      background: #f8f9fa;
+    }
+
+    .template-option-title {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .template-option-desc {
+      font-size: 11px;
+      color: #72777d;
+    }
+
+    /* Template placeholders in content */
+    .template-placeholder {
+      color: #36c;
+      background: #eef3ff;
+      padding: 1px 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      user-select: none;
+      font-style: italic;
+    }
+
+    .template-placeholder:hover {
+      background: #dbe7ff;
+    }
+
+    /* Source verification indicators */
+    .needs-source {
+      border-left: 3px solid #fc3;
+      padding-left: 8px;
+      margin: 4px 0;
+      background: #fffbf0;
+    }
+
+    .source-reminder {
+      font-size: 11px;
+      color: #ac6600;
+      margin-top: 4px;
+      font-style: italic;
+    }
     .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
     .verify-note.show { display: block; }
     .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
@@ -908,7 +1031,32 @@
             </div>
           </section>
           <section class="ac-step" id="step3">
-            <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
+            <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead...">
+              <!-- Smart chips container -->
+              <div class="smart-chips-container" id="smartChips">
+                <div class="smart-chip primary" data-action="template">
+                  <span class="smart-chip-icon">📝</span>
+                  <span>Template</span>
+                </div>
+                <div class="smart-chip" data-action="section">
+                  <span class="smart-chip-icon">📑</span>
+                  <span>Section</span>
+                </div>
+                <div class="smart-chip" data-action="source">
+                  <span class="smart-chip-icon">🔗</span>
+                  <span>Source</span>
+                </div>
+                <div class="smart-chip" data-action="assistance">
+                  <span class="smart-chip-icon">✨</span>
+                  <span>Help</span>
+                </div>
+              </div>
+              
+              <!-- Template popup -->
+              <div class="template-popup" id="templatePopup">
+                <!-- Will be populated by JavaScript based on context -->
+              </div>
+            </div>
           </section>
         </div>
       </div>
@@ -2393,6 +2541,323 @@
       updateGuideContent();
       initializeSourceModal();
     });
+
+    // Smart Chips functionality
+    let smartChipsContainer, templatePopup, currentCursorPosition;
+
+    function initializeSmartChips() {
+      smartChipsContainer = document.getElementById('smartChips');
+      templatePopup = document.getElementById('templatePopup');
+      
+      // Add event listeners to smart chips
+      const smartChips = document.querySelectorAll('.smart-chip');
+      smartChips.forEach(chip => {
+        chip.addEventListener('click', handleSmartChipClick);
+      });
+
+      // Show chips when editor is focused and empty or cursor is at new line
+      const editor = document.getElementById('editor');
+      editor.addEventListener('keyup', handleEditorKeyup);
+      editor.addEventListener('click', handleEditorClick);
+      
+      // Hide popups when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.smart-chips-container') && !e.target.closest('.template-popup')) {
+          hideTemplatePopup();
+          hideSmartChips();
+        }
+      });
+    }
+
+    function handleEditorKeyup(e) {
+      // Show chips in certain conditions
+      if (shouldShowSmartChips()) {
+        showSmartChipsAtCursor();
+      } else {
+        hideSmartChips();
+      }
+    }
+
+    function handleEditorClick(e) {
+      setTimeout(() => {
+        if (shouldShowSmartChips()) {
+          showSmartChipsAtCursor();
+        } else {
+          hideSmartChips();
+        }
+      }, 10);
+    }
+
+    function shouldShowSmartChips() {
+      const editor = document.getElementById('editor');
+      const selection = window.getSelection();
+      
+      if (!selection.rangeCount) return false;
+      
+      const range = selection.getRangeAt(0);
+      const container = range.startContainer;
+      
+      // Show if editor is empty
+      if (editor.textContent.trim() === '') return true;
+      
+      // Show if at the beginning of a new paragraph
+      if (container.nodeType === Node.TEXT_NODE) {
+        const text = container.textContent;
+        const offset = range.startOffset;
+        
+        // At start of paragraph or after line break
+        if (offset === 0 || text.charAt(offset - 1) === '\n') {
+          return true;
+        }
+      }
+      
+      return false;
+    }
+
+    function showSmartChipsAtCursor() {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      
+      const range = selection.getRangeAt(0);
+      currentCursorPosition = range.cloneRange();
+      
+      // Position chips below cursor
+      const rect = range.getBoundingClientRect();
+      const editor = document.getElementById('editor');
+      const editorRect = editor.getBoundingClientRect();
+      
+      smartChipsContainer.style.left = (rect.left - editorRect.left) + 'px';
+      smartChipsContainer.style.top = (rect.bottom - editorRect.top + 4) + 'px';
+      smartChipsContainer.classList.add('show');
+    }
+
+    function hideSmartChips() {
+      smartChipsContainer.classList.remove('show');
+    }
+
+    function handleSmartChipClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const action = this.dataset.action;
+      
+      switch(action) {
+        case 'template':
+          showTemplatePopup();
+          break;
+        case 'section':
+          insertNewSection();
+          break;
+        case 'source':
+          openReferenceDialog();
+          break;
+        case 'assistance':
+          showGuideInterface();
+          break;
+      }
+      
+      hideSmartChips();
+    }
+
+    function showTemplatePopup() {
+      const templates = getContextualTemplates();
+      
+      let html = '';
+      templates.forEach(template => {
+        html += `
+          <button class="template-option" data-template="${template.id}">
+            <div class="template-option-title">${template.title}</div>
+            <div class="template-option-desc">${template.description}</div>
+          </button>
+        `;
+      });
+      
+      templatePopup.innerHTML = html;
+      
+      // Position popup relative to smart chips
+      const rect = smartChipsContainer.getBoundingClientRect();
+      const editor = document.getElementById('editor');
+      const editorRect = editor.getBoundingClientRect();
+      
+      templatePopup.style.left = (rect.left - editorRect.left) + 'px';
+      templatePopup.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+      templatePopup.classList.add('show');
+      
+      // Add click handlers to template options
+      const options = templatePopup.querySelectorAll('.template-option');
+      options.forEach(option => {
+        option.addEventListener('click', function() {
+          insertTemplate(this.dataset.template);
+          hideTemplatePopup();
+        });
+      });
+    }
+
+    function hideTemplatePopup() {
+      templatePopup.classList.remove('show');
+    }
+
+    function getContextualTemplates() {
+      const category = selectedCat || 'other';
+      const editor = document.getElementById('editor');
+      const isEmpty = editor.textContent.trim() === '';
+      
+      let templates = [];
+      
+      if (isEmpty) {
+        // Lead paragraph templates
+        switch(category) {
+          case 'person':
+            templates.push({
+              id: 'person-lead',
+              title: 'Biography introduction',
+              description: 'Template for introducing a person'
+            });
+            break;
+          case 'place':
+            templates.push({
+              id: 'place-lead',
+              title: 'Location introduction',
+              description: 'Template for introducing a place'
+            });
+            break;
+          case 'organization':
+            templates.push({
+              id: 'org-lead',
+              title: 'Organization introduction',
+              description: 'Template for introducing an organization'
+            });
+            break;
+          default:
+            templates.push({
+              id: 'generic-lead',
+              title: 'Generic introduction',
+              description: 'Basic introduction template'
+            });
+        }
+      } else {
+        // Section templates
+        templates.push({
+          id: 'basic-paragraph',
+          title: 'Paragraph starter',
+          description: 'Template for a new paragraph'
+        });
+      }
+      
+      return templates;
+    }
+
+    function insertTemplate(templateId) {
+      const editor = document.getElementById('editor');
+      const template = getTemplateContent(templateId);
+      
+      // Restore cursor position
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(currentCursorPosition);
+      
+      // Insert template with placeholders
+      const templateHTML = createTemplateHTML(template);
+      document.execCommand('insertHTML', false, templateHTML);
+      
+      // Focus first placeholder
+      setTimeout(() => {
+        const firstPlaceholder = editor.querySelector('.template-placeholder');
+        if (firstPlaceholder) {
+          selectPlaceholder(firstPlaceholder);
+        }
+      }, 10);
+    }
+
+    function getTemplateContent(templateId) {
+      const templates = {
+        'person-lead': {
+          text: '[NAME] was born on [DATE] in [LOCATION]. [He/She] is known for [MAIN_ACHIEVEMENT]. [Additional context about significance].',
+          needsSource: true
+        },
+        'place-lead': {
+          text: '[PLACE_NAME] is a [TYPE] located in [LOCATION]. It is known for [MAIN_FEATURE] and has a population of [POPULATION].',
+          needsSource: true
+        },
+        'org-lead': {
+          text: '[ORGANIZATION_NAME] is a [TYPE] founded in [YEAR] in [LOCATION]. The organization focuses on [MAIN_PURPOSE].',
+          needsSource: true
+        },
+        'generic-lead': {
+          text: '[TOPIC] is [DEFINITION]. It is significant because [IMPORTANCE].',
+          needsSource: true
+        },
+        'basic-paragraph': {
+          text: '[TOPIC_SENTENCE]. [Supporting details]. [Conclusion or transition].',
+          needsSource: true
+        }
+      };
+      
+      return templates[templateId] || templates['generic-lead'];
+    }
+
+    function createTemplateHTML(template) {
+      let html = template.text;
+      
+      // Replace placeholders with clickable spans
+      html = html.replace(/\[([^\]]+)\]/g, '<span class="template-placeholder" data-placeholder="$1">$1</span>');
+      
+      if (template.needsSource) {
+        html += ' <span class="source-reminder">Add source</span>';
+      }
+      
+      return html;
+    }
+
+    function selectPlaceholder(placeholder) {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(placeholder);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      
+      // Add click handler to replace placeholder
+      placeholder.addEventListener('click', function() {
+        selectPlaceholder(this);
+      });
+    }
+
+    function insertNewSection() {
+      // Use existing section functionality from sidebar
+      const guideSidebar = document.getElementById('guideSidebar');
+      if (window.innerWidth > 768) {
+        guideSidebar.classList.add('open');
+      } else {
+        const guideModalBackdrop = document.getElementById('guideModalBackdrop');
+        guideModalBackdrop.classList.add('show');
+        guideModalBackdrop.style.display = 'block';
+      }
+      updateGuideContent();
+    }
+
+    function openReferenceDialog() {
+      // Use existing reference dialog
+      const refDialog = document.getElementById('refDialogBackdrop');
+      refDialog.style.display = 'block';
+      document.getElementById('refUrl').focus();
+    }
+
+    function showGuideInterface() {
+      // Open sidebar or modal with guidance
+      insertNewSection();
+    }
+
+    // Initialize smart chips when Step 3 becomes active
+    const originalToStep3 = window.toStep3;
+    window.toStep3 = function() {
+      if (originalToStep3) originalToStep3();
+      setTimeout(initializeSmartChips, 100);
+    };
+
+    // Also initialize if we're already in step 3
+    if (document.getElementById('step3').classList.contains('active')) {
+      initializeSmartChips();
+    }
 
   </script>
 </body>
