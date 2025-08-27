@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Article Creator — Source-based Concept</title>
+  <title>Article Creator — Reference Chip Concept</title>
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
   <link rel="stylesheet" href="reading-styles.css">
@@ -49,302 +49,634 @@
       z-index: 100;
     }
     
-    .step1-title {
-      font-size: 1.8rem;
-      color: var(--color-base);
-      margin: 0 0 20px 0;
-      text-align: center;
+    /* Responsive positioning for mobile with keyboard */
+    @media (max-height: 600px) {
+      #step1.ac-step {
+        position: fixed;
+        top: 30%;
+        transform: translate(-50%, -30%);
+      }
     }
     
-    .topic-description {
-      text-align: center;
-      font-size: 14px;
-      color: var(--color-subtle);
-      margin-bottom: 24px;
-      line-height: 1.4;
+    @media (max-width: 768px) {
+      #step1.ac-step {
+        width: 95%;
+        padding: 20px;
+      }
+      
+      /* Adjust for mobile keyboard */
+      @media (max-height: 500px) {
+        #step1.ac-step {
+          top: 20%;
+          transform: translate(-50%, -20%);
+        }
+      }
     }
     
-    .start-section {
-      margin: 16px 0;
+    /* Center Step 2 in viewport */
+    #step2.ac-step {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      max-width: 700px;
+      width: 90%;
+      z-index: 100;
     }
     
-    /* Navigation section */
-    .nav-section {
-      border-top: 1px solid #eaecf0;
-      padding-top: 16px;
-      text-align: center;
-      margin-top: 24px;
+    /* Responsive positioning for Step 2 */
+    @media (max-width: 768px) {
+      #step2.ac-step {
+        width: 95%;
+        padding: 20px;
+        top: 45%;
+        transform: translate(-50%, -45%);
+      }
     }
     
-    .nav-section p {
-      color: #72777d;
-      font-size: 13px;
-      margin-bottom: 12px;
+    .ac-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+    .ac-actions .btn { height: 34px; padding: 0 12px; border: 1px solid #c8ccd1; border-radius: 4px; background: #fff; cursor: pointer; }
+    .ac-actions .btn.primary { background: #36c; color: #fff; border-color: #36c; }
+    .category-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin: 8px 0 4px; }
+    .category-item { border: 1px solid #c8ccd1; border-radius: 4px; padding: 10px; cursor: pointer; background: #fff; }
+    .category-item:hover { background: #f8f9fa; }
+    .category-item.selected { border-color: #36c; box-shadow: 0 0 0 2px #eaf3ff; }
+    .hint { font-size: 12px; color: #72777d; margin-top: 6px; }
+    /* Hide the VE chrome by default - show when Step 3 is active */
+    .ve-in-step3 #veHeader,
+    .ve-in-step3 #veToolbar {
+      display: block !important;
     }
     
-    .nav-section .link {
-      color: #36c;
-      text-decoration: none;
-      font-size: 13px;
+    /* Mobile-only: Hide header and show footer instead */
+    @media (max-width: 768px) {
+      .ve-in-step3 #veHeader {
+        display: none !important;
+      }
+      
+      .ve-in-step3 #veFooter {
+        display: block !important;
+      }
+      
+      /* Footer styling - mobile only */
+      .ve-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid var(--border-color-subtle, #eaecf0);
+        padding: 8px 16px;
+        font-size: 12px;
+        color: var(--color-subtle, #54595d);
+        z-index: 10;
+      }
+      
+      .ve-footer .status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
     }
     
-    .nav-section .link:hover {
-      text-decoration: underline;
-    }
-
-    /* Topic categories */
-    .category-row {
-      margin: 20px 0;
+    /* Clean layout for Step 3 */
+    .ve-in-step3 .creator-wrap {
+      max-width: none;
+      padding: 0;
     }
     
-    .category-row label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 12px;
-      color: #202122;
+    .ve-in-step3 #step3 {
+      border: none;
+      background: transparent;
+      padding: 0;
     }
     
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
+    .ve-in-step3 #editor {
+      border: none;
+      background: transparent;
+      min-height: 400px;
+      padding: 16px 0;
     }
     
-    .category-option {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      border: 1px solid #c8ccd1;
-      border-radius: 4px;
-      background: #f8f9fa;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      user-select: none;
+    /* Primary button styling for publish/submit buttons */
+    .btn.primary {
+      background: #36c !important;
+      color: #fff !important;
+      border-color: #36c !important;
     }
     
-    .category-option:hover {
-      background: #eaecf0;
-      border-color: #a2a9b1;
+    .btn.primary:hover {
+      background: #2a4b8d !important;
+      border-color: #2a4b8d !important;
     }
     
-    .category-option.selected {
-      background: #eef3ff;
-      border-color: #36c;
-      color: #36c;
-    }
-    
-    .category-option input[type="radio"] {
-      margin: 0 12px 0 0;
-      accent-color: #36c;
-    }
-    
-    .category-label {
-      font-weight: 500;
-      font-size: 14px;
-    }
-
-    /* Continue button section */
-    .continue-section {
-      text-align: center;
-      margin-top: 32px;
-    }
-    
-    .btn-continue {
-      background: #36c;
-      color: #fff;
-      border: 1px solid #36c;
-      border-radius: 4px;
-      padding: 10px 24px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    
-    .btn-continue:hover:not(:disabled) {
-      background: #2a4b8d;
-      border-color: #2a4b8d;
-    }
-    
-    .btn-continue:disabled {
-      background: #eaecf0;
-      color: #a2a9b1;
-      border-color: #eaecf0;
-      cursor: not-allowed;
-    }
-    
-    /* Step 2 specific */
-    #step2.ac-step { padding: 24px; }
-    
-    .step-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #eaecf0;
-    }
-    
-    .step-back {
-      background: none;
-      border: 1px solid #c8ccd1;
-      color: #36c;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    
-    .step-back:hover {
-      background: #f8f9fa;
-    }
-    
-    .step-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin: 0;
-    }
-    
-    .draft-status {
-      font-size: 13px;
-      color: #72777d;
-    }
-
-    /* Guide Sidebar */
+    /* Guide Me Sidebar */
     .guide-sidebar {
       position: fixed;
       top: 0;
       right: -400px;
-      width: 360px;
+      width: 400px;
       height: 100vh;
       background: #fff;
-      border-left: 1px solid #eaecf0;
+      border-left: 1px solid var(--border-color-subtle, #eaecf0);
+      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
       z-index: 1000;
       transition: right 0.3s ease;
       overflow-y: auto;
-      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
     }
-
+    
     .guide-sidebar.open {
       right: 0;
     }
-
+    
     .guide-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #eaecf0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
       background: #f8f9fa;
     }
-
-    .guide-title {
+    
+    .guide-header h3 {
+      margin: 0;
       font-size: 16px;
       font-weight: 600;
-      margin: 0;
       color: #202122;
     }
-
+    
     .close-btn {
       background: none;
       border: none;
-      font-size: 18px;
+      font-size: 20px;
       cursor: pointer;
       color: #72777d;
       padding: 4px;
-      line-height: 1;
+      border-radius: 4px;
     }
-
+    
     .close-btn:hover {
+      background: #eaecf0;
       color: #202122;
     }
-
+    
     .guide-content {
       padding: 20px;
     }
-
-    .guide-note {
-      font-size: 14px;
-      color: #54595d;
-      margin-bottom: 16px;
-      line-height: 1.4;
+    
+    .guide-section {
+      margin-bottom: 24px;
     }
-
-    /* Section suggestions */
-    .section-button {
-      display: block;
-      width: 100%;
-      text-align: left;
-      padding: 12px 16px;
+    
+    .guide-section h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .guide-section ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style-type: disc;
+    }
+    
+    .guide-section li {
       margin-bottom: 8px;
-      border: 1px solid #c8ccd1;
-      border-radius: 4px;
-      background: #f8f9fa;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #54595d;
     }
-
-    .section-button:hover {
-      background: #eaecf0;
-      border-color: #a2a9b1;
+    
+    .guide-section li strong {
+      color: #202122;
     }
-
-    .section-button.added {
-      background: #eef3ff;
-      border-color: #36c;
-      color: #36c;
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .guide-sidebar {
+        display: none; /* Hide sidebar on mobile, use modal instead */
+      }
     }
-
-    .section-button.added::after {
-      content: " ✓";
-      color: #14866d;
-    }
-
-    .section-name {
-      display: block;
-      font-weight: 500;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .section-description {
-      display: block;
-      font-size: 12px;
-      color: #72777d;
-      line-height: 1.3;
-    }
-
-    /* Mobile guide modal */
+    
+    /* Guide Me Modal Drawer (Mobile) */
     .guide-modal-backdrop {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      inset: 0;
+      background: rgba(0,0,0,0.5);
       z-index: 2000;
     }
-
-    .guide-modal {
+    
+    .guide-modal-backdrop.open {
+      display: block;
+    }
+    
+    .guide-modal-drawer {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       background: #fff;
-      border-radius: 12px 12px 0 0;
-      max-height: 85vh;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      max-height: 70vh;
       overflow-y: auto;
       transform: translateY(100%);
       transition: transform 0.3s ease;
-      z-index: 2001;
     }
-
-    .guide-modal-backdrop.show .guide-modal {
+    
+    .guide-modal-backdrop.open .guide-modal-drawer {
       transform: translateY(0);
     }
-
-    /* Action buttons in sidebar */
+    
+    .guide-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
+      background: #f8f9fa;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    
+    .guide-modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .guide-modal-content {
+      padding: 20px;
+    }
+    
+    /* Section suggestion buttons */
+    .section-button {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #fff;
+      color: #202122;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .section-button:hover {
+      background: #f8f9fa;
+      border-color: #a2a9b1;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .section-button.added {
+      background: #eaf3ff;
+      border-color: #36c;
+      color: #36c;
+      cursor: default;
+    }
+    
+    .section-button.added::after {
+      content: " ✓";
+      float: right;
+    }
+    
+    .section-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    
+    .section-description {
+      font-size: 12px;
+      color: #72777d;
+      line-height: 1.3;
+      display: block;
+      margin-bottom: 6px;
+    }
+    
+    
+    /* Source button styling */
+    .source-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      background: #f8f9fa;
+      color: #202122;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      gap: 10px;
+    }
+    
+    .source-button:hover {
+      background: #eaecf0;
+      border-color: #a2a9b1;
+    }
+    
+    .source-button-icon {
+      font-size: 16px;
+    }
+    
+    .source-button-text {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    /* Source modal styling */
+    .source-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+    }
+    
+    .source-modal-backdrop[aria-hidden="false"] {
+      display: block;
+    }
+    
+    .source-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 1px solid #eaecf0;
+      border-radius: 8px;
+      width: 600px;
+      max-width: 92vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    
+    .source-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eaecf0;
+      background: #f8f9fa;
+    }
+    
+    .source-modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .source-modal-content {
+      padding: 20px;
+    }
+    
+    .source-input-section label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #202122;
+    }
+    
+    .source-input-section input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #c8ccd1;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font: inherit;
+      margin-bottom: 12px;
+    }
+    
+    .source-note {
+      font-size: 12px;
+      color: #ac6600;
+      background: #fef6e7;
+      border: 1px solid #fc3;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 20px;
+    }
+    
+    .source-verification h4,
+    .draft-preview h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #202122;
+    }
+    
+    .verification-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    
+    .step-icon {
+      font-size: 14px;
+      width: 16px;
+    }
+    
+    .verification-step.completed .step-icon {
+      color: #14866d;
+    }
+    
+    .verification-step.completed .step-text {
+      color: #14866d;
+    }
+    
+    .source-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .source-badge.reliable {
+      background: #d5fdf4;
+      color: #14866d;
+      border: 1px solid #14866d;
+    }
+    
+    .source-badge.questionable {
+      background: #fef6e7;
+      color: #ac6600;
+      border: 1px solid #fc3;
+    }
+    
+    .reliability-note {
+      font-size: 12px;
+      color: #54595d;
+    }
+    
+    .draft-warning {
+      background: #fef6e7;
+      border: 1px solid #fc3;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #ac6600;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    
+    .draft-content {
+      background: #f8f9fa;
+      border: 1px solid #eaecf0;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .source-modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 16px 20px;
+      border-top: 1px solid #eaecf0;
+      background: #f8f9fa;
+    }
+    
+    .guide-note {
+      font-size: 12px;
+      color: #72777d;
+      margin: 12px 0 16px 0;
+      font-style: italic;
+    }
+    
+    /* Sidebar source verification styles */
+    .source-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .source-url-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    
+    .source-url-input:focus {
+      border-color: #36c;
+      outline: none;
+      box-shadow: inset 0 0 0 1px #36c;
+    }
+    
+    .source-check-btn {
+      padding: 8px 16px;
+      background: #36c;
+      color: white;
+      border: 1px solid #36c;
+      border-radius: 2px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .source-check-btn:hover {
+      background: #2a4b8d;
+      border-color: #2a4b8d;
+    }
+    
+    .source-check-btn:disabled {
+      background: #a2a9b1;
+      border-color: #a2a9b1;
+      cursor: not-allowed;
+    }
+    
+    .source-warning {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    
+    .sidebar-verification-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    
+    .sidebar-step-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #eaecf0;
+      color: #72777d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+    
+    .sidebar-step-icon.active {
+      background: #36c;
+      color: white;
+    }
+    
+    .sidebar-step-icon.completed {
+      background: #00af89;
+      color: white;
+    }
+    
+    .sidebar-source-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .sidebar-source-badge.reliable {
+      background: #d5fdf4;
+      color: #00af89;
+      border: 1px solid #00af89;
+    }
+    
+    .sidebar-source-badge.questionable {
+      background: #fef6e7;
+      color: #ac6600;
+      border: 1px solid #fc3;
+    }
+    
+    .sidebar-draft-content {
+      background: #f8f9fa;
+      border: 1px solid #eaecf0;
+      border-radius: 2px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
     .sidebar-action-buttons {
       display: flex;
       gap: 8px;
@@ -401,7 +733,7 @@
       color: white;
       border-color: #36c;
     }
-
+    
     /* Hide modal on desktop */
     @media (min-width: 769px) {
       .guide-modal-backdrop {
@@ -446,98 +778,91 @@
     <div class="ve-bar">
       <!-- Mobile toolbar -->
       <div class="mobile-toolbar">
-        <button class="btn" id="closeMobile" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
-        <button class="btn" disabled title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
-        <div class="dropdown">
+        <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+        <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+        <div class="dropdown" id="dd-style-mobile">
           <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
           <span class="caret" aria-hidden="true"></span>
-          <div class="menu">
-            <button>Bold</button>
-            <button>Italic</button>
+          <div class="menu" id="menu-style-mobile">
+            <button data-style="bold">Bold</button>
+            <button data-style="italic">Italic</button>
+            <button data-style="underline">Underline</button>
+            <button data-style="strike">Strikethrough</button>
+            <button data-style="clean">Clear styling</button>
           </div>
         </div>
-        <button class="btn" disabled title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
-        <button class="btn" id="openRefMobile" title="Reference"><span style="font-size: 14px; filter: brightness(0.7);">¹²</span></button>
-        <div class="dropdown">
-          <span class="cdx-icon" data-icon="cdxIconEdit"></span>
-          <span class="caret" aria-hidden="true"></span>
-          <div class="menu">
-            <button>Media…</button>
-          </div>
-        </div>
-        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
+        <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+        <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
+        <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
 
       <!-- Desktop toolbar -->
       <div class="desktop-toolbar">
         <div class="group tight">
-          <button class="btn" disabled title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
-          <button class="btn" disabled title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
         </div>
         <div class="group">
-          <div class="dropdown">
+          <div class="dropdown" id="dd-paragraph">
             <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
             <span class="cdx-button__label">Paragraph</span>
             <span class="caret" aria-hidden="true"></span>
-            <div class="menu">
-              <button>Paragraph</button>
-              <button>Heading</button>
-              <button>Subheading 1</button>
-              <button>Subheading 2</button>
-              <button>Subheading 3</button>
-              <button>Subheading 4</button>
+            <div class="menu" id="menu-paragraph">
+              <button data-header="">Paragraph</button>
+              <button data-header="1">Heading 1</button>
+              <button data-header="2">Heading 2</button>
+              <button data-header="3">Heading 3</button>
+              <button data-header="4">Heading 4</button>
+              <button data-header="5">Heading 5</button>
+              <button data-header="6">Heading 6</button>
+              <button data-header="code">Preformatted</button>
             </div>
           </div>
         </div>
         <div class="group">
-          <div class="dropdown">
+          <div class="dropdown" id="dd-style">
             <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
             <span class="cdx-button__label">A</span>
             <span class="caret" aria-hidden="true"></span>
-            <div class="menu">
-              <button>Bold</button>
-              <button>Italic</button>
-              <button>Superscript</button>
-              <button>Subscript</button>
-              <button>Strikethrough</button>
-              <button>Code</button>
-              <button>Underline</button>
-              <button>Language</button>
-              <button>Big</button>
-              <button>Small</button>
-              <button>Clear styling</button>
+            <div class="menu" id="menu-style">
+              <button data-style="bold">Bold</button>
+              <button data-style="italic">Italic</button>
+              <button data-style="underline">Underline</button>
+              <button data-style="strike">Strikethrough</button>
+              <button data-style="clean">Clear styling</button>
             </div>
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" disabled title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
-          <button class="btn" disabled title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
-          <button class="btn" disabled title="Decrease indentation"><span class="cdx-icon" data-icon="cdxIconOutdent"></span></button>
-          <button class="btn" disabled title="Increase indentation"><span class="cdx-icon" data-icon="cdxIconIndent"></span></button>
+          <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+          <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
         </div>
         <div class="group">
-          <button class="btn" disabled title="Link">
+          <button class="btn" id="btn-link" title="Add link">
             <span class="cdx-icon" data-icon="cdxIconLink"></span>
             <span class="cdx-button__label">Link</span>
           </button>
-          <button class="btn" id="openRef" title="Reference">
-            <span style="font-size: 14px; filter: brightness(0.7); margin-right: 6px;">¹²</span>
+          <div class="dropdown" id="dd-cite">
+            <span class="cdx-icon" data-icon="cdxIconReference"></span>
             <span class="cdx-button__label">Cite</span>
-          </button>
-          <div class="dropdown">
+            <span class="caret"></span>
+            <div class="menu" id="menu-cite">
+              <button data-cite="web">Cite web… (mock)</button>
+              <button data-cite="book">Cite book… (mock)</button>
+              <button data-cite="news">Cite news… (mock)</button>
+            </div>
+          </div>
+          <div class="dropdown" id="dd-insert">
             <span class="cdx-icon" data-icon="cdxIconAdd"></span>
             <span class="cdx-button__label">Insert</span>
-            <span class="caret" aria-hidden="true"></span>
-            <div class="menu">
-              <button>Media…</button>
-              <button>Template…</button>
-              <button>Table…</button>
-              <button>Math formula…</button>
-              <button>Chemical formula…</button>
-              <button>Gallery…</button>
-              <button>Hieroglyphs…</button>
-              <button>Musical notation…</button>
-              <button>Special character…</button>
+            <span class="caret"></span>
+            <div class="menu" id="menu-insert">
+              <button data-insert="image">Media…</button>
+              <button data-insert="template">Template… (mock)</button>
+              <button data-insert="math">Math… (mock)</button>
+              <button data-insert="table">Table… (mock)</button>
+              <button data-insert="char">Special character…</button>
             </div>
           </div>
         </div>
@@ -546,276 +871,285 @@
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
+        <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
+          <button class="btn publish-btn" id="publish" disabled>Publish</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Main container -->
-  <div class="ac-steps" id="articleCreator">
-    
-    <!-- Step 1: Topic Selection -->
-    <div class="ac-step active" id="step1">
-      <div class="step1-content">
-        <h1 class="step1-title">Create a new article</h1>
-        <p class="topic-description">What topic would you like to write about? Choose a category to get specific guidance for your article structure.</p>
+  <main class="ve-content-wrap">
+    <div class="surface">
+      <div class="creator-wrap">
+        <div class="ac-steps">
+          <section class="ac-step active" id="step1">
+            <h3>What article would you like to create?</h3>
+            <input id="title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
+            <div class="ac-actions">
+              <button class="btn primary" id="toStep2" disabled>Continue</button>
+            </div>
+          </section>
+          <section class="ac-step" id="step2">
+            <h3>Assign a topic category</h3>
+            <div class="category-list" id="categoryList">
+              <div class="category-item" data-cat="person">Person / Biography</div>
+              <div class="category-item" data-cat="place">Geographic Location</div>
+              <div class="category-item" data-cat="species">Species / Biology</div>
+              <div class="category-item" data-cat="organization">Organization</div>
+              <div class="category-item" data-cat="academic">Academic / Concept</div>
+              <div class="category-item" data-cat="creative">Creative Work</div>
+              <div class="category-item" data-cat="event">Event</div>
+              <div class="category-item" data-cat="other">Other</div>
+            </div>
+            <div class="hint">This helps us suggest the right structure and policies.</div>
+            <div class="ac-actions">
+              <button class="btn" id="backTo1">Back</button>
+              <button class="btn primary" id="toStep3" disabled>Start editing</button>
+            </div>
+          </section>
+          <section class="ac-step" id="step3">
+            <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
+          </section>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- Guide Me Sidebar -->
+  <div class="guide-sidebar" id="guideSidebar">
+    <div class="guide-header">
+      <h3>Writing guidance</h3>
+      <button class="close-btn" id="closeSidebar" title="Close">×</button>
+    </div>
+    <div class="guide-content" id="guideContent">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <!-- Guide Me Modal Drawer (Mobile) -->
+  <div class="guide-modal-backdrop" id="guideModalBackdrop">
+    <div class="guide-modal-drawer" id="guideModalDrawer">
+      <div class="guide-modal-header">
+        <h3>Writing guidance</h3>
+        <button class="close-btn" id="closeModalDrawer" title="Close">×</button>
+      </div>
+      <div class="guide-modal-content" id="guideModalContent">
+        <!-- Content will be dynamically loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer status (shown only in Step 3) -->
+  <footer class="ve-footer" id="veFooter" style="display: none;">
+    <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
+  </footer>
+
+  <!-- Source verification modal -->
+  <div class="source-modal-backdrop" id="sourceModalBackdrop" aria-hidden="true">
+    <div class="source-modal" role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle">
+      <div class="source-modal-header">
+        <h3 id="sourceModalTitle">Add content from a reliable source</h3>
+        <button class="close-btn" id="closeSourceModal" title="Close">×</button>
+      </div>
+      <div class="source-modal-content">
+        <div class="source-input-section">
+          <label for="sourceUrl">Source URL</label>
+          <input type="url" id="sourceUrl" placeholder="https://example.com/article" />
+        </div>
         
-        <div class="category-row">
-          <label for="categorySelect">What type of article are you creating?</label>
-          <div class="category-grid">
-            <div class="category-option" data-category="person">
-              <input type="radio" name="category" value="person" id="cat-person">
-              <label for="cat-person" class="category-label">Biography</label>
+        <div class="source-verification" id="sourceVerification" style="display: none;">
+          <h4>Source verification</h4>
+          <div class="verification-steps" id="verificationSteps">
+            <div class="verification-step" id="step1">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Checking domain...</span>
             </div>
-            <div class="category-option" data-category="place">
-              <input type="radio" name="category" value="place" id="cat-place">
-              <label for="cat-place" class="category-label">Geographic Location</label>
+            <div class="verification-step" id="step2">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Verifying reliability...</span>
             </div>
-            <div class="category-option" data-category="species">
-              <input type="radio" name="category" value="species" id="cat-species">
-              <label for="cat-species" class="category-label">Species</label>
+            <div class="verification-step" id="step3">
+              <span class="step-icon">⏳</span>
+              <span class="step-text">Checking HTTPS security...</span>
             </div>
-            <div class="category-option" data-category="organization">
-              <input type="radio" name="category" value="organization" id="cat-organization">
-              <label for="cat-organization" class="category-label">Organization</label>
-            </div>
-            <div class="category-option" data-category="academic">
-              <input type="radio" name="category" value="academic" id="cat-academic">
-              <label for="cat-academic" class="category-label">Academic Concept</label>
-            </div>
-            <div class="category-option" data-category="creative">
-              <input type="radio" name="category" value="creative" id="cat-creative">
-              <label for="cat-creative" class="category-label">Creative Work</label>
-            </div>
-            <div class="category-option" data-category="event">
-              <input type="radio" name="category" value="event" id="cat-event">
-              <label for="cat-event" class="category-label">Event</label>
-            </div>
-            <div class="category-option" data-category="other">
-              <input type="radio" name="category" value="other" id="cat-other">
-              <label for="cat-other" class="category-label">Other Topic</label>
-            </div>
+          </div>
+          <div class="source-result" id="sourceResult" style="display: none;">
+            <div class="source-badge" id="sourceBadge"></div>
+            <div class="reliability-note" id="reliabilityNote"></div>
           </div>
         </div>
         
-        <div class="continue-section">
-          <button class="btn-continue" id="continueBtn" disabled>Continue</button>
-        </div>
-        
-        <div class="nav-section">
-          <p>Exploring article creation concepts</p>
-          <a href="index.html" class="link">← Back to concepts overview</a>
+        <div class="draft-preview" id="draftPreview" style="display: none;">
+          <h4>Draft content preview</h4>
+          <div class="draft-content" id="draftContent"></div>
         </div>
       </div>
-    </div>
-    
-    <!-- Step 2: Title Entry -->
-    <div class="ac-step" id="step2">
-      <div class="step-nav">
-        <button class="step-back" id="backBtn">← Back</button>
-        <h2 class="step-title">Article title</h2>
-        <span class="draft-status">Draft</span>
-      </div>
-      
-      <div class="start-section">
-        <label for="articleTitle" style="display: block; font-weight: 500; margin-bottom: 8px;">What is the title of your article?</label>
-        <input type="text" id="articleTitle" class="title-input" placeholder="Enter article title..." autocomplete="off">
-        <p style="font-size: 13px; color: #72777d; margin: 8px 0 0 0;">Choose a clear, specific title that follows Wikipedia naming conventions.</p>
-      </div>
-      
-      <div class="continue-section">
-        <button class="btn-continue" id="startWritingBtn" disabled>Start writing</button>
-      </div>
-    </div>
-    
-    <!-- Step 3: Article Writing -->
-    <div class="ac-step" id="step3">
-      <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
-    </div>
-    
-  </div>
-
-  <!-- Guide Sidebar (Desktop) -->
-  <div class="guide-sidebar" id="guideSidebar">
-    <div class="guide-header">
-      <h3 class="guide-title">Article guidance</h3>
-      <button class="close-btn" id="closeSidebar">&times;</button>
-    </div>
-    <div class="guide-content" id="guideContent">
-      <!-- Content will be populated by JavaScript -->
-    </div>
-  </div>
-
-  <!-- Guide Modal (Mobile) -->
-  <div class="guide-modal-backdrop" id="guideModalBackdrop">
-    <div class="guide-modal">
-      <div class="guide-header">
-        <h3 class="guide-title">Article guidance</h3>
-        <button class="close-btn" id="closeModalDrawer">&times;</button>
-      </div>
-      <div class="guide-content" id="guideModalContent">
-        <!-- Content will be populated by JavaScript -->
+      <div class="source-modal-actions">
+        <button class="btn" id="cancelSource">Cancel</button>
+        <button class="btn" id="checkSourceBtn">Check source</button>
+        <button class="btn primary" id="generateDraftBtn" style="display: none;">Create draft from source</button>
+        <button class="btn primary" id="insertDraftBtn" style="display: none;">Insert as draft</button>
       </div>
     </div>
   </div>
 
-  <!-- Reference dialog -->
-  <div class="ref-dialog-backdrop" id="refDialogBackdrop">
-    <div class="ref-dialog">
-      <div class="ref-row">
-        <label for="refUrl">Reference URL</label>
-        <input type="url" id="refUrl" placeholder="https://example.com/article">
-        <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-          <div style="font-size: 12px; color: #72777d;">Source type:</div>
-          <span class="badge" id="refHint">Enter URL to classify</span>
-        </div>
-        <div id="refBadges" style="margin-top: 6px;"></div>
-      </div>
+  <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
+    <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
+      <div class="ref-row"><strong id="refTitle">Add reference</strong> <span id="refHint" class="badge">unclassified</span></div>
+      <div class="ref-row"><label for="refUrl">Source URL</label><input id="refUrl" type="url" placeholder="https://example.com/article"></div>
+      <div class="ref-row"><label for="refTitleInput">Title (optional)</label><input id="refTitleInput" type="text" placeholder="Article title"></div>
       <div class="ref-actions">
-        <button id="cancelRef" style="background: #f8f9fa; border: 1px solid #c8ccd1; color: #202122; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
-        <button id="insertRef" style="background: #36c; border: 1px solid #36c; color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Insert</button>
+        <button class="btn" id="refCancel">Cancel</button>
+        <button class="btn primary" id="refInsert">Insert cite</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Article creation state
-    let selectedCategory = '';
-    let articleTitle = '';
-    let addedSections = [];
+    // === Codex Icons via MW API ===
+    async function loadCodexIcons(iconNames) {
+      const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
+        '&names=' + encodeURIComponent(iconNames.join('|'));
+      const res = await fetch(url);
+      const data = await res.json();
+      const out = {};
+      const map = data?.query?.codexicons || {};
+      
+      for (const k of Object.keys(map)) {
+        const entry = map[k];
+        const path = typeof entry === 'string' ? entry : (entry.ltr || entry.default || Object.values(entry.langCodeMap || {})[0] || '');
+        out[k] = path;
+      }
+      return out;
+    }
 
-    // Initialize the article creator
-    document.addEventListener('DOMContentLoaded', function() {
-      setupCategorySelection();
-      setupTitleEntry(); 
-      setupEditor();
-      loadArticleSuggestions();
-      setupGuideInterface();
-      setupReferenceDialog();
-      setupNavigation();
-    });
-
-    // Category selection in Step 1
-    function setupCategorySelection() {
-      const categoryOptions = document.querySelectorAll('.category-option');
-      const continueBtn = document.getElementById('continueBtn');
-
-      categoryOptions.forEach(option => {
-        option.addEventListener('click', function() {
-          // Remove selected class from all options
-          categoryOptions.forEach(opt => opt.classList.remove('selected'));
-          
-          // Add selected class to clicked option
-          this.classList.add('selected');
-          
-          // Check the radio button
-          const radio = this.querySelector('input[type="radio"]');
-          radio.checked = true;
-          
-          // Store selected category
-          selectedCategory = radio.value;
-          
-          // Enable continue button
-          continueBtn.disabled = false;
+    // Apply icons on load
+    (function applyIcons() {
+      const nodes = Array.from(document.querySelectorAll('.cdx-icon[data-icon]'));
+      const names = Array.from(new Set(nodes.map(n => n.getAttribute('data-icon'))));
+      
+      loadCodexIcons(names).then(paths => {
+        nodes.forEach(n => {
+          const name = n.getAttribute('data-icon');
+          const p = paths[name];
+          if (p) {
+            n.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">' + p + '</svg>';
+          }
         });
-      });
+      }).catch(console.error);
+    })();
+    // Steps
+    var titleInput=document.getElementById('title');
+    var toStep2=document.getElementById('toStep2');
+    var toStep3=document.getElementById('toStep3');
+    var backTo1=document.getElementById('backTo1');
+    var step1=document.getElementById('step1');
+    var step2=document.getElementById('step2');
+    var step3=document.getElementById('step3');
+    var categoryList=document.getElementById('categoryList');
+    var selectedCat=null;
 
-      // Continue button
-      continueBtn.addEventListener('click', function() {
-        if (selectedCategory) {
-          showStep('step2');
-        }
-      });
-    }
-
-    // Title entry in Step 2
-    function setupTitleEntry() {
-      const titleInput = document.getElementById('articleTitle');
-      const startBtn = document.getElementById('startWritingBtn');
-      const backBtn = document.getElementById('backBtn');
-
-      titleInput.addEventListener('input', function() {
-        articleTitle = this.value.trim();
-        startBtn.disabled = !articleTitle;
-      });
-
-      startBtn.addEventListener('click', function() {
-        if (articleTitle) {
-          startWritingMode();
-        }
-      });
-
-      backBtn.addEventListener('click', function() {
-        showStep('step1');
-      });
-    }
-
-    // Start writing mode - Step 3
-    function startWritingMode() {
-      showStep('step3');
+    titleInput.addEventListener('input', function(){ toStep2.disabled = !(titleInput.value.trim().length>0); });
+    toStep2.onclick=function(){ 
+      step1.classList.remove('active'); 
+      step2.classList.add('active'); 
       
-      // Show VE header and toolbar
-      document.getElementById('veHeader').style.display = 'block';
-      document.getElementById('veToolbar').style.display = 'block';
-      document.getElementById('veTitle').textContent = articleTitle;
+      // Update Step 2 title with the entered topic
+      var step2Title = step2.querySelector('h3');
+      var userTopic = titleInput.value.trim();
+      if (step2Title && userTopic) {
+        step2Title.textContent = 'What is "' + userTopic + '"?';
+      }
+    };
+    backTo1 && (backTo1.onclick=function(){ step2.classList.remove('active'); step1.classList.add('active'); });
+    categoryList && categoryList.addEventListener('click', function(e){
+      var item=e.target.closest('.category-item'); if(!item) return;
+      Array.from(categoryList.querySelectorAll('.category-item')).forEach(function(n){n.classList.remove('selected');});
+      item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); toStep3.disabled=false;
       
-      // Add class to body for step 3 styling
+      // Update guide content when category changes
+      setTimeout(updateGuideContent, 100);
+    });
+    toStep3 && (toStep3.onclick=function(){
+      step2.classList.remove('active');
+      step3.classList.add('active');
+      
+      // Activate VE interface
       document.body.classList.add('ve-in-step3');
       
-      // Focus the editor
-      const editor = document.getElementById('editor');
-      editor.focus();
-
-      // Show guide sidebar on desktop automatically
-      if (window.innerWidth > 768) {
-        const guideSidebar = document.getElementById('guideSidebar');
-        guideSidebar.classList.add('open');
-      }
-    }
-
-    // Show specific step
-    function showStep(stepId) {
-      // Hide all steps
-      document.querySelectorAll('.ac-step').forEach(step => {
-        step.classList.remove('active');
+      var ed = document.getElementById('editor');
+      var t = titleInput.value.trim();
+      var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      
+      // Update VE header title
+      var veTitle = document.getElementById('veTitle');
+      if (veTitle) veTitle.textContent = safeTitle;
+      
+      // Initialize editor with just placeholder and cursor
+      ed.innerHTML = '';
+      ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      
+      // Focus editor to show blinking cursor
+      ed.focus();
+      
+      // Add input listener to activate publish/submit buttons when user starts typing
+      ed.addEventListener('input', function() {
+        var publishBtn = document.getElementById('publish');
+        var submitBtn = document.getElementById('submit');
+        
+        if (ed.textContent.trim().length > 0) {
+          // Desktop publish button
+          if (publishBtn) {
+            publishBtn.disabled = false;
+            publishBtn.classList.add('primary');
+            publishBtn.textContent = 'Publish changes';
+          }
+          
+          // Mobile submit button  
+          if (submitBtn) {
+            submitBtn.classList.add('primary');
+            submitBtn.style.background = '#36c';
+            submitBtn.style.color = '#fff';
+            submitBtn.style.borderColor = '#36c';
+            // Make the icon white too
+            var icon = submitBtn.querySelector('.cdx-icon svg');
+            if (icon) icon.style.color = '#fff';
+          }
+        } else {
+          // Reset buttons when content is empty
+          if (publishBtn) {
+            publishBtn.disabled = true;
+            publishBtn.classList.remove('primary');
+            publishBtn.textContent = 'Publish';
+          }
+          
+          if (submitBtn) {
+            submitBtn.classList.remove('primary');
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
+            submitBtn.style.borderColor = '';
+            // Reset icon color too
+            var icon = submitBtn.querySelector('.cdx-icon svg');
+            if (icon) icon.style.color = '';
+          }
+        }
       });
       
-      // Show requested step
-      document.getElementById(stepId).classList.add('active');
-    }
-
-    // Editor setup
-    function setupEditor() {
-      const editor = document.getElementById('editor');
-      
-      // Handle keydown for better formatting behavior
-      editor.addEventListener('keydown', function(e) {
-        // Handle Enter key for better paragraph behavior
-        if (e.key === 'Enter') {
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            const container = range.startContainer;
-            
-            // Check if we're inside a superscript element
-            if (container.nodeType === Node.TEXT_NODE && container.parentNode.tagName === 'SUP') {
-              e.preventDefault();
-              
-              // Move cursor after the sup element
-              const supElement = container.parentNode;
-              const newRange = document.createRange();
-              newRange.setStartAfter(supElement);
-              newRange.collapse(true);
-              selection.removeAllRanges();
-              selection.addRange(newRange);
-              
-              // Insert a zero-width space to break formatting
-              document.execCommand('insertText', false, '\u200B');
-            } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
-              // We're at the end of a sup element
-              e.preventDefault();
-              
-              const newRange = document.createRange();
-              newRange.setStartAfter(container);
+      // Fix superscript formatting sticking after references
+      ed.addEventListener('keyup', function(e) {
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          var range = selection.getRangeAt(0);
+          var container = range.commonAncestorContainer;
+          
+          // Check if cursor is right after a superscript element
+          if (container.nodeType === Node.TEXT_NODE) {
+            var parent = container.parentNode;
+            if (parent && parent.tagName === 'SUP') {
+              // We're inside a sup element, move cursor outside
+              var newRange = document.createRange();
+              newRange.setStartAfter(parent);
               newRange.collapse(true);
               selection.removeAllRanges();
               selection.addRange(newRange);
@@ -823,155 +1157,123 @@
               // Insert a zero-width space to break formatting
               document.execCommand('insertText', false, '\u200B');
             }
+          } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
+            // We're at the end of a sup element
+            var newRange = document.createRange();
+            newRange.setStartAfter(container);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+            
+            // Insert a zero-width space to break formatting
+            document.execCommand('insertText', false, '\u200B');
           }
         }
       });
-    }
-
-    // Setup navigation
-    function setupNavigation() {
-      const closeMobileBtn = document.getElementById('closeMobile');
       
-      if (closeMobileBtn) {
-        closeMobileBtn.addEventListener('click', function() {
-          window.location.href = 'index.html';
-        });
-      }
-    }
-
-    // Reference dialog functionality
-    let refDialogBackdrop, refDialogUrlInput, refDialogCancelBtn, refDialogInsertBtn, refDialogHint, refDialogBadges;
-
-    function setupReferenceDialog() {
-      refDialogBackdrop = document.getElementById('refDialogBackdrop');
-      refDialogUrlInput = document.getElementById('refUrl');
-      refDialogCancelBtn = document.getElementById('cancelRef');
-      refDialogInsertBtn = document.getElementById('insertRef');
-      refDialogHint = document.getElementById('refHint');
-      refDialogBadges = document.getElementById('refBadges');
-
-      function openDialog() { refDialogBackdrop.style.display = 'block'; refDialogUrlInput.focus(); }
-      function closeDialog() { refDialogBackdrop.style.display = 'none'; }
-
-      let openBtn = document.getElementById('openRef');
-      function bindRef() { openBtn = document.getElementById('openRef'); if (openBtn) { openBtn.onclick = openDialog; } } 
-      bindRef(); 
-      
-      refDialogCancelBtn.onclick = closeDialog; 
-      refDialogBackdrop.addEventListener('click', function(e) { if (e.target === refDialogBackdrop) closeDialog(); });
-      
-      refDialogUrlInput.addEventListener('input', function() { 
-        var c = classify(refDialogUrlInput.value.trim()); 
-        refDialogHint.textContent = c.label; 
-        refDialogHint.className = 'badge ' + (c.cls || ''); 
+      // Also fix on input to handle pasting
+      ed.addEventListener('input', function(e) {
+        // Remove any lingering blue color from non-superscript text
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          var range = selection.getRangeAt(0);
+          var container = range.commonAncestorContainer;
+          
+          if (container.nodeType === Node.TEXT_NODE) {
+            var parent = container.parentNode;
+            // If we're in a span with blue color but not in a sup, remove the color
+            if (parent && parent.style && parent.style.color === 'rgb(6, 69, 173)' && parent.tagName !== 'SUP') {
+              parent.style.color = '';
+            }
+          }
+        }
       });
-      
-      refDialogInsertBtn.onclick = function() { 
-        var url = refDialogUrlInput.value.trim(); 
-        if (!url) return; 
-        
-        const editor = document.getElementById('editor');
-        if (document.activeElement !== editor) editor.focus(); 
-        document.execCommand('insertText', false, ' [1]'); 
-        var c = classify(url); 
-        refDialogBadges.innerHTML = '<span class="badge ' + (c.cls || '') + '">' + c.label + '</span>'; 
-        closeDialog(); 
-      };
+
+      // Open guidance automatically when entering editing (Step 3)
+      // Desktop only; delay to avoid immediate close from the click event
+      if (!isMobile()) {
+        setTimeout(function(){ showGuide(); }, 50);
+      }
+    });
+
+    // Reference dialog
+    var openBtn=null;
+    var backdrop=document.getElementById('refBackdrop');
+    var cancelBtn=document.getElementById('refCancel');
+    var insertBtn=document.getElementById('refInsert');
+    var urlInput=document.getElementById('refUrl');
+    var hint=document.getElementById('refHint');
+    var editor=document.getElementById('editor');
+    var verify=document.getElementById('verify');
+    var refBadges=document.getElementById('refBadges');
+    function classify(url){ try{ var h=new URL(url).hostname; if(/\.(gov|gov\.[a-z]{2})$/i.test(h)) return {label:'gov',cls:'good'}; if(/\.(edu|ac\.[a-z]{2})$/i.test(h)) return {label:'edu',cls:'good'}; if(/(reuters|apnews|bbc|nytimes|guardian|bloomberg|washingtonpost|ft\.com)/i.test(h)) return {label:'news',cls:'good'}; if(/(prnewswire|businesswire|globenewswire|newswire|press)/i.test(h)) return {label:'press release',cls:'warn'}; return {label:'unclassified',cls:''}; }catch(e){ return {label:'unclassified',cls:''}; } }
+    function openDialog(){ backdrop.style.display='block'; urlInput.focus(); }
+    function closeDialog(){ backdrop.style.display='none'; }
+    function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
+    urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
+    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
+
+    // Guide Me functionality - Desktop Sidebar & Mobile Modal
+    var guideSidebar = document.getElementById('guideSidebar');
+    var guideModalBackdrop = document.getElementById('guideModalBackdrop');
+    var addSectionBtn = document.getElementById('addSectionBtn');
+    var guideMeMobileBtn = document.getElementById('guideMeMobile');
+    var closeSidebarBtn = document.getElementById('closeSidebar');
+    var closeModalBtn = document.getElementById('closeModalDrawer');
+    var guideContent = document.getElementById('guideContent');
+    var guideModalContent = document.getElementById('guideModalContent');
+    var addedSections = [];
+    var suggestionsData = null;
+
+    // Function to check if we're on mobile
+    function isMobile() {
+      return window.innerWidth <= 768;
     }
 
-    // Source classification
-    function classify(url) {
-      if (!url) return { label: 'Enter URL to classify', cls: '' };
+    // Load suggestions data
+    async function loadSuggestions() {
       try {
-        const domain = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
-        if (/\.(gov|gov\.[a-z]{2})$/.test(domain)) return { label: 'Government source', cls: 'good' };
-        if (/\.(edu|ac\.[a-z]{2})$/.test(domain)) return { label: 'Academic source', cls: 'good' };
-        if (/(wikipedia|wikimedia)/.test(domain)) return { label: 'Wikipedia (not reliable)', cls: 'warn' };
-        if (/(twitter|facebook|instagram|tiktok|linkedin)/.test(domain)) return { label: 'Social media', cls: 'warn' };
-        if (/(nytimes|theguardian|bbc|bloomberg|reuters|apnews|washingtonpost|wsj|ft\.com)/.test(domain)) return { label: 'News source', cls: 'good' };
-        if (/(medium|substack|blogspot|wordpress)/.test(domain)) return { label: 'Blog/Self-published', cls: 'warn' };
-        return { label: 'General source', cls: '' };
-      } catch {
-        return { label: 'Invalid URL', cls: 'warn' };
+        const response = await fetch('article-creation-suggestions.json');
+        suggestionsData = await response.json();
+      } catch (error) {
+        console.error('Failed to load suggestions:', error);
+        suggestionsData = null;
       }
     }
 
-    // Load article suggestions data
-    let suggestionsData = {};
-    
-    function loadArticleSuggestions() {
-      fetch('article-creation-suggestions.json')
-        .then(response => response.json())
-        .then(data => {
-          suggestionsData = data;
-        })
-        .catch(error => {
-          console.error('Error loading suggestions:', error);
-        });
-    }
-
-    // Guide interface (sidebar/modal)
-    function setupGuideInterface() {
-      const guideSidebar = document.getElementById('guideSidebar');
-      const guideModalBackdrop = document.getElementById('guideModalBackdrop');
-      const addSectionBtn = document.getElementById('addSectionBtn');
-      const guideMeMobileBtn = document.getElementById('guideMeMobile');
-      const closeSidebarBtn = document.getElementById('closeSidebar');
-      const closeModalBtn = document.getElementById('closeModalDrawer');
-
-      function showGuide() {
-        updateGuideContent();
-        
-        if (window.innerWidth <= 768) {
-          guideModalBackdrop.classList.add('show');
-          guideModalBackdrop.style.display = 'block';
-        } else {
-          guideSidebar.classList.add('open');
-        }
+    // Generate guide content based on selected category
+    function generateGuideContent() {
+      if (!selectedCat || !suggestionsData || !suggestionsData[selectedCat]) {
+        return getDefaultGuideContent();
       }
 
-      function hideGuide() {
-        guideSidebar.classList.remove('open');
-        guideModalBackdrop.classList.remove('show');
-        setTimeout(() => {
-          if (!guideModalBackdrop.classList.contains('show')) {
-            guideModalBackdrop.style.display = 'none';
-          }
-        }, 300);
-      }
-
-      if (addSectionBtn) {
-        addSectionBtn.addEventListener('click', showGuide);
-      }
-
-      if (guideMeMobileBtn) {
-        guideMeMobileBtn.addEventListener('click', showGuide);
-      }
-
-      if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', hideGuide);
-      }
-
-      if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', hideGuide);
-      }
-
-      if (guideModalBackdrop) {
-        guideModalBackdrop.addEventListener('click', function(e) {
-          if (e.target === guideModalBackdrop) {
-            hideGuide();
-          }
-        });
-      }
-    }
-
-    // Update guide content
-    function updateGuideContent() {
-      const categoryData = suggestionsData[selectedCategory];
-      if (!categoryData) return;
-
-      let content = '';
+      const categoryData = suggestionsData[selectedCat];
+      let content = '<div class="guide-section">';
+      
+      // Introduction Accordion
       content += '<div class="accordion-item">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Introduction</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
+      
+      // Show introduction examples if available
+      if (categoryData.introduction && categoryData.introduction.examples) {
+        content += '<p class="guide-note" style="margin-top: 12px; font-weight: 500;">Examples from Wikipedia:</p>';
+        categoryData.introduction.examples.forEach(function(example) {
+          content += '<div class="intro-example" style="background: #f8f9fa; border-left: 3px solid #0645ad; padding: 10px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
+          content += '<div class="example-title" style="font-weight: bold; color: #0645ad; margin-bottom: 4px;">' + example.title + '</div>';
+          content += '<div class="example-text" style="color: #222;">' + example.text + '</div>';
+          content += '</div>';
+        });
+      }
+      content += '</div>';
+      content += '</div>';
+      
+      // Suggested Sections Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
       content += '<h4 style="margin: 0;">Suggested sections</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
@@ -979,7 +1281,7 @@
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
       content += '<p class="guide-note">' + categoryData.note + '</p>';
       
-      // Show all sections
+      // Show all sections (only 3, no References)
       categoryData.sections.forEach(function(section, index) {
         const sectionName = typeof section === 'string' ? section : section.name;
         const sectionDesc = typeof section === 'string' ? '' : section.description;
@@ -1030,11 +1332,11 @@
       content += '</div>';
       
       content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
-      content += '<div style="font-weight: 500; margin-bottom: 8px;">Are these sources about your topic specifically?</div>';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Are these sources from well-known news sites or publications?</div>';
       content += '<div class="eligibility-options">';
-      content += '<button class="eligibility-btn" data-question="specific" data-answer="yes">Yes</button>';
-      content += '<button class="eligibility-btn" data-question="specific" data-answer="maybe">Maybe</button>';
-      content += '<button class="eligibility-btn" data-question="specific" data-answer="no">No</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="no">No</button>';
       content += '</div>';
       content += '</div>';
       
@@ -1061,12 +1363,58 @@
       
       content += '</div>';
       content += '</div>';
+      
+      // Add from Source Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Add from source</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">Helper for citing reliable sources</p>';
+      content += '<div id="sourceVerificationArea">';
+      content += '<div class="source-input-group">';
+      content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
+      content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
+      content += '</div>';
+      content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
+      content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
+      content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
+      content += '</div>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '</div>';
+      
+      return content;
+    }
 
-      // Update both desktop and mobile content
-      document.getElementById('guideContent').innerHTML = content;
-      document.getElementById('guideModalContent').innerHTML = content;
+    // Default content when no category is selected
+    function getDefaultGuideContent() {
+      return '<div class="guide-section">' +
+        '<h4>✨ Getting started</h4>' +
+        '<ul>' +
+        '<li>Start with a clear opening sentence that defines your topic</li>' +
+        '<li>Include key facts in the first paragraph</li>' +
+        '<li>Use reliable sources throughout</li>' +
+        '</ul>' +
+        '<p class="guide-note">Select a category in Step 2 to see specific section suggestions for your article type.</p>' +
+        '</div>';
+    }
 
+    // Update guide content in both sidebar and modal
+    function updateGuideContent() {
+      const content = generateGuideContent();
+      if (guideContent) guideContent.innerHTML = content;
+      if (guideModalContent) guideModalContent.innerHTML = content;
+      
+      // Add click handlers to section buttons
       bindSectionButtons();
+      
+      // Bind source button
+      bindSourceButton();
+      
+      // Bind eligibility checker
       bindEligibilityChecker();
     }
 
@@ -1082,6 +1430,29 @@
         content.style.display = 'none';
         icon.style.transform = 'rotate(-90deg)';
       }
+    }
+
+    // Clean up extra breaks and empty elements that cause visual separators
+    function cleanupExtraBreaks() {
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+      
+      var content = editor.innerHTML;
+      
+      // Remove multiple consecutive BR tags
+      content = content.replace(/<br\s*\/?>\s*<br\s*\/?>/g, '<br>');
+      
+      // Remove BR tags that appear right before H2 elements (causing extra separators)
+      content = content.replace(/<br\s*\/?>\s*(<h2)/g, '$1');
+      
+      // Remove empty divs that might contain only whitespace or BR tags
+      content = content.replace(/<div[^>]*>(\s|<br\s*\/?>)*<\/div>/g, '');
+      
+      // Remove empty paragraphs but PRESERVE those with data-placeholder attribute
+      content = content.replace(/<p(?![^>]*data-placeholder)[^>]*>(\s|<br\s*\/?>|&nbsp;)*<\/p>/g, '');
+      
+      // Update editor content
+      editor.innerHTML = content;
     }
 
     // Get contextual writing prompt for section based on category
@@ -1182,6 +1553,9 @@
         editor.innerHTML = sectionHTML;
       }
 
+      // Clean up any extra BR tags or empty divs that might create visual separators
+      cleanupExtraBreaks();
+
       // Position cursor in the newly added section's paragraph
       editor.focus();
       var range = document.createRange();
@@ -1242,77 +1616,784 @@
       });
     }
 
-    // Bind eligibility checker
+    // Function to show guide interface
+    function showGuide() {
+      // Update content before showing
+      updateGuideContent();
+      
+      if (isMobile()) {
+        guideModalBackdrop.classList.add('open');
+      } else {
+        guideSidebar.classList.add('open');
+      }
+    }
+
+    // Function to hide guide interface
+    function hideGuide() {
+      guideSidebar.classList.remove('open');
+      guideModalBackdrop.classList.remove('open');
+    }
+
+    // Function to bind article eligibility checker functionality
     function bindEligibilityChecker() {
       const buttons = document.querySelectorAll('.eligibility-btn');
-      const result = document.getElementById('eligibilityResult');
-      let answers = {};
-
-      buttons.forEach(button => {
+      const resultDiv = document.getElementById('eligibilityResult');
+      
+      if (buttons.length === 0 || !resultDiv) return;
+      
+      const answers = {};
+      
+      buttons.forEach(function(button) {
         button.addEventListener('click', function() {
-          const question = this.dataset.question;
-          const answer = this.dataset.answer;
+          const question = this.getAttribute('data-question');
+          const answer = this.getAttribute('data-answer');
           
-          // Remove selected class from other buttons in same question
-          document.querySelectorAll(`[data-question="${question}"]`).forEach(btn => {
-            btn.classList.remove('selected');
-          });
-          
-          // Add selected class to clicked button
-          this.classList.add('selected');
-          
-          // Store answer
+          // Update answer
           answers[question] = answer;
           
-          // Check if all questions answered
-          const requiredQuestions = ['coverage', 'specific', 'independent', 'multiple'];
-          const allAnswered = requiredQuestions.every(q => answers[q]);
+          // Update button states
+          const questionButtons = document.querySelectorAll(`[data-question="${question}"]`);
+          questionButtons.forEach(btn => btn.classList.remove('selected'));
+          this.classList.add('selected');
           
-          if (allAnswered) {
-            showEligibilityResult(answers, result);
+          // Check if all questions answered
+          if (Object.keys(answers).length === 4) {
+            updateEligibilityResult(answers, resultDiv);
           }
         });
       });
+      
+      function updateEligibilityResult(answers, resultDiv) {
+        const yesCount = Object.values(answers).filter(a => a === 'yes').length;
+        const maybeCount = Object.values(answers).filter(a => a === 'maybe').length;
+        const noCount = Object.values(answers).filter(a => a === 'no').length;
+        
+        resultDiv.style.display = 'block';
+        
+        if (yesCount === 4) {
+          resultDiv.style.background = '#d5fdf4';
+          resultDiv.style.color = '#00af89';
+          resultDiv.style.border = '1px solid #00af89';
+          resultDiv.innerHTML = '✅ <strong>Excellent!</strong> Your topic looks ready for Wikipedia. You have strong eligibility.';
+        } else if (yesCount >= 2 && noCount <= 1) {
+          resultDiv.style.background = '#fef6e7';
+          resultDiv.style.color = '#ac6600';
+          resultDiv.style.border = '1px solid #fc3';
+          resultDiv.innerHTML = '⚠️ <strong>Good start!</strong> Consider strengthening the areas you\'re unsure about, or try draft space first.';
+        } else {
+          resultDiv.style.background = '#fee7e6';
+          resultDiv.style.color = '#d33';
+          resultDiv.style.border = '1px solid #d33';
+          resultDiv.innerHTML = '💡 <strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
+        }
+      }
     }
 
-    function showEligibilityResult(answers, resultEl) {
-      const yesCount = Object.values(answers).filter(a => a === 'yes').length;
-      const noCount = Object.values(answers).filter(a => a === 'no').length;
-      
-      let message = '';
-      let className = '';
-      
-      if (yesCount >= 3) {
-        message = '✅ Great! Your topic likely meets Wikipedia\'s inclusion criteria. You have reliable, independent sources that provide significant coverage.';
-        className = 'good';
-      } else if (noCount >= 2) {
-        message = '❌ Your topic may not meet Wikipedia\'s standards yet. Consider finding more independent, reliable sources that focus specifically on your topic.';
-        className = 'warn';
-      } else {
-        message = '⚠️ Your topic might be suitable, but gather stronger sources. Look for newspaper articles, magazine features, or academic papers that discuss your topic in detail.';
-        className = 'neutral';
-      }
-      
-      resultEl.innerHTML = message;
-      resultEl.className = className;
-      resultEl.style.display = 'block';
-      
-      if (className === 'good') {
-        resultEl.style.backgroundColor = '#d4edda';
-        resultEl.style.borderColor = '#c3e6cb';
-        resultEl.style.color = '#155724';
-      } else if (className === 'warn') {
-        resultEl.style.backgroundColor = '#f8d7da';
-        resultEl.style.borderColor = '#f5c6cb';
-        resultEl.style.color = '#721c24';
-      } else {
-        resultEl.style.backgroundColor = '#fff3cd';
-        resultEl.style.borderColor = '#ffeaa7';
-        resultEl.style.color = '#856404';
+    // Desktop Suggestions button
+    if (addSectionBtn) {
+      addSectionBtn.addEventListener('click', showGuide);
+    }
+
+    // Mobile Suggestions button
+    if (guideMeMobileBtn) {
+      guideMeMobileBtn.addEventListener('click', showGuide);
+    }
+
+    // Close buttons
+    if (closeSidebarBtn) {
+      closeSidebarBtn.addEventListener('click', hideGuide);
+    }
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', hideGuide);
+    }
+
+    // Removed auto-hide when clicking outside - sidebar stays open until manually closed
+
+    // Hide modal when clicking backdrop (mobile only)
+    if (guideModalBackdrop) {
+      guideModalBackdrop.addEventListener('click', function(e) {
+        if (e.target === guideModalBackdrop) {
+          hideGuide();
+        }
+      });
+    }
+
+    // Source verification functionality
+    var reliableSourcesData = null;
+    var sourceModalBackdrop = document.getElementById('sourceModalBackdrop');
+    var sourceUrl = document.getElementById('sourceUrl');
+    var checkSourceBtn = document.getElementById('checkSourceBtn');
+    var generateDraftBtn = document.getElementById('generateDraftBtn');
+    var insertDraftBtn = document.getElementById('insertDraftBtn');
+    var closeSourceModal = document.getElementById('closeSourceModal');
+    var cancelSource = document.getElementById('cancelSource');
+    
+    // Load reliable sources data
+    async function loadReliableSources() {
+      try {
+        const response = await fetch('reliable-sources.json');
+        reliableSourcesData = await response.json();
+      } catch (error) {
+        console.error('Failed to load reliable sources:', error);
+        reliableSourcesData = null;
       }
     }
+    
+    // Open source modal
+    function openSourceModal() {
+      sourceModalBackdrop.setAttribute('aria-hidden', 'false');
+      sourceUrl.focus();
+      resetSourceModal();
+    }
+    
+    // Close source modal
+    function closeSourceModalDialog() {
+      sourceModalBackdrop.setAttribute('aria-hidden', 'true');
+      resetSourceModal();
+    }
+    
+    // Reset modal to initial state
+    function resetSourceModal() {
+      sourceUrl.value = '';
+      document.getElementById('sourceVerification').style.display = 'none';
+      document.getElementById('draftPreview').style.display = 'none';
+      checkSourceBtn.style.display = 'inline-block';
+      generateDraftBtn.style.display = 'none';
+      insertDraftBtn.style.display = 'none';
+    }
+    
+    // Check source reliability
+    function checkSource() {
+      var url = sourceUrl.value.trim();
+      if (!url) return;
+      
+      // Show verification section
+      document.getElementById('sourceVerification').style.display = 'block';
+      checkSourceBtn.style.display = 'none';
+      
+      // Simulate verification steps
+      performVerificationSteps(url);
+    }
+    
+    // Simulate verification animation
+    function performVerificationSteps(url) {
+      var steps = ['step1', 'step2'];
+      var currentStep = 0;
+      
+      function processStep() {
+        if (currentStep < steps.length) {
+          var stepElement = document.getElementById(steps[currentStep]);
+          var icon = stepElement.querySelector('.step-icon');
+          var text = stepElement.querySelector('.step-text');
+          
+          // Update icon to checkmark and mark as completed
+          setTimeout(function() {
+            icon.textContent = '✓';
+            stepElement.classList.add('completed');
+            
+            // Update text based on step
+            if (currentStep === 0) {
+              text.textContent = 'Domain verified: ' + extractDomain(url);
+            } else if (currentStep === 1) {
+              text.textContent = 'Source reliability checked';
+            }
+            
+            currentStep++;
+            if (currentStep < steps.length) {
+              setTimeout(processStep, 800);
+            } else {
+              setTimeout(showSourceResult, 500);
+            }
+          }, 1000);
+        }
+      }
+      
+      processStep();
+    }
+    
+    // Show source verification result
+    function showSourceResult() {
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = classifySource(domain);
+      
+      var resultDiv = document.getElementById('sourceResult');
+      var badgeDiv = document.getElementById('sourceBadge');
+      var noteDiv = document.getElementById('reliabilityNote');
+      
+      if (sourceType.reliable) {
+        badgeDiv.className = 'source-badge reliable';
+        badgeDiv.textContent = '✓ ' + sourceType.label;
+        noteDiv.textContent = sourceType.reliability;
+      } else {
+        badgeDiv.className = 'source-badge questionable';
+        badgeDiv.textContent = '⚠️ ' + sourceType.label;
+        noteDiv.textContent = sourceType.warning;
+      }
+      
+      resultDiv.style.display = 'block';
+      generateDraftBtn.style.display = 'inline-block';
+    }
+    
+    // Extract domain from URL
+    function extractDomain(url) {
+      try {
+        return new URL(url).hostname.replace('www.', '');
+      } catch (e) {
+        return url.split('/')[0];
+      }
+    }
+    
+    // Classify source based on domain
+    function classifySource(domain) {
+      if (!reliableSourcesData) {
+        return {reliable: true, label: 'External source', reliability: 'Source checking available'};
+      }
+      
+      var sources = reliableSourcesData.approved_sources;
+      
+      // Check each source category
+      for (var category in sources) {
+        var categoryData = sources[category];
+        
+        // Check domains
+        if (categoryData.domains && categoryData.domains.some(d => domain.includes(d))) {
+          return {
+            reliable: true,
+            label: categoryData.label,
+            reliability: categoryData.reliability
+          };
+        }
+        
+        // Check suffixes
+        if (categoryData.suffixes && categoryData.suffixes.some(s => domain.endsWith(s))) {
+          return {
+            reliable: true,
+            label: categoryData.label,
+            reliability: categoryData.reliability
+          };
+        }
+      }
+      
+      // Check questionable sources
+      var questionable = reliableSourcesData.questionable_sources;
+      if (questionable.domains && questionable.domains.some(d => domain.includes(d))) {
+        return {
+          reliable: false,
+          label: questionable.label,
+          warning: questionable.warning
+        };
+      }
+      
+      // Default to external source
+      return {
+        reliable: true,
+        label: 'External source',
+        reliability: 'Source information extracted'
+      };
+    }
+    
+    // Generate draft content
+    function generateDraft() {
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = getSourceTypeForTemplate(domain);
+      
+      var templates = reliableSourcesData ? reliableSourcesData.draft_templates : null;
+      var template = templates && templates[sourceType] ? templates[sourceType] : templates.default;
+      
+      // Create mock draft content
+      var title = generateMockTitle(domain);
+      var today = new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+      
+      var draftContent = template.stub
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[TITLE]', title)
+        .replace('[DATE]', today)
+        .replace('[TOPIC]', 'this subject')
+        .replace('[FIELD]', 'relevant field');
+        
+      var citation = template.citation
+        .replace('[AUTHOR]', 'Author Name')
+        .replace('[TITLE]', title)
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[DATE]', today)
+        .replace('[TODAY]', today)
+        .replace('[URL]', url);
+      
+      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+                     draftContent + '\n\n' +
+                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     citation;
+      
+      document.getElementById('draftContent').textContent = fullDraft;
+      document.getElementById('draftPreview').style.display = 'block';
+      generateDraftBtn.style.display = 'none';
+      insertDraftBtn.style.display = 'inline-block';
+    }
+    
+    // Generate mock title based on domain
+    function generateMockTitle(domain) {
+      var titles = [
+        'Recent Developments in Subject Area',
+        'Analysis of Current Topic',
+        'Overview of Related Field',
+        'Background Information on Subject',
+        'Context and Development'
+      ];
+      return titles[Math.floor(Math.random() * titles.length)];
+    }
+    
+    // Get source type for template
+    function getSourceTypeForTemplate(domain) {
+      if (!reliableSourcesData) return 'default';
+      
+      var sources = reliableSourcesData.approved_sources;
+      for (var category in sources) {
+        var categoryData = sources[category];
+        if (categoryData.domains && categoryData.domains.some(d => domain.includes(d))) {
+          return category;
+        }
+        if (categoryData.suffixes && categoryData.suffixes.some(s => domain.endsWith(s))) {
+          return category;
+        }
+      }
+      return 'default';
+    }
+    
+    // Insert draft into editor
+    function insertDraft() {
+      var draftText = document.getElementById('draftContent').textContent;
+      var editor = document.getElementById('editor');
+      
+      if (editor) {
+        var currentContent = editor.innerHTML;
+        var draftHTML = draftText.replace(/\n/g, '<br>');
+        
+        if (currentContent.trim() === '') {
+          editor.innerHTML = '<div style="margin-bottom: 2em;">' + draftHTML + '</div>';
+        } else {
+          editor.innerHTML = currentContent + '<div style="margin-top: 2em;">' + draftHTML + '</div>';
+        }
+        
+        editor.focus();
+      }
+      
+      closeSourceModalDialog();
+    }
+
+    // Bind source button click handlers for sidebar
+    function bindSourceButton() {
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      if (checkBtn) {
+        checkBtn.addEventListener('click', function() {
+          checkSidebarSource();
+        });
+      }
+    }
+
+    // Check source in sidebar
+    function checkSidebarSource() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      
+      if (!sourceUrl || !sourceUrl.value.trim()) {
+        return;
+      }
+      
+      // Disable button and show loading
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'Checking...';
+      
+      // Show verification steps
+      performSidebarVerificationSteps(sourceUrl.value.trim());
+    }
+
+    // Perform verification steps in sidebar
+    function performSidebarVerificationSteps(url) {
+      var stepsDiv = document.getElementById('sidebarVerificationSteps');
+      var steps = [
+        'Checking domain...',
+        'Verifying source reliability...'
+      ];
+      
+      var stepsHTML = '';
+      steps.forEach(function(step, index) {
+        stepsHTML += '<div class="sidebar-verification-step" id="sidebarStep' + index + '">';
+        stepsHTML += '<div class="sidebar-step-icon" id="sidebarStepIcon' + index + '">' + (index + 1) + '</div>';
+        stepsHTML += '<span class="sidebar-step-text" id="sidebarStepText' + index + '">' + step + '</span>';
+        stepsHTML += '</div>';
+      });
+      
+      stepsDiv.innerHTML = stepsHTML;
+      stepsDiv.style.display = 'block';
+      
+      var currentStep = 0;
+      
+      function processStep() {
+        if (currentStep < steps.length) {
+          var stepElement = document.getElementById('sidebarStep' + currentStep);
+          var icon = document.getElementById('sidebarStepIcon' + currentStep);
+          var text = document.getElementById('sidebarStepText' + currentStep);
+          
+          // Mark current step as active
+          icon.classList.add('active');
+          
+          // Update icon to checkmark and mark as completed
+          setTimeout(function() {
+            icon.textContent = '✓';
+            icon.classList.remove('active');
+            icon.classList.add('completed');
+            
+            // Update text based on step
+            if (currentStep === 0) {
+              text.textContent = 'Domain verified: ' + extractDomain(url);
+            } else if (currentStep === 1) {
+              text.textContent = 'Source reliability checked';
+            }
+            
+            currentStep++;
+            if (currentStep < steps.length) {
+              setTimeout(processStep, 800);
+            } else {
+              setTimeout(showSidebarSourceResult, 500);
+            }
+          }, 1000);
+        }
+      }
+      
+      processStep();
+    }
+
+    // Show source verification result in sidebar
+    function showSidebarSourceResult() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var checkBtn = document.getElementById('sidebarCheckBtn');
+      var resultDiv = document.getElementById('sidebarSourceResult');
+      
+      var url = sourceUrl.value.trim();
+      var domain = extractDomain(url);
+      var sourceType = classifySource(domain);
+      
+      var resultHTML = '';
+      if (sourceType.reliable) {
+        resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + sourceType.label + '</div>';
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.reliability + '</p>';
+      } else {
+        resultHTML += '<div class="sidebar-source-badge questionable">⚠️ ' + sourceType.label + '</div>';
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.warning + '</p>';
+      }
+      
+      resultHTML += '<div class="sidebar-action-buttons">';
+      resultHTML += '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Generate draft</button>';
+      resultHTML += '</div>';
+      
+      resultDiv.innerHTML = resultHTML;
+      resultDiv.style.display = 'block';
+      
+      // Re-enable check button
+      checkBtn.disabled = false;
+      checkBtn.textContent = 'Check source';
+      
+      // Bind generate button
+      var generateBtn = document.getElementById('sidebarGenerateBtn');
+      if (generateBtn) {
+        generateBtn.addEventListener('click', function() {
+          generateSidebarDraft(url);
+        });
+      }
+    }
+
+    // Generate draft in sidebar
+    function generateSidebarDraft(url) {
+      var domain = extractDomain(url);
+      var sourceType = getSourceTypeForTemplate(domain);
+      
+      var templates = reliableSourcesData ? reliableSourcesData.draft_templates : null;
+      var template = templates && templates[sourceType] ? templates[sourceType] : templates.default;
+      
+      // Create mock draft content
+      var title = generateMockTitle(domain);
+      var today = new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+      
+      var draftContent = template.stub
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[TITLE]', title)
+        .replace('[DATE]', today)
+        .replace('[TOPIC]', 'this subject')
+        .replace('[FIELD]', 'relevant field');
+        
+      var citation = template.citation
+        .replace('[AUTHOR]', 'Author Name')
+        .replace('[TITLE]', title)
+        .replace('[SOURCE]', domain.charAt(0).toUpperCase() + domain.slice(1))
+        .replace('[DATE]', today)
+        .replace('[TODAY]', today)
+        .replace('[URL]', url);
+      
+      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+                     draftContent + '\n\n' +
+                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     citation;
+      
+      var previewDiv = document.getElementById('sidebarDraftPreview');
+      var previewHTML = '';
+      previewHTML += '<div class="sidebar-draft-content">' + fullDraft + '</div>';
+      previewHTML += '<div class="sidebar-action-buttons">';
+      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarInsertBtn">Insert into article</button>';
+      previewHTML += '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>';
+      previewHTML += '</div>';
+      
+      previewDiv.innerHTML = previewHTML;
+      previewDiv.style.display = 'block';
+      
+      // Bind action buttons
+      var insertBtn = document.getElementById('sidebarInsertBtn');
+      var cancelBtn = document.getElementById('sidebarCancelBtn');
+      
+      if (insertBtn) {
+        insertBtn.addEventListener('click', function() {
+          insertSidebarDraft(fullDraft);
+        });
+      }
+      
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+          resetSidebarSource();
+        });
+      }
+    }
+
+    // Insert draft from sidebar into editor
+    function insertSidebarDraft(draftText) {
+      var editor = document.getElementById('editor');
+      
+      if (editor) {
+        var currentContent = editor.innerHTML;
+        var hasContent = currentContent.trim() !== '';
+        
+        var domain = extractDomain(document.getElementById('sidebarSourceUrl').value);
+        var sourceType = classifySource(domain);
+        var sectionTitle = 'Section title';
+        
+        // Create realistic Wikipedia content with references
+        var content = 'This is where the content from the verified source would appear in the article. ';
+        content += 'The information extracted from ' + domain + ' provides additional context and details that support the main article topic.<sup style="color: #0645ad;">[1]</sup> ';
+        content += 'Key facts and data points from the source can be integrated here to enhance the encyclopedic coverage. ';
+        content += 'This demonstrates how external sources contribute to comprehensive article development.<sup style="color: #0645ad;">[2]</sup>';
+        
+        // Get citation from original draft
+        var lines = draftText.split('\n');
+        var citation = '';
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line.startsWith('[1]')) {
+            citation = line;
+            break;
+          }
+        }
+        
+        // Create Wikipedia-style section with proper formatting
+        var sectionHTML = '';
+        sectionHTML += '<h2 id="Section_title" style="';
+        sectionHTML += 'font-family: Georgia, serif; ';
+        sectionHTML += 'font-size: 1.5em; ';
+        sectionHTML += 'font-weight: normal; ';
+        sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; ';
+        sectionHTML += 'padding: 0; ';
+        sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+        sectionHTML += 'padding-bottom: 0.25em;';
+        sectionHTML += '">' + sectionTitle + '</h2>';
+        
+        // Add content paragraph with proper styling
+        sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6;">' + content + '</p>';
+        
+        // Add minimal draft notice (non-editable)
+        sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
+        
+        // Check if References section already exists
+        var referencesExists = currentContent.includes('<h2') && currentContent.includes('id="References"');
+        
+        if (!referencesExists) {
+          // Add References section as proper Wikipedia section
+          sectionHTML += '<h2 id="References" style="';
+          sectionHTML += 'font-family: Georgia, serif; ';
+          sectionHTML += 'font-size: 1.5em; ';
+          sectionHTML += 'font-weight: normal; ';
+          sectionHTML += 'margin: 2em 0 0.25em 0; ';
+          sectionHTML += 'padding: 0; ';
+          sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+          sectionHTML += 'padding-bottom: 0.25em;';
+          sectionHTML += '">References</h2>';
+          
+          // Add citation content
+          sectionHTML += '<div style="margin: 0.75em 0; font-size: 0.9em;">';
+          if (citation) {
+            sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>'; // Remove [1] prefix
+            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          } else {
+            // Fallback content if citation parsing failed
+            sectionHTML += '<p style="margin: 0.25em 0;">1. "Context and Development". ' + domain.charAt(0).toUpperCase() + domain.slice(1) + '. Retrieved ' + new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '.</p>';
+            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
+          }
+          sectionHTML += '</div>';
+        }
+        
+        if (hasContent) {
+          editor.innerHTML = currentContent + sectionHTML;
+        } else {
+          editor.innerHTML = sectionHTML;
+        }
+        
+        // Clean up any extra BR tags or empty elements
+        cleanupExtraBreaks();
+        
+        // Add event listener to hide source notice when user starts editing
+        addSourceNoticeHideListener();
+        
+        editor.focus();
+      }
+      
+      // Reset source area
+      resetSidebarSource();
+    }
+
+    // Add event listener to hide source notice when user starts editing content
+    function addSourceNoticeHideListener() {
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+      
+      // Simple approach: hide source notices after any meaningful editing
+      var inputCount = 0;
+      var hideNoticesOnEdit = function(event) {
+        inputCount++;
+        
+        // Hide notices after 3 input events (typing 3 characters)
+        if (inputCount >= 3) {
+          var sourceNotices = editor.querySelectorAll('.source-notice');
+          sourceNotices.forEach(function(notice) {
+            if (notice && notice.parentNode) {
+              notice.style.transition = 'opacity 0.3s ease';
+              notice.style.opacity = '0';
+              setTimeout(function() {
+                if (notice.parentNode) {
+                  notice.parentNode.removeChild(notice);
+                }
+              }, 300);
+            }
+          });
+          
+          // Remove the listener after hiding
+          editor.removeEventListener('input', hideNoticesOnEdit);
+        }
+      };
+      
+      // Add the global listener with a small delay to ensure DOM is ready
+      setTimeout(function() {
+        editor.addEventListener('input', hideNoticesOnEdit);
+      }, 100);
+    }
+
+    // Reset sidebar source verification
+    function resetSidebarSource() {
+      var sourceUrl = document.getElementById('sidebarSourceUrl');
+      var stepsDiv = document.getElementById('sidebarVerificationSteps');
+      var resultDiv = document.getElementById('sidebarSourceResult');
+      var previewDiv = document.getElementById('sidebarDraftPreview');
+      
+      if (sourceUrl) sourceUrl.value = '';
+      if (stepsDiv) stepsDiv.style.display = 'none';
+      if (resultDiv) resultDiv.style.display = 'none';
+      if (previewDiv) previewDiv.style.display = 'none';
+    }
+
+    // Open source verification modal
+    function openSourceModalDialog() {
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      var sourceUrl = document.getElementById('sourceUrl');
+      var checkBtn = document.getElementById('checkSourceBtn');
+      var generateBtn = document.getElementById('generateDraftBtn');
+      var insertBtn = document.getElementById('insertDraftBtn');
+      var stepsDiv = document.getElementById('verificationSteps');
+      var resultDiv = document.getElementById('sourceResult');
+      var previewDiv = document.getElementById('draftPreview');
+      
+      // Reset modal state
+      if (sourceUrl) sourceUrl.value = '';
+      if (checkBtn) checkBtn.style.display = 'inline-block';
+      if (generateBtn) generateBtn.style.display = 'none';
+      if (insertBtn) insertBtn.style.display = 'none';
+      if (stepsDiv) stepsDiv.style.display = 'none';
+      if (resultDiv) resultDiv.style.display = 'none';
+      if (previewDiv) previewDiv.style.display = 'none';
+      
+      backdrop.classList.add('open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      
+      // Focus on URL input
+      setTimeout(function() {
+        if (sourceUrl) sourceUrl.focus();
+      }, 100);
+    }
+
+    // Close source verification modal
+    function closeSourceModalDialog() {
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      backdrop.classList.remove('open');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    // Initialize source modal event handlers
+    function initializeSourceModal() {
+      var closeBtn = document.getElementById('closeSourceModal');
+      var backdrop = document.getElementById('sourceModalBackdrop');
+      var checkBtn = document.getElementById('checkSourceBtn');
+      var generateBtn = document.getElementById('generateDraftBtn');
+      var insertBtn = document.getElementById('insertDraftBtn');
+      
+      // Close button
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeSourceModalDialog);
+      }
+      
+      // Backdrop click to close
+      if (backdrop) {
+        backdrop.addEventListener('click', function(e) {
+          if (e.target === backdrop) {
+            closeSourceModalDialog();
+          }
+        });
+      }
+      
+      // Escape key to close
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && backdrop && backdrop.classList.contains('open')) {
+          closeSourceModalDialog();
+        }
+      });
+      
+      // Check source button
+      if (checkBtn) {
+        checkBtn.addEventListener('click', checkSource);
+      }
+      
+      // Generate draft button
+      if (generateBtn) {
+        generateBtn.addEventListener('click', generateDraft);
+      }
+      
+      // Insert draft button
+      if (insertBtn) {
+        insertBtn.addEventListener('click', insertDraft);
+      }
+    }
+
+    // Initialize suggestions and sources on page load
+    Promise.all([loadSuggestions(), loadReliableSources()]).then(function() {
+      updateGuideContent();
+      initializeSourceModal();
+    });
 
   </script>
-
 </body>
 </html>
