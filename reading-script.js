@@ -796,6 +796,24 @@ function setupSharedHandlers() {
       }
     };
   }
+
+  // Insert actions from suggestions (delegated)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.expand-suggestion__action--primary');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const action = btn.getAttribute('data-action') || 'insert-section';
+    if (action === 'insert-image') {
+      insertImagePlaceholder();
+      return;
+    }
+    const card = btn.closest('.expand-suggestion');
+    const titleEl = card ? card.querySelector('.expand-suggestion__content h5') : null;
+    const sectionTitle = titleEl ? titleEl.textContent.trim() : 'New section';
+    insertSectionIntoEditor(sectionTitle);
+  });
+
   
   // Close wizard when clicking backdrop
   const wizardBackdrop = document.querySelector('.wizard-backdrop');
@@ -912,6 +930,81 @@ function setupSharedHandlers() {
       addSourceToList();
     }
   });
+}
+
+// Insert a new section (H2) with a placeholder paragraph at current caret (or end)
+function insertSectionIntoEditor(title) {
+  if (!quill) return;
+  const safeTitle = String(title || 'New section');
+
+  // Always append at the end to preserve existing content
+  let index = quill.getLength();
+
+  // Ensure there is a blank line before the new section
+  try {
+    const prev1 = index > 0 ? quill.getText(index - 1, 1) : '\n';
+    const prev2 = index > 1 ? quill.getText(index - 2, 1) : '\n';
+    if (prev1 !== '\n') {
+      quill.insertText(index, '\n', 'user');
+      index += 1;
+    }
+    // Optional extra spacing: keep a single blank line before sections
+    if (prev1 === '\n' && prev2 !== '\n') {
+      // one newline already, that's fine
+    }
+  } catch (_) {}
+
+  // Insert heading line and format as H2
+  quill.insertText(index, safeTitle, 'user');
+  quill.insertText(index + safeTitle.length, '\n', 'user');
+  // Format just this line as header level 2
+  quill.formatLine(index, 1, 'header', 2, 'user');
+  index += safeTitle.length + 1;
+
+  // Insert placeholder paragraph below heading
+  const placeholder = 'Start adding ' + safeTitle.toLowerCase() + '…';
+  quill.insertText(index, placeholder, { italic: true }, 'user');
+  quill.insertText(index + placeholder.length, '\n', 'user');
+
+  // Place caret at start of the new paragraph and scroll into view
+  quill.setSelection(index, 0, 'user');
+  try { quill.scrollIntoView && quill.scrollIntoView(); } catch (_) {}
+}
+
+// Insert a grey image placeholder (SVG data URI) with a caption line
+function insertImagePlaceholder() {
+  if (!quill) return;
+  const w = 640, h = 360;
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <rect width="100%" height="100%" fill="#e6e6e6"/>
+  <rect x="${Math.round(w*0.18)}" y="${Math.round(h*0.28)}" width="${Math.round(w*0.64)}" height="${Math.round(h*0.44)}" fill="#d0d0d0"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="16" fill="#7a7a7a">Image</text>
+</svg>`;
+  const dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+
+  const sel = quill.getSelection(true) || { index: quill.getLength(), length: 0 };
+  let index = sel.index;
+
+  // Ensure on its own line
+  try {
+    const prevChar = index > 0 ? quill.getText(index - 1, 1) : '\n';
+    if (prevChar !== '\n') { quill.insertText(index, '\n', 'user'); index += 1; }
+  } catch (_) {}
+
+  // Insert image embed
+  quill.insertEmbed(index, 'image', dataUrl, 'user');
+  index += 1; // embeds count as length 1
+  quill.insertText(index, '\n', 'user');
+  index += 1;
+
+  // Caption placeholder
+  const caption = 'Add caption…';
+  quill.insertText(index, caption, { italic: true }, 'user');
+  quill.insertText(index + caption.length, '\n', 'user');
+
+  // Place caret at caption line
+  quill.setSelection(index, 0, 'user');
 }
 
 function addSourceToList() {

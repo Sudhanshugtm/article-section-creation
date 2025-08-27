@@ -14,12 +14,13 @@
 
   function renderSuggestions(listEl, items) {
     if (!listEl || !Array.isArray(items)) return;
-    const html = items.map(item => {
+    const limited = items.slice(0, 2);
+    const html = limited.map(item => {
       const icon = item.icon ? String(item.icon) : '';
       const title = item.title ? String(item.title) : '';
       const why = item.why ? String(item.why) : '';
-      const reference = item.reference ? String(item.reference) : '';
-      const example = item.example ? String(item.example) : '';
+      // Reference and Example blocks removed per request
+      const include = Array.isArray(item.include) ? item.include.map(String) : [];
       const primary = item.primaryAction ? String(item.primaryAction) : '';
       return (
         '<li class="expand-suggestion">' +
@@ -27,20 +28,17 @@
           '<div class="expand-suggestion__content">' +
             '<h5>' + title + '</h5>' +
             '<p>' + why + '</p>' +
-            (reference ? (
-              '<div class="expand-suggestion__outline">' +
-                '<span class="outline-label">Reference</span>' +
-                '<div>' + reference + '</div>' +
-              '</div>'
-            ) : '') +
-            (example ? (
-              '<div class="expand-suggestion__outline">' +
-                '<span class="outline-label">Example</span>' +
-                '<pre class="example-snippet">' + example + '</pre>' +
+            '' +
+            (include.length ? (
+              '<div class="include-guidance">' +
+                '<div class="include-guidance__title">What to include:</div>' +
+                '<ul class="include-guidance__list">' +
+                  include.map(it => '<li>' + it + '</li>').join('') +
+                '</ul>' +
               '</div>'
             ) : '') +
             '<div class="expand-suggestion__actions">' +
-              (primary ? '<button class="expand-suggestion__action expand-suggestion__action--primary">' + primary + '</button>' : '') +
+              (primary ? '<button class="expand-suggestion__action expand-suggestion__action--primary" data-action="insert-section">' + primary + '</button>' : '') +
             '</div>' +
           '</div>' +
         '</li>'
