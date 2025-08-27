@@ -778,6 +778,32 @@
       border-color: #2a4b8d;
     }
     
+    /* Eligibility checker styles */
+    .eligibility-options {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .eligibility-btn {
+      padding: 6px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 2px;
+      background: #f8f9fa;
+      color: #222;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    
+    .eligibility-btn:hover {
+      background: #eaecf0;
+    }
+    
+    .eligibility-btn.selected {
+      background: #36c;
+      color: white;
+      border-color: #36c;
+    }
+    
     /* Hide modal on desktop */
     @media (min-width: 769px) {
       .guide-modal-backdrop {
@@ -837,7 +863,7 @@
         </div>
         <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
         <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
-        <button class="btn" id="guideMeMobile" title="Get writing suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
+        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
         <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
 
@@ -911,7 +937,7 @@
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" id="addSectionBtn" title="Get writing suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Guide me</span></button>
+          <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
@@ -1000,10 +1026,6 @@
         <div class="source-input-section">
           <label for="sourceUrl">Source URL</label>
           <input type="url" id="sourceUrl" placeholder="https://example.com/article" />
-          <div class="source-note">
-            ⚠️ Note: This creates a DRAFT based on source metadata.<br>
-            Always review and edit before publishing.
-          </div>
         </div>
         
         <div class="source-verification" id="sourceVerification" style="display: none;">
@@ -1030,9 +1052,6 @@
         
         <div class="draft-preview" id="draftPreview" style="display: none;">
           <h4>Draft content preview</h4>
-          <div class="draft-warning">
-            ⚠️ DRAFT: This content requires human review and editing
-          </div>
           <div class="draft-content" id="draftContent"></div>
         </div>
       </div>
@@ -1363,6 +1382,58 @@
       content += '</div>';
       content += '</div>';
       
+      // Article Eligibility Check Accordion
+      content += '<div class="accordion-item" style="margin-top: 16px;">';
+      content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
+      content += '<h4 style="margin: 0;">Article eligibility check</h4>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '</div>';
+      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<p class="guide-note">Quick check: Does your topic have what Wikipedia needs?</p>';
+      
+      content += '<div class="eligibility-questions">';
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Has your topic been covered in newspapers or magazines?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Are these sources from well-known news sites or publications?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Were these written by independent journalists (not press releases)?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Do you have at least 2 different sources?</div>';
+      content += '<div class="eligibility-options">';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="yes">Yes</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="maybe">Maybe</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="no">No</button>';
+      content += '</div>';
+      content += '</div>';
+      content += '</div>';
+      
+      content += '<div id="eligibilityResult" style="margin-top: 16px; padding: 12px; border-radius: 4px; font-size: 14px; display: none;"></div>';
+      
+      content += '</div>';
+      content += '</div>';
+      
       // Add from Source Accordion
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
@@ -1375,9 +1446,6 @@
       content += '<div class="source-input-group">';
       content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
-      content += '</div>';
-      content += '<div class="source-warning" style="margin-top: 8px; padding: 8px; background: #fef6e7; border: 1px solid #fc3; border-radius: 2px; font-size: 12px; color: #ac6600;">';
-      content += '⚠️ This creates a DRAFT based on source metadata. Always review and edit before publishing.';
       content += '</div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
@@ -1415,6 +1483,9 @@
       
       // Bind source button
       bindSourceButton();
+      
+      // Bind eligibility checker
+      bindEligibilityChecker();
     }
 
     // Toggle accordion sections
@@ -1454,6 +1525,62 @@
       editor.innerHTML = content;
     }
 
+    // Get contextual writing prompt for section based on category
+    function getWritingPromptForSection(sectionName, category) {
+      var prompts = {
+        'person': {
+          'Early life': 'When and where was this person born? What was their childhood like? What about their education and early influences?',
+          'Career': 'What is this person known for professionally? What were their major achievements, works, or contributions?',
+          'Background': 'What\'s important to know about this person\'s background? Include birth, education, and early experiences.',
+          'Overview': 'What are this person\'s main accomplishments? What makes them notable or significant?'
+        },
+        'place': {
+          'Geography': 'Where exactly is this place located? What are its physical features, climate, and natural characteristics?',
+          'History': 'How did this place develop over time? When was it founded or first settled? What major events happened here?',
+          'Background': 'What\'s the historical context of this place? How did it come to be what it is today?',
+          'Overview': 'What are the key facts about this place? What makes it notable or significant?'
+        },
+        'species': {
+          'Description': 'What does this species look like? What are its distinctive physical features that help identify it?',
+          'Habitat': 'Where does this species live? What kind of environment does it need to survive?',
+          'Background': 'What\'s the scientific context of this species? How was it discovered or classified?',
+          'Overview': 'What are the key characteristics of this species? What makes it unique or important?'
+        },
+        'organization': {
+          'History': 'When and why was this organization founded? Who started it and what were the original goals?',
+          'Activities': 'What does this organization actually do? What programs, services, or work does it carry out?',
+          'Background': 'What led to the creation of this organization? What problem was it trying to solve?',
+          'Overview': 'What are the main things this organization does? What impact does it have?'
+        },
+        'academic': {
+          'Definition': 'What exactly does this concept mean? How would you explain it clearly to someone new to the topic?',
+          'Background': 'How did this concept develop? Who were the key people involved in discovering or developing it?',
+          'Overview': 'What are the main aspects of this concept? Why is it important in its field?'
+        },
+        'creative': {
+          'Plot': 'What is this work about? Summarize the main story or content without giving away major spoilers.',
+          'Production': 'How was this work created? Who made it, when, and what was the creative process like?',
+          'Background': 'What inspired this work? What\'s the story behind its creation?',
+          'Overview': 'What is this creative work and what makes it significant or notable?'
+        },
+        'event': {
+          'Background': 'What led up to this event? What were the circumstances and causes that made it happen?',
+          'Timeline': 'What actually happened during this event? Walk through the key moments in chronological order.',
+          'Overview': 'What was this event and why was it important? What were the main outcomes?'
+        },
+        'other': {
+          'Background': 'What\'s the context or history behind this topic? How did it come about or develop?',
+          'Overview': 'What are the main aspects or components of this topic? What should readers know about it?'
+        }
+      };
+
+      // Get category-specific prompts, fallback to 'other' if category not found
+      var categoryPrompts = prompts[category] || prompts['other'];
+      
+      // Return specific prompt for section, or a generic one if not found
+      return categoryPrompts[sectionName] || 'Click here to start writing about ' + sectionName.toLowerCase() + '. What should readers know?';
+    }
+
     // Add section to editor
     function addSectionToEditor(sectionName) {
       if (addedSections.indexOf(sectionName) !== -1) return; // Already added
@@ -1468,6 +1595,9 @@
       var currentContent = editor.innerHTML;
       var hasContent = currentContent.trim() !== '';
       
+      // Get contextual writing prompt based on section and category
+      var writingPrompt = getWritingPromptForSection(sectionName, selectedCategory);
+      
       // Create section with Wikipedia-style formatting (no extra breaks)
       var sectionHTML = '';
       sectionHTML += '<h2 id="' + sectionName.replace(/\s+/g, '_') + '" style="';
@@ -1479,7 +1609,7 @@
       sectionHTML += 'border-bottom: 1px solid #eaecf0; '; // Lighter gray separator
       sectionHTML += 'padding-bottom: 0.25em;';
       sectionHTML += '">' + sectionName + '</h2>';
-      sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d;" data-placeholder="Start writing about ' + sectionName.toLowerCase() + '...">&nbsp;</p>'; // Placeholder text
+      sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d; font-style: italic;" data-placeholder="' + writingPrompt + '">' + writingPrompt + '</p>';
       
       // Check if References section exists and insert before it
       var referencesMatch = currentContent.match(/<h2[^>]*id="References"[^>]*>/);
@@ -1518,17 +1648,22 @@
       }
       
       if (newSectionP) {
-        // Clear the non-breaking space, show placeholder, and position cursor
-        newSectionP.innerHTML = '';
-        newSectionP.setAttribute('data-placeholder', 'Start writing about ' + sectionName.toLowerCase() + '...');
-        
-        // Add CSS for placeholder if not already present
-        if (!document.getElementById('placeholder-style')) {
-          var style = document.createElement('style');
-          style.id = 'placeholder-style';
-          style.textContent = 'p[data-placeholder]:empty:before { content: attr(data-placeholder); color: #a2a9b1; font-style: italic; }';
-          document.head.appendChild(style);
-        }
+        // Set up click handler to clear writing prompt when user clicks to write
+        newSectionP.addEventListener('click', function() {
+          if (this.style.fontStyle === 'italic' && this.style.color === 'rgb(114, 119, 125)') {
+            this.innerHTML = '';
+            this.style.color = '';
+            this.style.fontStyle = '';
+            
+            // Position cursor at start
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(this, 0);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        });
         
         range.setStart(newSectionP, 0);
         range.collapse(true);
@@ -1602,12 +1737,67 @@
       guideModalBackdrop.classList.remove('open');
     }
 
-    // Desktop Guide me button
+    // Function to bind article eligibility checker functionality
+    function bindEligibilityChecker() {
+      const buttons = document.querySelectorAll('.eligibility-btn');
+      const resultDiv = document.getElementById('eligibilityResult');
+      
+      if (buttons.length === 0 || !resultDiv) return;
+      
+      const answers = {};
+      
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          const question = this.getAttribute('data-question');
+          const answer = this.getAttribute('data-answer');
+          
+          // Update answer
+          answers[question] = answer;
+          
+          // Update button states
+          const questionButtons = document.querySelectorAll(`[data-question="${question}"]`);
+          questionButtons.forEach(btn => btn.classList.remove('selected'));
+          this.classList.add('selected');
+          
+          // Check if all questions answered
+          if (Object.keys(answers).length === 4) {
+            updateEligibilityResult(answers, resultDiv);
+          }
+        });
+      });
+      
+      function updateEligibilityResult(answers, resultDiv) {
+        const yesCount = Object.values(answers).filter(a => a === 'yes').length;
+        const maybeCount = Object.values(answers).filter(a => a === 'maybe').length;
+        const noCount = Object.values(answers).filter(a => a === 'no').length;
+        
+        resultDiv.style.display = 'block';
+        
+        if (yesCount === 4) {
+          resultDiv.style.background = '#d5fdf4';
+          resultDiv.style.color = '#00af89';
+          resultDiv.style.border = '1px solid #00af89';
+          resultDiv.innerHTML = '✅ <strong>Excellent!</strong> Your topic looks ready for Wikipedia. You have strong eligibility.';
+        } else if (yesCount >= 2 && noCount <= 1) {
+          resultDiv.style.background = '#fef6e7';
+          resultDiv.style.color = '#ac6600';
+          resultDiv.style.border = '1px solid #fc3';
+          resultDiv.innerHTML = '⚠️ <strong>Good start!</strong> Consider strengthening the areas you\'re unsure about, or try draft space first.';
+        } else {
+          resultDiv.style.background = '#fee7e6';
+          resultDiv.style.color = '#d33';
+          resultDiv.style.border = '1px solid #d33';
+          resultDiv.innerHTML = '💡 <strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
+        }
+      }
+    }
+
+    // Desktop Suggestions button
     if (addSectionBtn) {
       addSectionBtn.addEventListener('click', showGuide);
     }
 
-    // Mobile Guide me button
+    // Mobile Suggestions button
     if (guideMeMobileBtn) {
       guideMeMobileBtn.addEventListener('click', showGuide);
     }
@@ -1620,14 +1810,7 @@
       closeModalBtn.addEventListener('click', hideGuide);
     }
 
-    // Hide sidebar when clicking outside of it (desktop only)
-    document.addEventListener('click', function(e) {
-      if (!isMobile() && guideSidebar.classList.contains('open') && 
-          !guideSidebar.contains(e.target) && 
-          !addSectionBtn.contains(e.target)) {
-        hideGuide();
-      }
-    });
+    // Removed auto-hide when clicking outside - sidebar stays open until manually closed
 
     // Hide modal when clicking backdrop (mobile only)
     if (guideModalBackdrop) {
