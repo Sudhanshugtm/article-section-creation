@@ -17,6 +17,43 @@
     .chip.reference { border-color: #36c; color: #36c; background: #eef3ff; }
     .editor { min-height: 260px; outline: none; }
     .editor[contenteditable="true"]:empty:before { content: attr(data-placeholder); color: #72777d; }
+    /* Fix for H2 border issues in contenteditable */
+    .editor h2 { 
+      font-family: Georgia, serif;
+      font-size: 1.5em;
+      font-weight: normal;
+      margin: 2em 0 0.25em 0;
+      padding: 0 0 0.25em 0;
+      border-bottom: 1px solid #eaecf0;
+      position: relative;
+    }
+    .editor h2:first-child { margin-top: 1em; }
+    /* Wiki section heading styles */
+    .wiki-section-heading {
+      font-family: Georgia, serif !important;
+      font-size: 1.5em !important;
+      font-weight: normal !important;
+      margin: 2em 0 0.25em 0 !important;
+      padding: 0 0 0.25em 0 !important;
+      border-bottom: 1px solid #eaecf0 !important;
+      position: relative !important;
+      display: block !important;
+    }
+    .wiki-section-heading:first-child { margin-top: 1em !important; }
+    /* Prevent duplicate borders and clean up contenteditable issues */
+    .editor div:empty { border: none !important; display: none !important; }
+    .editor div { border: none !important; border-bottom: none !important; }
+    .editor p { border: none !important; border-bottom: none !important; }
+    .editor br { display: block; margin: 0; padding: 0; border: none !important; }
+    .editor hr { display: none !important; } /* Hide any stray HR elements */
+    /* Only H2 elements should have borders */
+    .editor h2.wiki-section-heading { 
+      border-bottom: 1px solid #eaecf0 !important; 
+    }
+    /* Any other element trying to have a border-bottom should not */
+    .editor *:not(h2) { 
+      border-bottom: none !important; 
+    }
     .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
     .verify-note.show { display: block; }
     .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
@@ -225,6 +262,11 @@
       color: #202122;
     }
     
+    .section-close-btn:hover {
+      background: #f0f0f0;
+      color: #d33;
+    }
+    
     .guide-content {
       padding: 20px;
     }
@@ -317,52 +359,60 @@
       padding: 20px;
     }
     
-    /* Section suggestion buttons */
+    /* Section suggestion buttons - simplified design */
     .section-button {
       display: block;
       width: 100%;
       margin-bottom: 12px;
-      padding: 12px 14px;
+      padding: 12px;
       border: 1px solid #c8ccd1;
       border-radius: 4px;
       background: #fff;
       color: #202122;
-      text-align: left;
       cursor: pointer;
       transition: all 0.2s ease;
     }
     
     .section-button:hover {
       background: #f8f9fa;
-      border-color: #a2a9b1;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-color: #36c;
     }
     
     .section-button.added {
       background: #eaf3ff;
       border-color: #36c;
-      color: #36c;
+      opacity: 0.7;
       cursor: default;
     }
     
-    .section-button.added::after {
-      content: " ✓";
-      float: right;
+    .section-info {
+      display: block;
     }
     
     .section-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 500;
       display: block;
     }
     
     .section-description {
-      font-size: 12px;
+      font-size: 11px;
       color: #72777d;
       line-height: 1.3;
       display: block;
-      margin-bottom: 6px;
+      margin-top: 2px;
+    }
+    
+    .section-action {
+      display: block;
+      font-size: 12px;
+      color: #36c;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+    
+    .section-button.added .section-action {
+      color: #14866d;
     }
     
     
@@ -1093,6 +1143,163 @@
       // Focus editor to show blinking cursor
       ed.focus();
       
+      // Set up MutationObserver to watch for and remove phantom elements (but not valid sections)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          // Check all added nodes
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1 && node.tagName !== 'H2') { // Element node, but not H2
+              // Only remove borders from non-H2 elements
+              if (node.style) {
+                node.style.borderBottom = 'none';
+                node.style.border = 'none';
+              }
+              // Only remove if it's truly empty (no text, no child elements, no buttons)
+              if (node.textContent.trim() === '' && !node.querySelector('*') && node.tagName !== 'P') {
+                setTimeout(function() {
+                  if (node.parentNode) {
+                    node.remove();
+                  }
+                }, 50);
+              }
+            } else if (node.nodeType === 1 && node.tagName === 'H2' && node.classList && node.classList.contains('wiki-section-heading')) {
+              // Remove empty H2s that appear due to native splits
+              var hasText = false;
+              for (var i = 0; i < node.childNodes.length; i++) {
+                var n = node.childNodes[i];
+                if (n.nodeType === Node.TEXT_NODE && n.textContent.replace(/\u200B/g, '').trim() !== '') {
+                  hasText = true; break;
+                }
+              }
+              if (!hasText && node.parentNode) {
+                node.parentNode.removeChild(node);
+              }
+            }
+          });
+        });
+      });
+      
+      // Start observing the editor (reduced scope)
+      observer.observe(ed, {
+        childList: true,
+        subtree: true
+      });
+      
+      // Add gentle cleanup on Enter key only
+      ed.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+          setTimeout(function() {
+            // Only remove borders from non-H2 elements, don't remove elements
+            var allElements = ed.querySelectorAll('*:not(h2)');
+            allElements.forEach(function(el) {
+              if (el.style) {
+                el.style.borderBottom = 'none';
+                el.style.border = 'none';
+              }
+            });
+            // Clean up stray empty headings that create extra separators
+            cleanupEmptyHeadings();
+          }, 100);
+        }
+      });
+
+      // Intercept Enter/Backspace around H2 to avoid stray separators
+      ed.addEventListener('keydown', function(e) {
+        var sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+        var range = sel.getRangeAt(0);
+        if (!range.collapsed) return; // handle caret only
+
+        // Find closest H2 heading
+        var node = range.startContainer;
+        var element = (node.nodeType === Node.TEXT_NODE) ? node.parentNode : node;
+        var h2 = element.closest ? element.closest('h2.wiki-section-heading') : null;
+        if (!h2) return;
+
+        // Helper: is caret at the very start of the H2 text (ignoring zero-width spaces/whitespace)
+        var atStart = (function() {
+          try {
+            var pre = range.cloneRange();
+            pre.selectNodeContents(h2);
+            pre.setEnd(range.startContainer, range.startOffset);
+            var txt = pre.toString().replace(/\u200B/g, '').trim();
+            return txt.length === 0;
+          } catch (err) {
+            // Fallback: if startOffset is 0 and we're in or on the H2
+            return range.startOffset === 0;
+          }
+        })();
+
+        // Helper: detect empty paragraph
+        function isEmptyParagraph(el) {
+          if (!el || !el.tagName || el.tagName.toLowerCase() !== 'p') return false;
+          var inner = (el.innerHTML || '').trim();
+          var text = (el.textContent || '').replace(/\u200B/g, '').trim();
+          var onlyBrs = /^(?:<br\s*\/?\s*)*$/.test(inner);
+          return text.length === 0 && (inner === '' || onlyBrs);
+        }
+
+        // Helper: does H2 have real text (not just a button or whitespace)
+        function h2HasText(el) {
+          if (!el) return false;
+          for (var i = 0; i < el.childNodes.length; i++) {
+            var n = el.childNodes[i];
+            if (n.nodeType === Node.TEXT_NODE && n.textContent.replace(/\u200B/g, '').trim() !== '') {
+              return true;
+            }
+          }
+          return false;
+        }
+
+        // ENTER anywhere inside H2: prevent native split and insert paragraph
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          var p = document.createElement('p');
+          p.innerHTML = '<br>';
+          if (atStart) {
+            h2.parentNode.insertBefore(p, h2);
+          } else {
+            // Insert after H2
+            if (h2.nextSibling) {
+              h2.parentNode.insertBefore(p, h2.nextSibling);
+            } else {
+              h2.parentNode.appendChild(p);
+            }
+          }
+          // Place caret inside the new paragraph
+          var r = document.createRange();
+          r.selectNodeContents(p);
+          r.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(r);
+          return;
+        }
+
+        // BACKSPACE at start of H2: remove preceding empty paragraph to "move back" without altering H2
+        if (e.key === 'Backspace' && atStart) {
+          var prev = h2.previousElementSibling;
+          if (prev) {
+            var removed = false;
+            if (isEmptyParagraph(prev)) {
+              prev.parentNode.removeChild(prev);
+              removed = true;
+            } else if (prev.tagName && prev.tagName.toLowerCase() === 'h2' && prev.classList.contains('wiki-section-heading') && !h2HasText(prev)) {
+              prev.parentNode.removeChild(prev);
+              removed = true;
+            }
+            if (removed) {
+              e.preventDefault();
+              var r2 = document.createRange();
+              r2.selectNodeContents(h2);
+              r2.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(r2);
+              return;
+            }
+          }
+        }
+      });
+      
       // Add input listener to activate publish/submit buttons when user starts typing
       ed.addEventListener('input', function() {
         var publishBtn = document.getElementById('publish');
@@ -1269,6 +1476,15 @@
           content += '</div>';
         });
       }
+      
+      // Show introduction template based on category
+      content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">Template structure:</p>';
+      var template = getIntroductionTemplate(selectedCat);
+      content += '<div class="intro-template" style="background: #f0f8ff; border-left: 3px solid #36c; padding: 12px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
+      content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Typically, introduction sections have this structure:</div>';
+      content += '<div style="color: #222; font-family: monospace; background: #fff; padding: 8px; border-radius: 3px; border: 1px solid #c8ccd1;">' + template + '</div>';
+      content += '</div>';
+      
       content += '</div>';
       content += '</div>';
       
@@ -1276,9 +1492,9 @@
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
       content += '<h4 style="margin: 0;">Suggested sections</h4>';
-      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
-      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
       content += '<p class="guide-note">' + categoryData.note + '</p>';
       
       // Show all sections (only 3, no References)
@@ -1289,24 +1505,31 @@
         const isAdded = addedSections.indexOf(sectionName) !== -1;
         const className = isAdded ? 'section-button added' : 'section-button';
         
-        content += '<button class="' + className + '" data-section="' + sectionName + '">';
+        content += '<button class="' + className + '" data-section="' + sectionName + '" onclick="addSectionToEditor(\'' + sectionName.replace(/'/g, "\\'") + '\')">';
+        content += '<div class="section-info">';
         content += '<span class="section-name">' + sectionName + '</span>';
         if (sectionDesc) {
           content += '<span class="section-description">' + sectionDesc + '</span>';
         }
         
-        // Add "What to Include" guidance if include items exist
-        if (sectionInclude.length > 0) {
-          content += '<div class="include-guidance" style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 3px; border: 1px solid #eaecf0;">';
-          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">What to include:</div>';
-          content += '<ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #54595d; line-height: 1.4;">';
-          sectionInclude.forEach(function(item) {
-            content += '<li>' + item + '</li>';
-          });
-          content += '</ul>';
+        // Always show template structure for this section
+        var sectionTemplate = getSectionTemplate(sectionName, selectedCat);
+        content += '<div style="margin-top: 6px; padding: 6px; background: #f0f8ff; border-left: 2px solid #36c; border-radius: 2px;">';
+        content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">Example structure:</div>';
+        content += '<div style="font-size: 10px; color: #222; font-family: monospace; line-height: 1.3;">' + sectionTemplate.substring(0, 100) + '...</div>';
+        content += '</div>';
+        
+        // Add Wikipedia example if available
+        var wikipediaExample = getWikipediaExample(sectionName, selectedCat);
+        if (wikipediaExample) {
+          content += '<div style="margin-top: 6px; padding: 6px; background: #f8f9fa; border-left: 2px solid #72777d; border-radius: 2px;">';
+          content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">Wikipedia example:</div>';
+          content += '<div style="font-size: 10px; color: #222; line-height: 1.4;">' + wikipediaExample.substring(0, 120) + '...</div>';
           content += '</div>';
         }
         
+        content += '</div>';
+        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Insert') + '</span>';
         content += '</button>';
       });
       content += '</div>';
@@ -1316,9 +1539,9 @@
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
       content += '<h4 style="margin: 0;">Article eligibility check</h4>';
-      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
-      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
       content += '<p class="guide-note">Quick check: Does your topic have what Wikipedia needs?</p>';
       
       content += '<div class="eligibility-questions">';
@@ -1368,9 +1591,9 @@
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
       content += '<h4 style="margin: 0;">Add from source</h4>';
-      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
+      content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
-      content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
+      content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
       content += '<p class="guide-note">Helper for citing reliable sources</p>';
       content += '<div id="sourceVerificationArea">';
       content += '<div class="source-input-group">';
@@ -1451,8 +1674,146 @@
       // Remove empty paragraphs but PRESERVE those with data-placeholder attribute
       content = content.replace(/<p(?![^>]*data-placeholder)[^>]*>(\s|<br\s*\/?>|&nbsp;)*<\/p>/g, '');
       
+      // Remove any empty H2 elements that might have been created
+      content = content.replace(/<h2[^>]*>(\s|&nbsp;)*<\/h2>/g, '');
+      
+      // Remove any H2 elements that only contain buttons (phantom sections)
+      content = content.replace(/<h2[^>]*>(\s*<button[^>]*>.*?<\/button>\s*)*<\/h2>/g, '');
+      
+      // Remove any elements with border-bottom styles that aren't H2
+      content = content.replace(/<(?!h2)[^>]+style="[^"]*border-bottom[^"]*"[^>]*>/g, function(match) {
+        return match.replace(/border-bottom[^;"]*;?/g, '');
+      });
+      
       // Update editor content
       editor.innerHTML = content;
+      
+      // After updating, force remove borders from all non-H2 elements
+      var allElements = editor.querySelectorAll('*:not(h2)');
+      allElements.forEach(function(el) {
+        if (el.style) {
+          el.style.borderBottom = 'none';
+          el.style.border = 'none';
+        }
+        // Remove border-bottom from style attribute if it exists
+        if (el.hasAttribute('style')) {
+          var styleAttr = el.getAttribute('style');
+          if (styleAttr.includes('border-bottom')) {
+            styleAttr = styleAttr.replace(/border-bottom[^;]*;?/g, '');
+            el.setAttribute('style', styleAttr);
+          }
+        }
+      });
+
+      // Finally, remove any stray empty headings
+      cleanupEmptyHeadings();
+    }
+
+    // Remove stray empty section headings that create visual dividers
+    function cleanupEmptyHeadings() {
+      var ed = document.getElementById('editor');
+      if (!ed) return;
+      var h2s = ed.querySelectorAll('h2.wiki-section-heading');
+      h2s.forEach(function(h) {
+        // Determine if there's any real text node content in the H2 (ignoring whitespace/ZWSP)
+        var hasText = false;
+        for (var i = 0; i < h.childNodes.length; i++) {
+          var n = h.childNodes[i];
+          if (n.nodeType === Node.TEXT_NODE && n.textContent.replace(/\u200B/g, '').trim() !== '') {
+            hasText = true;
+            break;
+          }
+        }
+        if (!hasText) {
+          // Empty heading — remove it to avoid duplicate separators
+          if (h.parentNode) h.parentNode.removeChild(h);
+        }
+      });
+    }
+
+    // Get template for specific sections based on category
+    function getSectionTemplate(sectionName, category) {
+      var templates = {
+        'person': {
+          'Early life': '[Person\'s Name] was born on [Date] in [Location]. Their parents were [Parents\' details]. They attended [Education details] where they [notable achievements or experiences].',
+          'Career': '[Person\'s Name] began their career in [Year] as [Initial position]. They later became known for [Major achievements]. Their notable works include [List key works or contributions].',
+          'Background': '[Person\'s Name] comes from [Background context]. Their early experiences with [relevant field] began when [context]. This led to their later work in [area of expertise].',
+          'Overview': '[Person\'s Name] is primarily known for [main achievements]. They have [quantifiable accomplishments] and are recognized for [specific contributions to their field].'
+        },
+        'place': {
+          'Geography': '[Place Name] is located at [coordinates/description] in [broader geographic area]. The terrain is characterized by [physical features]. The climate is [climate description] with [seasonal patterns].',
+          'History': '[Place Name] was first [settled/established] in [year] by [people/group]. Major historical events include [key events]. The area developed significantly during [time period] due to [factors].',
+          'Background': 'The area now known as [Place Name] has been [historical context]. Early development was influenced by [factors]. Today it is known for [current significance].',
+          'Overview': '[Place Name] is a [type of place] with [key statistics]. It is notable for [main features] and serves as [primary function or significance].'
+        },
+        'species': {
+          'Description': 'The [Species Name] typically measures [size] and weighs [weight]. It is characterized by [distinctive features]. Key identifying features include [specific characteristics that distinguish it].',
+          'Habitat': 'The [Species Name] is found primarily in [geographic range]. It prefers [habitat type] with [environmental conditions]. Its distribution is [distribution pattern].',
+          'Background': 'The [Species Name] was first [discovered/described] in [year] by [scientist]. It belongs to the [taxonomic classification] and is related to [related species].',
+          'Overview': 'The [Species Name] is a [type of organism] known for [key characteristics]. It plays an important role in [ecological role] and is [conservation status].'
+        },
+        'organization': {
+          'History': '[Organization Name] was founded in [Year] by [Founder(s)] with the mission to [original mission]. It began as [initial form] and has grown to [current scope].',
+          'Activities': '[Organization Name] primarily focuses on [main activities]. Their key programs include [list programs]. They serve [target population] through [methods].',
+          'Background': '[Organization Name] was established in response to [need or problem]. The founders recognized that [rationale] and created the organization to [solution approach].',
+          'Overview': '[Organization Name] is a [type of organization] that [main function]. It operates in [scope/geography] and is known for [key achievements or focus areas].'
+        },
+        'other': {
+          'Background': '[Topic] has its origins in [historical context]. It developed from [early forms] and became [current form] through [process or evolution].',
+          'Overview': '[Topic] is [definition] that [key characteristics]. It is significant because [importance] and is used for [applications or purposes].'
+        }
+      };
+      
+      var categoryTemplates = templates[category] || templates['other'];
+      return categoryTemplates[sectionName] || templates['other']['Background'];
+    }
+
+    // Get introduction template based on category
+    function getIntroductionTemplate(category) {
+      var templates = {
+        'person': '[Person\'s Name] was born on [Date] and is known for [notable achievements]. They are [brief description of what makes them notable].',
+        'place': '[Place Name] is [type of location] located in [geographic area]. It has a population of [number] and is known for [key features or significance].',
+        'species': 'The [common name] ([Scientific name]) is a [type of organism] that [key characteristics]. It is [distinctive features or behaviors].',
+        'organization': '[Organization Name] is a [type of organization] founded in [year] by [founder]. It [main purpose or mission].',
+        'academic': '[Term/Concept] is [definition] that [main characteristics or applications]. It was [development or discovery context].',
+        'creative': '[Title] is a [type of work] [created/written/directed] by [creator] in [year]. It [brief description of content or significance].',
+        'event': '[Event Name] was [type of event] that occurred on [date] in [location]. It [significance or impact].',
+        'other': '[Topic Name] is [definition or description] that [key characteristics or significance]. It [additional context].'
+      };
+      
+      return templates[category] || templates['other'];
+    }
+
+    // Get Wikipedia examples for sections
+    function getWikipediaExample(sectionName, category) {
+      var examples = {
+        'person': {
+          'Early life': 'Marie Curie was born Maria Skłodowska on 7 November 1867 in Warsaw, Poland. Her parents were both teachers, and she was the youngest of five children. Despite facing financial difficulties after her father lost his savings, she excelled in her studies and graduated from gymnasium at age 15.',
+          'Career': 'Einstein began his career at the Swiss Patent Office in 1902, where he evaluated patent applications. During this period, he completed his most creative work, publishing four groundbreaking papers in 1905 that would transform physics, including his theory of special relativity.',
+          'Background': 'Stephen Hawking came from an academic family. His father was a medical researcher and his mother was one of the first female students at Oxford. The family placed a high value on education, which influenced his later academic pursuits.',
+          'Overview': 'Albert Einstein was a theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work is known for its influence on the philosophy of science and he received the 1921 Nobel Prize in Physics.'
+        },
+        'place': {
+          'Geography': 'Paris is situated on the Seine River in north-central France, at the center of the Île-de-France region. The city covers an area of 105.4 square kilometers and has an elevation ranging from 28 to 131 meters above sea level.',
+          'History': 'London was founded by the Romans around 47 AD as Londinium. After the Roman withdrawal in the 5th century, the city was largely abandoned until it was resettled by the Anglo-Saxons. It grew rapidly during the medieval period and became England\'s largest city.',
+          'Background': 'The area now known as New York City was originally inhabited by Algonquian tribes. European exploration began in the 16th century, with the Dutch establishing New Amsterdam in 1624, which the English later renamed New York.',
+          'Overview': 'Tokyo is the capital and most populous city of Japan. Located at the head of Tokyo Bay, it is the political, economic, and cultural center of Japan, with a metropolitan area population exceeding 37 million.'
+        },
+        'species': {
+          'Description': 'The giant panda has a distinctive black-and-white coat, with black fur around its eyes, ears, legs, and shoulders. Adults typically measure 1.2 to 1.9 meters in length and weigh between 80 and 125 kilograms. Their thick, woolly coat keeps them warm in their cool mountain homes.',
+          'Habitat': 'Giant pandas live in temperate broadleaf and mixed forests in southwest China, particularly in Sichuan Province. They are found at elevations between 1,200 and 3,400 meters, where bamboo grows abundantly beneath the forest canopy.',
+          'Background': 'The blue whale was first described by Robert Sibbald in 1694. For centuries, it was too large and fast to hunt effectively, but advances in whaling technology in the 19th century led to widespread hunting.',
+          'Overview': 'The African elephant is the largest living terrestrial animal. Distinguished by its large ears and concave back, it plays a crucial role in maintaining the biodiversity of the ecosystems in which it lives.'
+        },
+        'organization': {
+          'History': 'The Red Cross was founded in 1863 by Henry Dunant and Gustave Moynier in Geneva, Switzerland. It began as a response to the suffering Dunant witnessed at the Battle of Solferino, leading to the first Geneva Convention.',
+          'Activities': 'UNICEF works in over 190 countries providing humanitarian aid to children. Its activities include emergency relief, promoting child rights, improving healthcare and education, and protecting children from violence and exploitation.',
+          'Background': 'NASA was established in 1958 in response to the Soviet Union\'s launch of Sputnik. It replaced the National Advisory Committee for Aeronautics and began civilian space exploration efforts.',
+          'Overview': 'The World Health Organization is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.'
+        }
+      };
+      
+      return (examples[category] && examples[category][sectionName]) || null;
     }
 
     // Get contextual writing prompt for section based on category
@@ -1526,19 +1887,19 @@
       var hasContent = currentContent.trim() !== '';
       
       // Get contextual writing prompt based on section and category
-      var writingPrompt = getWritingPromptForSection(sectionName, selectedCategory);
+      var writingPrompt = getWritingPromptForSection(sectionName, selectedCat);
       
       // Create section with Wikipedia-style formatting (no extra breaks)
       var sectionHTML = '';
-      sectionHTML += '<h2 id="' + sectionName.replace(/\s+/g, '_') + '" style="';
-      sectionHTML += 'font-family: Georgia, serif; ';
-      sectionHTML += 'font-size: 1.5em; ';
-      sectionHTML += 'font-weight: normal; ';
-      sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; '; // More top margin if content exists
-      sectionHTML += 'padding: 0; ';
-      sectionHTML += 'border-bottom: 1px solid #eaecf0; '; // Lighter gray separator
-      sectionHTML += 'padding-bottom: 0.25em;';
-      sectionHTML += '">' + sectionName + '</h2>';
+      sectionHTML += '<h2 id="' + sectionName.replace(/\s+/g, '_') + '" class="wiki-section-heading">' + sectionName;
+      sectionHTML += '<button class="section-close-btn" onclick="removeSectionFromEditor(\'' + sectionName + '\')" style="';
+      sectionHTML += 'position: absolute; right: 420px; top: 50%; transform: translateY(-50%); ';
+      sectionHTML += 'background: #fff; border: 1px solid #c8ccd1; font-size: 16px; color: #72777d; cursor: pointer; ';
+      sectionHTML += 'padding: 2px 8px; border-radius: 3px; transition: color 0.2s, background 0.2s, border-color 0.2s;" ';
+      sectionHTML += 'title="Remove this section">';
+      sectionHTML += '×';
+      sectionHTML += '</button>';
+      sectionHTML += '</h2>';
       sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d; font-style: italic;" data-placeholder="' + writingPrompt + '">' + writingPrompt + '</p>';
       
       // Check if References section exists and insert before it
@@ -1553,8 +1914,10 @@
         editor.innerHTML = sectionHTML;
       }
 
-      // Clean up any extra BR tags or empty divs that might create visual separators
-      cleanupExtraBreaks();
+      // Clean up any extra BR tags or empty divs that might create visual separators (but not immediately after section insertion)
+      setTimeout(function() {
+        cleanupExtraBreaks();
+      }, 100);
 
       // Position cursor in the newly added section's paragraph
       editor.focus();
@@ -1602,6 +1965,62 @@
       }
 
       // Update content to show new state
+      updateGuideContent();
+    }
+
+    // Remove section from editor
+    function removeSectionFromEditor(sectionName) {
+      var editor = document.getElementById('editor');
+      if (!editor) return;
+      
+      // First, clean up any phantom elements
+      cleanupExtraBreaks();
+      
+      // Remove from tracking array
+      var index = addedSections.indexOf(sectionName);
+      if (index !== -1) {
+        addedSections.splice(index, 1);
+      }
+      
+      // Find and remove the section from editor
+      var sectionId = sectionName.replace(/\s+/g, '_');
+      var sectionElement = editor.querySelector('#' + sectionId);
+      
+      // Also look for any H2 elements that contain this section name (in case ID is missing)
+      if (!sectionElement) {
+        var allH2s = editor.querySelectorAll('h2');
+        for (var i = 0; i < allH2s.length; i++) {
+          if (allH2s[i].textContent.includes(sectionName)) {
+            sectionElement = allH2s[i];
+            break;
+          }
+        }
+      }
+      
+      if (sectionElement) {
+        // Find all elements that belong to this section (heading + following content until next heading)
+        var elementsToRemove = [sectionElement];
+        var nextElement = sectionElement.nextElementSibling;
+        
+        while (nextElement && nextElement.tagName.toLowerCase() !== 'h2') {
+          elementsToRemove.push(nextElement);
+          nextElement = nextElement.nextElementSibling;
+        }
+        
+        // Remove all elements belonging to this section
+        elementsToRemove.forEach(function(element) {
+          if (element && element.parentNode) {
+            element.parentNode.removeChild(element);
+          }
+        });
+        
+        // Clean up any extra breaks and phantom elements again
+        setTimeout(function() {
+          cleanupExtraBreaks();
+        }, 10);
+      }
+      
+      // Update guide content to reflect changes
       updateGuideContent();
     }
 
@@ -2084,10 +2503,6 @@
         resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.warning + '</p>';
       }
       
-      resultHTML += '<div class="sidebar-action-buttons">';
-      resultHTML += '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Generate draft</button>';
-      resultHTML += '</div>';
-      
       resultDiv.innerHTML = resultHTML;
       resultDiv.style.display = 'block';
       
@@ -2095,13 +2510,8 @@
       checkBtn.disabled = false;
       checkBtn.textContent = 'Check source';
       
-      // Bind generate button
-      var generateBtn = document.getElementById('sidebarGenerateBtn');
-      if (generateBtn) {
-        generateBtn.addEventListener('click', function() {
-          generateSidebarDraft(url);
-        });
-      }
+      // Automatically generate and show draft content (skip the Generate Draft button)
+      generateSidebarDraft(url);
     }
 
     // Generate draft in sidebar
