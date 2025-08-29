@@ -6,13 +6,13 @@
           "name": "Scientist/Researcher",
           "detectionKeywords": ["scientist", "researcher", "mathematician", "physicist", "chemist", "biologist", "engineer", "inventor"],
           "introductionTemplates": {
-            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} who {{MAJOR_CONTRIBUTION}}. {{PRONOUN_POSSESSIVE}} main discoveries include {{DISCOVERIES}}{{CAREER_CONTEXT}}{{LEGACY_IMPACT}}",
-            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} known for {{PRIMARY_DISCOVERY}}.",
-            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} and {{SECONDARY_ROLES}}. {{EARLY_CAREER}} {{PRONOUN_POSSESSIVE}} major contributions include {{DETAILED_DISCOVERIES}}{{METHODOLOGY}}{{RECOGNITION}}{{HISTORICAL_IMPACT}}"
+            "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} {{KNOWN_FOR}}. {{CURRENT_POSITION}} {{MAJOR_CONTRIBUTIONS}}. {{RECOGNITION_AWARDS}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} known for {{PRIMARY_ACHIEVEMENT}}.",
+            "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} and {{SECONDARY_ROLES}}. {{CURRENT_STATUS}} {{DETAILED_CONTRIBUTIONS}} {{CAREER_HIGHLIGHTS}}"
           },
           "contextualChips": [
-            "+ scientific field", "+ major discovery", "+ research method", "+ theoretical contribution",
-            "+ practical applications", "+ scientific institutions", "+ awards received", "+ historical significance"
+            "+ pronunciation", "+ birth date", "+ birth place", "+ scientific field", "+ current position", 
+            "+ major contributions", "+ awards received", "+ current status", "+ recognition"
           ],
           "sections": [
             {
@@ -64,13 +64,13 @@
           "name": "Artist/Creative",
           "detectionKeywords": ["artist", "painter", "sculptor", "writer", "author", "composer", "musician", "director"],
           "introductionTemplates": {
-            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} known for {{ARTISTIC_STYLE}}. {{PRONOUN_POSSESSIVE}} notable works include {{MAJOR_WORKS}}{{ARTISTIC_MOVEMENT}}{{CULTURAL_IMPACT}}",
-            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} known for {{PRIMARY_WORK}}.",
-            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} who {{ARTISTIC_INNOVATION}}. {{EARLY_DEVELOPMENT}} {{PRONOUN_POSSESSIVE}} body of work spans {{ARTISTIC_RANGE}}{{CULTURAL_CONTEXT}}{{LASTING_INFLUENCE}}"
+            "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} {{KNOWN_FOR}}. {{CULTURAL_IMPACT}} {{MAJOR_WORKS}} {{CURRENT_STATUS}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} known for {{PRIMARY_ACHIEVEMENT}}.",
+            "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} and {{SECONDARY_ROLES}}. {{ARTISTIC_SIGNIFICANCE}} {{CAREER_HIGHLIGHTS}} {{CULTURAL_INFLUENCE}}"
           },
           "contextualChips": [
-            "+ artistic medium", "+ artistic style", "+ notable works", "+ artistic movement",
-            "+ cultural influence", "+ creative innovations", "+ exhibitions", "+ critical reception"
+            "+ pronunciation", "+ birth date", "+ birth place", "+ artistic medium", "+ cultural impact",
+            "+ major works", "+ current status", "+ artistic significance", "+ career highlights"
           ],
           "sections": [
             {
@@ -103,13 +103,13 @@
           "name": "Political Figure",
           "detectionKeywords": ["politician", "president", "minister", "senator", "governor", "mayor", "leader"],
           "introductionTemplates": {
-            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} who {{MAJOR_POLICIES}}. {{PRONOUN}} served as {{OFFICES_HELD}}{{POLITICAL_ACHIEVEMENTS}}{{HISTORICAL_CONTEXT}}",
-            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} known for {{PRIMARY_POLICY}}.",
-            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} and {{SECONDARY_ROLES}}. {{POLITICAL_CAREER}} {{PRONOUN_POSSESSIVE}} administration focused on {{POLICY_AREAS}}{{POLITICAL_LEGACY}}{{HISTORICAL_SIGNIFICANCE}}"
+            "formal": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} who {{CURRENT_ROLE}}. {{POLITICAL_EXPERIENCE}} {{MAJOR_ACHIEVEMENTS}} {{POLITICAL_SIGNIFICANCE}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} known for {{PRIMARY_ACHIEVEMENT}}.",
+            "detailed": "{{FULL_NAME}} (born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} and {{SECONDARY_ROLES}}. {{CURRENT_STATUS}} {{POLITICAL_CAREER_HIGHLIGHTS}} {{HISTORICAL_SIGNIFICANCE}}"
           },
           "contextualChips": [
-            "+ political position", "+ political party", "+ major policies", "+ political achievements",
-            "+ offices held", "+ political reforms", "+ electoral history", "+ political legacy"
+            "+ birth date", "+ birth place", "+ political position", "+ current role", "+ political experience",
+            "+ major achievements", "+ current status", "+ political significance", "+ career highlights"
           ],
           "sections": [
             {
@@ -129,29 +129,92 @@
               "priority": 2
             }
           ]
+        },
+        "business_leader": {
+          "name": "Business Leader/Entrepreneur",
+          "detectionKeywords": ["businessman", "entrepreneur", "CEO", "founder", "executive", "investor", "billionaire"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} {{KNOWN_FOR}}. {{NET_WORTH_STATUS}} {{BUSINESS_ACHIEVEMENTS}} {{COMPANIES_LED}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{PRIMARY_BUSINESS}}.",
+            "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} and {{SECONDARY_ROLES}}. {{WEALTH_RANKING}} {{BUSINESS_EMPIRE}} {{INDUSTRY_IMPACT}}"
+          },
+          "contextualChips": [
+            "+ pronunciation", "+ birth date", "+ birth place", "+ occupation", "+ net worth status",
+            "+ business achievements", "+ companies led", "+ wealth ranking", "+ industry impact"
+          ]
+        },
+        "entertainer": {
+          "name": "Entertainment Figure",
+          "detectionKeywords": ["singer", "actor", "director", "producer", "entertainer", "celebrity", "performer"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} {{KNOWN_FOR}}. {{CULTURAL_IMPACT}} {{MAJOR_WORKS}} {{CAREER_ACHIEVEMENTS}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{PRIMARY_WORK}}.",
+            "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} and {{SECONDARY_ROLES}}. {{INDUSTRY_STATUS}} {{ARTISTIC_ACHIEVEMENTS}} {{CULTURAL_INFLUENCE}}"
+          },
+          "contextualChips": [
+            "+ pronunciation", "+ birth date", "+ birth place", "+ occupation", "+ cultural impact",
+            "+ major works", "+ career achievements", "+ industry status", "+ cultural influence"
+          ]
+        },
+        "athlete": {
+          "name": "Professional Athlete",
+          "detectionKeywords": ["athlete", "player", "champion", "sports", "basketball", "football", "soccer", "tennis"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} professional {{SPORT}} {{POSITION}}. {{CAREER_STATUS}} {{MAJOR_ACHIEVEMENTS}} {{RECORDS_HELD}}",
+            "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{SPORT}} known for {{PRIMARY_ACHIEVEMENT}}.",
+            "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} professional {{SPORT}} for {{CURRENT_TEAM}}. {{GREATNESS_STATEMENT}} {{CAREER_STATISTICS}} {{CHAMPIONSHIP_HISTORY}}"
+          },
+          "contextualChips": [
+            "+ pronunciation", "+ birth date", "+ birth place", "+ sport", "+ position", "+ current team",
+            "+ career status", "+ major achievements", "+ records held", "+ championship history"
+          ]
         }
       },
       "defaultTemplate": {
-        "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} who {{ACHIEVEMENT}}. {{PRONOUN}} {{CAREER_SUMMARY}}{{NOTABLE_CONTRIBUTIONS}}{{RECOGNITION}}",
-        "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{MAIN_CONTRIBUTION}}.",
-        "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} who {{DETAILED_ACHIEVEMENT}}. {{BACKGROUND}} {{CAREER_DETAILS}}{{LEGACY}}"
+        "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} {{KNOWN_FOR}}. {{CURRENT_STATUS}} {{MAJOR_ACHIEVEMENTS}} {{RECOGNITION}}",
+        "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{PRIMARY_ACHIEVEMENT}}.",
+        "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} and {{SECONDARY_ROLES}}. {{CURRENT_POSITION}} {{CAREER_HIGHLIGHTS}} {{SIGNIFICANCE_STATEMENT}}"
       },
       "defaultSections": [
+        {
+          "title": "Early life and education",
+          "description": "Childhood, family background, and educational journey",
+          "icon": "🎓",
+          "contentTemplate": "{{NAME}} was born {{BIRTH_DETAILS}} in {{BIRTH_PLACE}}. {{FAMILY_BACKGROUND}} {{EARLY_EDUCATION}} {{FORMATIVE_EXPERIENCES}}",
+          "wikidataProperties": ["P569", "P19", "P22", "P25", "P69"],
+          "priority": 1
+        },
+        {
+          "title": "Career",
+          "description": "Professional journey, major positions, and career development",
+          "icon": "💼",
+          "contentTemplate": "{{NAME}} began {{CAREER_START}} at {{EARLY_INSTITUTION}}. {{CAREER_PROGRESSION}} {{MAJOR_POSITIONS}} {{PROFESSIONAL_ACHIEVEMENTS}}",
+          "wikidataProperties": ["P108", "P39", "P106"],
+          "priority": 2
+        },
         {
           "title": "Personal life",
           "description": "Family, relationships, and personal interests",
           "icon": "👥",
-          "contentTemplate": "{{NAME}} {{PERSONAL_DETAILS}}. {{FAMILY_INFO}} {{PERSONAL_INTERESTS}}",
+          "contentTemplate": "{{NAME}} {{MARITAL_STATUS}} {{SPOUSE_DETAILS}}. {{CHILDREN_INFO}} {{PERSONAL_INTERESTS}} {{RESIDENCE}}",
           "wikidataProperties": ["P26", "P40", "P551"],
-          "priority": 5
+          "priority": 3
         },
         {
-          "title": "Death and legacy",
-          "description": "Final years and posthumous recognition",
-          "icon": "⚰️",
-          "contentTemplate": "{{NAME}} died {{DEATH_DETAILS}}. {{LEGACY}} {{MEMORIALS}} {{CONTINUING_INFLUENCE}}",
-          "wikidataProperties": ["P570", "P20", "P509"],
-          "priority": 6
+          "title": "Recognition and awards",
+          "description": "Honors, accolades, and formal recognition",
+          "icon": "🏅",
+          "contentTemplate": "{{NAME}} has received {{MAJOR_AWARDS}}. {{AWARD_DETAILS}} {{HONORARY_DEGREES}} {{RECOGNITION_TIMELINE}}",
+          "wikidataProperties": ["P166", "P512", "P1411"],
+          "priority": 4
+        },
+        {
+          "title": "Legacy and influence",
+          "description": "Long-term impact, cultural significance, and continuing influence",
+          "icon": "🏛️",
+          "contentTemplate": "{{NAME}}'s work has {{IMPACT_DESCRIPTION}}. {{INFLUENCE_ON_FIELD}} {{CULTURAL_SIGNIFICANCE}} {{CONTINUING_RELEVANCE}}",
+          "wikidataProperties": ["P2184", "P1411", "P166"],
+          "priority": 5
         }
       ],
       "wikidataProperties": ["P569", "P570", "P19", "P20", "P27", "P106", "P69", "P166", "P800", "P101", "P108", "P512", "P184", "P185"]
@@ -259,18 +322,44 @@
     "description": "When users click interactive chips, they get dropdown options with these predefined values",
     "conversionLogic": "Unfilled placeholders become clickable chips: {{MAJOR_DISCOVERY}} → 'major discovery' chip",
     "PERSON": {
-      "nationality": ["American", "British", "Indian", "Canadian", "Australian", "German", "French", "Custom..."],
-      "occupation": ["writer", "scientist", "artist", "politician", "musician", "actor", "engineer", "Custom..."],
-      "birth_year": ["1950", "1960", "1970", "1980", "1990", "2000", "Custom..."],
-      "main_achievement": ["notable works", "scientific discoveries", "artistic contributions", "political reforms", "Custom..."],
-      "birth_date": ["January 1, 1970", "March 15, 1965", "June 10, 1980", "Custom..."],
-      "birth_place": ["New York", "London", "Paris", "Mumbai", "Toronto", "Sydney", "Custom..."],
+      "nationality": ["American", "British", "Indian", "Canadian", "Australian", "German", "French", "Italian", "Japanese", "Chinese", "Custom..."],
+      "occupation": ["businessman", "writer", "scientist", "artist", "politician", "musician", "actor", "engineer", "singer-songwriter", "philanthropist", "Custom..."],
+      "birth_date": ["June 28, 1971", "October 28, 1955", "January 12, 1964", "December 13, 1989", "December 30, 1984", "Custom..."],
+      "birth_place": ["Pretoria, South Africa", "Seattle, Washington", "Albuquerque, New Mexico", "Reading, Pennsylvania", "Akron, Ohio", "Custom..."],
+      "pronunciation": ["EE-lon", "MUSK", "BAY-zohss", "lə-BRON", "Custom..."],
+      "known_for": ["known for his leadership of Tesla, SpaceX, and X", "best known as the founder of Amazon", "known for autobiographical songwriting", "widely regarded as one of the greatest players", "Custom..."],
+      "current_status": ["has been the wealthiest person in the world", "is the third richest person in the world", "serves as chairman and CEO", "plays for Inter Miami", "Custom..."],
+      "current_position": ["CEO of Tesla", "Executive Chairman of Amazon", "Chief Executive Officer of Apple", "President of the United States", "Custom..."],
       "family_background": ["middle-class family", "academic family", "working-class origins", "aristocratic lineage", "Custom..."],
       "early_education": ["local schools", "private tutoring", "prestigious academy", "public education", "Custom..."],
       "career_start_institution": ["Harvard University", "Oxford University", "MIT", "Stanford University", "Custom..."],
       "career_start_year": ["1990", "1995", "2000", "2005", "2010", "Custom..."],
-      "primary_research": ["theoretical physics", "molecular biology", "computer science", "political theory", "Custom..."],
-      "major_contributions": ["groundbreaking research", "innovative policies", "artistic innovations", "technological advances", "Custom..."],
+      "primary_achievement": ["revolutionary space exploration", "e-commerce innovation", "music industry transformation", "basketball excellence", "scientific breakthroughs", "Custom..."],
+      "major_achievements": ["founded multiple companies", "pioneered electric vehicles", "advanced space technology", "won multiple championships", "received Nobel Prize", "Custom..."],
+      "recognition": ["Forbes richest person rankings", "Grammy Awards", "Olympic gold medals", "Nobel Prize winner", "Academy Awards", "Custom..."],
+      "significance_statement": ["cultural icon of the 21st century", "one of the most influential entrepreneurs", "widely considered among the greatest", "pioneered sustainable technology", "Custom..."],
+      "career_highlights": ["Tesla IPO success", "SpaceX missions", "chart-topping albums", "championship victories", "groundbreaking research", "Custom..."],
+      "net_worth": ["$424.7 billion", "$220 billion", "$160.2 billion", "$115.1 billion", "Custom..."],
+      "birth_details": ["on June 28, 1971", "on October 28, 1955", "on January 12, 1964", "on December 13, 1989", "in 1970", "Custom..."],
+      "birth_place": ["Pretoria, South Africa", "Seattle, Washington", "Albuquerque, New Mexico", "Reading, Pennsylvania", "New York City", "Custom..."],
+      "formative_experiences": ["showed early entrepreneurial interests", "demonstrated academic excellence", "developed passion for technology", "exhibited leadership qualities", "Custom..."],
+      "career_start": ["his career in 1995", "working at Microsoft", "as a software engineer", "in the entertainment industry", "with a small startup", "Custom..."],
+      "early_institution": ["Stanford University", "Harvard University", "a tech startup", "Wall Street firm", "family business", "Custom..."],
+      "career_progression": ["He quickly rose through the ranks", "His innovative approach gained recognition", "Multiple promotions followed", "He founded his own company", "Custom..."],
+      "major_positions": ["CEO and founder", "senior executive roles", "board positions", "industry leadership", "Custom..."],
+      "professional_achievements": ["revolutionary business strategies", "groundbreaking innovations", "industry transformation", "market leadership", "Custom..."],
+      "marital_status": ["is married to", "was married to", "lives with partner", "divorced from", "remains single", "Custom..."],
+      "spouse_details": ["Jane Smith in 1995", "fellow entrepreneur John Doe", "longtime partner Sarah", "former colleague", "Custom..."],
+      "children_info": ["They have two children", "The couple has three sons", "They have one daughter", "No children", "Custom..."],
+      "residence": ["They reside in California", "The family lives in New York", "He maintains homes in multiple cities", "Currently based in Austin", "Custom..."],
+      "major_awards": ["Nobel Prize", "Presidential Medal of Freedom", "Grammy Awards", "Academy Awards", "Forbes recognition", "Custom..."],
+      "award_details": ["for outstanding contributions", "recognizing lifetime achievement", "for innovation excellence", "honoring humanitarian work", "Custom..."],
+      "honorary_degrees": ["from Harvard University", "from multiple institutions", "in recognition of achievements", "doctorate in engineering", "Custom..."],
+      "recognition_timeline": ["throughout his career", "starting in the 1990s", "increasingly since 2000", "particularly in recent years", "Custom..."],
+      "impact_description": ["transformed the industry", "influenced a generation", "changed how we think about", "pioneered new approaches to", "Custom..."],
+      "influence_on_field": ["His methods are widely adopted", "Students follow his teachings", "Industry standards reflect his vision", "Competitors emulate his strategies", "Custom..."],
+      "cultural_significance": ["became a household name", "inspired countless individuals", "shaped popular culture", "influenced social movements", "Custom..."],
+      "continuing_relevance": ["His work remains influential today", "Legacy continues through foundations", "Ideas are still being developed", "Impact grows with time", "Custom..."],
       "political_start_year": ["1990", "1995", "2000", "2005", "2010", "Custom..."],
       "first_office": ["city councilor", "state representative", "mayor", "senator", "Custom..."],
       "major_offices": ["Governor", "Senator", "Prime Minister", "President", "Cabinet Minister", "Custom..."],

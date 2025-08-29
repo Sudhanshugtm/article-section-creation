@@ -111,25 +111,39 @@
       color: #72777d;
     }
 
-    /* Template placeholders in content */
+    /* Template placeholders in content (inline chips) */
     .template-placeholder {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 2px 8px;
-      border: 1px solid #c8ccd1;
+      border: 1px dashed #a2a9b1;
       border-radius: 12px;
       background: #f8f9fa;
       color: #202122;
       cursor: pointer;
       user-select: none;
       font-style: normal;
+      position: relative;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .template-placeholder::before {
+      content: '+';
+      font-size: 12px;
+      color: #36c;
     }
 
     .template-placeholder:hover {
       background: #eef3ff;
       border-color: #36c;
-      color: #36c;
+      color: #2a4b8d;
+      box-shadow: 0 0 0 2px #eaf3ff;
+    }
+
+    .template-placeholder:focus-visible {
+      outline: 2px solid #36c;
+      outline-offset: 1px;
     }
 
     /* Chip suggestion menu */
@@ -137,17 +151,30 @@
       position: absolute;
       display: none;
       background: #fff;
-      border: 1px solid #eaecf0;
+      border: none;
       border-radius: 8px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      min-width: 220px;
-      max-width: 360px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+      width: 460px;
+      min-width: 320px;
+      max-width: 90vw;
       z-index: 3500;
       padding: 6px 0;
     }
     .chip-menu-header { font-weight: 600; padding: 8px 12px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
     .chip-menu-item { display:block; width:100%; text-align:left; padding:10px 12px; background:#fff; border:0; cursor:pointer; font-size:13px; }
     .chip-menu-item:hover { background:#f8f9fa; }
+    .chip-menu-item[data-chip-submit] { background:#36c; color:#fff; border-radius:4px; }
+    .chip-menu-item[data-chip-submit]:hover { background:#2a4b8d; }
+
+    /* Simplified Suggestions panel */
+    .assist-menu { width: 520px; max-width: calc(100vw - 32px); padding: 6px 0; }
+    .assist-group { padding: 8px 12px; }
+    .assist-actions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 4px; }
+    .assist-actions .action-chip { padding:6px 10px; border-radius:8px; }
+    .assist-list { list-style:none; margin:0; padding:0; }
+    .assist-list-item { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:8px 0; }
+    .assist-list-item .meta { font-size:12px; color:#555; }
+    .assist-list-item .action-chip { white-space:nowrap; }
 
     /* Source verification indicators */
     .needs-source {
@@ -174,6 +201,44 @@
     .badge { display:inline-block; font-size:10px; padding:2px 6px; border-radius:10px; border:1px solid #c8ccd1; color:#72777d; }
     .badge.good { color:#14866d; border-color:#14866d; }
     .badge.warn { color:#ac6600; border-color:#ac6600; }
+
+    /* Reference chip emphasis */
+    .ref-chip { border-color:#36c !important; color:#36c !important; background:#eef3ff !important; }
+
+    /* Insert feedback highlight */
+    @keyframes insertFlash {
+      0% { background-color: #fff7cc; }
+      100% { background-color: transparent; }
+    }
+    .flash-insert { animation: insertFlash 1.2s ease-out; }
+
+    /* Undo toast */
+    .undo-toast {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 16px;
+      background: #202122;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 4000;
+      font-size: 13px;
+    }
+    .undo-toast.show { display: flex; }
+    .undo-toast .btn-undo {
+      background: #fff;
+      color: #202122;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    .undo-toast .btn-undo:hover { background: #f0f0f0; }
   
     .chip.guidance { border-color: #c8ccd1; background: #fff; }
     .ac-steps { max-width: 1100px; margin: 0 auto; }
@@ -527,6 +592,11 @@
       border: 1px solid #14866d;
     }
     
+    /* Removable section wrapper */
+    .section-block { position: relative; }
+    .section-dismiss { position: absolute; top: 0; right: 0; transform: translate(50%,-50%); width: 20px; height: 20px; border-radius: 50%; border: 1px solid #eaecf0; background: #fff; color: #72777d; line-height: 18px; text-align: center; cursor: pointer; font-size: 12px; user-select: none; }
+    .section-dismiss:hover { background: #f8f9fa; }
+
     .source-badge.questionable {
       background: #fef6e7;
       color: #ac6600;
@@ -893,6 +963,7 @@
         </div>
         <div class="group tight">
           <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
+          <button class="btn" id="openSourceBtn" title="Add from a source"><span class="cdx-icon" data-icon="cdxIconLinkExternal"></span><span class="cdx-button__label">Source</span></button>
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
@@ -1137,6 +1208,37 @@
       (list || document.getElementById('References')?.insertAdjacentElement('afterend', (function(){const d=document.createElement('div');d.id='referencesList';return d;})()))?.appendChild(p);
     }
 
+    // === Lightweight undo + feedback ===
+    let __lastUndoAction = null;
+    function flashElement(el) {
+      try { if (!el) return; el.classList.add('flash-insert'); setTimeout(() => el && el.classList && el.classList.remove('flash-insert'), 1500); } catch(_) {}
+    }
+    function ensureUndoToastEl() {
+      let t = document.getElementById('undoToast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'undoToast';
+        t.className = 'undo-toast';
+        t.innerHTML = '<span id="undoToastMsg">Change applied</span><button class="btn-undo" id="undoToastBtn">Undo</button>';
+        document.body.appendChild(t);
+      }
+      return t;
+    }
+    function showUndoToast(message, undoFn, highlightEl) {
+      try { flashElement(highlightEl); } catch(_) {}
+      const t = ensureUndoToastEl();
+      const msg = t.querySelector('#undoToastMsg');
+      const btn = t.querySelector('#undoToastBtn');
+      if (msg) msg.textContent = message || 'Change applied';
+      __lastUndoAction = (typeof undoFn === 'function') ? undoFn : null;
+      if (btn) {
+        btn.onclick = function(){ try { __lastUndoAction && __lastUndoAction(); } finally { t.classList.remove('show'); __lastUndoAction = null; } };
+      }
+      t.classList.add('show');
+      // Auto-hide after a few seconds if untouched
+      setTimeout(function(){ if (t.classList.contains('show')) t.classList.remove('show'); }, 6000);
+    }
+
     function insertReferenceLink(url, title) {
       const editor = document.getElementById('editor');
       ensureSelectionInEditor(editor);
@@ -1164,6 +1266,15 @@
       // Reposition chips after insert
       try { if (typeof showSmartChipsAtCursor === 'function') showSmartChipsAtCursor(); } catch(_) {}
       const sc = document.getElementById('smartChips'); if (sc) sc.classList.add('show');
+
+      // Feedback + undo
+      try {
+        const highlightTarget = sup.closest('p') || sup;
+        showUndoToast('Inserted citation', function(){
+          try { if (sup && sup.parentNode) sup.parentNode.removeChild(sup); } catch(_){ }
+          try { const list = document.getElementById('referencesList'); if (list && list.lastElementChild) list.removeChild(list.lastElementChild); } catch(_){ }
+        }, highlightTarget);
+      } catch(_) {}
     }
     // Steps
     var titleInput=document.getElementById('creation-title');
@@ -1230,7 +1341,7 @@
       // Insert a single Assistance chip with inline menu (simple concept)
       var assistHtml = ''+
         '<div id="assistChip" class="assist-chip" style="position:absolute; top:4px; left:4px; z-index:150; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #c8ccd1; border-radius:12px; background:#f8f9fa; color:#202122; cursor:pointer;">✨ Suggestions</div>'+
-        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:1px solid #eaecf0; border-radius:8px; box-shadow:0 8px 16px rgba(0,0,0,0.2); min-width:280px; min-height:200px; padding:0;">'+
+        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); width:520px; max-width:90vw; padding:0;">'+
           '<div class="assist-menu-header">Suggestions</div>'+
           '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
           '<div class="assist-sep"></div>'+
@@ -1385,6 +1496,7 @@
     // Sidebar buttons removed
     // Guide content elements removed
     var addedSections = [];
+    window.addedSections = addedSections;
     var suggestionsData = null;
 
     // Function to check if we're on mobile
@@ -2519,6 +2631,13 @@
           if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
         });
       }
+      var srcBtn = document.getElementById('openSourceBtn');
+      if (srcBtn) {
+        srcBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
+        });
+      }
       var mobileBtn = document.getElementById('guideMeMobile');
       if (mobileBtn) {
         mobileBtn.addEventListener('click', function(e){
@@ -2530,10 +2649,12 @@
 
     // Load advanced intro templates (read-only)
     function loadTemplates() {
-      return fetch('templates.json')
+      // Bust caches to ensure latest templates.json is used
+      var url = 'templates.json?v=' + Date.now();
+      return fetch(url, { cache: 'no-cache' })
         .then(function(r){ return r.json(); })
         .then(function(data){ window.templatesData = data; })
-        .catch(function(){ window.templatesData = null; });
+        .catch(function(err){ window.templatesData = null; console && console.warn && console.warn('Failed to load templates.json', err); });
     }
 
     // Initialize suggestions and sources on page load
@@ -2546,6 +2667,8 @@
     let smartChipsContainer, templatePopup, currentCursorPosition;
 
     function initializeSmartChips() {
+      if (window.__smartChipsInitialized) return; // prevent double-binding if block included twice
+      window.__smartChipsInitialized = true;
       smartChipsContainer = document.getElementById('smartChips');
       templatePopup = document.getElementById('templatePopup');
       
@@ -2588,112 +2711,268 @@
     // Assistance chip (simple inline menu)
     var suppressChipPositioning = false;
     function initializeAssistanceUI() {
+      if (window.__assistUIInitialized) return; // prevent double-binding from duplicate blocks
+      window.__assistUIInitialized = true;
       const chip = document.getElementById('assistChip');
       const menu = document.getElementById('assistMenu');
       if (!chip || !menu) return;
       const editor = document.getElementById('editor');
+      const CHIP_ANCHOR_MODE = 'block'; // 'block' anchors to current paragraph, reducing jitter vs caret
+      let rafId = null;
+      let frozen = false; // freeze while menu open
+      let lastAnchorEl = null; // remember last anchor paragraph for stable re-show
       
       // Helpers to hide/show the suggestions chip
       window.hideSuggestionsChip = function() {
         if (menu) menu.style.display = 'none';
         if (chip) chip.style.display = 'none';
+        frozen = false;
       };
       window.showSuggestionsChip = function(anchorEl) {
         if (chip) chip.style.display = 'inline-flex';
-        if (anchorEl && typeof positionChipBelowElement === 'function') {
-          try { positionChipBelowElement(anchorEl); } catch(_) {}
+        const target = anchorEl || lastAnchorEl;
+        if (target && typeof positionChipBelowElement === 'function') {
+          try { positionChipBelowElement(target); } catch(_) {}
         } else {
-          setTimeout(positionChipAtCursor, 0);
+          schedulePosition();
         }
       };
+      // Expose small control for other handlers
+      window.__assistSetFrozen = function(v){
+        frozen = !!v;
+        if (!frozen) schedulePosition();
+      };
       
-      function positionChipAtCursor() {
-        if (suppressChipPositioning) return;
+      function getActiveBlockElement() {
+        const isChipVisible = () => chip && chip.style.display !== 'none';
+        if (isChipVisible() && lastAnchorEl) return lastAnchorEl;
         const sel = window.getSelection();
-        if (!sel.rangeCount) return;
-        const liveRange = sel.getRangeAt(0);
-        const range = liveRange.cloneRange();
-        const editorRect = editor.getBoundingClientRect();
-        let rect = range.getBoundingClientRect();
-        const empty = !rect || ((rect.left === 0 && rect.top === 0 && rect.right === 0 && rect.bottom === 0));
-        if (empty) {
-          const node = (range.startContainer && range.startContainer.nodeType === Node.TEXT_NODE)
-            ? range.startContainer.parentElement
-            : range.startContainer;
-          const fb = (node && node.getBoundingClientRect) ? node.getBoundingClientRect() : editorRect;
-          rect = { left: fb.left, right: fb.right, top: fb.top, bottom: fb.bottom, width: fb.width, height: fb.height };
+        if (!sel.rangeCount) return lastAnchorEl || editor;
+        let node = sel.getRangeAt(0).startContainer;
+        if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        if (!node) return editor;
+        const block = node.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+        return block || lastAnchorEl || editor;
+      }
+
+      function offsetWithin(el, ancestor) {
+        try {
+          let x = 0, y = 0, n = el;
+          while (n && n !== ancestor) {
+            x += n.offsetLeft || 0;
+            y += n.offsetTop || 0;
+            n = n.offsetParent;
+          }
+          return { left: x, top: y };
+        } catch(_) {
+          return { left: 0, top: 0 };
         }
-        const left = Math.max(0, rect.left - editorRect.left);
-        const top = Math.max(0, rect.bottom - editorRect.top + 24);
+      }
+
+      function schedulePosition() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(positionChipAtCursor);
+      }
+
+      function positionChipAtCursor() {
+        rafId = null;
+        if (suppressChipPositioning || frozen) return;
+        const editorRect = editor.getBoundingClientRect();
+        let left = 0, top = 0;
+        if (CHIP_ANCHOR_MODE === 'block') {
+          const isChipVisible = () => chip && chip.style.display !== 'none';
+          const block = (isChipVisible() && lastAnchorEl) ? lastAnchorEl : getActiveBlockElement();
+          if (block && block !== editor) {
+            const off = offsetWithin(block, editor);
+            left = Math.max(0, off.left);
+            top  = Math.max(0, off.top + block.offsetHeight + 8);
+          } else {
+            const rect = editorRect;
+            left = 0;
+            top  = 8;
+          }
+          // Only update anchor when chip isn't visible to avoid following clicks
+          if (!(isChipVisible())) lastAnchorEl = block;
+        } else {
+          const sel = window.getSelection();
+          if (!sel.rangeCount) return;
+          const range = sel.getRangeAt(0).cloneRange();
+          let rect = range.getBoundingClientRect();
+          const empty = !rect || ((rect.left === 0 && rect.top === 0 && rect.right === 0 && rect.bottom === 0));
+          if (empty) {
+            const node = (range.startContainer && range.startContainer.nodeType === Node.TEXT_NODE)
+              ? range.startContainer.parentElement
+              : range.startContainer;
+            const fb = (node && node.getBoundingClientRect) ? node.getBoundingClientRect() : editorRect;
+            rect = { left: fb.left, right: fb.right, top: fb.top, bottom: fb.bottom, width: fb.width, height: fb.height };
+          }
+          left = Math.max(0, rect.left - editorRect.left);
+          top  = Math.max(0, rect.bottom - editorRect.top + 24);
+        }
         chip.style.left = left + 'px';
         chip.style.top = top + 'px';
+        // Keep menu attached to chip if open
+        if (menu && menu.style.display !== 'none') {
+          menu.style.left = chip.style.left;
+          menu.style.top  = (parseInt(chip.style.top || '0', 10) + 32) + 'px';
+        }
       }
 
       function positionChipBelowElement(el) {
         if (!el) return;
-        const editorRect = editor.getBoundingClientRect();
-        const rect = el.getBoundingClientRect();
-        const left = Math.max(0, rect.left - editorRect.left);
-        const top = Math.max(0, rect.bottom - editorRect.top + 24);
+        const off = offsetWithin(el, editor);
+        const left = Math.max(0, off.left);
+        const top  = Math.max(0, off.top + el.offsetHeight + 8);
         chip.style.left = left + 'px';
         chip.style.top = top + 'px';
+        lastAnchorEl = el;
       }
       
       function buildMainMenu() {
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
-        // Prefer JSON-backed examples if available
-        var ex = (window.suggestionsData && window.suggestionsData[cat] && window.suggestionsData[cat].introduction && Array.isArray(window.suggestionsData[cat].introduction.examples)) ? window.suggestionsData[cat].introduction.examples : null;
-        var exampleTexts = [];
-        if (ex && ex.length) {
-          for (var i=0; i<ex.length && i<2; i++) {
-            var e = ex[i];
-            if (e && e.text) exampleTexts.push(e.text);
-          }
+        // Context-aware header: Lead vs current section
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        function toId(n){ return String(n||'').trim().replace(/\s+/g,'_'); }
+        function sectionExistsByName(nm){
+          try{
+            var editor = document.getElementById('editor');
+            if (!editor) return false;
+            var id = toId(nm);
+            if (editor.querySelector('h2#'+CSS.escape(id))) return true;
+            var n = String(nm||'').trim().toLowerCase();
+            var headers = editor.querySelectorAll('h2');
+            for (var i=0;i<headers.length;i++){ var t = (headers[i].textContent||'').trim().toLowerCase(); if (t === n) return true; }
+            return false;
+          }catch(_){ return false; }
         }
-        // Fallback to generic samples if JSON lacks examples
-        if (exampleTexts.length === 0) {
-          exampleTexts = generateSampleIntroductions(title, cat).slice(0,2);
+        function getCurrentSectionName(){
+          try{
+            var block = getActiveBlockElement();
+            if (!block || block === editor) return 'Lead';
+            var editorRect = editor.getBoundingClientRect();
+            var bOff = offsetWithin(block, editor).top;
+            var headers = Array.from(editor.querySelectorAll('h2'));
+            var best = null; var bestTop = -1;
+            headers.forEach(function(h){ var off = offsetWithin(h, editor).top; if (off <= bOff && off > bestTop) { bestTop = off; best = h; } });
+            return best ? (best.textContent || 'Section').trim() : 'Lead';
+          }catch(_) { return 'Lead'; }
+        }
+        function getSectionMetaByName(name){
+          try { var tpl = window.templatesData; var key = catToKey(cat); var list = (tpl && tpl.categories && tpl.categories[key] && Array.isArray(tpl.categories[key].defaultSections)) ? tpl.categories[key].defaultSections : []; var n = String(name||'').trim().toLowerCase(); for (var i=0;i<list.length;i++){ var t = (list[i].title||'').trim().toLowerCase(); if (t === n) return list[i]; } return null; } catch(_) { return null; }
+        }
+        function getLeadExampleFromSuggestions(cat){
+          try{
+            var ex = window.suggestionsData && window.suggestionsData[cat] && window.suggestionsData[cat].introduction && Array.isArray(window.suggestionsData[cat].introduction.examples) ? window.suggestionsData[cat].introduction.examples : null;
+            if (ex && ex.length) return ex[0].text || null;
+            return null;
+          }catch(_) { return null; }
         }
 
-        // Suggested sections from JSON
-        var sectionBlock = '';
-        var secList = (window.suggestionsData && window.suggestionsData[cat] && Array.isArray(window.suggestionsData[cat].sections)) ? window.suggestionsData[cat].sections : [];
-        if (secList && secList.length) {
-          var preview = secList.slice(0, 3);
-          sectionBlock += '<div class="assist-sep"></div>';
-          sectionBlock += '<div class="intro-sample" style="background:#fcfdfc; border:1px solid #e6f5ea; border-radius:8px;">';
-          sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
-          preview.forEach(function(sec){
-            var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
-            var desc = (typeof sec === 'string') ? '' : (sec.description || '');
-            var include = (typeof sec === 'string') ? [] : (sec.include || []);
-            sectionBlock += '<div style="padding:8px 0;">';
-            sectionBlock += '<div style="font-weight:600;">'+ escapeHtml(name) +'</div>';
-            if (desc) sectionBlock += '<div style="font-size:12px; color:#555; margin:2px 0 6px 0;">'+ escapeHtml(desc) +'</div>';
-            if (include && include.length) {
-              var items = include.slice(0,3).map(function(it){ return '<li>'+ escapeHtml(it) +'</li>'; }).join('');
-              sectionBlock += '<ul style="margin:0 0 6px 16px; padding:0; font-size:12px; color:#555;">'+ items +'</ul>';
+        function getWikipediaSectionExample(sectionName, category){
+          var ex = {
+            'person': {
+              'Early life': 'Marie Curie was born Maria Skłodowska on 7 November 1867 in Warsaw, Poland. Her parents were both teachers, and she was the youngest of five children. Despite financial difficulties after her father lost his savings, she excelled in her studies and graduated from gymnasium at age 15.',
+              'Career': 'Einstein began his career at the Swiss Patent Office in 1902, where he evaluated patent applications. During this period, he completed his most creative work, publishing four groundbreaking papers in 1905 that would transform physics, including his theory of special relativity.',
+              'Background': 'Stephen Hawking came from an academic family. His father was a medical researcher and his mother was one of the first female students at Oxford. The family placed a high value on education, which influenced his later academic pursuits.',
+              'Overview': 'Albert Einstein was a theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work influenced the philosophy of science and he received the 1921 Nobel Prize in Physics.'
+            },
+            'place': {
+              'Geography': 'Paris is situated on the Seine River in north-central France, at the center of the Île-de-France region. The city covers an area of 105.4 square kilometers and has an elevation ranging from 28 to 131 meters above sea level.',
+              'History': 'London was founded by the Romans around 47 AD as Londinium. After the Roman withdrawal in the 5th century, the city was largely abandoned until it was resettled by the Anglo-Saxons. It grew rapidly during the medieval period and became England\'s largest city.',
+              'Background': 'The area now known as New York City was originally inhabited by Algonquian tribes. European exploration began in the 16th century, with the Dutch establishing New Amsterdam in 1624, later renamed New York.',
+              'Overview': 'Tokyo is the capital and most populous city of Japan. Located at the head of Tokyo Bay, it is the political, economic, and cultural center of Japan, with a metropolitan area population exceeding 37 million.'
+            },
+            'species': {
+              'Description': 'The giant panda has a distinctive black-and-white coat, with black fur around its eyes, ears, legs, and shoulders. Adults typically measure 1.2 to 1.9 meters in length and weigh between 80 and 125 kilograms.',
+              'Habitat': 'Giant pandas live in temperate broadleaf and mixed forests in southwest China, particularly in Sichuan Province, at elevations between 1,200 and 3,400 meters where bamboo grows abundantly.',
+              'Background': 'The blue whale was first scientifically described in 1694 by Robert Sibbald. Advances in whaling technology in the 19th century led to widespread hunting until international protection efforts.',
+              'Overview': 'The African elephant is the largest living terrestrial animal, distinguished by its large ears and concave back, and plays a crucial role in maintaining the biodiversity of its ecosystems.'
+            },
+            'organization': {
+              'History': 'The Red Cross was founded in 1863 by Henry Dunant and Gustave Moynier in Geneva, Switzerland, as a response to the suffering witnessed at the Battle of Solferino, leading to the first Geneva Convention.',
+              'Activities': 'UNICEF works in over 190 countries providing humanitarian aid to children, including emergency relief, promoting child rights, improving healthcare and education, and protecting children from violence and exploitation.',
+              'Background': 'NASA was established in 1958 in response to the Soviet launch of Sputnik, replacing NACA and beginning civilian space exploration efforts.',
+              'Overview': 'The World Health Organization is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.'
             }
-            sectionBlock += '<div class="action-row"><button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button></div>';
-            sectionBlock += '</div>';
-          });
-          if (secList.length > 3) {
-            sectionBlock += '<div class="action-row"><button class="action-chip" data-view-all-sections>View all</button></div>';
-          }
-          sectionBlock += '</div>';
+          };
+          var cat = (category||'').toLowerCase();
+          var sec = String(sectionName||'').trim();
+          var m = ex[cat] && ex[cat][sec];
+          return m || null;
         }
+
+        function buildExampleBlock(isLead, currentSection, cat){
+          var text = isLead ? getLeadExampleFromSuggestions(cat) : getWikipediaSectionExample(currentSection, cat);
+          if (!text) return '';
+          return '<div class="assist-group">'+
+                   '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge">Wikipedia example</span></div>'+
+                   '<div class="intro-text" style="background:#f8f9fa; border-left:3px solid #36c; padding:10px; line-height:1.5;">'+ escapeHtml(text) +'</div>'+
+                 '</div>';
+        }
+
+        var currentSection = getCurrentSectionName();
+        var isLead = /^lead$/i.test(currentSection);
+        var secMeta = isLead ? null : getSectionMetaByName(currentSection);
+
+        var contextBlock = '<div class="assist-group">'+
+          '<div class="template-option-title" style="margin-bottom:2px;">'+ (isLead ? 'Lead section' : 'Section: ' + escapeHtml(currentSection)) +'</div>'+
+          '<div class="meta">'+ (isLead ? 'Good leads briefly define the topic and summarize the most important points in a neutral tone, with sources.' : (secMeta && secMeta.description ? escapeHtml(secMeta.description) : 'Add well-sourced, neutral content relevant to this section.')) +'</div>'+
+          buildExampleBlock(isLead, currentSection, cat) +
+          '<div class="assist-actions">'+
+            (isLead ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>' : (sectionExistsByName(currentSection) ? '' : '<button class="action-chip" data-insert-section="'+ escapeHtml(currentSection) +'">Try a section starter</button>'))+
+          '</div>'+
+        '</div>';
+
+        // Build a simpler, cleaner sections list below
+        var sectionBlock = '';
+        (function buildSections(){
+          var tpl = window.templatesData;
+          var catKey = catToKey(cat);
+          var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : null;
+          if (tplSections && tplSections.length) {
+            sectionBlock += '<div class="assist-sep"></div>';
+            sectionBlock += '<div class="assist-group">';
+            sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
+            sectionBlock += '<ul class="assist-list">';
+            tplSections.forEach(function(sec){
+              var name = sec && sec.title ? sec.title : 'Section';
+              var desc = sec && sec.description ? sec.description : '';
+              var exists = sectionExistsByName(name);
+              sectionBlock += '<li class="assist-list-item">'+
+                '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
+                (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+              '</li>';
+            });
+            sectionBlock += '</ul></div>';
+            return;
+          }
+          // Fallback to legacy suggestionsData (simple list)
+          var secList = (window.suggestionsData && window.suggestionsData[cat] && Array.isArray(window.suggestionsData[cat].sections)) ? window.suggestionsData[cat].sections : [];
+          if (secList && secList.length) {
+            sectionBlock += '<div class="assist-sep"></div>';
+            sectionBlock += '<div class="assist-group">';
+            sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
+            sectionBlock += '<ul class="assist-list">';
+            secList.forEach(function(sec){
+              var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
+              var desc = (typeof sec === 'string') ? '' : (sec.description || '');
+              var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var i=0;i<hs.length;i++){ var t=(hs[i].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
+              sectionBlock += '<li class="assist-list-item">'+
+                '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
+                (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+              '</li>';
+            });
+            sectionBlock += '</ul></div>';
+          }
+        })();
 
         var html = ''+
           '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">Suggestions <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">Hide</button></div>'+
-          '<div class="intro-sample" style="background:#f8faff; border:1px solid #e6f0ff; border-radius:8px;">'+
-            '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge">Suggested</span> Introduction</div>'+
-            exampleTexts.map(function(text){ return '<div class="intro-text" style="margin-bottom:10px;">'+ escapeHtml(text) +'</div>'; }).join('')+
-            '<div class="action-row"><button class="action-chip" data-insert-intro-template>Insert template</button></div>'+
-          '</div>'+
-          sectionBlock +
-          '<button class="assist-item" data-assist="source"><div class="template-option-title">Add from a source</div><div class="template-option-desc">Open source dialog</div></button>'+
-          '';
+          contextBlock +
+          sectionBlock;
         menu.innerHTML = html;
         // Bind actions
         var tplBtn = menu.querySelector('[data-insert-intro-template]');
@@ -2705,6 +2984,7 @@
             e.stopPropagation();
             insertIntroTemplate(title, cat);
             menu.style.display='none';
+            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
             // Ensure caret is positioned inside the inserted template
             setTimeout(function(){
               try { if (typeof positionChipAtCursor === 'function') positionChipAtCursor(); } catch(_) {}
@@ -2720,6 +3000,7 @@
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name);
             menu.style.display = 'none';
+            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
           });
         });
         var viewAllBtn = menu.querySelector('[data-view-all-sections]');
@@ -2728,14 +3009,33 @@
       }
       
       function buildSectionMenu() {
-        const suggestions = getSectionSuggestions(window.selectedCat || 'other');
-        let html = '<div class="assist-menu-header">Suggested sections</div>';
-        suggestions.forEach(function(name, idx){
-          html += '<button class="assist-item" data-insert-section="'+name+'"><div class="template-option-title">'+name+'</div><div class="template-option-desc">Insert section</div></button>';
-          if (idx < suggestions.length - 1) html += '<div class="assist-sep"></div>';
-        });
-        html += '<div class="assist-sep"></div>'+
-          '<button class="assist-item" data-back="1"><div class="template-option-title">Back</div></button>';
+        var cat = (window.selectedCat || 'other');
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        var tpl = window.templatesData;
+        var catKey = catToKey(cat);
+        var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : [];
+        var html = '<div class="assist-menu-header">Suggested sections</div>';
+        if (tplSections && tplSections.length) {
+          tplSections.forEach(function(sec, idx){
+            var name = sec && sec.title ? sec.title : 'Section';
+            var desc = sec && sec.description ? sec.description : '';
+            html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title">'+escapeHtml(name)+'</div><div class="template-option-desc">'+ (desc ? escapeHtml(desc) : 'Insert section') +'</div></button>';
+            if (idx < tplSections.length - 1) html += '<div class="assist-sep"></div>';
+          });
+        } else {
+          const suggestions = getSectionSuggestions(cat);
+          suggestions.forEach(function(name, idx){
+            var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var i=0;i<hs.length;i++){ var t=(hs[i].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
+            if (!exists) {
+              html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title">'+escapeHtml(name)+'</div><div class="template-option-desc">Insert section</div></button>';
+              if (idx < suggestions.length - 1) html += '<div class="assist-sep"></div>';
+            } else {
+              html += '<div class="assist-item" style="cursor:default; opacity:0.7;"><div class="template-option-title">'+escapeHtml(name)+'</div><div class="template-option-desc">Already added</div></div>';
+              if (idx < suggestions.length - 1) html += '<div class="assist-sep"></div>';
+            }
+          });
+        }
+        html += '<div class="assist-sep"></div><button class="assist-item" data-back="1"><div class="template-option-title">Back</div></button>';
         menu.innerHTML = html;
         bindSectionHandlers();
       }
@@ -2773,10 +3073,11 @@
             var idx = parseInt(this.getAttribute('data-insert-intro'), 10);
             insertIntroText(samples[idx]);
             menu.style.display = 'none';
+            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
           });
         });
         var chipBtn = menu.querySelector('[data-insert-chip-starter]');
-        if (chipBtn) chipBtn.addEventListener('click', function(){ insertChipStyleStarter(title, cat); menu.style.display = 'none'; });
+        if (chipBtn) chipBtn.addEventListener('click', function(){ insertChipStyleStarter(title, cat); menu.style.display = 'none'; if (window.__assistSetFrozen) window.__assistSetFrozen(false); });
         var back = menu.querySelector('[data-back]');
         if (back) back.addEventListener('click', function(){ buildMainMenu(); });
       }
@@ -2788,27 +3089,104 @@
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name);
             menu.style.display = 'none';
+            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
           });
         });
         var back = menu.querySelector('[data-back]');
         if (back) back.addEventListener('click', function(){ buildMainMenu(); });
       }
       
+      // Freeze on mousedown to prevent selectionchange from moving chip before click
+      chip.addEventListener('mousedown', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        frozen = true;
+      });
       chip.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
         // Position menu under the chip
         menu.style.left = chip.style.left;
-        menu.style.top = (parseInt(chip.style.top||'0',10) + 32) + 'px';
-        if (menu.style.display === 'none') { buildMainMenu(); menu.style.display = 'block'; } else { menu.style.display = 'none'; }
+        // Prefer placing menu within editor viewport: if near bottom, pop above
+        var chipTop = parseInt(chip.style.top||'0',10);
+        var editorRect = editor.getBoundingClientRect();
+        var approxMenuHeight = Math.max(menu.offsetHeight || 260, 220);
+        var spaceBelow = editor.clientHeight - chipTop;
+        if (spaceBelow < approxMenuHeight + 40) {
+          menu.style.top = Math.max(0, chipTop - approxMenuHeight - 10) + 'px';
+          menu.setAttribute('data-pos','above');
+          // Flip arrow to bottom
+          var arrow = menu.querySelector('.assist-arrow');
+          if (arrow) {
+            arrow.style.top = '';
+            arrow.style.bottom = '-8px';
+            arrow.style.borderBottomColor = 'transparent';
+            arrow.style.borderTop = '8px solid #fff';
+            arrow.style.filter = 'drop-shadow(0 1px 0 #eaecf0)';
+          }
+        } else {
+          menu.style.top = (chipTop + 32) + 'px';
+          menu.setAttribute('data-pos','below');
+          // Arrow on top
+          var arrow2 = menu.querySelector('.assist-arrow');
+          if (arrow2) {
+            arrow2.style.bottom = '';
+            arrow2.style.top = '-8px';
+            arrow2.style.borderTop = 'none';
+            arrow2.style.borderBottom = '8px solid #fff';
+            arrow2.style.filter = 'drop-shadow(0 -1px 0 #eaecf0)';
+          }
+        }
+        if (menu.style.display === 'none') {
+          buildMainMenu();
+          menu.style.display = 'block';
+          frozen = true;
+        } else {
+          menu.style.display = 'none';
+          frozen = false;
+          schedulePosition();
+        }
       });
+
+      // Close menu when clicking outside assist chip/menu
+      document.addEventListener('click', function(e){
+        const inAssist = !!e.target.closest('#assistChip') || !!e.target.closest('#assistMenu');
+        if (!inAssist && menu.style.display !== 'none') {
+          menu.style.display = 'none';
+          frozen = false;
+          schedulePosition();
+        }
+      }, true);
 
       // Expose helpers globally for external callers
       window.buildMainMenu = buildMainMenu;
       window.positionChipBelowElement = positionChipBelowElement;
 
       // Reposition chip near caret as user interacts
-      editor.addEventListener('focus', function(){ setTimeout(positionChipAtCursor, 0); });
+      editor.addEventListener('focus', function(){ setTimeout(schedulePosition, 0); });
       editor.addEventListener('click', function(e){
+        // Handle section dismissal
+        var dismissBtn = e.target && e.target.closest && e.target.closest('.section-dismiss');
+        if (dismissBtn) {
+          e.preventDefault(); e.stopPropagation();
+          try {
+            var block = dismissBtn.closest('.section-block');
+            var secName = block && block.getAttribute('data-section');
+            var anchor = (block && (block.nextElementSibling || block.previousElementSibling)) || editor;
+            if (block && block.parentNode) block.parentNode.removeChild(block);
+            // Update addedSections tracking
+            if (secName && Array.isArray(window.addedSections)) {
+              window.addedSections = window.addedSections.filter(function(n){ return String(n).toLowerCase() !== String(secName).toLowerCase(); });
+            }
+            // Refresh suggestions panel if open
+            var menu = document.getElementById('assistMenu');
+            if (menu && menu.style.display !== 'none' && window.buildMainMenu) {
+              window.buildMainMenu();
+            }
+            // Re-anchor chip near the next block
+            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(anchor && anchor.querySelector ? (anchor.querySelector('p, h1, h2, h3, h4, h5, h6, li, blockquote') || anchor) : anchor);
+          } catch(_) {}
+          return;
+        }
         var t = e.target;
         // Reference chip opens dialog
         if (t && (t.classList && t.classList.contains('ref-chip'))) {
@@ -2823,10 +3201,22 @@
           showChipSuggestMenu(t);
           return;
         }
-        setTimeout(positionChipAtCursor, 0);
+        setTimeout(schedulePosition, 0);
       });
-      editor.addEventListener('keyup', function(){ positionChipAtCursor(); });
-      editor.addEventListener('input', function(){ positionChipAtCursor(); });
+      editor.addEventListener('keyup', function(){ schedulePosition(); });
+      editor.addEventListener('input', function(e){
+        // Reposition mainly on structural edits; throttle everything else
+        schedulePosition();
+      });
+      document.addEventListener('selectionchange', function(){
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) {
+          schedulePosition();
+        }
+      });
+      window.addEventListener('resize', schedulePosition);
+      // Reposition on any scroll that may shift editor
+      document.addEventListener('scroll', schedulePosition, true);
       // Placeholder chip key handling: clear default text on first type; Tab/Shift+Tab to navigate
       editor.addEventListener('keydown', function(e){
         var sel = window.getSelection();
@@ -2854,7 +3244,9 @@
         }
       });
       // Initial position
-      setTimeout(positionChipAtCursor, 0);
+      setTimeout(schedulePosition, 0);
+      // Expose helpers for other modules
+      window.__assistGetLastAnchor = function(){ return lastAnchorEl; };
     }
 
     // Chip suggestion menu logic
@@ -2864,6 +3256,9 @@
         chipMenuEl = document.createElement('div');
         chipMenuEl.id = 'chipSuggestMenu';
         chipMenuEl.className = 'chip-menu';
+        // Ensure roomy width like assist menu
+        chipMenuEl.style.width = '460px';
+        chipMenuEl.style.maxWidth = '90vw';
         document.body.appendChild(chipMenuEl);
       }
       return chipMenuEl;
@@ -2875,12 +3270,41 @@
       const cat = (window.selectedCat || 'other');
       const td = window.templatesData || null;
       const headerHint = getChipHeaderHintFromTemplates(td, key);
-      const suggestions = getChipSuggestions(key, cat, td);
+      let suggestions = getChipSuggestions(key, cat, td);
+      // Avoid duplicate Custom option if provided by templates.json
+      const normalize = function(s){ return String(s||'').trim().toLowerCase().replace(/…/g,'...'); };
+      const hasCustom = suggestions && suggestions.some(function(s){ return normalize(s) === 'custom...'; });
+      // Determine if there are any curated (non-Custom) values
+      const nonCustomCount = (suggestions || []).filter(function(s){ return normalize(s) !== 'custom...'; }).length;
+      // Friendly guidance when only Custom is available
+      const getCustomHint = function(k){
+        switch(k){
+          case 'pronunciation': return 'Enter pronunciation (IPA or phonetic), e.g., EE-lon';
+          case 'birth_date': return 'Enter full birth date, e.g., June 28, 1971';
+          case 'birth_place': return 'Enter city, region, country';
+          case 'known_for': return 'Add a short phrase describing what they are known for';
+          case 'current_status': return 'Describe current role/status in present tense';
+          case 'recognition': return 'Add notable awards, honors, or rankings';
+          default: return 'Type a value for this field, then click Insert';
+        }
+      };
+      const customHint = getCustomHint(key);
       let html = '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
       suggestions.forEach(function(opt){
-        html += '<button class="chip-menu-item" data-chip-value="'+ escapeHtml(opt) +'">'+ escapeHtml(opt) +'</button>';
+        if (normalize(opt) === 'custom...') {
+          html += '<button class="chip-menu-item" data-chip-custom>Custom…</button>';
+        } else {
+          html += '<button class="chip-menu-item" data-chip-value="'+ escapeHtml(opt) +'">'+ escapeHtml(opt) +'</button>';
+        }
       });
-      html += '<div class="assist-sep"></div><button class="chip-menu-item" data-chip-custom>Custom…</button>';
+      if (!hasCustom) {
+        html += '<div class="assist-sep"></div><button class="chip-menu-item" data-chip-custom>Custom…</button>';
+      }
+      // If no curated suggestions, show a friendly hint block
+      if (nonCustomCount === 0) {
+        html += '<div class="assist-sep"></div>'+
+                '<div class="chip-guidance" style="padding:10px 12px; font-size:12px; color:#54595d;">'+ escapeHtml(customHint) +'</div>';
+      }
       menu.innerHTML = html;
 
       // Position near chip
@@ -2894,34 +3318,99 @@
         btn.addEventListener('click', function(e){
           e.preventDefault();
           var val = this.getAttribute('data-chip-value') || '';
+          // If a value is "Custom..." treat as custom entry instead of literal text
+          if (normalize(val) === 'custom...') {
+            // delegate to custom handler
+            const customBtn = menu.querySelector('[data-chip-custom]');
+            if (customBtn) customBtn.click(); else {
+              // fallback: inline-edit
+              chipEl.setAttribute('contenteditable', 'true');
+              if (/^add\s/i.test(chipEl.textContent||'')) chipEl.textContent = '';
+              chipEl.focus();
+            }
+            menu.style.display = 'none';
+            return;
+          }
           // Replace chip with plain text (no chip styling)
           var textNode = document.createTextNode(val);
           if (chipEl && chipEl.parentNode) {
-            chipEl.parentNode.replaceChild(textNode, chipEl);
+            var original = chipEl.cloneNode(true);
+            var parent = chipEl.parentNode;
+            parent.replaceChild(textNode, chipEl);
+            // Feedback + undo
+            try {
+              var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
+              showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
+                try { if (textNode && textNode.parentNode) textNode.parentNode.replaceChild(original, textNode); } catch(_) {}
+              }, block || parent);
+            } catch(_) {}
           }
           menu.style.display = 'none';
         });
       });
-      const customBtn = menu.querySelector('[data-chip-custom]');
-      if (customBtn) customBtn.addEventListener('click', function(e){
-        e.preventDefault();
-        menu.style.display = 'none';
-        // Enable manual editing; on blur/Enter, commit to plain text and remove chip styling
-        chipEl.setAttribute('contenteditable', 'true');
-        chipEl.focus();
-        var commit = function(){
-          var txt = (chipEl.textContent || '').trim();
-          var node = document.createTextNode(txt);
-          if (chipEl && chipEl.parentNode) {
-            chipEl.parentNode.replaceChild(node, chipEl);
+      const customBtns = menu.querySelectorAll('[data-chip-custom]');
+      customBtns.forEach(function(customBtn){
+        customBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          // Show inline custom input inside the menu instead of editing the chip
+          var existing = menu.querySelector('.chip-custom-entry');
+          if (!existing) {
+            menu.insertAdjacentHTML('beforeend',
+              '<div class="assist-sep"></div>'+
+              '<div class="chip-custom-entry" style="padding:10px 12px;">'+
+                '<div style="font-size:12px; color:#555; margin-bottom:6px;">Enter a custom value — '+ escapeHtml(customHint) +'</div>'+
+                '<input type="text" id="chipCustomInput" style="width:100%; height:32px; border:1px solid #c8ccd1; border-radius:4px; padding:6px 8px; font: inherit;" placeholder="'+ escapeHtml(customHint) +'" />'+
+                '<div style="display:flex; gap:8px; margin-top:8px;">'+
+                  '<button class="chip-menu-item" data-chip-submit style="width:auto; display:inline-block;">Insert</button>'+
+                  '<button class="chip-menu-item" data-chip-cancel style="width:auto; display:inline-block;">Cancel</button>'+
+                '</div>'+
+              '</div>'
+            );
           }
-          chipEl.removeEventListener('blur', commit);
-          chipEl.removeEventListener('keydown', onKey);
-        };
-        var onKey = function(ev){ if (ev.key === 'Enter') { ev.preventDefault(); commit(); } };
-        chipEl.addEventListener('blur', commit);
-        chipEl.addEventListener('keydown', onKey);
+          var input = menu.querySelector('#chipCustomInput');
+          if (input) {
+            // Prefill with empty (remove default label like "add …")
+            input.value = '';
+            input.focus();
+            input.select();
+            var submit = function(){
+              var val = (input.value || '').trim();
+              if (!val) { input.focus(); return; }
+              var node = document.createTextNode(val);
+              if (chipEl && chipEl.parentNode) {
+                var original = chipEl.cloneNode(true);
+                var parent = chipEl.parentNode;
+                parent.replaceChild(node, chipEl);
+                // Feedback + undo
+                try {
+                  var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
+                  showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
+                    try { if (node && node.parentNode) node.parentNode.replaceChild(original, node); } catch(_) {}
+                  }, block || parent);
+                } catch(_) {}
+              }
+              menu.style.display = 'none';
+            };
+            var cancel = function(){
+              var wrap = menu.querySelector('.chip-custom-entry');
+              if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+              input.removeEventListener('keydown', onKey);
+            };
+            var onKey = function(ev){ if (ev.key === 'Enter') { ev.preventDefault(); submit(); } };
+            input.addEventListener('keydown', onKey);
+            var submitBtn = menu.querySelector('[data-chip-submit]');
+            var cancelBtn = menu.querySelector('[data-chip-cancel]');
+            if (submitBtn) submitBtn.addEventListener('click', function(ev){ ev.preventDefault(); submit(); });
+            if (cancelBtn) cancelBtn.addEventListener('click', function(ev){ ev.preventDefault(); cancel(); });
+          }
+        });
       });
+
+      // Auto-open the custom input when there are no curated values, so users can type immediately
+      if (nonCustomCount === 0) {
+        const firstCustom = menu.querySelector('[data-chip-custom]');
+        if (firstCustom) { try { firstCustom.click(); } catch(_) {} }
+      }
 
       // Close on outside click
       const closeFn = function(ev){
@@ -2938,10 +3427,44 @@
       var out = [];
       try {
         var K = key.toUpperCase();
+        var kLower = key.toLowerCase();
+        // Key alias map to tolerate template/key drift
+        var aliases = {
+          'current_status': ['current_position','current_role','career_status','industry_status'],
+          'major_achievements': ['major_contributions','career_highlights','notable_contributions'],
+          'recognition': ['recognition_awards','awards','awards_and_honors','honors']
+        };
+        var candidates = [kLower].concat(aliases[kLower] || []);
         if (templatesData) {
-          if (templatesData.placeholderValues && Array.isArray(templatesData.placeholderValues[K])) {
+          // 1) New userInteractionValues with category nesting support
+          if (templatesData.userInteractionValues) {
+            // a) Category-scoped values e.g., userInteractionValues.PERSON.birth_date
+            var catKey = (function(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } })(category);
+            if (catKey && templatesData.userInteractionValues[catKey]) {
+              var catMap = templatesData.userInteractionValues[catKey];
+              for (var i=0;i<candidates.length && (!out || out.length===0);i++) {
+                var cc = candidates[i];
+                if (Array.isArray(catMap[cc])) {
+                  out = catMap[cc].slice(0, 8);
+                }
+              }
+            }
+            // b) Global values at root (lowercase keys)
+            if (!out || out.length===0) {
+              for (var j=0;j<candidates.length && (!out || out.length===0);j++) {
+                var c2 = candidates[j];
+                if (Array.isArray(templatesData.userInteractionValues[c2])) {
+                  out = templatesData.userInteractionValues[c2].slice(0, 8);
+                }
+              }
+            }
+          }
+          // 2) Legacy placeholderValues (UPPERCASE keys)
+          if ((!out || out.length === 0) && templatesData.placeholderValues && Array.isArray(templatesData.placeholderValues[K])) {
             out = templatesData.placeholderValues[K].slice(0, 8);
-          } else if (templatesData.placeholderMappings && templatesData.placeholderMappings.userInteractionValues) {
+          }
+          // 3) Legacy placeholderMappings.userInteractionValues (UPPERCASE keys)
+          if ((!out || out.length === 0) && templatesData.placeholderMappings && templatesData.placeholderMappings.userInteractionValues) {
             var uv = templatesData.placeholderMappings.userInteractionValues[K];
             if (Array.isArray(uv)) out = uv.slice(0, 8);
           }
@@ -2949,8 +3472,9 @@
           var catKey = (function(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } })(category);
           if ((!out || out.length===0) && catKey && templatesData.categories && templatesData.categories[catKey]) {
             var catData = templatesData.categories[catKey];
-            if (catData.suggestionValues && Array.isArray(catData.suggestionValues[K])) {
-              out = catData.suggestionValues[K].slice(0, 8);
+            // Prefer lowercase keys at category level, else UPPERCASE
+            if (catData.suggestionValues && (Array.isArray(catData.suggestionValues[kLower]) || Array.isArray(catData.suggestionValues[K]))) {
+              out = (catData.suggestionValues[kLower] || catData.suggestionValues[K]).slice(0, 8);
             }
           }
         }
@@ -2958,6 +3482,12 @@
       if (out && out.length) return out;
       // Fallback static suggestions
       switch(key) {
+        case 'current_status': return ['has been the wealthiest person in the world','is the third richest person in the world','serves as chairman and CEO','plays for Inter Miami','Custom...'];
+        case 'major_achievements': return ['pioneering research in machine learning','breakthroughs in electric vehicles and reusable rockets','landmark albums and chart-topping singles','multiple championship titles and MVP awards','Custom...'];
+        case 'recognition': return ['recipient of the Nobel Prize','inducted into the Hall of Fame','awarded the Presidential Medal of Freedom','recipient of multiple Grammy Awards','Custom...'];
+        case 'pronunciation': return ['EE-lon','MUSK','BAY-zohss','lə-BRON','Custom...'];
+        case 'birth_date': return ['June 28, 1971','October 28, 1955','January 12, 1964','December 13, 1989','December 30, 1984','Custom...'];
+        case 'known_for': return ['known for his leadership of Tesla, SpaceX, and X','best known as the founder of Amazon','known for autobiographical songwriting','Custom...'];
         case 'nationality': return ['American','British','Indian','French','German'];
         case 'occupation': return ['scientist','artist','politician','entrepreneur','athlete'];
         case 'achievement': return ['pioneering research','notable inventions','influential works','groundbreaking discoveries'];
@@ -2975,7 +3505,8 @@
         case 'importance': return ['influences many areas','guides current practice','shaped modern thinking'];
         case 'date': return ['1 January 2000','15 August 1995','20 June 2010'];
         default:
-          return ['example 1','example 2','example 3'];
+          // No generic placeholders; return empty so UI can show only Custom…
+          return [];
       }
     }
 
@@ -2992,13 +3523,59 @@
     function toggleSuggestionsChip() {
       var chip = document.getElementById('assistChip');
       if (!chip) return;
+      var editor = document.getElementById('editor');
+      function selectionInsideEditor() {
+        var sel = window.getSelection();
+        return !!(sel && sel.rangeCount && editor && editor.contains(sel.anchorNode));
+      }
+      function getTopVisibleBlockInEditor() {
+        if (!editor) return null;
+        var editorRect = editor.getBoundingClientRect();
+        var blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
+          .filter(function(el){ return el.id !== 'assistChip' && el.id !== 'assistMenu' && el.offsetParent !== null; });
+        var best = null; var bestDelta = Infinity;
+        for (var i=0;i<blocks.length;i++) {
+          var r = blocks[i].getBoundingClientRect();
+          // consider only blocks intersecting editor viewport region
+          var intersects = r.bottom > editorRect.top && r.top < editorRect.bottom;
+          if (!intersects) continue;
+          var delta = Math.abs(r.top - editorRect.top);
+          if (delta < bestDelta) { bestDelta = delta; best = blocks[i]; }
+        }
+        // fallback to first child paragraph-like if nothing intersected
+        if (!best) best = blocks.find(function(el){ return el.tagName === 'P'; }) || blocks[0] || null;
+        return best;
+      }
       if (chip.style.display === 'none') {
-        showSuggestionsChip();
+        var editor = document.getElementById('editor');
+        var lastAnchor = (typeof window.__assistGetLastAnchor === 'function') ? window.__assistGetLastAnchor() : null;
+        var anchor = null;
+        // Prefer a valid last anchor inside the editor for stability
+        if (lastAnchor && editor && editor.contains(lastAnchor)) {
+          anchor = lastAnchor;
+        } else if (selectionInsideEditor()) {
+          // derive current block from selection
+          var sel = window.getSelection();
+          var node = sel.getRangeAt(0).startContainer;
+          if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+          anchor = node && node.closest ? node.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote') : null;
+        }
+        if (!anchor) {
+          anchor = getTopVisibleBlockInEditor();
+        }
+        showSuggestionsChip(anchor);
         // Also open the menu for convenience
         var menu = document.getElementById('assistMenu');
-        if (menu) { if (window.buildMainMenu) window.buildMainMenu(); menu.style.display = 'block'; menu.style.left = chip.style.left; menu.style.top = (parseInt(chip.style.top||'0',10)+32)+'px'; }
+        if (menu) {
+          if (window.buildMainMenu) window.buildMainMenu();
+          menu.style.display = 'block';
+          menu.style.left = chip.style.left;
+          menu.style.top = (parseInt(chip.style.top||'0',10)+32)+'px';
+          if (window.__assistSetFrozen) window.__assistSetFrozen(true);
+        }
       } else {
         hideSuggestionsChip();
+        if (window.__assistSetFrozen) window.__assistSetFrozen(false);
       }
     }
 
@@ -3007,18 +3584,51 @@
       var title = (window.articleTitleText || 'This topic');
       var category = (window.selectedCat || 'other');
       var text = (typeof generateTopicSentence === 'function') ? generateTopicSentence(title, category) : (title + ' — introduction.');
-      var html = '<p style="margin: 0.75em 0; line-height:1.6;">'+ text +'</p>';
+      var pid = 'simpleIntro-' + Date.now();
+      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">'+ text +'</p>';
       insertHTMLAtCursor(html, editor);
       editor.focus();
-      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+      // Anchor chip to the newly inserted paragraph and keep it visible when appropriate
+      var el = document.getElementById(pid);
+      if (el) {
+        var chip = document.getElementById('assistChip');
+        var chipVisible = chip && chip.style.display !== 'none';
+        var hadSectionsBefore = editor.querySelectorAll('h2').length > 0;
+        var shouldReanchor = (!chipVisible) || (!hadSectionsBefore);
+        if (shouldReanchor) {
+          try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
+          try { if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el); } catch(_) {}
+        }
+        try { window.lastIntroId = pid; } catch(_) {}
+        // Feedback + undo
+        try {
+          showUndoToast('Inserted introduction', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+        } catch(_) {}
+      }
     }
 
     function insertIntroText(text) {
       var editor = document.getElementById('editor');
-      var html = '<p style="margin: 0.75em 0; line-height:1.6;">'+ escapeHtml(text) +'</p>';
+      var pid = 'introText-' + Date.now();
+      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">'+ escapeHtml(text) +'</p>';
       insertHTMLAtCursor(html, editor);
       editor.focus();
-      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+      var el = document.getElementById(pid);
+      if (el) {
+        var chip = document.getElementById('assistChip');
+        var chipVisible = chip && chip.style.display !== 'none';
+        var hadSectionsBefore = editor.querySelectorAll('h2').length > 0;
+        var shouldReanchor = (!chipVisible) || (!hadSectionsBefore);
+        if (shouldReanchor) {
+          try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
+          try { if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el); } catch(_) {}
+        }
+        try { window.lastIntroId = pid; } catch(_) {}
+        // Feedback + undo
+        try {
+          showUndoToast('Inserted introduction', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+        } catch(_) {}
+      }
     }
 
     function insertChipStyleStarter(title, category) {
@@ -3035,13 +3645,32 @@
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) { lead.outerHTML = html; } else { insertHTMLAtCursor(html, editor); }
       editor.focus();
-      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+      var el = document.getElementById(pid);
+      if (el) {
+        var chip = document.getElementById('assistChip');
+        var chipVisible = chip && chip.style.display !== 'none';
+        var hadSectionsBefore = editor.querySelectorAll('h2').length > 0;
+        var shouldReanchor = (!chipVisible) || (!hadSectionsBefore);
+        if (shouldReanchor) {
+          try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
+          try { if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el); } catch(_) {}
+        }
+        try { window.lastIntroId = pid; } catch(_) {}
+        // Feedback + undo
+        try {
+          showUndoToast('Inserted template starter', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+        } catch(_) {}
+      }
     }
 
     // Insert an editable introduction template with inline chips and a Reference chip
     function insertIntroTemplate(title, category) {
       var editor = document.getElementById('editor');
       // Deterministic insert (no selection).
+      var chip = document.getElementById('assistChip');
+      var chipVisible = chip && chip.style.display !== 'none';
+      var hadSectionsBefore = editor.querySelectorAll('h2').length > 0;
+      var hadLeadPlaceholder = !!document.getElementById('leadPlaceholder');
       var base = getIntroTemplateBase(title, category);
       var htmlBody = base.replace(/\[([^\]]+)\]/g, function(_, key){
         var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
@@ -3059,10 +3688,28 @@
       // Position chip/menu below the inserted paragraph without using selection
       setTimeout(function(){
         var el = document.getElementById(pid);
-        try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
+        try {
+          // Only re-anchor to intro if no sections existed or chip isn't visible yet
+          var shouldReanchor = (!chipVisible) || (!hadSectionsBefore) || hadLeadPlaceholder;
+          if (shouldReanchor) {
+            if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el);
+            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el);
+          }
+          // Focus first placeholder for immediate typing context
+          var firstPh = el && el.querySelector('.template-placeholder');
+          if (firstPh) {
+            try { selectPlaceholder(firstPh); } catch(_) {}
+          } else {
+            // place caret at end of new paragraph
+            try { placeCaretAtEnd(el); } catch(_) {}
+          }
+          try { window.lastIntroId = pid; } catch(_) {}
+          // Feedback + undo
+          try { showUndoToast('Inserted intro template', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el); } catch(_) {}
+        } catch(_) {}
         suppressChipPositioning = false;
       }, 0);
-      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+      // Keep chip visible; menu was already closed by the click handler
     }
 
     function getIntroTemplateBase(title, category) {
@@ -3097,6 +3744,9 @@
             case 'person': return 'PERSON';
             case 'place': return 'LOCATION';
             case 'species': return 'SPECIES';
+            case 'organization': return 'ORGANIZATION';
+            case 'academic': return 'ACADEMIC';
+            case 'event': return 'EVENT';
             default: return null;
           }
         })(category);
@@ -3178,23 +3828,95 @@
       var id = name.replace(/\s+/g,'_');
       var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
       var para = buildSectionParagraphWithChips(name);
-      var html = heading + para;
-      // Deterministic placement: before References if present, else after the intro, else at end
-      var refs = editor.querySelector('#References');
-      if (refs) {
-        refs.insertAdjacentHTML('beforebegin', html);
-      } else if (window.lastIntroId && editor.querySelector('#'+window.lastIntroId)) {
-        editor.querySelector('#'+window.lastIntroId).insertAdjacentHTML('afterend', html);
-      } else {
-        var lead = document.getElementById('leadPlaceholder');
-        if (lead && lead.parentNode === editor) {
-          lead.insertAdjacentHTML('afterend', html);
+      // Ensure we can reference the new paragraph element after insertion
+      var newParaId = 'sectionPara-' + Date.now();
+      if (para.indexOf('<p ') !== -1) {
+        para = para.replace('<p ', '<p id="'+newParaId+'" ');
+      }
+      var html = '<div class="section-block" data-section="'+escapeHtml(name)+'" data-section-id="'+id+'">'+
+                   '<button class="section-dismiss" title="Remove section" aria-label="Remove section" contenteditable="false">×</button>'+
+                   heading + para +
+                 '</div>';
+      // Placement: respect templates.json defaultSections order when available
+      var placed = false;
+      try {
+        function norm(s){ return String(s||'').trim().toLowerCase(); }
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        var cat = (window.selectedCat || 'other');
+        var catKey = catToKey(cat);
+        var tdata = window.templatesData;
+        var ordered = (tdata && tdata.categories && tdata.categories[catKey] && Array.isArray(tdata.categories[catKey].defaultSections)) ? tdata.categories[catKey].defaultSections.map(function(s){ return norm(s.title||''); }) : [];
+        var targetIdx = ordered.indexOf(norm(name));
+        if (targetIdx >= 0 && ordered.length) {
+          var headers = Array.from(editor.querySelectorAll('h2'));
+          var existing = [];
+          headers.forEach(function(h){
+            var tx = norm(h.textContent||'');
+            var idx = ordered.indexOf(tx);
+            if (idx >= 0) existing.push({ idx: idx, el: h });
+          });
+          var next = null; var minHigher = Infinity;
+          existing.forEach(function(e){ if (e.idx > targetIdx && e.idx < minHigher) { minHigher = e.idx; next = e.el; } });
+          if (next) {
+            next.insertAdjacentHTML('beforebegin', html);
+            placed = true;
+          } else {
+            var refs = editor.querySelector('#References');
+            if (refs) { refs.insertAdjacentHTML('beforebegin', html); placed = true; }
+          }
+        }
+      } catch(_) {}
+      if (!placed) {
+        // Fallback deterministic placement:
+        // - before References if present
+        // - else append at end if any sections already exist
+        // - else after lead placeholder if present
+        var refs = editor.querySelector('#References');
+        if (refs) {
+          refs.insertAdjacentHTML('beforebegin', html);
         } else {
-          editor.insertAdjacentHTML('beforeend', html);
+          var existingH2 = editor.querySelectorAll('h2').length;
+          if (existingH2 > 0) {
+            editor.insertAdjacentHTML('beforeend', html);
+          } else {
+            var lead = document.getElementById('leadPlaceholder');
+            if (lead && lead.parentNode === editor) {
+              lead.insertAdjacentHTML('afterend', html);
+            } else {
+              editor.insertAdjacentHTML('beforeend', html);
+            }
+          }
         }
       }
+      // Track section as added
+      try {
+        if (Array.isArray(window.addedSections)) {
+          if (window.addedSections.indexOf(name) === -1) window.addedSections.push(name);
+        }
+      } catch(_) {}
+      // Move caret into the new section paragraph (first placeholder if available) and keep chip visible
+      try {
+        var insertedPara = editor.querySelector('#'+newParaId);
+        if (insertedPara) {
+          var firstPh = insertedPara.querySelector('.template-placeholder');
+          if (firstPh) {
+            selectPlaceholder(firstPh);
+          } else {
+            // place caret at end of the new paragraph
+            placeCaretAtEnd(insertedPara);
+          }
+          // Remember this as the last anchor for chip positioning
+          if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
+          if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
+          // Feedback + undo
+          try {
+            var block = insertedPara.closest('.section-block');
+            showUndoToast('Inserted section: '+ name, function(){ if (block && block.parentNode) block.parentNode.removeChild(block); }, block || insertedPara);
+          } catch(_) {}
+        }
+      } catch(_) {}
       editor.focus();
-      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+      // Keep chip visible after insertion
     }
 
     function buildSectionParagraphWithChips(sectionName) {
