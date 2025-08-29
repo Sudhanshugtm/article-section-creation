@@ -178,13 +178,13 @@ jobs:
               <div class="group">
                 <h2>Article Creation</h2>
                 <div class="card">
-                  <h3>Concept A — Reference chip flow</h3>
+                  <h3>Concept A — Sidebar assistance</h3>
                   <div class="links">
                     <a href="creation/article-creator.html">Open concept</a>
                   </div>
                 </div>
                 <div class="card">
-                  <h3>Concept B — Source-based split view</h3>
+                  <h3>Concept B — Incontext assistance</h3>
                   <div class="links">
                     <a href="creation/creation.html">Open concept</a>
                   </div>
@@ -193,14 +193,14 @@ jobs:
 
               <div class="group">
                 <h2>Section Expansion</h2>
-                <div class="card">
+                <!-- <div class="card">
                   <h3>Concept 1 — Overlay Wizard</h3>
                   <div class="links">
                     <a href="expansion/concept1/articles-concept1.html">Open article list</a>
                   </div>
-                </div>
+                </div> -->
                 <div class="card">
-                  <h3>Concept 2 — Sidebar Panel</h3>
+                  <h3>Sidebar panel</h3>
                   <div class="links">
                     <a href="expansion/concept2/articles-concept2.html">Open article list</a>
                   </div>
