@@ -1,0 +1,366 @@
+{
+  "categories": {
+    "PERSON": {
+      "subcategories": {
+        "scientist": {
+          "name": "Scientist/Researcher",
+          "detectionKeywords": ["scientist", "researcher", "mathematician", "physicist", "chemist", "biologist", "engineer", "inventor"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} who {{MAJOR_CONTRIBUTION}}. {{PRONOUN_POSSESSIVE}} main discoveries include {{DISCOVERIES}}{{CAREER_CONTEXT}}{{LEGACY_IMPACT}}",
+            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} known for {{PRIMARY_DISCOVERY}}.",
+            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{SCIENTIFIC_FIELD}} and {{SECONDARY_ROLES}}. {{EARLY_CAREER}} {{PRONOUN_POSSESSIVE}} major contributions include {{DETAILED_DISCOVERIES}}{{METHODOLOGY}}{{RECOGNITION}}{{HISTORICAL_IMPACT}}"
+          },
+          "contextualChips": [
+            "+ scientific field", "+ major discovery", "+ research method", "+ theoretical contribution",
+            "+ practical applications", "+ scientific institutions", "+ awards received", "+ historical significance"
+          ],
+          "sections": [
+            {
+              "title": "Early life and education",
+              "description": "Childhood, family background, and educational journey",
+              "icon": "🎓",
+              "contentTemplate": "{{NAME}} was born {{BIRTH_DETAILS}}. {{EARLY_EDUCATION}} {{FAMILY_BACKGROUND}} {{EDUCATIONAL_INSTITUTIONS}}",
+              "templateVariations": [
+                "{{NAME}} entered the world {{BIRTH_DETAILS}}. {{FAMILY_BACKGROUND}} {{EDUCATIONAL_JOURNEY}} shaped their future pursuits.",
+                "Born {{BIRTH_DETAILS}}, {{NAME}} showed early promise in academic endeavors. {{FAMILY_INFLUENCE}} {{EDUCATIONAL_FOUNDATION}} provided the groundwork for later achievements.",
+                "The early years of {{NAME}} began {{BIRTH_DETAILS}}. {{CHILDHOOD_INFLUENCES}} {{ACADEMIC_DEVELOPMENT}} would prove instrumental in their career.",
+                "{{NAME}}'s formative years commenced {{BIRTH_DETAILS}}. {{EARLY_ENVIRONMENT}} {{EDUCATIONAL_PATH}} established the foundation for their scholarly pursuits."
+              ],
+              "wikidataProperties": ["P569", "P19", "P22", "P25", "P69", "P512"],
+              "priority": 1
+            },
+            {
+              "title": "Career and research", 
+              "description": "Professional career, research positions, and major work",
+              "icon": "🔬",
+              "contentTemplate": "{{NAME}} began {{CAREER_START}} at {{INSTITUTIONS}}. {{RESEARCH_FOCUS}} {{MAJOR_POSITIONS}} {{COLLABORATIONS}}",
+              "templateVariations": [
+                "{{NAME}}'s professional journey commenced {{CAREER_START}} with {{INSTITUTIONS}}. {{RESEARCH_SPECIALIZATION}} {{CAREER_PROGRESSION}} {{SCIENTIFIC_COLLABORATIONS}}",
+                "The scientific career of {{NAME}} took shape {{CAREER_START}} at {{INSTITUTIONS}}. {{RESEARCH_DIRECTION}} {{PROFESSIONAL_DEVELOPMENT}} {{ACADEMIC_PARTNERSHIPS}}",
+                "{{NAME}} embarked on their research path {{CAREER_START}} through {{INSTITUTIONS}}. {{INVESTIGATIVE_FOCUS}} {{CAREER_ADVANCEMENT}} {{COLLABORATIVE_EFFORTS}}"
+              ],
+              "wikidataProperties": ["P108", "P101", "P184", "P185", "P800"],
+              "priority": 2
+            },
+            {
+              "title": "Major discoveries",
+              "description": "Key scientific contributions and breakthrough discoveries",
+              "icon": "💡",
+              "contentTemplate": "{{NAME}} is best known for {{MAJOR_DISCOVERY}}. {{DISCOVERY_DETAILS}} {{SCIENTIFIC_IMPACT}} {{RECOGNITION}}",
+              "wikidataProperties": ["P800", "P166", "P2184"],
+              "priority": 3
+            },
+            {
+              "title": "Legacy and influence",
+              "description": "Long-term impact on science and society",
+              "icon": "🏛️",
+              "contentTemplate": "{{NAME}}'s work has had lasting impact on {{FIELD}}. {{INFLUENCE_ON_OTHERS}} {{MODERN_APPLICATIONS}} {{COMMEMORATIONS}}",
+              "wikidataProperties": ["P166", "P2184", "P1411"],
+              "priority": 4
+            }
+          ]
+        },
+        "artist": {
+          "name": "Artist/Creative",
+          "detectionKeywords": ["artist", "painter", "sculptor", "writer", "author", "composer", "musician", "director"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} known for {{ARTISTIC_STYLE}}. {{PRONOUN_POSSESSIVE}} notable works include {{MAJOR_WORKS}}{{ARTISTIC_MOVEMENT}}{{CULTURAL_IMPACT}}",
+            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} known for {{PRIMARY_WORK}}.",
+            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{ARTISTIC_MEDIUM}} who {{ARTISTIC_INNOVATION}}. {{EARLY_DEVELOPMENT}} {{PRONOUN_POSSESSIVE}} body of work spans {{ARTISTIC_RANGE}}{{CULTURAL_CONTEXT}}{{LASTING_INFLUENCE}}"
+          },
+          "contextualChips": [
+            "+ artistic medium", "+ artistic style", "+ notable works", "+ artistic movement",
+            "+ cultural influence", "+ creative innovations", "+ exhibitions", "+ critical reception"
+          ],
+          "sections": [
+            {
+              "title": "Early life",
+              "description": "Childhood and formative experiences",
+              "icon": "👶",
+              "contentTemplate": "{{NAME}} was born {{BIRTH_DETAILS}}. {{EARLY_INFLUENCES}} {{FAMILY_ARTISTIC_BACKGROUND}}",
+              "wikidataProperties": ["P569", "P19", "P22", "P25"],
+              "priority": 1
+            },
+            {
+              "title": "Artistic development",
+              "description": "Training, influences, and style evolution",
+              "icon": "🎨",
+              "contentTemplate": "{{NAME}} developed {{ARTISTIC_STYLE}} through {{TRAINING}}. {{INFLUENCES}} {{STYLE_EVOLUTION}}",
+              "wikidataProperties": ["P69", "P184", "P135"],
+              "priority": 2
+            },
+            {
+              "title": "Major works",
+              "description": "Notable creations and masterpieces",
+              "icon": "🖼️",
+              "contentTemplate": "Among {{NAME}}'s most celebrated works are {{MAJOR_WORKS}}. {{WORK_DESCRIPTIONS}} {{CRITICAL_RECEPTION}}",
+              "wikidataProperties": ["P800", "P1441"],
+              "priority": 3
+            }
+          ]
+        },
+        "politician": {
+          "name": "Political Figure",
+          "detectionKeywords": ["politician", "president", "minister", "senator", "governor", "mayor", "leader"],
+          "introductionTemplates": {
+            "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} who {{MAJOR_POLICIES}}. {{PRONOUN}} served as {{OFFICES_HELD}}{{POLITICAL_ACHIEVEMENTS}}{{HISTORICAL_CONTEXT}}",
+            "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} known for {{PRIMARY_POLICY}}.",
+            "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{POLITICAL_POSITION}} and {{SECONDARY_ROLES}}. {{POLITICAL_CAREER}} {{PRONOUN_POSSESSIVE}} administration focused on {{POLICY_AREAS}}{{POLITICAL_LEGACY}}{{HISTORICAL_SIGNIFICANCE}}"
+          },
+          "contextualChips": [
+            "+ political position", "+ political party", "+ major policies", "+ political achievements",
+            "+ offices held", "+ political reforms", "+ electoral history", "+ political legacy"
+          ],
+          "sections": [
+            {
+              "title": "Political career",
+              "description": "Rise to power and major political positions",
+              "icon": "🏛️",
+              "contentTemplate": "{{NAME}} entered politics {{CAREER_START}}. {{MAJOR_POSITIONS}} {{POLITICAL_ACHIEVEMENTS}}",
+              "wikidataProperties": ["P39", "P102", "P1365", "P1366"],
+              "priority": 1
+            },
+            {
+              "title": "Policies and reforms",
+              "description": "Major policy initiatives and governmental reforms",
+              "icon": "📜",
+              "contentTemplate": "During {{TENURE}}, {{NAME}} implemented {{MAJOR_POLICIES}}. {{POLICY_IMPACT}} {{REFORMS}}",
+              "wikidataProperties": ["P39", "P793"],
+              "priority": 2
+            }
+          ]
+        }
+      },
+      "defaultTemplate": {
+        "formal": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} who {{ACHIEVEMENT}}. {{PRONOUN}} {{CAREER_SUMMARY}}{{NOTABLE_CONTRIBUTIONS}}{{RECOGNITION}}",
+        "concise": "{{FULL_NAME}} ({{LIFE_SPAN}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{MAIN_CONTRIBUTION}}.",
+        "detailed": "{{FULL_NAME}} ({{BIRTH_DETAILS}}{{DEATH_DETAILS}}) was {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} who {{DETAILED_ACHIEVEMENT}}. {{BACKGROUND}} {{CAREER_DETAILS}}{{LEGACY}}"
+      },
+      "defaultSections": [
+        {
+          "title": "Personal life",
+          "description": "Family, relationships, and personal interests",
+          "icon": "👥",
+          "contentTemplate": "{{NAME}} {{PERSONAL_DETAILS}}. {{FAMILY_INFO}} {{PERSONAL_INTERESTS}}",
+          "wikidataProperties": ["P26", "P40", "P551"],
+          "priority": 5
+        },
+        {
+          "title": "Death and legacy",
+          "description": "Final years and posthumous recognition",
+          "icon": "⚰️",
+          "contentTemplate": "{{NAME}} died {{DEATH_DETAILS}}. {{LEGACY}} {{MEMORIALS}} {{CONTINUING_INFLUENCE}}",
+          "wikidataProperties": ["P570", "P20", "P509"],
+          "priority": 6
+        }
+      ],
+      "wikidataProperties": ["P569", "P570", "P19", "P20", "P27", "P106", "P69", "P166", "P800", "P101", "P108", "P512", "P184", "P185"]
+    },
+    "LOCATION": {
+      "subcategories": {
+        "city": {
+          "name": "City/Urban Area",
+          "detectionKeywords": ["city", "town", "municipality", "urban", "metropolitan"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is {{ARTICLE}} {{CITY_TYPE}} and {{ADMINISTRATIVE_ROLE}} in {{REGION}}. {{POPULATION_CONTEXT}}{{GEOGRAPHICAL_SIGNIFICANCE}}{{ADMINISTRATIVE_DETAILS}}{{ECONOMIC_ROLE}}",
+            "concise": "{{NAME}} is {{ARTICLE}} {{CITY_TYPE}} in {{REGION}} with a population of {{POPULATION}}.",
+            "detailed": "{{NAME}} is {{ARTICLE}} {{CITY_TYPE}} located in {{DETAILED_LOCATION}}. {{ADMINISTRATIVE_STATUS}} {{DEMOGRAPHIC_DETAILS}}{{GEOGRAPHICAL_FEATURES}}{{ECONOMIC_OVERVIEW}}{{CULTURAL_SIGNIFICANCE}}{{HISTORICAL_CONTEXT}}"
+          },
+          "contextualChips": [
+            "+ city type", "+ metropolitan status", "+ administrative role", "+ population ranking",
+            "+ regional significance", "+ economic importance", "+ cultural landmarks", "+ transportation hub"
+          ],
+          "sections": [
+            {
+              "title": "History",
+              "description": "Historical development and founding",
+              "icon": "📚",
+              "contentTemplate": "{{NAME}} was {{FOUNDING_DETAILS}}. {{HISTORICAL_DEVELOPMENT}} {{MAJOR_HISTORICAL_EVENTS}}",
+              "wikidataProperties": ["P571", "P112", "P793"],
+              "priority": 1
+            },
+            {
+              "title": "Geography",
+              "description": "Physical location, climate, and geographical features",
+              "icon": "🗺️",
+              "contentTemplate": "{{NAME}} is located {{GEOGRAPHICAL_POSITION}}. {{CLIMATE}} {{GEOGRAPHICAL_FEATURES}} {{TOPOGRAPHY}}",
+              "wikidataProperties": ["P625", "P206", "P706", "P2044"],
+              "priority": 2
+            },
+            {
+              "title": "Demographics",
+              "description": "Population statistics and demographic composition",
+              "icon": "👥",
+              "contentTemplate": "As of {{CENSUS_YEAR}}, {{NAME}} has a population of {{POPULATION}}. {{DEMOGRAPHIC_BREAKDOWN}} {{POPULATION_TRENDS}}",
+              "wikidataProperties": ["P1082", "P6"],
+              "priority": 3
+            }
+          ]
+        },
+        "geographical_feature": {
+          "name": "Natural Feature",
+          "detectionKeywords": ["mountain", "river", "lake", "forest", "desert", "valley", "island"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is {{ARTICLE}} {{FEATURE_TYPE}} located in {{REGION}}. {{GEOGRAPHICAL_DETAILS}}{{FORMATION_INFO}}{{ECOLOGICAL_SIGNIFICANCE}}{{HUMAN_INTERACTION}}",
+            "concise": "{{NAME}} is {{ARTICLE}} {{FEATURE_TYPE}} in {{REGION}} known for {{PRIMARY_CHARACTERISTIC}}.",
+            "detailed": "{{NAME}} is {{ARTICLE}} {{FEATURE_TYPE}} situated in {{DETAILED_LOCATION}}. {{FORMATION_HISTORY}} {{PHYSICAL_CHARACTERISTICS}}{{ECOLOGICAL_ROLE}}{{CULTURAL_IMPORTANCE}}{{CONSERVATION_STATUS}}"
+          },
+          "contextualChips": [
+            "+ geographical type", "+ formation process", "+ physical characteristics", "+ ecological role",
+            "+ conservation status", "+ human activities", "+ cultural significance", "+ scientific importance"
+          ]
+        }
+      },
+      "defaultTemplate": {
+        "formal": "{{NAME}} is {{ARTICLE}} {{TYPE}} in {{PARENT_LOCATION}}. {{POPULATION_INFO}}{{AREA_INFO}}{{SIGNIFICANCE}}{{HISTORY}}",
+        "concise": "{{NAME}} is {{ARTICLE}} {{TYPE}} in {{PARENT_LOCATION}} with {{PRIMARY_STATISTIC}}.",
+        "detailed": "{{NAME}} is {{ARTICLE}} {{TYPE}} located in {{PARENT_LOCATION}}. {{ADMIN_INFO}} {{DETAILED_STATISTICS}}{{GEOGRAPHY}}{{ECONOMY}}{{CULTURE}}"
+      },
+      "wikidataProperties": ["P31", "P17", "P131", "P1082", "P2046", "P571", "P421", "P281", "P36", "P610", "P706", "P206"]
+    },
+    "SPECIES": {
+      "subcategories": {
+        "bird": {
+          "name": "Avian Species",
+          "detectionKeywords": ["bird", "avian", "eagle", "hawk", "duck", "sparrow", "owl", "parrot"],
+          "introductionTemplates": {
+            "formal": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{BIRD_TYPE}} native to {{HABITAT_REGIONS}}. {{TAXONOMIC_CONTEXT}}{{PHYSICAL_CHARACTERISTICS}}{{BEHAVIORAL_TRAITS}}{{CONSERVATION_STATUS}}",
+            "concise": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{BIRD_TYPE}} found in {{PRIMARY_HABITAT}}.",
+            "detailed": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} species of {{DETAILED_TYPE}} belonging to {{TAXONOMIC_CLASSIFICATION}}. {{EVOLUTIONARY_CONTEXT}} {{DETAILED_MORPHOLOGY}}{{ECOLOGICAL_ROLE}}{{REPRODUCTION}}{{DISTRIBUTION}}{{CONSERVATION_EFFORTS}}"
+          },
+          "contextualChips": [
+            "+ bird type", "+ habitat", "+ migration patterns", "+ feeding behavior",
+            "+ nesting habits", "+ conservation status", "+ distinctive features", "+ ecological role"
+          ]
+        },
+        "mammal": {
+          "name": "Mammalian Species",
+          "detectionKeywords": ["mammal", "primate", "carnivore", "herbivore", "rodent", "cetacean"],
+          "introductionTemplates": {
+            "formal": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{MAMMAL_TYPE}} native to {{HABITAT_REGIONS}}. {{TAXONOMIC_POSITION}}{{SIZE_CHARACTERISTICS}}{{SOCIAL_BEHAVIOR}}{{CONSERVATION_STATUS}}",
+            "concise": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{MAMMAL_TYPE}} found in {{PRIMARY_HABITAT}}.",
+            "detailed": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} species of {{DETAILED_TYPE}} in the {{FAMILY}} family. {{EVOLUTIONARY_HISTORY}} {{PHYSICAL_DESCRIPTION}}{{BEHAVIORAL_ECOLOGY}}{{REPRODUCTION_LIFECYCLE}}{{DISTRIBUTION_RANGE}}{{HUMAN_INTERACTION}}"
+          },
+          "contextualChips": [
+            "+ mammal type", "+ habitat", "+ social structure", "+ diet", 
+            "+ reproduction", "+ conservation status", "+ human interaction", "+ evolutionary significance"
+          ]
+        }
+      },
+      "defaultTemplate": {
+        "formal": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} of {{PARENT_TAXON}}{{CONSERVATION_STATUS}}. {{RANGE_INFO}}{{CHARACTERISTICS}}{{DISCOVERY_INFO}}",
+        "concise": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} native to {{HABITAT}}.",
+        "detailed": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} of {{PARENT_TAXON}} in the {{FAMILY}} family. {{DETAILED_CLASSIFICATION}} {{MORPHOLOGY}}{{ECOLOGY}}{{BEHAVIOR}}{{DISTRIBUTION}}"
+      },
+      "wikidataProperties": ["P225", "P171", "P105", "P141", "P183", "P181", "P1843", "P935", "P2067", "P2048", "P2049", "P2044"]
+    }
+  },
+  "userInteractionValues": {
+    "description": "When users click interactive chips, they get dropdown options with these predefined values",
+    "conversionLogic": "Unfilled placeholders become clickable chips: {{MAJOR_DISCOVERY}} → 'major discovery' chip",
+    "PERSON": {
+      "nationality": ["American", "British", "Indian", "Canadian", "Australian", "German", "French", "Custom..."],
+      "occupation": ["writer", "scientist", "artist", "politician", "musician", "actor", "engineer", "Custom..."],
+      "birth_year": ["1950", "1960", "1970", "1980", "1990", "2000", "Custom..."],
+      "main_achievement": ["notable works", "scientific discoveries", "artistic contributions", "political reforms", "Custom..."],
+      "birth_date": ["January 1, 1970", "March 15, 1965", "June 10, 1980", "Custom..."],
+      "birth_place": ["New York", "London", "Paris", "Mumbai", "Toronto", "Sydney", "Custom..."],
+      "family_background": ["middle-class family", "academic family", "working-class origins", "aristocratic lineage", "Custom..."],
+      "early_education": ["local schools", "private tutoring", "prestigious academy", "public education", "Custom..."],
+      "career_start_institution": ["Harvard University", "Oxford University", "MIT", "Stanford University", "Custom..."],
+      "career_start_year": ["1990", "1995", "2000", "2005", "2010", "Custom..."],
+      "primary_research": ["theoretical physics", "molecular biology", "computer science", "political theory", "Custom..."],
+      "major_contributions": ["groundbreaking research", "innovative policies", "artistic innovations", "technological advances", "Custom..."],
+      "political_start_year": ["1990", "1995", "2000", "2005", "2010", "Custom..."],
+      "first_office": ["city councilor", "state representative", "mayor", "senator", "Custom..."],
+      "major_offices": ["Governor", "Senator", "Prime Minister", "President", "Cabinet Minister", "Custom..."],
+      "political_achievements": ["landmark legislation", "policy reforms", "international agreements", "social programs", "Custom..."],
+      "spouse_name": ["Jane Smith", "John Doe", "Custom..."],
+      "marriage_year": ["1990", "1995", "2000", "2005", "Custom..."],
+      "children_details": ["two children", "three sons", "one daughter", "no children", "Custom..."],
+      "personal_interests": ["reading", "music", "sports", "travel", "gardening", "Custom..."]
+    },
+    "LOCATION": {
+      "location_type": ["city", "town", "village", "region", "country", "Custom..."],
+      "population": ["over 1 million", "about 500,000", "about 100,000", "about 50,000", "Custom..."],
+      "administrative_role": ["capital city", "major city", "municipality", "administrative center", "Custom..."],
+      "parent_location": ["United States", "United Kingdom", "India", "Canada", "Australia", "Custom..."]
+    },
+    "SPECIES": {
+      "species_type": ["bird", "mammal", "reptile", "fish", "amphibian", "insect", "plant", "fungus", "Custom..."],
+      "habitat": ["forests", "grasslands", "wetlands", "deserts", "mountains", "rivers", "oceans", "Custom..."],
+      "conservation_status": ["Least Concern", "Near Threatened", "Vulnerable", "Endangered", "Critically Endangered", "Custom..."],
+      "native_region": ["North America", "South America", "Europe", "Asia", "Africa", "Australia", "Custom..."],
+      "habitat_details": ["tropical forests", "temperate forests", "freshwater lakes", "coastal areas", "mountain regions", "Custom..."],
+      "size_category": ["small", "medium-sized", "large", "very large", "tiny", "compact", "Custom..."],
+      "length_measurement": ["30-50 cm", "1-2 meters", "2-3 meters", "50-100 cm", "10-30 cm", "Custom..."],
+      "weight_range": ["1-5 kg", "10-25 kg", "25-50 kg", "50-100 kg", "100-200 kg", "Custom..."],
+      "sexual_dimorphism": ["pronounced sexual dimorphism", "minimal sexual dimorphism", "no sexual dimorphism", "males larger than females", "females larger than males", "Custom..."],
+      "size_difference": ["10-15% larger", "20-30% larger", "50% larger", "twice the size", "similar sizes", "Custom..."],
+      "primary_distinguishing_feature": ["prominent crest", "distinctive coloration", "long tail", "large ears", "powerful build", "unique markings", "Custom..."],
+      "feature_function_1": ["defensive purposes", "territorial display", "mating ritual", "heat regulation", "camouflage", "Custom..."],
+      "feature_function_2": ["communication", "navigation", "protection", "hunting", "social bonding", "Custom..."],
+      "body_covering": ["thick fur", "smooth scales", "feathers", "tough skin", "protective shell", "Custom..."],
+      "protection_type": ["weather protection", "predator defense", "UV protection", "thermal insulation", "Custom..."],
+      "adaptive_function": ["thermoregulation", "water conservation", "energy efficiency", "sensory enhancement", "Custom..."],
+      "skull_features": ["elongated skull", "reinforced cranium", "specialized jaw structure", "enlarged brain case", "Custom..."],
+      "sensory_organs": ["acute hearing", "enhanced vision", "sensitive smell", "specialized touch receptors", "Custom..."],
+      "eye_description": ["large round eyes", "forward-facing eyes", "small beady eyes", "compound eyes", "Custom..."],
+      "vision_type": ["excellent night vision", "color vision", "motion detection", "depth perception", "Custom..."],
+      "lighting_conditions": ["bright daylight", "low light conditions", "complete darkness", "underwater", "Custom..."],
+      "limb_structure": ["muscular limbs", "elongated limbs", "short sturdy limbs", "flexible appendages", "Custom..."],
+      "extremity_features": ["sharp claws", "webbed feet", "opposable thumbs", "suction cups", "hooves", "Custom..."],
+      "locomotion_ability": ["rapid running", "precise climbing", "efficient swimming", "sustained flight", "Custom..."],
+      "terrain_types": ["rocky surfaces", "sandy terrain", "muddy ground", "tree branches", "water surfaces", "Custom..."],
+      "taxonomic_classification": ["vertebrate species", "invertebrate species", "flowering plant", "coniferous tree", "Custom..."],
+      "family_classification": ["Felidae family", "Canidae family", "Ursidae family", "Corvidae family", "Custom..."],
+      "order_classification": ["Carnivora", "Primates", "Rodentia", "Passeriformes", "Lepidoptera", "Custom..."],
+      "discovery_year": ["1758", "1859", "1901", "1950", "1975", "2000", "Custom..."],
+      "describing_scientist": ["Carl Linnaeus", "Charles Darwin", "Alfred Wallace", "John Smith", "Custom..."],
+      "type_locality": ["Madagascar", "Amazon rainforest", "Galápagos Islands", "Australian Outback", "Custom..."],
+      "distinguishing_feature_1": ["unique coloration pattern", "distinctive size", "specialized appendages", "unusual behavior", "Custom..."],
+      "distinguishing_feature_2": ["vocal characteristics", "mating displays", "feeding habits", "seasonal changes", "Custom..."],
+      "distinguishing_feature_3": ["habitat preferences", "social structure", "reproductive cycle", "migration patterns", "Custom..."],
+      "phenotypic_variation": ["significant color variation", "size polymorphism", "seasonal dimorphism", "geographic variation", "Custom..."],
+      "subspecies_number": ["three recognized subspecies", "five distinct populations", "no subspecies", "numerous local variants", "Custom..."],
+      "ecological_role": ["apex predator", "keystone species", "pollinator", "seed disperser", "decomposer", "Custom..."],
+      "predator_role": ["top predator", "secondary predator", "opportunistic hunter", "ambush predator", "Custom..."],
+      "prey_role": ["primary prey", "occasional prey", "rarely preyed upon", "protected by defenses", "Custom..."],
+      "seasonal_behaviors": ["winter hibernation", "spring migration", "summer breeding", "autumn feeding", "Custom..."],
+      "life_stages": ["juvenile development", "adult maturity", "elderly decline", "metamorphosis stages", "Custom..."],
+      "feeding_classification": ["strict carnivore", "herbivore", "omnivore", "insectivore", "filter feeder", "Custom..."],
+      "primary_food_sources": ["small mammals", "insects", "fruits and seeds", "aquatic plants", "nectar", "Custom..."],
+      "secondary_diet": ["seasonal fruits", "emergency protein sources", "mineral supplements", "occasional scavenging", "Custom..."],
+      "resource_scarcity": ["winter months", "drought periods", "territorial competition", "climate changes", "Custom..."],
+      "social_organization": ["matriarchal groups", "alpha-dominated packs", "loose aggregations", "solitary individuals", "Custom..."],
+      "group_size": ["small family units", "large flocks", "mated pairs", "temporary gatherings", "Custom..."],
+      "group_composition": ["mixed-age groups", "age-segregated clusters", "breeding pairs only", "female-dominated groups", "Custom..."],
+      "communication_methods": ["complex vocalizations", "visual displays", "chemical signals", "tactile interactions", "Custom..."],
+      "communication_complexity": ["15+ distinct calls", "30+ vocalizations", "simple sound repertoire", "elaborate signal system", "Custom..."],
+      "call_functions": ["alarm calls", "mating songs", "territorial warnings", "parent-offspring communication", "Custom..."],
+      "breeding_pattern": ["annual breeding cycle", "biannual reproduction", "opportunistic breeding", "continuous reproduction", "Custom..."],
+      "breeding_season": ["spring months", "late summer", "dry season", "year-round", "Custom..."],
+      "courtship_behavior": ["complex dances", "vocal performances", "gift presentations", "territorial displays", "Custom..."],
+      "courtship_duration": ["several days", "multiple weeks", "brief encounters", "extended seasons", "Custom..."],
+      "parental_strategy": ["biparental care", "female-only care", "male-only care", "communal raising", "Custom..."],
+      "care_activities": ["nest building", "food provisioning", "protection duties", "teaching behaviors", "Custom..."],
+      "care_duration": ["2-3 months", "6 months", "one year", "until independence", "Custom..."],
+      "primary_habitat": ["dense forests", "open grasslands", "wetland areas", "rocky mountains", "coastal regions", "Custom..."],
+      "geographic_distribution": ["widespread across continents", "limited to specific regions", "island populations", "fragmented habitats", "Custom..."],
+      "habitat_types": ["diverse ecosystems", "specialized niches", "edge environments", "transitional zones", "Custom..."],
+      "secondary_habitats": ["agricultural areas", "urban parks", "secondary forests", "disturbed habitats", "Custom..."],
+      "vegetation_type": ["old-growth forests", "deciduous woodlands", "coniferous stands", "mixed vegetation", "Custom..."],
+      "canopy_coverage": ["dense canopy (80-90%)", "moderate coverage (50-70%)", "open canopy (30-50%)", "sparse coverage", "Custom..."],
+      "shelter_benefits": ["predator avoidance", "weather protection", "nesting sites", "roosting locations", "Custom..."],
+      "resource_availability": ["year-round food sources", "seasonal abundance", "water access", "nesting materials", "Custom..."],
+      "terrain_features": ["river valleys", "steep slopes", "plateau areas", "cave systems", "Custom..."],
+      "landscape_elements": ["natural clearings", "fallen logs", "boulder fields", "stream corridors", "Custom..."],
+      "seasonal_range_1": ["northern breeding areas", "mountain highlands", "tropical regions", "coastal zones", "Custom..."],
+      "seasonal_range_2": ["southern wintering grounds", "lowland areas", "temperate zones", "inland regions", "Custom..."],
+      "migration_distance": ["short local movements", "medium-distance travel", "transcontinental journeys", "no migration", "Custom..."],
+      "climate_adaptations": ["temperature tolerance", "drought resistance", "flood adaptations", "seasonal adjustments", "Custom..."],
+      "alternative_habitats": ["human-modified landscapes", "protected reserves", "restoration areas", "corridor habitats", "Custom..."],
+      "elevation_changes": ["higher altitudes", "lower elevations", "sea level areas", "mountain peaks", "Custom..."]
+    }
+  }
+}

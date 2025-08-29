@@ -113,18 +113,41 @@
 
     /* Template placeholders in content */
     .template-placeholder {
-      color: #36c;
-      background: #eef3ff;
-      padding: 1px 4px;
-      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border: 1px solid #c8ccd1;
+      border-radius: 12px;
+      background: #f8f9fa;
+      color: #202122;
       cursor: pointer;
       user-select: none;
-      font-style: italic;
+      font-style: normal;
     }
 
     .template-placeholder:hover {
-      background: #dbe7ff;
+      background: #eef3ff;
+      border-color: #36c;
+      color: #36c;
     }
+
+    /* Chip suggestion menu */
+    .chip-menu {
+      position: absolute;
+      display: none;
+      background: #fff;
+      border: 1px solid #eaecf0;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      min-width: 220px;
+      max-width: 360px;
+      z-index: 3500;
+      padding: 6px 0;
+    }
+    .chip-menu-header { font-weight: 600; padding: 8px 12px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
+    .chip-menu-item { display:block; width:100%; text-align:left; padding:10px 12px; background:#fff; border:0; cursor:pointer; font-size:13px; }
+    .chip-menu-item:hover { background:#f8f9fa; }
 
     /* Source verification indicators */
     .needs-source {
@@ -154,12 +177,13 @@
   
     .chip.guidance { border-color: #c8ccd1; background: #fff; }
     .ac-steps { max-width: 1100px; margin: 0 auto; }
-    .ac-step { display: none; border: 1px solid var(--border-color-subtle, #eaecf0); background: #fff; border-radius: 6px; padding: 16px; }
+    .ac-step { display: none; border: none; background: #fff; border-radius: 0; padding: 16px; box-shadow: none; }
     .ac-step.active { display: block; }
     .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
     
     /* Center Step 1 in viewport */
-    #step1.ac-step {
+    #step1.ac-step,
+    #creation-step1.ac-step {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -174,7 +198,8 @@
     
     /* Responsive positioning for mobile with keyboard */
     @media (max-height: 600px) {
-      #step1.ac-step {
+      #step1.ac-step,
+      #creation-step1.ac-step {
         position: fixed;
         top: 30%;
         transform: translate(-50%, -30%);
@@ -182,14 +207,16 @@
     }
     
     @media (max-width: 768px) {
-      #step1.ac-step {
+      #step1.ac-step,
+      #creation-step1.ac-step {
         width: 95%;
         padding: 20px;
       }
       
       /* Adjust for mobile keyboard */
       @media (max-height: 500px) {
-        #step1.ac-step {
+        #step1.ac-step,
+        #creation-step1.ac-step {
           top: 20%;
           transform: translate(-50%, -20%);
         }
@@ -197,7 +224,8 @@
     }
     
     /* Center Step 2 in viewport */
-    #step2.ac-step {
+    #step2.ac-step,
+    #creation-step2.ac-step {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -212,7 +240,8 @@
     
     /* Responsive positioning for Step 2 */
     @media (max-width: 768px) {
-      #step2.ac-step {
+      #step2.ac-step,
+      #creation-step2.ac-step {
         width: 95%;
         padding: 20px;
         top: 45%;
@@ -298,147 +327,7 @@
       border-color: #2a4b8d !important;
     }
     
-    /* Guide Me Sidebar */
-    .guide-sidebar {
-      position: fixed;
-      top: 0;
-      right: -400px;
-      width: 400px;
-      height: 100vh;
-      background: #fff;
-      border-left: 1px solid var(--border-color-subtle, #eaecf0);
-      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-      z-index: 1000;
-      transition: right 0.3s ease;
-      overflow-y: auto;
-    }
     
-    .guide-sidebar.open {
-      right: 0;
-    }
-    
-    .guide-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
-      background: #f8f9fa;
-    }
-    
-    .guide-header h3 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #202122;
-    }
-    
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #72777d;
-      padding: 4px;
-      border-radius: 4px;
-    }
-    
-    .close-btn:hover {
-      background: #eaecf0;
-      color: #202122;
-    }
-    
-    .guide-content {
-      padding: 20px;
-    }
-    
-    .guide-section {
-      margin-bottom: 24px;
-    }
-    
-    .guide-section h4 {
-      margin: 0 0 12px 0;
-      font-size: 14px;
-      font-weight: 600;
-      color: #202122;
-    }
-    
-    .guide-section ul {
-      margin: 0;
-      padding-left: 20px;
-      list-style-type: disc;
-    }
-    
-    .guide-section li {
-      margin-bottom: 8px;
-      font-size: 13px;
-      line-height: 1.4;
-      color: #54595d;
-    }
-    
-    .guide-section li strong {
-      color: #202122;
-    }
-    
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-      .guide-sidebar {
-        display: none; /* Hide sidebar on mobile, use modal instead */
-      }
-    }
-    
-    /* Guide Me Modal Drawer (Mobile) */
-    .guide-modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 2000;
-    }
-    
-    .guide-modal-backdrop.open {
-      display: block;
-    }
-    
-    .guide-modal-drawer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      max-height: 70vh;
-      overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-    }
-    
-    .guide-modal-backdrop.open .guide-modal-drawer {
-      transform: translateY(0);
-    }
-    
-    .guide-modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color-subtle, #eaecf0);
-      background: #f8f9fa;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-    }
-    
-    .guide-modal-header h3 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #202122;
-    }
-    
-    .guide-modal-content {
-      padding: 20px;
-    }
     
     /* Section suggestion buttons */
     .section-button {
@@ -863,6 +752,19 @@
         display: none !important;
       }
     }
+    /* Assistance menu styling */
+    .assist-menu { min-width: 280px; max-width: 380px; min-height: 200px; padding: 0; border-radius: 8px; }
+    .assist-menu-header { font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
+    .assist-item { display: block; width: 100%; text-align: left; padding: 12px 14px; background: #fff; border: none; cursor: pointer; }
+    .assist-item:hover { background: #f8f9fa; }
+    .assist-sep { height: 1px; background: #eaecf0; margin: 0; }
+    .intro-sample { padding: 12px 14px; background: #fff; }
+    .intro-sample + .intro-sample { border-top: 1px solid #eaecf0; }
+    .intro-text { font-size: 13px; line-height: 1.55; color: #202122; margin-bottom: 8px; }
+    .action-row { display: flex; gap: 8px; align-items: center; }
+    .action-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #c8ccd1; border-radius:12px; background:#f8f9fa; color:#202122; cursor:pointer; font-size:12px; }
+    .action-chip:hover { background:#eef3ff; border-color:#36c; color:#36c; }
+    .suggest-badge { display:inline-block; font-size:11px; color:#445; background:#eef3ff; border:1px solid #cfe2ff; border-radius:10px; padding:2px 6px; margin-bottom:6px; }
   </style>
 </head>
 <body>
@@ -1005,16 +907,16 @@
     <div class="surface">
       <div class="creator-wrap">
         <div class="ac-steps">
-          <section class="ac-step active" id="step1">
+          <section class="ac-step active" id="creation-step1">
             <h3>What article would you like to create?</h3>
-            <input id="title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
+            <input id="creation-title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
             <div class="ac-actions">
-              <button class="btn primary" id="toStep2" disabled>Continue</button>
+              <button class="btn primary" id="creation-toStep2" disabled>Continue</button>
             </div>
           </section>
-          <section class="ac-step" id="step2">
+          <section class="ac-step" id="creation-step2">
             <h3>Assign a topic category</h3>
-            <div class="category-list" id="categoryList">
+            <div class="category-list" id="creation-categoryList">
               <div class="category-item" data-cat="person">Person / Biography</div>
               <div class="category-item" data-cat="place">Geographic Location</div>
               <div class="category-item" data-cat="species">Species / Biology</div>
@@ -1026,11 +928,11 @@
             </div>
             <div class="hint">This helps us suggest the right structure and policies.</div>
             <div class="ac-actions">
-              <button class="btn" id="backTo1">Back</button>
-              <button class="btn primary" id="toStep3" disabled>Start editing</button>
+              <button class="btn" id="creation-backTo1">Back</button>
+              <button class="btn primary" id="creation-toStep3" disabled>Start editing</button>
             </div>
           </section>
-          <section class="ac-step" id="step3">
+          <section class="ac-step" id="creation-step3">
             <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead...">
               <!-- Smart chips container -->
               <div class="smart-chips-container" id="smartChips">
@@ -1064,29 +966,6 @@
     </div>
   </main>
 
-  <!-- Guide Me Sidebar -->
-  <div class="guide-sidebar" id="guideSidebar">
-    <div class="guide-header">
-      <h3>Writing guidance</h3>
-      <button class="close-btn" id="closeSidebar" title="Close">×</button>
-    </div>
-    <div class="guide-content" id="guideContent">
-      <!-- Content will be dynamically loaded here -->
-    </div>
-  </div>
-
-  <!-- Guide Me Modal Drawer (Mobile) -->
-  <div class="guide-modal-backdrop" id="guideModalBackdrop">
-    <div class="guide-modal-drawer" id="guideModalDrawer">
-      <div class="guide-modal-header">
-        <h3>Writing guidance</h3>
-        <button class="close-btn" id="closeModalDrawer" title="Close">×</button>
-      </div>
-      <div class="guide-modal-content" id="guideModalContent">
-        <!-- Content will be dynamically loaded here -->
-      </div>
-    </div>
-  </div>
 
   <!-- Footer status (shown only in Step 3) -->
   <footer class="ve-footer" id="veFooter" style="display: none;">
@@ -1187,16 +1066,116 @@
         });
       }).catch(console.error);
     })();
+
+    // === Referencing helpers (concept demo) ===
+    let referenceCount = 0;
+    let lastSourceReminderClicked = null;
+
+    function ensureSelectionInEditor(editor) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount || !editor.contains(sel.anchorNode)) {
+        placeCaretAtEnd(editor);
+      }
+      try { currentCursorPosition = sel.getRangeAt(0).cloneRange(); } catch (_) {}
+    }
+
+    function placeCaretAtEnd(el) {
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function insertNodeAtCaret(node, editor) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) placeCaretAtEnd(editor);
+      const range = sel.getRangeAt(0);
+      range.collapse(true);
+      range.insertNode(node);
+      // Move caret after the inserted node
+      range.setStartAfter(node);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function ensureReferencesSection() {
+      const editor = document.getElementById('editor');
+      const hasRefs = editor.innerHTML.includes('<h2') && editor.innerHTML.includes('id="References"');
+      if (!hasRefs) {
+        const block = document.createElement('div');
+        block.innerHTML = (
+          '<h2 id="References" style="font-family: Georgia, serif; font-size: 1.5em; font-weight: normal; margin: 2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">References</h2>' +
+          '<div id="referencesList" style="margin:0.75em 0; font-size:0.9em;"></div>'
+        );
+        editor.appendChild(block);
+      } else {
+        // Ensure list container exists
+        const refsList = document.getElementById('referencesList');
+        if (!refsList) {
+          const refsHeader = editor.querySelector('#References');
+          const div = document.createElement('div');
+          div.id = 'referencesList';
+          div.style.margin = '0.75em 0';
+          div.style.fontSize = '0.9em';
+          refsHeader && refsHeader.insertAdjacentElement('afterend', div);
+        }
+      }
+    }
+
+    function appendReferenceEntry(number, url, title) {
+      const list = document.getElementById('referencesList');
+      const p = document.createElement('p');
+      p.style.margin = '0.25em 0';
+      const domain = (() => { try { return new URL(url).hostname; } catch(_) { return ''; } })();
+      const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+      const citation = title ? `${title}. ${domain ? domain + '.' : ''} Retrieved ${today}. ${url}` : `${domain ? domain + '.' : ''} Retrieved ${today}. ${url}`;
+      p.textContent = `${number}. ${citation}`;
+      (list || document.getElementById('References')?.insertAdjacentElement('afterend', (function(){const d=document.createElement('div');d.id='referencesList';return d;})()))?.appendChild(p);
+    }
+
+    function insertReferenceLink(url, title) {
+      const editor = document.getElementById('editor');
+      ensureSelectionInEditor(editor);
+
+      // Build <sup> link
+      referenceCount += 1;
+      const sup = document.createElement('sup');
+      sup.className = 'wiki-reference';
+      sup.title = url;
+      sup.style.color = '#0645ad';
+      sup.textContent = `[${referenceCount}]`;
+
+      // Replace last clicked source reminder if present
+      if (lastSourceReminderClicked && lastSourceReminderClicked.parentNode) {
+        lastSourceReminderClicked.replaceWith(sup);
+        lastSourceReminderClicked = null;
+      } else {
+        insertNodeAtCaret(sup, editor);
+      }
+
+      // Ensure and append to References
+      ensureReferencesSection();
+      appendReferenceEntry(referenceCount, url, title || '');
+
+      // Reposition chips after insert
+      try { if (typeof showSmartChipsAtCursor === 'function') showSmartChipsAtCursor(); } catch(_) {}
+      const sc = document.getElementById('smartChips'); if (sc) sc.classList.add('show');
+    }
     // Steps
-    var titleInput=document.getElementById('title');
-    var toStep2=document.getElementById('toStep2');
-    var toStep3=document.getElementById('toStep3');
-    var backTo1=document.getElementById('backTo1');
-    var step1=document.getElementById('step1');
-    var step2=document.getElementById('step2');
-    var step3=document.getElementById('step3');
-    var categoryList=document.getElementById('categoryList');
+    var titleInput=document.getElementById('creation-title');
+    var toStep2=document.getElementById('creation-toStep2');
+    var toStep3=document.getElementById('creation-toStep3');
+    var backTo1=document.getElementById('creation-backTo1');
+    var step1=document.getElementById('creation-step1');
+    var step2=document.getElementById('creation-step2');
+    var step3=document.getElementById('creation-step3');
+    var categoryList=document.getElementById('creation-categoryList');
     var selectedCat=null;
+
 
     titleInput.addEventListener('input', function(){ toStep2.disabled = !(titleInput.value.trim().length>0); });
     toStep2.onclick=function(){ 
@@ -1214,7 +1193,15 @@
     categoryList && categoryList.addEventListener('click', function(e){
       var item=e.target.closest('.category-item'); if(!item) return;
       Array.from(categoryList.querySelectorAll('.category-item')).forEach(function(n){n.classList.remove('selected');});
-      item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); toStep3.disabled=false;
+      item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); 
+      // Expose selected category globally for template suggestions
+      window.selectedCat = selectedCat;
+      
+      // Get the button fresh each time to avoid conflicts with smart chips code
+      var toStep3Button = document.getElementById('creation-toStep3');
+      if (toStep3Button) {
+        toStep3Button.disabled=false;
+      }
       
       // Update guide content when category changes
       setTimeout(updateGuideContent, 100);
@@ -1229,17 +1216,46 @@
       var ed = document.getElementById('editor');
       var t = titleInput.value.trim();
       var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      // Expose plain title for autofill in templates
+      window.articleTitleText = t || 'Untitled';
       
       // Update VE header title
       var veTitle = document.getElementById('veTitle');
       if (veTitle) veTitle.textContent = safeTitle;
       
-      // Initialize editor with just placeholder and cursor
-      ed.innerHTML = '';
-      ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      // Initialize editor with a visible lead placeholder paragraph that holds the caret
+      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 0.75em 0 2.25em 0; line-height: 1.6; color: #72777d; font-style: italic;">' + safeTitle + ' is...</p>';
+      ed.removeAttribute('data-placeholder');
       
-      // Focus editor to show blinking cursor
+      // Insert a single Assistance chip with inline menu (simple concept)
+      var assistHtml = ''+
+        '<div id="assistChip" class="assist-chip" style="position:absolute; top:4px; left:4px; z-index:150; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #c8ccd1; border-radius:12px; background:#f8f9fa; color:#202122; cursor:pointer;">✨ Suggestions</div>'+
+        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:1px solid #eaecf0; border-radius:8px; box-shadow:0 8px 16px rgba(0,0,0,0.2); min-width:280px; min-height:200px; padding:0;">'+
+          '<div class="assist-menu-header">Suggestions</div>'+
+          '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
+          '<div class="assist-sep"></div>'+
+          '<button class="assist-item" data-assist="source"><div class="template-option-title">Add from a source</div><div class="template-option-desc">Open source dialog</div></button>'+ 
+          '<div class="assist-sep"></div>'+
+          '<button class="assist-item" data-assist="section"><div class="template-option-title">Suggested section</div><div class="template-option-desc">Add a common section</div></button>'+ 
+        '</div>';
+      ed.insertAdjacentHTML('beforeend', assistHtml);
+      initializeAssistanceUI();
+      
+      // Focus editor and place caret in the lead placeholder paragraph
       ed.focus();
+      (function(){
+        var lp = document.getElementById('leadPlaceholder');
+        if (lp) {
+          try {
+            var r = document.createRange();
+            var s = window.getSelection();
+            r.selectNodeContents(lp);
+            r.collapse(false);
+            s.removeAllRanges();
+            s.addRange(r);
+          } catch(_) {}
+        }
+      })();
       
       // Add input listener to activate publish/submit buttons when user starts typing
       ed.addEventListener('input', function() {
@@ -1358,18 +1374,16 @@
     function openDialog(){ backdrop.style.display='block'; urlInput.focus(); }
     function closeDialog(){ backdrop.style.display='none'; }
     function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
+    // Delegate: clicking on "Add source" reminder or reference chip opens reference dialog and prepares replacement
+    editor.addEventListener('click', function(e){ var target=e.target; var sr = target && (target.closest && (target.closest('.source-reminder') || target.closest('.ref-chip'))); if(sr){ lastSourceReminderClicked = sr; // place caret after it
+        var r=document.createRange(); var s=window.getSelection(); r.setStartAfter(sr); r.collapse(true); s.removeAllRanges(); s.addRange(r); openDialog(); }});
     urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
-    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; if(document.activeElement!==editor) editor.focus(); document.execCommand('insertText', false, ' [1]'); var c=classify(url); refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; closeDialog(); };
+    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; var titleInput=document.getElementById('refTitleInput'); var title=titleInput && titleInput.value ? titleInput.value.trim() : ''; if(document.activeElement!==editor) editor.focus(); insertReferenceLink(url, title); var c=classify(url); if(refBadges){ refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; } closeDialog(); };
 
     // Guide Me functionality - Desktop Sidebar & Mobile Modal
-    var guideSidebar = document.getElementById('guideSidebar');
-    var guideModalBackdrop = document.getElementById('guideModalBackdrop');
-    var addSectionBtn = document.getElementById('addSectionBtn');
-    var guideMeMobileBtn = document.getElementById('guideMeMobile');
-    var closeSidebarBtn = document.getElementById('closeSidebar');
-    var closeModalBtn = document.getElementById('closeModalDrawer');
-    var guideContent = document.getElementById('guideContent');
-    var guideModalContent = document.getElementById('guideModalContent');
+    // Sidebar elements removed
+    // Sidebar buttons removed
+    // Guide content elements removed
     var addedSections = [];
     var suggestionsData = null;
 
@@ -1552,18 +1566,7 @@
 
     // Update guide content in both sidebar and modal
     function updateGuideContent() {
-      const content = generateGuideContent();
-      if (guideContent) guideContent.innerHTML = content;
-      if (guideModalContent) guideModalContent.innerHTML = content;
-      
-      // Add click handlers to section buttons
-      bindSectionButtons();
-      
-      // Bind source button
-      bindSourceButton();
-      
-      // Bind eligibility checker
-      bindEligibilityChecker();
+      // Sidebar functionality removed
     }
 
     // Toggle accordion sections
@@ -1764,22 +1767,14 @@
       });
     }
 
-    // Function to show guide interface
+    // Function to show guide interface (sidebar removed)
     function showGuide() {
-      // Update content before showing
-      updateGuideContent();
-      
-      if (isMobile()) {
-        guideModalBackdrop.classList.add('open');
-      } else {
-        guideSidebar.classList.add('open');
-      }
+      // Sidebar functionality removed
     }
 
-    // Function to hide guide interface
+    // Function to hide guide interface (sidebar removed)
     function hideGuide() {
-      guideSidebar.classList.remove('open');
-      guideModalBackdrop.classList.remove('open');
+      // Sidebar functionality removed
     }
 
     // Function to bind article eligibility checker functionality
@@ -1838,33 +1833,12 @@
     }
 
     // Desktop Suggestions button
-    if (addSectionBtn) {
-      addSectionBtn.addEventListener('click', showGuide);
-    }
+    // Add section button removed
 
     // Mobile Suggestions button
-    if (guideMeMobileBtn) {
-      guideMeMobileBtn.addEventListener('click', showGuide);
-    }
+    // Guide me mobile button removed
 
-    // Close buttons
-    if (closeSidebarBtn) {
-      closeSidebarBtn.addEventListener('click', hideGuide);
-    }
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', hideGuide);
-    }
-
-    // Removed auto-hide when clicking outside - sidebar stays open until manually closed
-
-    // Hide modal when clicking backdrop (mobile only)
-    if (guideModalBackdrop) {
-      guideModalBackdrop.addEventListener('click', function(e) {
-        if (e.target === guideModalBackdrop) {
-          hideGuide();
-        }
-      });
-    }
+    // Sidebar event listeners removed
 
     // Source verification functionality
     var reliableSourcesData = null;
@@ -2536,8 +2510,34 @@
       }
     }
 
+    // Bring back Suggestions via toolbar buttons
+    (function bindSuggestionsToolbar(){
+      var desktopBtn = document.getElementById('addSectionBtn');
+      if (desktopBtn) {
+        desktopBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+        });
+      }
+      var mobileBtn = document.getElementById('guideMeMobile');
+      if (mobileBtn) {
+        mobileBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+        });
+      }
+    })();
+
+    // Load advanced intro templates (read-only)
+    function loadTemplates() {
+      return fetch('templates.json')
+        .then(function(r){ return r.json(); })
+        .then(function(data){ window.templatesData = data; })
+        .catch(function(){ window.templatesData = null; });
+    }
+
     // Initialize suggestions and sources on page load
-    Promise.all([loadSuggestions(), loadReliableSources()]).then(function() {
+    Promise.all([loadSuggestions(), loadReliableSources(), loadTemplates()]).then(function() {
       updateGuideContent();
       initializeSourceModal();
     });
@@ -2549,24 +2549,740 @@
       smartChipsContainer = document.getElementById('smartChips');
       templatePopup = document.getElementById('templatePopup');
       
-      // Add event listeners to smart chips
-      const smartChips = document.querySelectorAll('.smart-chip');
-      smartChips.forEach(chip => {
-        chip.addEventListener('click', handleSmartChipClick);
-      });
+      // Disabled in simplified concept
 
       // Show chips when editor is focused and empty or cursor is at new line
       const editor = document.getElementById('editor');
       editor.addEventListener('keyup', handleEditorKeyup);
       editor.addEventListener('click', handleEditorClick);
-      
-      // Hide popups when clicking outside
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.smart-chips-container') && !e.target.closest('.template-popup')) {
-          hideTemplatePopup();
-          hideSmartChips();
+      // Make template placeholders interactive on click
+      editor.addEventListener('click', function(e){
+        var t = e.target;
+        if (t && t.classList && t.classList.contains('template-placeholder')) {
+          try { selectPlaceholder(t); } catch(_) {}
         }
       });
+      // Also show chips when the editor gains focus and conditions match
+      editor.addEventListener('focus', function(){
+        setTimeout(function(){
+          if (shouldShowSmartChips()) {
+            showSmartChipsAtCursor();
+          }
+        }, 0);
+      });
+      
+      // Hide popups when clicking outside chips, popup, editor, and assistance menu
+      document.addEventListener('click', function(e) {
+        var inChips = !!e.target.closest('.smart-chips-container');
+        var inPopup = !!e.target.closest('.template-popup');
+        var inEditor = !!e.target.closest('#editor');
+        var inAssist = !!e.target.closest('#assistChip') || !!e.target.closest('#assistMenu');
+        if (!inChips && !inPopup && !inEditor && !inAssist) {
+          hideTemplatePopup();
+          hideSmartChips();
+          var m = document.getElementById('assistMenu'); if (m) m.style.display = 'none';
+        }
+      });
+    }
+
+    // Assistance chip (simple inline menu)
+    var suppressChipPositioning = false;
+    function initializeAssistanceUI() {
+      const chip = document.getElementById('assistChip');
+      const menu = document.getElementById('assistMenu');
+      if (!chip || !menu) return;
+      const editor = document.getElementById('editor');
+      
+      // Helpers to hide/show the suggestions chip
+      window.hideSuggestionsChip = function() {
+        if (menu) menu.style.display = 'none';
+        if (chip) chip.style.display = 'none';
+      };
+      window.showSuggestionsChip = function(anchorEl) {
+        if (chip) chip.style.display = 'inline-flex';
+        if (anchorEl && typeof positionChipBelowElement === 'function') {
+          try { positionChipBelowElement(anchorEl); } catch(_) {}
+        } else {
+          setTimeout(positionChipAtCursor, 0);
+        }
+      };
+      
+      function positionChipAtCursor() {
+        if (suppressChipPositioning) return;
+        const sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        const liveRange = sel.getRangeAt(0);
+        const range = liveRange.cloneRange();
+        const editorRect = editor.getBoundingClientRect();
+        let rect = range.getBoundingClientRect();
+        const empty = !rect || ((rect.left === 0 && rect.top === 0 && rect.right === 0 && rect.bottom === 0));
+        if (empty) {
+          const node = (range.startContainer && range.startContainer.nodeType === Node.TEXT_NODE)
+            ? range.startContainer.parentElement
+            : range.startContainer;
+          const fb = (node && node.getBoundingClientRect) ? node.getBoundingClientRect() : editorRect;
+          rect = { left: fb.left, right: fb.right, top: fb.top, bottom: fb.bottom, width: fb.width, height: fb.height };
+        }
+        const left = Math.max(0, rect.left - editorRect.left);
+        const top = Math.max(0, rect.bottom - editorRect.top + 24);
+        chip.style.left = left + 'px';
+        chip.style.top = top + 'px';
+      }
+
+      function positionChipBelowElement(el) {
+        if (!el) return;
+        const editorRect = editor.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+        const left = Math.max(0, rect.left - editorRect.left);
+        const top = Math.max(0, rect.bottom - editorRect.top + 24);
+        chip.style.left = left + 'px';
+        chip.style.top = top + 'px';
+      }
+      
+      function buildMainMenu() {
+        var title = (window.articleTitleText || 'This topic');
+        var cat = (window.selectedCat || 'other');
+        // Prefer JSON-backed examples if available
+        var ex = (window.suggestionsData && window.suggestionsData[cat] && window.suggestionsData[cat].introduction && Array.isArray(window.suggestionsData[cat].introduction.examples)) ? window.suggestionsData[cat].introduction.examples : null;
+        var exampleTexts = [];
+        if (ex && ex.length) {
+          for (var i=0; i<ex.length && i<2; i++) {
+            var e = ex[i];
+            if (e && e.text) exampleTexts.push(e.text);
+          }
+        }
+        // Fallback to generic samples if JSON lacks examples
+        if (exampleTexts.length === 0) {
+          exampleTexts = generateSampleIntroductions(title, cat).slice(0,2);
+        }
+
+        // Suggested sections from JSON
+        var sectionBlock = '';
+        var secList = (window.suggestionsData && window.suggestionsData[cat] && Array.isArray(window.suggestionsData[cat].sections)) ? window.suggestionsData[cat].sections : [];
+        if (secList && secList.length) {
+          var preview = secList.slice(0, 3);
+          sectionBlock += '<div class="assist-sep"></div>';
+          sectionBlock += '<div class="intro-sample" style="background:#fcfdfc; border:1px solid #e6f5ea; border-radius:8px;">';
+          sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
+          preview.forEach(function(sec){
+            var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
+            var desc = (typeof sec === 'string') ? '' : (sec.description || '');
+            var include = (typeof sec === 'string') ? [] : (sec.include || []);
+            sectionBlock += '<div style="padding:8px 0;">';
+            sectionBlock += '<div style="font-weight:600;">'+ escapeHtml(name) +'</div>';
+            if (desc) sectionBlock += '<div style="font-size:12px; color:#555; margin:2px 0 6px 0;">'+ escapeHtml(desc) +'</div>';
+            if (include && include.length) {
+              var items = include.slice(0,3).map(function(it){ return '<li>'+ escapeHtml(it) +'</li>'; }).join('');
+              sectionBlock += '<ul style="margin:0 0 6px 16px; padding:0; font-size:12px; color:#555;">'+ items +'</ul>';
+            }
+            sectionBlock += '<div class="action-row"><button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button></div>';
+            sectionBlock += '</div>';
+          });
+          if (secList.length > 3) {
+            sectionBlock += '<div class="action-row"><button class="action-chip" data-view-all-sections>View all</button></div>';
+          }
+          sectionBlock += '</div>';
+        }
+
+        var html = ''+
+          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">Suggestions <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">Hide</button></div>'+
+          '<div class="intro-sample" style="background:#f8faff; border:1px solid #e6f0ff; border-radius:8px;">'+
+            '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge">Suggested</span> Introduction</div>'+
+            exampleTexts.map(function(text){ return '<div class="intro-text" style="margin-bottom:10px;">'+ escapeHtml(text) +'</div>'; }).join('')+
+            '<div class="action-row"><button class="action-chip" data-insert-intro-template>Insert template</button></div>'+
+          '</div>'+
+          sectionBlock +
+          '<button class="assist-item" data-assist="source"><div class="template-option-title">Add from a source</div><div class="template-option-desc">Open source dialog</div></button>'+
+          '';
+        menu.innerHTML = html;
+        // Bind actions
+        var tplBtn = menu.querySelector('[data-insert-intro-template]');
+        if (tplBtn) {
+          // Prevent focus from moving off the editor
+          tplBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
+          tplBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            insertIntroTemplate(title, cat);
+            menu.style.display='none';
+            // Ensure caret is positioned inside the inserted template
+            setTimeout(function(){
+              try { if (typeof positionChipAtCursor === 'function') positionChipAtCursor(); } catch(_) {}
+              var ed = document.getElementById('editor'); if (ed) ed.focus();
+            }, 0);
+          });
+        }
+        var hideBtn = menu.querySelector('#assistHideBtn');
+        if (hideBtn) hideBtn.addEventListener('click', function(e){ e.preventDefault(); if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip(); });
+        // Bind insert buttons for sections in preview
+        menu.querySelectorAll('[data-insert-section]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var name = this.getAttribute('data-insert-section');
+            insertSectionSkeleton(name);
+            menu.style.display = 'none';
+          });
+        });
+        var viewAllBtn = menu.querySelector('[data-view-all-sections]');
+        if (viewAllBtn) viewAllBtn.addEventListener('click', function(){ buildSectionMenu(); });
+        bindMenuHandlers();
+      }
+      
+      function buildSectionMenu() {
+        const suggestions = getSectionSuggestions(window.selectedCat || 'other');
+        let html = '<div class="assist-menu-header">Suggested sections</div>';
+        suggestions.forEach(function(name, idx){
+          html += '<button class="assist-item" data-insert-section="'+name+'"><div class="template-option-title">'+name+'</div><div class="template-option-desc">Insert section</div></button>';
+          if (idx < suggestions.length - 1) html += '<div class="assist-sep"></div>';
+        });
+        html += '<div class="assist-sep"></div>'+
+          '<button class="assist-item" data-back="1"><div class="template-option-title">Back</div></button>';
+        menu.innerHTML = html;
+        bindSectionHandlers();
+      }
+      
+      function bindMenuHandlers() {
+        var items = menu.querySelectorAll('[data-assist]');
+        items.forEach(function(btn){
+          btn.addEventListener('click', function(ev){
+            var action = this.getAttribute('data-assist');
+            if (action === 'source') {
+              try { if (typeof openSourceModalDialog === 'function') { openSourceModalDialog(); } else { openReferenceDialog(); } } catch(_) { openReferenceDialog(); }
+              menu.style.display = 'none';
+            } else if (action === 'section') {
+              buildSectionMenu();
+            }
+          });
+        });
+      }
+
+      function buildIntroMenu() {
+        var title = (window.articleTitleText || 'This topic');
+        var cat = (window.selectedCat || 'other');
+        var samples = generateSampleIntroductions(title, cat);
+        var html = '<div class="assist-menu-header">Introduction samples</div>';
+        html += samples.map(function(text, idx){
+          return '<div class="intro-sample"><div class="intro-text">'+ escapeHtml(text) +'</div><div class="action-row"><button class="action-chip" data-insert-intro="'+idx+'">Insert</button></div></div>';
+        }).join('');
+        // Chip-style starter
+        html += '<div class="assist-sep"></div>';
+        html += '<div class="intro-sample"><div class="intro-text">'+ escapeHtml(getChipStyleStarterPreview(title, cat)) +'</div><div class="action-row"><button class="action-chip" data-insert-chip-starter>Insert</button><button class="action-chip" data-back="1">Back</button></div></div>';
+        menu.innerHTML = html;
+        // Bind actions
+        menu.querySelectorAll('[data-insert-intro]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var idx = parseInt(this.getAttribute('data-insert-intro'), 10);
+            insertIntroText(samples[idx]);
+            menu.style.display = 'none';
+          });
+        });
+        var chipBtn = menu.querySelector('[data-insert-chip-starter]');
+        if (chipBtn) chipBtn.addEventListener('click', function(){ insertChipStyleStarter(title, cat); menu.style.display = 'none'; });
+        var back = menu.querySelector('[data-back]');
+        if (back) back.addEventListener('click', function(){ buildMainMenu(); });
+      }
+      
+      function bindSectionHandlers() {
+        var items = menu.querySelectorAll('[data-insert-section]');
+        items.forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var name = this.getAttribute('data-insert-section');
+            insertSectionSkeleton(name);
+            menu.style.display = 'none';
+          });
+        });
+        var back = menu.querySelector('[data-back]');
+        if (back) back.addEventListener('click', function(){ buildMainMenu(); });
+      }
+      
+      chip.addEventListener('click', function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        // Position menu under the chip
+        menu.style.left = chip.style.left;
+        menu.style.top = (parseInt(chip.style.top||'0',10) + 32) + 'px';
+        if (menu.style.display === 'none') { buildMainMenu(); menu.style.display = 'block'; } else { menu.style.display = 'none'; }
+      });
+
+      // Expose helpers globally for external callers
+      window.buildMainMenu = buildMainMenu;
+      window.positionChipBelowElement = positionChipBelowElement;
+
+      // Reposition chip near caret as user interacts
+      editor.addEventListener('focus', function(){ setTimeout(positionChipAtCursor, 0); });
+      editor.addEventListener('click', function(e){
+        var t = e.target;
+        // Reference chip opens dialog
+        if (t && (t.classList && t.classList.contains('ref-chip'))) {
+          e.preventDefault(); e.stopPropagation();
+          lastSourceReminderClicked = t;
+          openDialog();
+          return;
+        }
+        // Placeholder chip shows suggestions menu
+        if (t && t.classList && t.classList.contains('template-placeholder')) {
+          e.preventDefault(); e.stopPropagation();
+          showChipSuggestMenu(t);
+          return;
+        }
+        setTimeout(positionChipAtCursor, 0);
+      });
+      editor.addEventListener('keyup', function(){ positionChipAtCursor(); });
+      editor.addEventListener('input', function(){ positionChipAtCursor(); });
+      // Placeholder chip key handling: clear default text on first type; Tab/Shift+Tab to navigate
+      editor.addEventListener('keydown', function(e){
+        var sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        var node = sel.anchorNode && sel.anchorNode.nodeType === Node.TEXT_NODE ? sel.anchorNode.parentElement : sel.anchorNode;
+        var ph = node && node.closest ? node.closest('.template-placeholder') : null;
+        if (!ph) return;
+        // Navigate with Tab between placeholders
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          var all = Array.from(editor.querySelectorAll('.template-placeholder'));
+          var idx = all.indexOf(ph);
+          var next = e.shiftKey ? all[idx-1] : all[idx+1];
+          if (next) {
+            try { selectPlaceholder(next); } catch(_) {}
+          }
+          return;
+        }
+        // Clear default label on first character
+        var txt = ph.textContent || '';
+        if (!ph.dataset.cleared && /^add\s/i.test(txt) && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          ph.textContent = '';
+          ph.dataset.cleared = '1';
+          // Let the keypress insert as usual
+        }
+      });
+      // Initial position
+      setTimeout(positionChipAtCursor, 0);
+    }
+
+    // Chip suggestion menu logic
+    let chipMenuEl = null;
+    function ensureChipMenu() {
+      if (!chipMenuEl) {
+        chipMenuEl = document.createElement('div');
+        chipMenuEl.id = 'chipSuggestMenu';
+        chipMenuEl.className = 'chip-menu';
+        document.body.appendChild(chipMenuEl);
+      }
+      return chipMenuEl;
+    }
+
+    function showChipSuggestMenu(chipEl) {
+      const menu = ensureChipMenu();
+      const key = (chipEl.getAttribute('data-placeholder') || '').toLowerCase();
+      const cat = (window.selectedCat || 'other');
+      const td = window.templatesData || null;
+      const headerHint = getChipHeaderHintFromTemplates(td, key);
+      const suggestions = getChipSuggestions(key, cat, td);
+      let html = '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
+      suggestions.forEach(function(opt){
+        html += '<button class="chip-menu-item" data-chip-value="'+ escapeHtml(opt) +'">'+ escapeHtml(opt) +'</button>';
+      });
+      html += '<div class="assist-sep"></div><button class="chip-menu-item" data-chip-custom>Custom…</button>';
+      menu.innerHTML = html;
+
+      // Position near chip
+      const rect = chipEl.getBoundingClientRect();
+      menu.style.left = rect.left + 'px';
+      menu.style.top = (rect.bottom + 6) + 'px';
+      menu.style.display = 'block';
+
+      // Handlers
+      menu.querySelectorAll('[data-chip-value]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          var val = this.getAttribute('data-chip-value') || '';
+          // Replace chip with plain text (no chip styling)
+          var textNode = document.createTextNode(val);
+          if (chipEl && chipEl.parentNode) {
+            chipEl.parentNode.replaceChild(textNode, chipEl);
+          }
+          menu.style.display = 'none';
+        });
+      });
+      const customBtn = menu.querySelector('[data-chip-custom]');
+      if (customBtn) customBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        menu.style.display = 'none';
+        // Enable manual editing; on blur/Enter, commit to plain text and remove chip styling
+        chipEl.setAttribute('contenteditable', 'true');
+        chipEl.focus();
+        var commit = function(){
+          var txt = (chipEl.textContent || '').trim();
+          var node = document.createTextNode(txt);
+          if (chipEl && chipEl.parentNode) {
+            chipEl.parentNode.replaceChild(node, chipEl);
+          }
+          chipEl.removeEventListener('blur', commit);
+          chipEl.removeEventListener('keydown', onKey);
+        };
+        var onKey = function(ev){ if (ev.key === 'Enter') { ev.preventDefault(); commit(); } };
+        chipEl.addEventListener('blur', commit);
+        chipEl.addEventListener('keydown', onKey);
+      });
+
+      // Close on outside click
+      const closeFn = function(ev){
+        if (!menu.contains(ev.target) && ev.target !== chipEl) {
+          menu.style.display = 'none';
+          document.removeEventListener('click', closeFn, true);
+        }
+      };
+      setTimeout(function(){ document.addEventListener('click', closeFn, true); }, 0);
+    }
+
+    function getChipSuggestions(key, category, templatesData) {
+      // Try templates.json explicit values first (placeholderValues or category-specific suggestionValues)
+      var out = [];
+      try {
+        var K = key.toUpperCase();
+        if (templatesData) {
+          if (templatesData.placeholderValues && Array.isArray(templatesData.placeholderValues[K])) {
+            out = templatesData.placeholderValues[K].slice(0, 8);
+          } else if (templatesData.placeholderMappings && templatesData.placeholderMappings.userInteractionValues) {
+            var uv = templatesData.placeholderMappings.userInteractionValues[K];
+            if (Array.isArray(uv)) out = uv.slice(0, 8);
+          }
+          // Category-specific suggestionValues support
+          var catKey = (function(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } })(category);
+          if ((!out || out.length===0) && catKey && templatesData.categories && templatesData.categories[catKey]) {
+            var catData = templatesData.categories[catKey];
+            if (catData.suggestionValues && Array.isArray(catData.suggestionValues[K])) {
+              out = catData.suggestionValues[K].slice(0, 8);
+            }
+          }
+        }
+      } catch(_) {}
+      if (out && out.length) return out;
+      // Fallback static suggestions
+      switch(key) {
+        case 'nationality': return ['American','British','Indian','French','German'];
+        case 'occupation': return ['scientist','artist','politician','entrepreneur','athlete'];
+        case 'achievement': return ['pioneering research','notable inventions','influential works','groundbreaking discoveries'];
+        case 'type': return category==='place' ? ['city','town','region','capital'] : ['organization','concept','event'];
+        case 'region': return ['United States','Europe','India','Asia','Africa'];
+        case 'feature': return ['historic architecture','cultural heritage','economic significance','natural beauty'];
+        case 'year': return ['1990','2000','2010','2020'];
+        case 'location': return ['New York','London','Delhi','Paris'];
+        case 'field': return ['physics','biology','computer science','economics'];
+        case 'taxon_rank': return ['species','genus','family','order'];
+        case 'habitat': return ['forests','wetlands','grasslands','mountains'];
+        case 'purpose': return ['education','research','community service','innovation'];
+        case 'significance': return ['wide impact','historical importance','scientific relevance'];
+        case 'definition': return ['a key idea','a widely used concept','a foundational principle'];
+        case 'importance': return ['influences many areas','guides current practice','shaped modern thinking'];
+        case 'date': return ['1 January 2000','15 August 1995','20 June 2010'];
+        default:
+          return ['example 1','example 2','example 3'];
+      }
+    }
+
+    function getChipHeaderHintFromTemplates(templatesData, key) {
+      try {
+        if (!templatesData || !templatesData.placeholderMappings || !templatesData.placeholderMappings.userInteractionValues) return null;
+        var v = templatesData.placeholderMappings.userInteractionValues[key.toUpperCase()];
+        if (typeof v === 'string') return v; // use descriptive hint as header
+        return null;
+      } catch(_) { return null; }
+    }
+
+    // Toggle Suggestions chip via toolbar button
+    function toggleSuggestionsChip() {
+      var chip = document.getElementById('assistChip');
+      if (!chip) return;
+      if (chip.style.display === 'none') {
+        showSuggestionsChip();
+        // Also open the menu for convenience
+        var menu = document.getElementById('assistMenu');
+        if (menu) { if (window.buildMainMenu) window.buildMainMenu(); menu.style.display = 'block'; menu.style.left = chip.style.left; menu.style.top = (parseInt(chip.style.top||'0',10)+32)+'px'; }
+      } else {
+        hideSuggestionsChip();
+      }
+    }
+
+    function insertSimpleIntroduction() {
+      var editor = document.getElementById('editor');
+      var title = (window.articleTitleText || 'This topic');
+      var category = (window.selectedCat || 'other');
+      var text = (typeof generateTopicSentence === 'function') ? generateTopicSentence(title, category) : (title + ' — introduction.');
+      var html = '<p style="margin: 0.75em 0; line-height:1.6;">'+ text +'</p>';
+      insertHTMLAtCursor(html, editor);
+      editor.focus();
+      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+    }
+
+    function insertIntroText(text) {
+      var editor = document.getElementById('editor');
+      var html = '<p style="margin: 0.75em 0; line-height:1.6;">'+ escapeHtml(text) +'</p>';
+      insertHTMLAtCursor(html, editor);
+      editor.focus();
+      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+    }
+
+    function insertChipStyleStarter(title, category) {
+      var editor = document.getElementById('editor');
+      var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
+      // Turn into placeholders like other templates
+      var html = base.replace(/\[([^\]]+)\]/g, function(_, key){
+        var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
+        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+      });
+      // Append a Reference chip to encourage sourcing
+      var pid = 'introTpl-'+Date.now();
+      html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">' + html + ' <span class="ref-chip action-chip">Reference</span></p>';
+      var lead = document.getElementById('leadPlaceholder');
+      if (lead && lead.parentNode === editor) { lead.outerHTML = html; } else { insertHTMLAtCursor(html, editor); }
+      editor.focus();
+      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+    }
+
+    // Insert an editable introduction template with inline chips and a Reference chip
+    function insertIntroTemplate(title, category) {
+      var editor = document.getElementById('editor');
+      // Deterministic insert (no selection).
+      var base = getIntroTemplateBase(title, category);
+      var htmlBody = base.replace(/\[([^\]]+)\]/g, function(_, key){
+        var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
+        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+      });
+      var pid = 'introTpl-' + Date.now();
+      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">' + htmlBody + ' <span class="ref-chip action-chip">Reference</span></p>';
+      suppressChipPositioning = true;
+      var lead = document.getElementById('leadPlaceholder');
+      if (lead && lead.parentNode === editor) {
+        lead.outerHTML = html;
+      } else {
+        editor.insertAdjacentHTML('beforeend', html);
+      }
+      // Position chip/menu below the inserted paragraph without using selection
+      setTimeout(function(){
+        var el = document.getElementById(pid);
+        try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
+        suppressChipPositioning = false;
+      }, 0);
+      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+    }
+
+    function getIntroTemplateBase(title, category) {
+      var t = title || 'This topic';
+      // Prefer structured templates from templates.json if available
+      var base = getIntroTemplateBaseFromTemplatesJson(t, category);
+      if (base) return base;
+      switch(category) {
+        case 'person':
+          return t + ' ([BIRTH_YEAR]' + ' – ' + '[DEATH_YEAR]' + ') was a [NATIONALITY] [OCCUPATION] who [ACHIEVEMENT].';
+        case 'place':
+          return t + ' is the [TYPE] in [REGION], with [POPULATION] and known for [FEATURE].';
+        case 'organization':
+          return t + ' is a [TYPE] of the [AFFILIATION] established in [YEAR], headquartered in [LOCATION], responsible for [PURPOSE].';
+        case 'species':
+          return 'The ' + t + ' ([SCIENTIFIC_NAME]) is a [TAXON_RANK] native to [HABITAT], noted for [FEATURE].';
+        case 'academic':
+          return t + ' is a fundamental theory in [FIELD] that [DEFINITION].';
+        case 'event':
+          return t + ' was the [TYPE] that took place in [LOCATION] on [DATE], noted for [SIGNIFICANCE].';
+        default:
+          return t + ' is [DEFINITION] and is significant because [IMPORTANCE].';
+      }
+    }
+
+    function getIntroTemplateBaseFromTemplatesJson(title, category) {
+      try {
+        var data = window.templatesData;
+        if (!data || !data.categories) return null;
+        var catKey = (function(c){
+          switch(c){
+            case 'person': return 'PERSON';
+            case 'place': return 'LOCATION';
+            case 'species': return 'SPECIES';
+            default: return null;
+          }
+        })(category);
+        if (!catKey || !data.categories[catKey]) return null;
+        var cat = data.categories[catKey];
+        var tpl = (cat.defaultTemplate && cat.defaultTemplate.formal) || null;
+        if (!tpl) return null;
+        // Convert {{KEY}} syntax to our [KEY] chips, with a couple direct replacements
+        var out = tpl;
+        out = out.replace(/\{\{FULL_NAME\}\}/g, title);
+        // Simplify article for now
+        out = out.replace(/\{\{ARTICLE\}\}/g, 'a');
+        out = out.replace(/\{\{([A-Z0-9_]+)\}\}/g, function(_, key){ return '['+key+']'; });
+        return out;
+      } catch(_) { return null; }
+    }
+
+    function getChipStyleStarterPreview(title, category) {
+      return title + ' is [definition]. It is significant because [importance].';
+    }
+
+    function generateSampleIntroductions(title, category) {
+      var t = title || 'This topic';
+      switch(category) {
+        case 'person':
+          return [
+            t + ' (' + new Date().getFullYear() + ') is a notable figure known for contributions in their field.',
+            t + ' is best known for significant achievements that have influenced their area of work.'
+          ];
+        case 'place':
+          return [
+            t + ' is a city recognized for its history, culture, and regional significance.',
+            'Located in a notable region, ' + t + ' has developed as a center of activity and heritage.'
+          ];
+        case 'organization':
+          return [
+            t + ' is an organization established to advance specific goals and activities.',
+            'Founded to address important needs, ' + t + ' operates across relevant domains.'
+          ];
+        case 'species':
+          return [
+            'The ' + t + ' is a species noted for its distinctive characteristics and habitat.',
+            t + ' is recognized for key traits and its role within its ecosystem.'
+          ];
+        case 'academic':
+          return [
+            t + ' is a concept that describes a key idea within its academic field.',
+            'In academic contexts, ' + t + ' refers to a foundational principle with wide applications.'
+          ];
+        case 'event':
+          return [
+            t + ' was an event of importance that shaped subsequent developments.',
+            'Occurring within a specific context, ' + t + ' had notable impact and outcomes.'
+          ];
+        default:
+          return [
+            t + ' is an encyclopedic topic of interest with broader relevance.',
+            'This article introduces ' + t + ' and summarizes key aspects readers should know.'
+          ];
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function getSectionSuggestions(cat) {
+      switch(cat) {
+        case 'person': return ['Background','Career'];
+        case 'place': return ['History','Geography'];
+        case 'species': return ['Description','Habitat'];
+        case 'organization': return ['History','Activities'];
+        default: return ['Background','Overview'];
+      }
+    }
+
+    function insertSectionSkeleton(name) {
+      var editor = document.getElementById('editor');
+      var id = name.replace(/\s+/g,'_');
+      var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
+      var para = buildSectionParagraphWithChips(name);
+      var html = heading + para;
+      // Deterministic placement: before References if present, else after the intro, else at end
+      var refs = editor.querySelector('#References');
+      if (refs) {
+        refs.insertAdjacentHTML('beforebegin', html);
+      } else if (window.lastIntroId && editor.querySelector('#'+window.lastIntroId)) {
+        editor.querySelector('#'+window.lastIntroId).insertAdjacentHTML('afterend', html);
+      } else {
+        var lead = document.getElementById('leadPlaceholder');
+        if (lead && lead.parentNode === editor) {
+          lead.insertAdjacentHTML('afterend', html);
+        } else {
+          editor.insertAdjacentHTML('beforeend', html);
+        }
+      }
+      editor.focus();
+      if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+    }
+
+    function buildSectionParagraphWithChips(sectionName) {
+      var title = (window.articleTitleText || 'This topic');
+      var category = (window.selectedCat || 'other');
+      // Prefer templates.json contentTemplate/templateVariations
+      var tpl = getSectionTemplateFromTemplates(sectionName, category);
+      if (tpl) {
+        // Replace {{NAME}}/{{FULL_NAME}} with title
+        tpl = tpl.replace(/\{\{(NAME|FULL_NAME)\}\}/g, title);
+        // Default ARTICLE to 'a'
+        tpl = tpl.replace(/\{\{ARTICLE\}\}/g, 'a');
+        // Convert remaining placeholders to chips
+        var htmlBody = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
+          return '<span class="template-placeholder" data-placeholder="'+key+'">'+prettifyPlaceholder(key)+'</span>';
+        });
+        return '<p style="margin:0.75em 0; line-height:1.6;">'+ htmlBody + ' <span class="ref-chip action-chip">Reference</span></p>';
+      }
+      // Fallback: use suggestionsData include list to create chip prompts
+      try{
+        var secMeta = (window.suggestionsData && window.suggestionsData[category] && window.suggestionsData[category].sections) ? window.suggestionsData[category].sections : [];
+        var match = null;
+        for (var i=0;i<secMeta.length;i++) {
+          var s = secMeta[i];
+          var n = (typeof s === 'string') ? s : (s.name||'');
+          if (n.toLowerCase() === sectionName.toLowerCase()) { match = s; break; }
+        }
+        var chips = [];
+        if (match && typeof match !== 'string' && Array.isArray(match.include)) {
+          chips = match.include.slice(0,4).map(function(label){
+            var key = label.toUpperCase().replace(/[^A-Z0-9]+/g,'_');
+            return '<span class="template-placeholder" data-placeholder="'+key+'">'+prettifyPlaceholder(key)+'</span>';
+          });
+        }
+        var prompt = chips.length ? chips.join(' ') : 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
+        if (chips.length) {
+          return '<p style="margin:0.75em 0; line-height:1.6;">'+ prompt + ' <span class="ref-chip action-chip">Reference</span></p>';
+        } else {
+          return '<p style="margin:0.75em 0; line-height:1.6; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
+        }
+      } catch(_) {
+        var p = 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
+        return '<p style="margin:0.75em 0; line-height:1.6; color:#72777d; font-style:italic;">'+ escapeHtml(p) +'</p>';
+      }
+    }
+
+    function getSectionTemplateFromTemplates(sectionName, category) {
+      try {
+        var data = window.templatesData; if (!data || !data.categories) return null;
+        var catKey = (function(c){
+          switch(c){
+            case 'person': return 'PERSON';
+            case 'place': return 'LOCATION';
+            case 'species': return 'SPECIES';
+            case 'organization': return 'ORGANIZATION';
+            case 'academic': return 'ACADEMIC';
+            case 'event': return 'EVENT';
+            default: return null;
+          }
+        })(category);
+        if (!catKey || !data.categories[catKey]) return null;
+        var cat = data.categories[catKey];
+        // Search defaultSections first
+        if (Array.isArray(cat.defaultSections)) {
+          for (var i=0;i<cat.defaultSections.length;i++) {
+            var sec = cat.defaultSections[i];
+            if ((sec.title||'').toLowerCase() === sectionName.toLowerCase()) {
+              return sec.contentTemplate || (sec.templateVariations && sec.templateVariations[0]) || null;
+            }
+          }
+        }
+        // Search subcategories
+        if (cat.subcategories) {
+          var subs = Object.keys(cat.subcategories);
+          for (var j=0;j<subs.length;j++) {
+            var sc = cat.subcategories[subs[j]];
+            if (Array.isArray(sc.sections)) {
+              for (var k=0;k<sc.sections.length;k++) {
+                var sec2 = sc.sections[k];
+                if ((sec2.title||'').toLowerCase() === sectionName.toLowerCase()) {
+                  return sec2.contentTemplate || (sec2.templateVariations && sec2.templateVariations[0]) || null;
+                }
+              }
+            }
+          }
+        }
+        return null;
+      } catch(_) { return null; }
     }
 
     function handleEditorKeyup(e) {
@@ -2618,16 +3334,42 @@
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
       
-      const range = selection.getRangeAt(0);
+      // Clone to avoid mutating the actual caret while measuring
+      const range = selection.getRangeAt(0).cloneRange();
       currentCursorPosition = range.cloneRange();
       
-      // Position chips below cursor
-      const rect = range.getBoundingClientRect();
       const editor = document.getElementById('editor');
+      if (!editor || !smartChipsContainer) return;
       const editorRect = editor.getBoundingClientRect();
       
-      smartChipsContainer.style.left = (rect.left - editorRect.left) + 'px';
-      smartChipsContainer.style.top = (rect.bottom - editorRect.top + 4) + 'px';
+      // Helper to get a reliable rect even when the range is at start/empty
+      function getCaretRect(rng) {
+        let r = rng.getBoundingClientRect();
+        const empty = !r || ((r.left === 0 && r.top === 0 && r.right === 0 && r.bottom === 0));
+        if (empty) {
+          const node = (rng.startContainer && rng.startContainer.nodeType === Node.TEXT_NODE)
+            ? rng.startContainer.parentElement
+            : rng.startContainer;
+          if (node && node.getBoundingClientRect) {
+            r = node.getBoundingClientRect();
+          } else {
+            r = editorRect;
+          }
+        }
+        return r;
+      }
+      
+      const rect = getCaretRect(range);
+      // Compute position relative to editor, clamp inside
+      let left = rect.left - editorRect.left;
+      let top = rect.bottom - editorRect.top + 4;
+      const approxWidth = smartChipsContainer.offsetWidth || 220;
+      const maxLeft = Math.max(0, editor.clientWidth - approxWidth);
+      left = Math.max(0, Math.min(left, maxLeft));
+      top = Math.max(0, top);
+      
+      smartChipsContainer.style.left = left + 'px';
+      smartChipsContainer.style.top = top + 'px';
       smartChipsContainer.classList.add('show');
     }
 
@@ -2655,8 +3397,6 @@
           showGuideInterface();
           break;
       }
-      
-      hideSmartChips();
     }
 
     function showTemplatePopup() {
@@ -2686,7 +3426,11 @@
       // Add click handlers to template options
       const options = templatePopup.querySelectorAll('.template-option');
       options.forEach(option => {
-        option.addEventListener('click', function() {
+        // Prevent focus/selection loss caused by mousedown
+        option.addEventListener('mousedown', function(e){ e.preventDefault(); });
+        option.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
           insertTemplate(this.dataset.template);
           hideTemplatePopup();
         });
@@ -2751,14 +3495,12 @@
       const editor = document.getElementById('editor');
       const template = getTemplateContent(templateId);
       
-      // Restore cursor position
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(currentCursorPosition);
-      
-      // Insert template with placeholders
-      const templateHTML = createTemplateHTML(template);
-      document.execCommand('insertHTML', false, templateHTML);
+      // Ensure selection is inside editor, else move caret to end
+      ensureSelectionInEditor(editor);
+
+      // Insert template with placeholders using DOM APIs (avoid execCommand)
+      const templateHTML = createTemplateHTML(template, templateId);
+      insertHTMLAtCursor(templateHTML, editor);
       
       // Focus first placeholder
       setTimeout(() => {
@@ -2766,7 +3508,54 @@
         if (firstPlaceholder) {
           selectPlaceholder(firstPlaceholder);
         }
+        // Keep chips visible and reposition near current caret after insertion
+        try {
+          if (typeof showSmartChipsAtCursor === 'function') {
+            showSmartChipsAtCursor();
+          }
+          if (smartChipsContainer) {
+            smartChipsContainer.classList.add('show');
+          }
+        } catch (_) {}
       }, 10);
+    }
+
+    // Utility: ensure selection is within the editor; if not, place at end
+    function ensureSelectionInEditor(editor) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount || !editor.contains(sel.anchorNode)) {
+        placeCaretAtEnd(editor);
+      }
+      // Also refresh stored cursor position
+      try {
+        const r = sel.getRangeAt(0);
+        currentCursorPosition = r.cloneRange();
+      } catch (_) {}
+    }
+
+    // Utility: place caret at end of a contenteditable
+    function placeCaretAtEnd(el) {
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    // Utility: insert HTML at current caret using DOM APIs
+    function insertHTMLAtCursor(html, editor) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) { placeCaretAtEnd(editor); }
+      const range = sel.getRangeAt(0);
+      // Prepare fragment
+      const t = document.createElement('template');
+      t.innerHTML = html;
+      const frag = t.content.cloneNode(true);
+      // Insert
+      range.deleteContents();
+      range.insertNode(frag);
     }
 
     function getTemplateContent(templateId) {
@@ -2796,17 +3585,54 @@
       return templates[templateId] || templates['generic-lead'];
     }
 
-    function createTemplateHTML(template) {
+    function createTemplateHTML(template, templateId) {
       let html = template.text;
-      
-      // Replace placeholders with clickable spans
-      html = html.replace(/\[([^\]]+)\]/g, '<span class="template-placeholder" data-placeholder="$1">$1</span>');
-      
+      const title = (window.articleTitleText || '').toString();
+      const category = (window.selectedCat || 'other');
+
+      // Autofill common placeholders with article title
+      if (title) {
+        html = html.replace(/\[(NAME|TOPIC|PLACE_NAME|ORGANIZATION_NAME|COMMON_NAME)\]/g, title);
+      }
+
+      // Provide a sensible default topic sentence for paragraph starter
+      if (templateId === 'basic-paragraph') {
+        const topicSentence = generateTopicSentence(title, category);
+        html = html.replace(/\[TOPIC_SENTENCE\]/g, topicSentence);
+      }
+
+      // Replace remaining placeholders with clickable, friendly chips
+      html = html.replace(/\[([^\]]+)\]/g, function(_, key){
+        const label = prettifyPlaceholder(key);
+        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+      });
+
       if (template.needsSource) {
         html += ' <span class="source-reminder">Add source</span>';
       }
       
       return html;
+    }
+
+    function prettifyPlaceholder(raw){
+      try{
+        const label = raw.replace(/_/g,' ').toLowerCase();
+        return 'add '+label;
+      }catch(_) { return raw; }
+    }
+
+    function generateTopicSentence(title, category){
+      const t = title || 'this topic';
+      switch(category){
+        case 'person': return t + ' — background and overview.';
+        case 'place': return 'Overview of '+t+': location, history, and significance.';
+        case 'organization': return t + ' — purpose, history, and key activities.';
+        case 'species': return t + ' — description, habitat, and notable traits.';
+        case 'academic': return 'Definition and context for '+t+'.';
+        case 'creative': return t + ' — summary and production details.';
+        case 'event': return t + ' — context, timeline, and impact.';
+        default: return 'Introduction to '+t+'.';
+      }
     }
 
     function selectPlaceholder(placeholder) {
@@ -2837,9 +3663,12 @@
 
     function openReferenceDialog() {
       // Use existing reference dialog
-      const refDialog = document.getElementById('refDialogBackdrop');
-      refDialog.style.display = 'block';
-      document.getElementById('refUrl').focus();
+      const refDialog = document.getElementById('refBackdrop');
+      if (refDialog) {
+        refDialog.style.display = 'block';
+        var url = document.getElementById('refUrl');
+        if (url) url.focus();
+      }
     }
 
     function showGuideInterface() {
@@ -2857,6 +3686,7 @@
     // Also initialize if we're already in step 3
     if (document.getElementById('step3').classList.contains('active')) {
       initializeSmartChips();
+      initializeAssistanceUI && initializeAssistanceUI();
     }
 
   </script>
