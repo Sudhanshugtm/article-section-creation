@@ -1306,22 +1306,86 @@
         var chip = document.getElementById('assistChip');
         var editor = document.getElementById('editor');
         if (!editor || !chip) return;
-        // Pick the top-most visible block inside the editor, fallback to last paragraph
-        var editorRect = editor.getBoundingClientRect();
-        var blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
-          .filter(function(el){ return el.offsetParent !== null; });
-        var best = null; var bestDelta = Infinity;
-        for (var i=0;i<blocks.length;i++) {
-          var r = blocks[i].getBoundingClientRect();
-          var intersects = r.bottom > editorRect.top && r.top < editorRect.bottom;
-          if (!intersects) continue;
-          var delta = Math.abs(r.top - editorRect.top);
-          if (delta < bestDelta) { bestDelta = delta; best = blocks[i]; }
+
+        // Clear any existing frozen state to allow repositioning
+        if (typeof window.__assistSetFrozen === 'function') {
+          window.__assistSetFrozen(false);
         }
-        if (!best) best = blocks[0] || editor;
-        if (typeof positionChipBelowElement === 'function') positionChipBelowElement(best);
-        if (typeof showSuggestionsChip === 'function') showSuggestionsChip(best);
-      } catch(_) {}
+
+        // Priority 1: Get current active block from selection (safe fallback to top-visible block)
+        var activeBlock = null;
+        try {
+          if (typeof getActiveBlockElement === 'function') activeBlock = getActiveBlockElement();
+        } catch(_) {}
+        if (!activeBlock) {
+          // Fallback: top-most visible block
+          var editorRect = editor.getBoundingClientRect();
+          var blocksTV = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
+            .filter(function(el){ return el.offsetParent !== null; });
+          var best = null, bestDelta = Infinity;
+          for (var i=0;i<blocksTV.length;i++){
+            var r = blocksTV[i].getBoundingClientRect();
+            var intersects = r.bottom > editorRect.top && r.top < editorRect.bottom;
+            if (!intersects) continue;
+            var delta = Math.abs(r.top - editorRect.top);
+            if (delta < bestDelta) { bestDelta = delta; best = blocksTV[i]; }
+          }
+          activeBlock = best || blocksTV[0] || editor;
+        }
+        if (activeBlock && activeBlock !== editor && editor.contains(activeBlock) && activeBlock.offsetParent !== null) {
+          lastAnchorEl = activeBlock;
+          if (typeof positionChipBelowElement === 'function') {
+            positionChipBelowElement(activeBlock);
+          }
+          if (typeof showSuggestionsChip === 'function') {
+            showSuggestionsChip(activeBlock);
+          }
+          return;
+        }
+
+        // Priority 2: Use last anchor if still valid
+        if (lastAnchorEl && editor.contains(lastAnchorEl) && lastAnchorEl.offsetParent !== null) {
+          const editorRect = editor.getBoundingClientRect();
+          const anchorRect = lastAnchorEl.getBoundingClientRect();
+          const isVisible = anchorRect.bottom > editorRect.top && anchorRect.top < editorRect.bottom;
+
+          if (isVisible) {
+            if (typeof positionChipBelowElement === 'function') {
+              positionChipBelowElement(lastAnchorEl);
+            }
+            if (typeof showSuggestionsChip === 'function') {
+              showSuggestionsChip(lastAnchorEl);
+            }
+            return;
+          }
+        }
+
+        // Priority 3: Find the most recent valid block
+        var blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
+          .filter(function(el){
+            return el.offsetParent !== null &&
+                   el.id !== 'assistChip' &&
+                   el.id !== 'assistMenu' &&
+                   !el.closest('#assistChip') &&
+                   !el.closest('#assistMenu') &&
+                   el.textContent.trim().length > 0; // Only blocks with content
+          });
+
+        if (blocks.length > 0) {
+          // Use the most recent block (last in DOM)
+          var targetBlock = blocks[blocks.length - 1];
+          lastAnchorEl = targetBlock;
+
+          if (typeof positionChipBelowElement === 'function') {
+            positionChipBelowElement(targetBlock);
+          }
+          if (typeof showSuggestionsChip === 'function') {
+            showSuggestionsChip(targetBlock);
+          }
+        }
+      } catch(error) {
+        console.warn('Error in reanchorAssistChip:', error);
+      }
     }
 
     function insertReferenceLink(url, title) {
@@ -1452,6 +1516,13 @@
         '</div>';
       ed.insertAdjacentHTML('beforeend', assistHtml);
       initializeAssistanceUI();
+
+      // Ensure chip is properly positioned after initialization
+      setTimeout(function() {
+        if (typeof reanchorAssistChip === 'function') {
+          reanchorAssistChip();
+        }
+      }, 200);
       
       // Focus editor and place caret in the lead placeholder paragraph
       ed.focus();
@@ -2791,11 +2862,19 @@
         if (t && t.classList && t.classList.contains('template-placeholder')) {
           e.preventDefault(); e.stopPropagation();
           try { showChipSuggestMenu(t); } catch(_) {}
+          try {
+            var blk = t.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+            if (blk) { lastAnchorEl = blk; if (typeof positionChipBelowElement === 'function') positionChipBelowElement(blk); }
+          } catch(_) {}
           return;
         }
         if (t && t.classList && t.classList.contains('ref-chip')) {
           e.preventDefault(); e.stopPropagation();
           try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
+          try {
+            var blk = t.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+            if (blk) { lastAnchorEl = blk; if (typeof positionChipBelowElement === 'function') positionChipBelowElement(blk); }
+          } catch(_) {}
           return;
         }
       });
@@ -2835,6 +2914,53 @@
       let rafId = null;
       let frozen = false; // freeze while menu open
       let lastAnchorEl = null; // remember last anchor paragraph for stable re-show
+
+      // Setup DOM mutation observer to detect content changes
+      setupMutationObserver();
+
+      function setupMutationObserver() {
+        if (!editor) return;
+
+        const observer = new MutationObserver(function(mutations) {
+          let hasStructuralChanges = false;
+
+          mutations.forEach(function(mutation) {
+            // Check for added nodes that are block elements
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              Array.from(mutation.addedNodes).forEach(function(node) {
+                if (node.nodeType === Node.ELEMENT_NODE &&
+                    ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE'].includes(node.tagName) &&
+                    node.textContent.trim().length > 0) {
+                  hasStructuralChanges = true;
+                }
+              });
+            }
+
+            // Check for text content changes in existing blocks
+            if (mutation.type === 'characterData' && mutation.target.parentElement) {
+              const parent = mutation.target.parentElement;
+              if (['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE'].includes(parent.tagName)) {
+                hasStructuralChanges = true;
+              }
+            }
+          });
+
+          // Re-anchor chip after structural changes
+          if (hasStructuralChanges) {
+            setTimeout(function() {
+              if (!frozen) {
+                reanchorAssistChip();
+              }
+            }, 50); // Small delay for DOM stabilization
+          }
+        });
+
+        observer.observe(editor, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+      }
       
       // Helpers to hide/show the suggestions chip
       window.hideSuggestionsChip = function() {
@@ -2858,19 +2984,64 @@
       // Expose small control for other handlers
       window.__assistSetFrozen = function(v){
         frozen = !!v;
-        if (!frozen) schedulePosition();
+        if (!frozen) {
+          // Auto-reset frozen state after 1 second to prevent getting stuck
+          setTimeout(function() {
+            if (frozen) {
+              frozen = false;
+              schedulePosition();
+            }
+          }, 1000);
+          schedulePosition();
+        }
       };
       
       function getActiveBlockElement() {
         const isChipVisible = () => chip && chip.style.display !== 'none';
-        if (isChipVisible() && lastAnchorEl) return lastAnchorEl;
+
+        // First priority: current selection if it exists and is valid
         const sel = window.getSelection();
-        if (!sel.rangeCount) return lastAnchorEl || editor;
-        let node = sel.getRangeAt(0).startContainer;
-        if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
-        if (!node) return editor;
-        const block = node.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
-        return block || lastAnchorEl || editor;
+        if (sel.rangeCount > 0) {
+          let node = sel.getRangeAt(0).startContainer;
+          if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+          if (node && editor.contains(node)) {
+            const block = node.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+            if (block && block.offsetParent !== null) {
+              // Update lastAnchorEl when we find a valid current block
+              lastAnchorEl = block;
+              return block;
+            }
+          }
+        }
+
+        // Second priority: last anchor if it's still valid and visible
+        if (lastAnchorEl && editor.contains(lastAnchorEl) && lastAnchorEl.offsetParent !== null) {
+          const rect = lastAnchorEl.getBoundingClientRect();
+          const editorRect = editor.getBoundingClientRect();
+          const isVisible = rect.bottom > editorRect.top && rect.top < editorRect.bottom;
+          if (isVisible) {
+            return lastAnchorEl;
+          }
+        }
+
+        // Third priority: find the most recent valid block
+        const blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
+          .filter(function(el){
+            return el.offsetParent !== null &&
+                   el.id !== 'assistChip' &&
+                   el.id !== 'assistMenu' &&
+                   !el.closest('#assistChip') &&
+                   !el.closest('#assistMenu');
+          });
+
+        if (blocks.length > 0) {
+          // Return the last (most recent) block
+          lastAnchorEl = blocks[blocks.length - 1];
+          return lastAnchorEl;
+        }
+
+        // Final fallback
+        return editor;
       }
 
       function offsetWithin(el, ancestor) {
@@ -2951,13 +3122,41 @@
       }
 
       function positionChipBelowElement(el) {
-        if (!el) return;
-        const off = offsetWithin(el, editor);
-        const left = Math.max(0, off.left);
-        const top  = Math.max(0, off.top + el.offsetHeight + 8);
-        chip.style.left = left + 'px';
-        chip.style.top = top + 'px';
-        lastAnchorEl = el;
+        if (!el || !chip) return;
+
+        try {
+          const off = offsetWithin(el, editor);
+          const editorRect = editor.getBoundingClientRect();
+          const elRect = el.getBoundingClientRect();
+
+          // Ensure the element is actually visible
+          if (elRect.width === 0 && elRect.height === 0) return;
+
+          let left = Math.max(0, off.left);
+          let top = Math.max(0, off.top + el.offsetHeight + 8);
+
+          // Constrain to editor bounds
+          const chipWidth = chip.offsetWidth || 120;
+          const chipHeight = chip.offsetHeight || 32;
+          const maxLeft = Math.max(0, editor.clientWidth - chipWidth - 16);
+          const maxTop = Math.max(0, editor.clientHeight - chipHeight - 16);
+
+          left = Math.min(left, maxLeft);
+          top = Math.min(top, maxTop);
+
+          chip.style.left = left + 'px';
+          chip.style.top = top + 'px';
+          lastAnchorEl = el;
+
+          // Ensure chip stays within viewport if editor is scrollable
+          const chipRect = chip.getBoundingClientRect();
+          if (chipRect.bottom > editorRect.bottom) {
+            const scrollTop = editor.scrollTop + (chipRect.bottom - editorRect.bottom) + 16;
+            editor.scrollTop = scrollTop;
+          }
+        } catch (error) {
+          console.warn('Error positioning chip:', error);
+        }
       }
       
       function buildMainMenu() {
@@ -3235,6 +3434,13 @@
         ev.preventDefault();
         ev.stopPropagation();
         frozen = true;
+        // Reset frozen state after a short delay to ensure it's not stuck
+        setTimeout(function(){
+          if (frozen) {
+            frozen = false;
+            schedulePosition();
+          }
+        }, 1000);
       });
       // Keyboard support
       chip.addEventListener('keydown', function(ev){
@@ -3345,10 +3551,46 @@
         setTimeout(schedulePosition, 0);
       });
       editor.addEventListener('keyup', function(){ schedulePosition(); });
+
+      // Enhanced input event handling for better content change detection
+      let inputTimeout;
       editor.addEventListener('input', function(e){
-        // Reposition mainly on structural edits; throttle everything else
-        schedulePosition();
+        // Clear existing timeout
+        clearTimeout(inputTimeout);
+
+        // Check if this is a structural change (new paragraph, etc.)
+        const isStructuralChange = e.inputType === 'insertParagraph' ||
+                                   e.inputType === 'insertLineBreak' ||
+                                   (e.data && e.data.includes('\n'));
+
+        if (isStructuralChange) {
+          // Immediate repositioning for structural changes
+          setTimeout(function() {
+            if (!frozen) {
+              reanchorAssistChip();
+            }
+          }, 10);
+        } else {
+          // Debounced repositioning for other changes
+          inputTimeout = setTimeout(function() {
+            if (!frozen) {
+              schedulePosition();
+            }
+          }, 150);
+        }
       });
+       editor.addEventListener('keyup', function(){ schedulePosition(); });
+       editor.addEventListener('input', function(e){
+         // Reposition mainly on structural edits; throttle everything else
+         schedulePosition();
+         // Re-anchor after significant content changes
+         if (e.inputType === 'insertParagraph' || e.inputType === 'insertLineBreak' ||
+             e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') {
+           setTimeout(function(){
+             reanchorAssistChip();
+           }, 100);
+         }
+       });
       document.addEventListener('selectionchange', function(){
         const sel = window.getSelection();
         if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) {
@@ -3381,10 +3623,44 @@
           return;
         }
       });
-      // Initial position
-      setTimeout(schedulePosition, 0);
-      // Expose helpers for other modules
-      window.__assistGetLastAnchor = function(){ return lastAnchorEl; };
+       // Initial position
+       setTimeout(schedulePosition, 0);
+
+       // Set up mutation observer to detect DOM changes that affect positioning
+       const observer = new MutationObserver(function(mutations) {
+         let shouldReanchor = false;
+         mutations.forEach(function(mutation) {
+           // Check for added/removed nodes that could affect positioning
+           if (mutation.type === 'childList' &&
+               (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)) {
+             // Check if any added/removed nodes are block elements
+             const relevantNodes = Array.from(mutation.addedNodes).concat(Array.from(mutation.removedNodes));
+             const hasBlockElements = relevantNodes.some(function(node) {
+               return node.nodeType === Node.ELEMENT_NODE &&
+                      (node.matches('p, h1, h2, h3, h4, h5, h6, li, blockquote') ||
+                       node.querySelector('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
+             });
+             if (hasBlockElements) {
+               shouldReanchor = true;
+             }
+           }
+         });
+         if (shouldReanchor) {
+           setTimeout(function(){
+             reanchorAssistChip();
+           }, 50);
+         }
+       });
+
+       // Start observing the editor for changes
+       observer.observe(editor, {
+         childList: true,
+         subtree: true,
+         attributes: false
+       });
+
+       // Expose helpers for other modules
+       window.__assistGetLastAnchor = function(){ return lastAnchorEl; };
     }
 
     // Chip suggestion menu logic
@@ -3720,7 +3996,8 @@
           menu.style.display = 'block';
           menu.style.left = chip.style.left;
           menu.style.top = (parseInt(chip.style.top||'0',10)+32)+'px';
-          if (window.__assistSetFrozen) window.__assistSetFrozen(true);
+          // Keep chip/menu responsive; do not freeze positioning while menu is open
+          if (window.__assistSetFrozen) window.__assistSetFrozen(false);
         }
       } else {
         hideSuggestionsChip();
@@ -4558,6 +4835,12 @@
     if (document.getElementById('step3').classList.contains('active')) {
       initializeSmartChips();
       initializeAssistanceUI && initializeAssistanceUI();
+      // Ensure chip is properly positioned after initialization
+      setTimeout(function() {
+        if (typeof reanchorAssistChip === 'function') {
+          reanchorAssistChip();
+        }
+      }, 200);
     }
 
   </script>
