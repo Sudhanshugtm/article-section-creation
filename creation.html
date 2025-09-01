@@ -116,8 +116,8 @@
       display: inline-flex;
       align-items: baseline;
       gap: 6px;
-      padding: 2px 10px !important;
-      margin: 0 6px !important;
+      padding: 2px 8px !important;
+      margin: 0 !important;
       border: 1px dashed #a2a9b1;
       border-radius: 12px;
       background: #f8f9fa;
@@ -385,7 +385,7 @@
     }
 
     /* Comfortable reading line-height for content inside the editor */
-    #editor { line-height: 1.9 !important; }
+    #editor { line-height: 1.9 !important; hyphens: auto; }
     #editor p,
     #editor li,
     #editor blockquote { line-height: inherit; }
@@ -2899,7 +2899,19 @@
         let left = 0, top = 0;
         if (CHIP_ANCHOR_MODE === 'block') {
           const isChipVisible = () => chip && chip.style.display !== 'none';
-          const block = (isChipVisible() && lastAnchorEl) ? lastAnchorEl : getActiveBlockElement();
+          // Prefer current active block; fall back to last anchor only if it still intersects the editor viewport
+          let block = getActiveBlockElement();
+          const inView = function(el){
+            try {
+              if (!el) return false;
+              const r = el.getBoundingClientRect();
+              return r.bottom > editorRect.top && r.top < editorRect.bottom;
+            } catch(_) { return false; }
+          };
+          if (!block || block === editor) {
+            // If no active block, use last anchor if it's still in view
+            if (lastAnchorEl && inView(lastAnchorEl)) block = lastAnchorEl;
+          }
           if (block && block !== editor) {
             const off = offsetWithin(block, editor);
             left = Math.max(0, off.left);
@@ -2909,8 +2921,10 @@
             left = 0;
             top  = 8;
           }
-          // Only update anchor when chip isn't visible to avoid following clicks
-          if (!(isChipVisible())) lastAnchorEl = block;
+          // Always keep lastAnchorEl in sync with the current block if it's valid/in view
+          if (block && block !== editor) {
+            lastAnchorEl = block;
+          }
         } else {
           const sel = window.getSelection();
           if (!sel.rangeCount) return;
@@ -3338,6 +3352,8 @@
       document.addEventListener('selectionchange', function(){
         const sel = window.getSelection();
         if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) {
+          // When selection changes inside the editor, prefer the block containing the caret
+          try { lastAnchorEl = getActiveBlockElement(); } catch(_) {}
           schedulePosition();
         }
       });
@@ -3766,7 +3782,7 @@
 
     function insertChipStyleStarter(title, category) {
       var editor = document.getElementById('editor');
-      var base = title + ' is ' + '[DEFINITION]' + '.<br>It is significant because ' + '[IMPORTANCE]' + '.';
+      var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
       // Turn into placeholders like other templates
       var html = base.replace(/\[([^\]]+)\]/g, function(_, key){
         var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
@@ -3852,19 +3868,19 @@
       if (base) return base;
       switch(category) {
         case 'person':
-          return t + ' ([BIRTH_YEAR]' + ' – ' + '[DEATH_YEAR]' + ') was a [NATIONALITY] [OCCUPATION]<br>who [ACHIEVEMENT].';
+          return t + ' ([BIRTH_YEAR]' + ' – ' + '[DEATH_YEAR]' + ') was a [NATIONALITY] [OCCUPATION] who [ACHIEVEMENT].';
         case 'place':
-          return t + ' is the [TYPE] in [REGION], with [POPULATION]<br>and known for [FEATURE].';
+          return t + ' is the [TYPE] in [REGION], with [POPULATION] and known for [FEATURE].';
         case 'organization':
-          return t + ' is a [TYPE] of the [AFFILIATION] established in [YEAR],<br>headquartered in [LOCATION], responsible for [PURPOSE].';
+          return t + ' is a [TYPE] of the [AFFILIATION] established in [YEAR], headquartered in [LOCATION], responsible for [PURPOSE].';
         case 'species':
-          return 'The ' + t + ' ([SCIENTIFIC_NAME]) is a [TAXON_RANK] native to [HABITAT],<br>noted for [FEATURE].';
+          return 'The ' + t + ' ([SCIENTIFIC_NAME]) is a [TAXON_RANK] native to [HABITAT], noted for [FEATURE].';
         case 'academic':
-          return t + ' is a fundamental theory in [FIELD]<br>that [DEFINITION].';
+          return t + ' is a fundamental theory in [FIELD] that [DEFINITION].';
         case 'event':
-          return t + ' was the [TYPE] that took place in [LOCATION] on [DATE],<br>noted for [SIGNIFICANCE].';
+          return t + ' was the [TYPE] that took place in [LOCATION] on [DATE], noted for [SIGNIFICANCE].';
         default:
-          return t + ' is [DEFINITION]<br>and is significant because [IMPORTANCE].';
+          return t + ' is [DEFINITION] and is significant because [IMPORTANCE].';
       }
     }
 
