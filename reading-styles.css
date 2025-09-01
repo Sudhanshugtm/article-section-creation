@@ -720,9 +720,10 @@ body {
   .desktop-toolbar {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     width: 100%;
+    overflow-x: auto;
   }
 
   .ve-strip {
@@ -738,9 +739,10 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     margin: 0 -20px;
     padding: 8px 20px;
-    display: flex; 
-    align-items: center; 
-    flex-wrap: wrap; 
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 8px;
   }
 

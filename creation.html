@@ -243,8 +243,9 @@
       cursor: pointer;
     }
     .undo-toast .btn-undo:hover { background: #f0f0f0; }
-  
+
     .chip.guidance { border-color: #c8ccd1; background: #fff; }
+    .hidden { display: none !important; }
     .ac-steps { max-width: 1100px; margin: 0 auto; }
     .ac-step { display: none; border: none; background: #fff; border-radius: 0; padding: 16px; box-shadow: none; }
     .ac-step.active { display: block; }
@@ -834,7 +835,7 @@
       }
     }
     /* Assistance menu styling */
-    .assist-menu { min-width: 280px; max-width: 380px; min-height: 200px; padding: 0; border-radius: 8px; }
+    .assist-menu { min-width: 520px; max-width: calc(100vw - 32px); width: 760px; min-height: 200px; padding: 0; border-radius: 8px; }
     .assist-menu-header { font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
     .assist-item { display: block; width: 100%; text-align: left; padding: 12px 14px; background: #fff; border: none; cursor: pointer; }
     .assist-item:hover { background: #f8f9fa; }
@@ -863,6 +864,9 @@
       box-shadow: none;
       transition: background 0.15s ease, border-color 0.15s ease;
       user-select: none;
+      /* hide the inline chip but keep it for anchoring */
+      visibility: hidden;
+      pointer-events: none;
     }
     .assist-chip:hover {
       background: #f3f4f6;
@@ -1500,13 +1504,14 @@
       if (veTitle) veTitle.textContent = safeTitle;
       
       // Initialize editor with a visible lead placeholder paragraph that holds the caret
-      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">' + safeTitle + ' is...</p>';
+      // Includes inline guidance to use '/' for suggestions
+      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">Start writing about ' + safeTitle + ' or <strong>Press "\/" for suggestions</strong>.</p>';
       ed.removeAttribute('data-placeholder');
       
       // Insert a single Assistance chip with inline menu (simple concept)
       var assistHtml = ''+
         '<div id="assistChip" class="assist-chip" role="button" aria-label="Suggestions" aria-expanded="false" tabindex="0" style="z-index:150;"><span class="icon">✨</span><span class="label">Suggestions</span></div>'+
-        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); width:520px; max-width:90vw; padding:0;">'+
+        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); padding:0;">'+
           '<div class="assist-menu-header">Suggestions</div>'+
           '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
           '<div class="assist-sep"></div>'+
@@ -1524,7 +1529,7 @@
         }
       }, 200);
       
-      // Focus editor and place caret in the lead placeholder paragraph
+      // Focus editor and place caret at the beginning of the lead placeholder paragraph
       ed.focus();
       (function(){
         var lp = document.getElementById('leadPlaceholder');
@@ -1532,8 +1537,9 @@
           try {
             var r = document.createRange();
             var s = window.getSelection();
+            // Place caret at the start of the paragraph
             r.selectNodeContents(lp);
-            r.collapse(false);
+            r.collapse(true);
             s.removeAllRanges();
             s.addRange(r);
           } catch(_) {}
@@ -2798,6 +2804,7 @@
     (function bindSuggestionsToolbar(){
       var desktopBtn = document.getElementById('addSectionBtn');
       if (desktopBtn) {
+        try { desktopBtn.title = 'Suggestions (press /)'; desktopBtn.setAttribute('aria-keyshortcuts','/'); } catch(_) {}
         desktopBtn.addEventListener('click', function(e){
           e.preventDefault();
           if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
@@ -2910,6 +2917,8 @@
       const menu = document.getElementById('assistMenu');
       if (!chip || !menu) return;
       const editor = document.getElementById('editor');
+      // Advertise keyboard shortcut for a11y
+      try { editor.setAttribute('aria-keyshortcuts','/'); editor.setAttribute('aria-label', (editor.getAttribute('aria-label')||'Editor') + '. Press slash for suggestions.'); } catch(_) {}
       const CHIP_ANCHOR_MODE = 'block'; // 'block' anchors to current paragraph, reducing jitter vs caret
       let rafId = null;
       let frozen = false; // freeze while menu open
@@ -3508,8 +3517,109 @@
       window.buildMainMenu = buildMainMenu;
       window.positionChipBelowElement = positionChipBelowElement;
 
+      // Slash command: open Suggestions (Notion-style)
+      function showSlashSuggestions() {
+        try {
+          const editorRect = editor.getBoundingClientRect();
+          // Prefer active block; fallback to top-visible block
+          let anchor = null;
+          try { if (typeof getActiveBlockElement === 'function') anchor = getActiveBlockElement(); } catch(_) {}
+          if (!anchor || anchor === editor) {
+            const blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote')).filter(function(el){ return el.offsetParent !== null; });
+            let best = null, bestDelta = Infinity;
+            for (let i=0;i<blocks.length;i++) {
+              const r = blocks[i].getBoundingClientRect();
+              const intersects = r.bottom > editorRect.top && r.top < editorRect.bottom;
+              if (!intersects) continue;
+              const delta = Math.abs(r.top - editorRect.top);
+              if (delta < bestDelta) { bestDelta = delta; best = blocks[i]; }
+            }
+            anchor = best || blocks[0] || editor;
+          }
+          lastAnchorEl = anchor;
+          if (typeof positionChipBelowElement === 'function') positionChipBelowElement(anchor);
+          if (typeof showSuggestionsChip === 'function') showSuggestionsChip(anchor);
+          const menu = document.getElementById('assistMenu');
+          if (menu) {
+            if (window.buildMainMenu) window.buildMainMenu();
+            menu.style.display = 'block';
+            menu.style.left = (document.getElementById('assistChip')?.style.left || '0px');
+            menu.style.top = ((parseInt(document.getElementById('assistChip')?.style.top || '0', 10) + 32) + 'px');
+          }
+        } catch(_) {}
+      }
+
       // Reposition chip near caret as user interacts
       editor.addEventListener('focus', function(){ setTimeout(schedulePosition, 0); });
+      // Utility to clear the initial lead placeholder before real content is inserted
+      function clearLeadPlaceholder(){
+        try {
+          var editor = document.getElementById('editor');
+          var lp = document.getElementById('leadPlaceholder') || (editor && editor.querySelector && editor.querySelector('.lead-placeholder'));
+          if (!lp) return false;
+          // Clear content first, then place caret inside the paragraph
+          lp.innerHTML = '';
+          try {
+            // Defer caret placement to end of current event loop
+            setTimeout(function(){
+              try {
+                var r = document.createRange();
+                var s = window.getSelection();
+                r.selectNodeContents(lp);
+                r.collapse(true);
+                s.removeAllRanges();
+                s.addRange(r);
+                if (editor) editor.focus();
+              } catch(_) {}
+            }, 0);
+          } catch(_) {}
+          // Normalize styling so it's a regular paragraph now
+          lp.removeAttribute('id');
+          if (lp.classList) lp.classList.remove('lead-placeholder');
+          lp.style.fontStyle = '';
+          lp.style.color = '';
+          return true;
+        } catch(_) { return false; }
+      }
+      editor.addEventListener('keydown', function(e){
+        // Only react when focus is within the editor
+        try { if (document.activeElement && !editor.contains(document.activeElement)) return; } catch(_) {}
+        // If first real input with placeholder visible, intercept, clear, then insert char ourselves
+        var hasLP = !!document.getElementById('leadPlaceholder') || !!editor.querySelector('.lead-placeholder');
+        if (hasLP && !e.metaKey && !e.ctrlKey && !e.altKey && e.key && e.key.length === 1 && e.key !== '/') {
+          e.preventDefault();
+          // Clear placeholder and place caret
+          clearLeadPlaceholder();
+          // Insert the typed character on the next tick to ensure caret is set
+          setTimeout(function(){
+            try {
+              var sel = window.getSelection();
+              if (sel && sel.rangeCount) {
+                var range = sel.getRangeAt(0);
+                var tn = document.createTextNode(e.key);
+                range.insertNode(tn);
+                range.setStartAfter(tn);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+              }
+            } catch(_) {}
+          }, 0);
+          return;
+        }
+        if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          e.preventDefault();
+          var menuNow = document.getElementById('assistMenu');
+          if (menuNow && menuNow.style.display !== 'none') {
+            // Toggle off if already open
+            menuNow.style.display = 'none';
+            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+          } else {
+            showSlashSuggestions();
+          }
+        }
+      });
+      editor.addEventListener('paste', function(){ clearLeadPlaceholder(); });
       editor.addEventListener('click', function(e){
         // Handle section dismissal
         var dismissBtn = e.target && e.target.closest && e.target.closest('.section-dismiss');
@@ -4843,6 +4953,8 @@
       }, 200);
     }
 
+    // Inline hint to teach '/'
+    // Removed separate inline '/' hint in favor of placeholder text.
   </script>
 </body>
 </html>
