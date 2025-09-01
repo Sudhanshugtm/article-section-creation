@@ -404,6 +404,17 @@
       border-color: #2a4b8d !important;
     }
     
+    /* Prevent publish button text from wrapping to multiple lines */
+    .publish-btn {
+      white-space: nowrap;
+      min-width: auto; /* Allow button to expand as needed */
+    }
+    
+    /* Ensure publish button container has enough space */
+    .group:last-child {
+      margin-right: 12px; /* Add margin to prevent clipping */
+    }
+    
     
     
     /* Section suggestion buttons */
@@ -1154,6 +1165,10 @@
   </div>
 
   <script>
+    // Stub functions to prevent console errors from extensions or external scripts
+    window.addMouseUpHandler = window.addMouseUpHandler || function() { /* stub */ };
+    window.checkLogin = window.checkLogin || function() { /* stub */ };
+    
     // === Codex Icons via MW API ===
     async function loadCodexIcons(iconNames) {
       const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
@@ -1505,7 +1520,7 @@
       
       // Initialize editor with a visible lead placeholder paragraph that holds the caret
       // Includes inline guidance to use '/' for suggestions
-      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">Start writing about ' + safeTitle + ' or <strong>Press "\/" for suggestions</strong>.</p>';
+      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">Start writing about ' + safeTitle + ' or <strong>Press "/" for suggestions</strong>.</p>';
       ed.removeAttribute('data-placeholder');
       
       // Insert a single Assistance chip with inline menu (simple concept)
@@ -1548,43 +1563,12 @@
       
       // Add input listener to activate publish/submit buttons when user starts typing
       ed.addEventListener('input', function() {
-        // If editor is effectively empty (ignoring assist UI), restore the lead placeholder
-        try {
-          var blocks = Array.from(ed.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
-          var hasNonEmpty = blocks.some(function(b){ return (b.textContent || '').trim().length > 0; });
-          if (!hasNonEmpty) {
-            var lp = document.getElementById('leadPlaceholder');
-            var placeholderHTML = 'Start writing about ' + (window.articleTitleText || safeTitle || 'Untitled') + ' or <strong>Press "\\/" for suggestions</strong>.';
-            var p = ed.querySelector('p');
-            if (lp) {
-              lp.innerHTML = placeholderHTML;
-              lp.style.color = '#72777d';
-              lp.style.fontStyle = 'italic';
-            } else if (p) {
-              p.id = 'leadPlaceholder';
-              if (p.classList) p.classList.add('lead-placeholder');
-              p.style.color = '#72777d';
-              p.style.fontStyle = 'italic';
-              p.innerHTML = placeholderHTML;
-            } else {
-              ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
-              lp = document.getElementById('leadPlaceholder');
-            }
-            // Place caret at beginning of the placeholder paragraph
-            try {
-              var target = document.getElementById('leadPlaceholder') || ed.querySelector('p');
-              if (target) {
-                var r = document.createRange();
-                var s = window.getSelection();
-                r.selectNodeContents(target);
-                r.collapse(true);
-                s.removeAllRanges();
-                s.addRange(r);
-                ed.focus();
-              }
-            } catch(_) {}
+        // Use unified placeholder restoration logic
+        setTimeout(function() {
+          if (window.restorePlaceholderIfEmpty) {
+            window.restorePlaceholderIfEmpty();
           }
-        } catch(_) {}
+        }, 0);
         var publishBtn = document.getElementById('publish');
         var submitBtn = document.getElementById('submit');
         
@@ -3009,31 +2993,97 @@
       }
       
       // Helper: restore placeholder when editor is empty of user content
-      function restorePlaceholderIfEmpty() {
+      window.restorePlaceholderIfEmpty = function restorePlaceholderIfEmpty() {
         try {
           const ed = document.getElementById('editor');
           if (!ed) return;
+          
+          // Check if editor has any meaningful content (excluding assist chips and empty paragraphs)
           const blocks = Array.from(ed.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
-          const hasNonEmpty = blocks.some(function(b){ return (b.textContent || '').trim().length > 0; });
-          if (hasNonEmpty) return;
+          const hasNonEmpty = blocks.some(function(b){ 
+            // Filter out assist chip, placeholders, assist menu content, and empty/whitespace-only content
+            if (b.id === 'assistChip' || b.id === 'leadPlaceholder' || b.classList.contains('lead-placeholder')) return false;
+            if (b.classList.contains('assist-list-item') || b.closest('#assistMenu')) return false;
+            const text = (b.textContent || '').trim();
+            // Ignore single characters that might be artifacts (like leftover "/")
+            if (text.length <= 1 && (text === '/' || text === '' || /^\s*$/.test(text))) return false;
+            return text.length > 0; 
+          });
+          
+          // If no blocks exist at all (just assist UI), we definitely need to restore placeholder
+          const hasContentBlocks = blocks.some(function(b){ 
+            return b.id !== 'assistChip' && 
+                   !b.classList.contains('assist-menu') && 
+                   !b.classList.contains('assist-list-item') &&
+                   !b.classList.contains('lead-placeholder') &&
+                   !b.closest('#assistMenu'); // Exclude anything inside assist menu
+          });
+          
+          if (hasNonEmpty) {
+            // Remove existing placeholder if content exists
+            const existingPlaceholder = document.getElementById('leadPlaceholder');
+            if (existingPlaceholder) {
+              existingPlaceholder.remove();
+            }
+            return;
+          }
+          
+          // If no content blocks exist at all (editor only has assist UI), force placeholder creation
+          if (!hasContentBlocks) {
+            const existingPlaceholder = document.getElementById('leadPlaceholder');
+            if (existingPlaceholder) existingPlaceholder.remove();
+            
+            const title = (window.articleTitleText || 'Untitled');
+            const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "/" for suggestions</strong>.';
+            
+            // Force create at beginning, even if assist elements exist
+            ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
+            
+            // Set cursor to beginning of placeholder
+            setTimeout(function() {
+              const placeholder = document.getElementById('leadPlaceholder');
+              if (placeholder) {
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(placeholder);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+              }
+            }, 0);
+            return;
+          }
+          
+          // Restore placeholder if no content exists
           let lp = document.getElementById('leadPlaceholder');
           const title = (window.articleTitleText || 'Untitled');
-          const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "\\/" for suggestions</strong>.';
-          let p = ed.querySelector('p');
+          const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "/" for suggestions</strong>.';
+          
           if (lp) {
-            lp.innerHTML = placeholderHTML;
-            lp.style.color = '#72777d';
-            lp.style.fontStyle = 'italic';
-          } else if (p) {
-            p.id = 'leadPlaceholder';
-            if (p.classList) p.classList.add('lead-placeholder');
-            p.style.color = '#72777d';
-            p.style.fontStyle = 'italic';
-            p.innerHTML = placeholderHTML;
-          } else {
-            ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
-            lp = document.getElementById('leadPlaceholder');
+            // Update existing placeholder content if it's empty or cleared
+            if (!lp.textContent.trim()) {
+              lp.innerHTML = placeholderHTML;
+              lp.style.color = '#72777d';
+              lp.style.fontStyle = 'italic';
+            }
+            return; // Already properly set
           }
+          
+          // Create fresh placeholder at the beginning
+          ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
+          
+          // Set cursor to beginning of placeholder
+          setTimeout(function() {
+            const placeholder = document.getElementById('leadPlaceholder');
+            if (placeholder) {
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.selectNodeContents(placeholder);
+              range.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+          }, 0);
         } catch(_) {}
       }
 
@@ -3047,7 +3097,7 @@
         }
         frozen = false;
         // After hiding, if the editor is empty, bring back the placeholder
-        restorePlaceholderIfEmpty();
+        window.restorePlaceholderIfEmpty();
       };
       window.showSuggestionsChip = function(anchorEl) {
         if (chip) chip.style.display = 'inline-flex';
@@ -3322,13 +3372,45 @@
         var currentSection = getCurrentSectionName();
         var isLead = /^lead$/i.test(currentSection);
         var secMeta = isLead ? null : getSectionMetaByName(currentSection);
+        
+        // Check if intro template already exists
+        var hasIntroTemplate = false;
+        try {
+          var editor = document.getElementById('editor');
+          // Look for intro template paragraph - it typically has an id starting with 'introTpl'
+          hasIntroTemplate = !!(editor.querySelector('p[id*="introTpl"]') || 
+                               // Also check for first paragraph with template placeholders before any h2
+                               (function(){
+                                 var firstH2 = editor.querySelector('h2');
+                                 var paras = Array.from(editor.querySelectorAll('p'));
+                                 for (var i = 0; i < paras.length; i++) {
+                                   var p = paras[i];
+                                   if (firstH2 && p.compareDocumentPosition(firstH2) & Node.DOCUMENT_POSITION_FOLLOWING) break;
+                                   if (p.querySelector('.template-placeholder') || p.querySelector('.ref-chip')) return true;
+                                 }
+                                 return false;
+                               })());
+        } catch(_) {}
 
-        var contextBlock = '<div class="assist-group">'+
-          '<div class="template-option-title" style="margin-bottom:2px;">'+ (isLead ? 'Lead section' : 'Section: ' + escapeHtml(currentSection)) +'</div>'+
-          '<div class="meta">'+ (isLead ? 'Good leads briefly define the topic and summarize the most important points in a neutral tone, with sources.' : (secMeta && secMeta.description ? escapeHtml(secMeta.description) : 'Add well-sourced, neutral content relevant to this section.')) +'</div>'+
-          buildExampleBlock(isLead, currentSection, cat) +
+        // Show current section context
+        var contextBlock = '';
+        if (!isLead) {
+          contextBlock = '<div class="assist-group">'+
+            '<div class="template-option-title" style="margin-bottom:2px;">Section: ' + escapeHtml(currentSection) +'</div>'+
+            '<div class="meta">'+ (secMeta && secMeta.description ? escapeHtml(secMeta.description) : 'Add well-sourced, neutral content relevant to this section.') +'</div>'+
+            '<div class="assist-actions">'+
+              (!sectionExistsByName(currentSection) ? '<button class="action-chip" data-insert-section="'+ escapeHtml(currentSection) +'">Try a section starter</button>' : '')+
+            '</div>'+
+          '</div>';
+        }
+
+        // Always show lead section block (either current context or standalone)
+        var leadSectionBlock = '<div class="assist-group">'+
+          '<div class="template-option-title" style="margin-bottom:2px;">Lead section</div>'+
+          '<div class="meta">Good leads briefly define the topic and summarize the most important points in a neutral tone, with sources.</div>'+
+          buildExampleBlock(true, 'Lead', cat) +
           '<div class="assist-actions">'+
-            (isLead ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>' : (sectionExistsByName(currentSection) ? '' : '<button class="action-chip" data-insert-section="'+ escapeHtml(currentSection) +'">Try a section starter</button>'))+
+            (!hasIntroTemplate ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>' : '')+
           '</div>'+
         '</div>';
 
@@ -3380,11 +3462,12 @@
         var html = ''+
           '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">Suggestions <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">Hide</button></div>'+
           contextBlock +
+          leadSectionBlock +
           sectionBlock;
         menu.innerHTML = html;
-        // Bind actions
-        var tplBtn = menu.querySelector('[data-insert-intro-template]');
-        if (tplBtn) {
+        // Bind actions - handle multiple intro template buttons
+        var tplBtns = menu.querySelectorAll('[data-insert-intro-template]');
+        tplBtns.forEach(function(tplBtn) {
           // Prevent focus from moving off the editor
           tplBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
           tplBtn.addEventListener('click', function(e){
@@ -3399,7 +3482,7 @@
               var ed = document.getElementById('editor'); if (ed) ed.focus();
             }, 0);
           });
-        }
+        });
         var hideBtn = menu.querySelector('#assistHideBtn');
         if (hideBtn) hideBtn.addEventListener('click', function(e){ e.preventDefault(); if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip(); });
         // Bind insert buttons for sections in preview
@@ -3407,8 +3490,14 @@
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name);
-            menu.style.display = 'none';
-            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+            // Keep the menu open and refresh to reflect the new "Added" state
+            setTimeout(function(){
+              try {
+                buildMainMenu();
+                menu.style.display = 'block';
+                if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
+              } catch(_) {}
+            }, 50);
           });
         });
         var viewAllBtn = menu.querySelector('[data-view-all-sections]');
@@ -3498,8 +3587,14 @@
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name);
-            menu.style.display = 'none';
-            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+            // Keep the menu open and refresh to reflect the new "Added" state
+            setTimeout(function(){
+              try {
+                buildMainMenu();
+                menu.style.display = 'block';
+                if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
+              } catch(_) {}
+            }, 50);
           });
         });
         var back = menu.querySelector('[data-back]');
@@ -3573,12 +3668,14 @@
 
       // Close menu when clicking outside assist chip/menu
       document.addEventListener('click', function(e){
+        // Allow certain programmatic clicks (e.g., auto-focusing placeholders after insert)
+        if (window.__suppressAssistMenuHide) return;
         const inAssist = !!e.target.closest('#assistChip') || !!e.target.closest('#assistMenu');
         if (!inAssist && menu.style.display !== 'none') {
           menu.style.display = 'none';
           frozen = false;
           schedulePosition();
-          restorePlaceholderIfEmpty();
+          window.restorePlaceholderIfEmpty();
         }
       }, true);
 
@@ -3678,15 +3775,30 @@
         }
         if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
           e.preventDefault();
-          var menuNow = document.getElementById('assistMenu');
-          if (menuNow && menuNow.style.display !== 'none') {
-            // Toggle off if already open
-            menuNow.style.display = 'none';
-            if (window.__assistSetFrozen) window.__assistSetFrozen(false);
-            restorePlaceholderIfEmpty();
-          } else {
-            showSlashSuggestions();
-          }
+          
+          // Clean up any empty paragraphs or leftover "/" characters first
+          setTimeout(function() {
+            const editor = document.getElementById('editor');
+            if (editor) {
+              const emptyPs = Array.from(editor.querySelectorAll('p')).filter(function(p) {
+                const text = (p.textContent || '').trim();
+                return text === '' || text === '/' && !p.id && !p.classList.contains('lead-placeholder');
+              });
+              emptyPs.forEach(function(p) { 
+                if (p.parentNode) p.parentNode.removeChild(p); 
+              });
+            }
+            
+            var menuNow = document.getElementById('assistMenu');
+            if (menuNow && menuNow.style.display !== 'none') {
+              // Toggle off if already open
+              menuNow.style.display = 'none';
+              if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+              window.restorePlaceholderIfEmpty();
+            } else {
+              showSlashSuggestions();
+            }
+          }, 0);
         }
       });
       editor.addEventListener('paste', function(){ clearLeadPlaceholder(); });
@@ -4208,7 +4320,14 @@
         try { window.lastIntroId = pid; } catch(_) {}
         // Feedback + undo
         try {
-          showUndoToast('Inserted introduction', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+          showUndoToast('Inserted introduction', function(){ 
+            var x=document.getElementById(pid); 
+            if (x && x.parentNode) x.parentNode.removeChild(x); 
+            // Restore placeholder if editor becomes empty
+            setTimeout(function() { 
+              if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
+            }, 0);
+          }, el);
         } catch(_) {}
       }
     }
@@ -4232,7 +4351,14 @@
         try { window.lastIntroId = pid; } catch(_) {}
         // Feedback + undo
         try {
-          showUndoToast('Inserted introduction', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+          showUndoToast('Inserted introduction', function(){ 
+            var x=document.getElementById(pid); 
+            if (x && x.parentNode) x.parentNode.removeChild(x); 
+            // Restore placeholder if editor becomes empty
+            setTimeout(function() { 
+              if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
+            }, 0);
+          }, el);
         } catch(_) {}
       }
     }
@@ -4264,7 +4390,14 @@
         try { window.lastIntroId = pid; } catch(_) {}
         // Feedback + undo
         try {
-          showUndoToast('Inserted template starter', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el);
+          showUndoToast('Inserted template starter', function(){ 
+            var x=document.getElementById(pid); 
+            if (x && x.parentNode) x.parentNode.removeChild(x); 
+            // Restore placeholder if editor becomes empty
+            setTimeout(function() { 
+              if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
+            }, 0);
+          }, el);
         } catch(_) {}
       }
     }
@@ -4289,7 +4422,8 @@
       if (lead && lead.parentNode === editor) {
         lead.outerHTML = html;
       } else {
-        editor.insertAdjacentHTML('beforeend', html);
+        // ALWAYS insert intro at the very beginning of the editor, before any existing content
+        editor.insertAdjacentHTML('afterbegin', html);
       }
       // Position chip/menu below the inserted paragraph without using selection
       setTimeout(function(){
@@ -4311,7 +4445,14 @@
           }
           try { window.lastIntroId = pid; } catch(_) {}
           // Feedback + undo
-          try { showUndoToast('Inserted intro template', function(){ var x=document.getElementById(pid); if (x && x.parentNode) x.parentNode.removeChild(x); }, el); } catch(_) {}
+          try { showUndoToast('Inserted intro template', function(){ 
+            var x=document.getElementById(pid); 
+            if (x && x.parentNode) x.parentNode.removeChild(x); 
+            // Restore placeholder if editor becomes empty
+            setTimeout(function() { 
+              if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
+            }, 0);
+          }, el); } catch(_) {}
         } catch(_) {}
         suppressChipPositioning = false;
       }, 0);
@@ -4436,7 +4577,10 @@
       var para = buildSectionParagraphWithChips(name);
       // Ensure we can reference the new paragraph element after insertion
       var newParaId = 'sectionPara-' + Date.now();
-      if (para.indexOf('<p ') !== -1) {
+      // Replace <p> or <p > with <p id="...">
+      if (para.indexOf('<p>') !== -1) {
+        para = para.replace('<p>', '<p id="'+newParaId+'">');
+      } else if (para.indexOf('<p ') !== -1) {
         para = para.replace('<p ', '<p id="'+newParaId+'" ');
       }
       var html = '<div class="section-block" data-section="'+escapeHtml(name)+'" data-section-id="'+id+'">'+
@@ -4494,6 +4638,13 @@
           }
         }
       }
+      // Remove lead placeholder if it exists - sections should clear placeholder
+      try {
+        var leadPlaceholder = document.getElementById('leadPlaceholder');
+        if (leadPlaceholder && leadPlaceholder.parentNode === editor) {
+          leadPlaceholder.parentNode.removeChild(leadPlaceholder);
+        }
+      } catch(_) {}
       // Track section as added
       try {
         if (Array.isArray(window.addedSections)) {
@@ -4502,24 +4653,88 @@
       } catch(_) {}
       // Move caret into the new section paragraph (first placeholder if available) and keep chip visible
       try {
-        var insertedPara = editor.querySelector('#'+newParaId);
-        if (insertedPara) {
-          var firstPh = insertedPara.querySelector('.template-placeholder');
-          if (firstPh) {
-            try { if (firstPh && firstPh.focus) firstPh.focus(); } catch(_) {}
-          } else {
-            // place caret at end of the new paragraph
-            placeCaretAtEnd(insertedPara);
-          }
-          // Remember this as the last anchor for chip positioning
-          if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
-          if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
-          // Feedback + undo
+        // Use multiple attempts with increasing delays to ensure cursor positioning works
+        var attempts = 0;
+        var maxAttempts = 3;
+        
+        function attemptCursorPositioning() {
+          attempts++;
+          
           try {
-            var block = insertedPara.closest('.section-block');
-            showUndoToast('Inserted section: '+ name, function(){ if (block && block.parentNode) block.parentNode.removeChild(block); }, block || insertedPara);
-          } catch(_) {}
+            var insertedPara = document.querySelector('#'+newParaId);
+            console.log('Attempt', attempts, '- Para found:', !!insertedPara, insertedPara?.id);
+            
+            if (insertedPara) {
+              var firstPh = insertedPara.querySelector('.template-placeholder');
+              console.log('Template placeholder found:', !!firstPh);
+              
+              if (firstPh) {
+                // Focus and click the first template placeholder to activate it
+                console.log('Focusing template placeholder...');
+                firstPh.focus();
+                // Suppress assist menu auto-hide during this programmatic click
+                try { window.__suppressAssistMenuHide = true; } catch(_) {}
+                firstPh.click();
+                // Clear suppression shortly after
+                setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 150);
+                // Verify focus worked
+                setTimeout(function() {
+                  console.log('After placeholder focus - active element:', document.activeElement?.tagName, document.activeElement?.textContent?.substring(0, 30));
+                }, 10);
+              } else {
+                // Make paragraph contenteditable and focus it directly
+                console.log('No placeholder - focusing paragraph directly...');
+                insertedPara.setAttribute('contenteditable', 'true');
+                insertedPara.focus();
+                
+                // Clear any existing selection first
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                // Create new range at end of paragraph  
+                var range = document.createRange();
+                range.selectNodeContents(insertedPara);
+                range.collapse(false); // Collapse to end
+                selection.addRange(range);
+                
+                setTimeout(function() {
+                  console.log('After paragraph focus - active element:', document.activeElement?.tagName, document.activeElement?.id);
+                }, 10);
+              }
+              
+              // Remember this as the last anchor for chip positioning
+              if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
+              if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
+              
+              return; // Success, exit
+            }
+          } catch(e) {
+            console.log('Cursor positioning error on attempt', attempts, ':', e);
+          }
+          
+          // Retry if failed and haven't exceeded max attempts
+          if (attempts < maxAttempts) {
+            setTimeout(attemptCursorPositioning, 50 * attempts); // Increasing delay
+          }
         }
+        
+        setTimeout(attemptCursorPositioning, 100); // Start first attempt
+        
+        // Feedback + undo (find block immediately after insertion)  
+        try {
+          setTimeout(function() {
+            var insertedParaForUndo = document.querySelector('#'+newParaId);
+            var block = insertedParaForUndo ? insertedParaForUndo.closest('.section-block') : null;
+            if (block) {
+              showUndoToast('Inserted section: '+ name, function(){ 
+                if (block && block.parentNode) block.parentNode.removeChild(block); 
+                // Restore placeholder if editor becomes empty
+                setTimeout(function() { 
+                  if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
+                }, 0);
+              }, block);
+            }
+          }, 10); // Quick timeout to ensure DOM is ready
+        } catch(_) {}
       } catch(_) {}
       editor.focus();
       // Keep chip visible after insertion
