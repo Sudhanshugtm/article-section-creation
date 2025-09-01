@@ -3008,6 +3008,35 @@
         });
       }
       
+      // Helper: restore placeholder when editor is empty of user content
+      function restorePlaceholderIfEmpty() {
+        try {
+          const ed = document.getElementById('editor');
+          if (!ed) return;
+          const blocks = Array.from(ed.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
+          const hasNonEmpty = blocks.some(function(b){ return (b.textContent || '').trim().length > 0; });
+          if (hasNonEmpty) return;
+          let lp = document.getElementById('leadPlaceholder');
+          const title = (window.articleTitleText || 'Untitled');
+          const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "\\/" for suggestions</strong>.';
+          let p = ed.querySelector('p');
+          if (lp) {
+            lp.innerHTML = placeholderHTML;
+            lp.style.color = '#72777d';
+            lp.style.fontStyle = 'italic';
+          } else if (p) {
+            p.id = 'leadPlaceholder';
+            if (p.classList) p.classList.add('lead-placeholder');
+            p.style.color = '#72777d';
+            p.style.fontStyle = 'italic';
+            p.innerHTML = placeholderHTML;
+          } else {
+            ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
+            lp = document.getElementById('leadPlaceholder');
+          }
+        } catch(_) {}
+      }
+
       // Helpers to hide/show the suggestions chip
       window.hideSuggestionsChip = function() {
         if (menu) menu.style.display = 'none';
@@ -3017,6 +3046,8 @@
           chip.setAttribute('aria-expanded','false');
         }
         frozen = false;
+        // After hiding, if the editor is empty, bring back the placeholder
+        restorePlaceholderIfEmpty();
       };
       window.showSuggestionsChip = function(anchorEl) {
         if (chip) chip.style.display = 'inline-flex';
@@ -3547,6 +3578,7 @@
           menu.style.display = 'none';
           frozen = false;
           schedulePosition();
+          restorePlaceholderIfEmpty();
         }
       }, true);
 
@@ -3651,6 +3683,7 @@
             // Toggle off if already open
             menuNow.style.display = 'none';
             if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+            restorePlaceholderIfEmpty();
           } else {
             showSlashSuggestions();
           }
