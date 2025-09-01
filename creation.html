@@ -114,9 +114,10 @@
     /* Template placeholders in content (inline chips) */
     .template-placeholder {
       display: inline-flex;
-      align-items: center;
+      align-items: baseline;
       gap: 6px;
-      padding: 2px 8px;
+      padding: 2px 10px !important;
+      margin: 0 6px !important;
       border: 1px dashed #a2a9b1;
       border-radius: 12px;
       background: #f8f9fa;
@@ -126,6 +127,9 @@
       font-style: normal;
       position: relative;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      vertical-align: baseline;
+      line-height: inherit;
+      font-size: 1em;
     }
 
     .template-placeholder::before {
@@ -379,6 +383,13 @@
       min-height: 400px;
       padding: 16px 0;
     }
+
+    /* Comfortable reading line-height for content inside the editor */
+    #editor { line-height: 1.9 !important; }
+    #editor p,
+    #editor li,
+    #editor blockquote { line-height: inherit; }
+    #editor p { margin: 1.2em 0 !important; }
     
     /* Primary button styling for publish/submit buttons */
     .btn.primary {
@@ -834,7 +845,41 @@
     .action-row { display: flex; gap: 8px; align-items: center; }
     .action-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #c8ccd1; border-radius:12px; background:#f8f9fa; color:#202122; cursor:pointer; font-size:12px; }
     .action-chip:hover { background:#eef3ff; border-color:#36c; color:#36c; }
-    .suggest-badge { display:inline-block; font-size:11px; color:#445; background:#eef3ff; border:1px solid #cfe2ff; border-radius:10px; padding:2px 6px; margin-bottom:6px; }
+    .suggest-badge { display:none !important; }
+    span[style*="background:#eaf7ef"] { display:none !important; }
+
+    /* Suggestions floating chip */
+    .assist-chip {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid #c8ccd1;
+      border-radius: 14px;
+      background: #f8f9fa;
+      color: #202122;
+      cursor: pointer;
+      box-shadow: none;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      user-select: none;
+    }
+    .assist-chip:hover {
+      background: #f3f4f6;
+      border-color: #a2a9b1;
+    }
+    .assist-chip:focus-visible {
+      outline: 2px solid rgba(54,102,204,0.5);
+      outline-offset: 1px;
+    }
+    .assist-chip .icon { font-size: 14px; filter: brightness(0.65); }
+    .assist-chip .label { font-size: 12px; font-weight: 500; letter-spacing: .1px; }
+    .assist-chip.active {
+      background: #eef3ff;
+      border-color: #b6c8f0;
+      color: #202122;
+      box-shadow: none;
+    }
   </style>
 </head>
 <body>
@@ -1232,11 +1277,51 @@
       if (msg) msg.textContent = message || 'Change applied';
       __lastUndoAction = (typeof undoFn === 'function') ? undoFn : null;
       if (btn) {
-        btn.onclick = function(){ try { __lastUndoAction && __lastUndoAction(); } finally { t.classList.remove('show'); __lastUndoAction = null; } };
+        btn.onclick = function(){
+          let handled = false;
+          try {
+            if (__lastUndoAction) {
+              const ret = __lastUndoAction();
+              handled = (ret === true) || (ret && ret.handledCaret === true);
+            }
+          } finally {
+            // Unless the undo function already managed caret/selection, restore focus at end
+            if (!handled) {
+              try { var ed = document.getElementById('editor'); if (ed) { ed.focus(); placeCaretAtEnd(ed); } } catch(_) {}
+            }
+            try { if (typeof reanchorAssistChip === 'function') reanchorAssistChip(); } catch(_) {}
+            t.classList.remove('show');
+            __lastUndoAction = null;
+          }
+        };
       }
       t.classList.add('show');
       // Auto-hide after a few seconds if untouched
       setTimeout(function(){ if (t.classList.contains('show')) t.classList.remove('show'); }, 6000);
+    }
+
+    // Helper to re-anchor the Suggestions chip after DOM changes
+    function reanchorAssistChip() {
+      try {
+        var chip = document.getElementById('assistChip');
+        var editor = document.getElementById('editor');
+        if (!editor || !chip) return;
+        // Pick the top-most visible block inside the editor, fallback to last paragraph
+        var editorRect = editor.getBoundingClientRect();
+        var blocks = Array.from(editor.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'))
+          .filter(function(el){ return el.offsetParent !== null; });
+        var best = null; var bestDelta = Infinity;
+        for (var i=0;i<blocks.length;i++) {
+          var r = blocks[i].getBoundingClientRect();
+          var intersects = r.bottom > editorRect.top && r.top < editorRect.bottom;
+          if (!intersects) continue;
+          var delta = Math.abs(r.top - editorRect.top);
+          if (delta < bestDelta) { bestDelta = delta; best = blocks[i]; }
+        }
+        if (!best) best = blocks[0] || editor;
+        if (typeof positionChipBelowElement === 'function') positionChipBelowElement(best);
+        if (typeof showSuggestionsChip === 'function') showSuggestionsChip(best);
+      } catch(_) {}
     }
 
     function insertReferenceLink(url, title) {
@@ -1273,6 +1358,22 @@
         showUndoToast('Inserted citation', function(){
           try { if (sup && sup.parentNode) sup.parentNode.removeChild(sup); } catch(_){ }
           try { const list = document.getElementById('referencesList'); if (list && list.lastElementChild) list.removeChild(list.lastElementChild); } catch(_){ }
+          // If no references left, optionally hide the References heading container spacing
+          try {
+            const list = document.getElementById('referencesList');
+            const empty = list && list.children.length === 0;
+            if (empty) {
+              const refsHeader = document.getElementById('References');
+              if (refsHeader) {
+                const next = refsHeader.nextElementSibling;
+                if (next && next.id === 'referencesList' && next.children.length === 0) {
+                  // Remove both to reclaim space
+                  next.remove();
+                  refsHeader.remove();
+                }
+              }
+            }
+          } catch(_) {}
         }, highlightTarget);
       } catch(_) {}
     }
@@ -1335,12 +1436,12 @@
       if (veTitle) veTitle.textContent = safeTitle;
       
       // Initialize editor with a visible lead placeholder paragraph that holds the caret
-      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 0.75em 0 2.25em 0; line-height: 1.6; color: #72777d; font-style: italic;">' + safeTitle + ' is...</p>';
+      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">' + safeTitle + ' is...</p>';
       ed.removeAttribute('data-placeholder');
       
       // Insert a single Assistance chip with inline menu (simple concept)
       var assistHtml = ''+
-        '<div id="assistChip" class="assist-chip" style="position:absolute; top:4px; left:4px; z-index:150; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #c8ccd1; border-radius:12px; background:#f8f9fa; color:#202122; cursor:pointer;">✨ Suggestions</div>'+
+        '<div id="assistChip" class="assist-chip" role="button" aria-label="Suggestions" aria-expanded="false" tabindex="0" style="z-index:150;"><span class="icon">✨</span><span class="label">Suggestions</span></div>'+
         '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); width:520px; max-width:90vw; padding:0;">'+
           '<div class="assist-menu-header">Suggestions</div>'+
           '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
@@ -1802,7 +1903,7 @@
       sectionHTML += 'border-bottom: 1px solid #eaecf0; '; // Lighter gray separator
       sectionHTML += 'padding-bottom: 0.25em;';
       sectionHTML += '">' + sectionName + '</h2>';
-      sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6; color: #72777d; font-style: italic;" data-placeholder="' + writingPrompt + '">' + writingPrompt + '</p>';
+      sectionHTML += '<p style="margin: 1.1em 0; color: #72777d; font-style: italic;" data-placeholder="' + writingPrompt + '">' + writingPrompt + '</p>';
       
       // Check if References section exists and insert before it
       var referencesMatch = currentContent.match(/<h2[^>]*id="References"[^>]*>/);
@@ -2440,7 +2541,7 @@
         sectionHTML += '">' + sectionTitle + '</h2>';
         
         // Add content paragraph with proper styling
-        sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6;">' + content + '</p>';
+        sectionHTML += '<p>' + content + '</p>';
         
         // Add minimal draft notice (non-editable)
         sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
@@ -2678,11 +2779,24 @@
       const editor = document.getElementById('editor');
       editor.addEventListener('keyup', handleEditorKeyup);
       editor.addEventListener('click', handleEditorClick);
-      // Make template placeholders interactive on click
+      // Prevent caret from entering placeholders/ref chips; open menu/dialog instead
+      editor.addEventListener('mousedown', function(e){
+        var t = e.target;
+        if (t && t.classList && (t.classList.contains('template-placeholder') || t.classList.contains('ref-chip'))) {
+          e.preventDefault();
+        }
+      });
       editor.addEventListener('click', function(e){
         var t = e.target;
         if (t && t.classList && t.classList.contains('template-placeholder')) {
-          try { selectPlaceholder(t); } catch(_) {}
+          e.preventDefault(); e.stopPropagation();
+          try { showChipSuggestMenu(t); } catch(_) {}
+          return;
+        }
+        if (t && t.classList && t.classList.contains('ref-chip')) {
+          e.preventDefault(); e.stopPropagation();
+          try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
+          return;
         }
       });
       // Also show chips when the editor gains focus and conditions match
@@ -2725,7 +2839,11 @@
       // Helpers to hide/show the suggestions chip
       window.hideSuggestionsChip = function() {
         if (menu) menu.style.display = 'none';
-        if (chip) chip.style.display = 'none';
+        if (chip) {
+          chip.style.display = 'none';
+          chip.classList.remove('active');
+          chip.setAttribute('aria-expanded','false');
+        }
         frozen = false;
       };
       window.showSuggestionsChip = function(anchorEl) {
@@ -2950,11 +3068,11 @@
           }
           // Fallback to legacy suggestionsData (simple list)
           var secList = (window.suggestionsData && window.suggestionsData[cat] && Array.isArray(window.suggestionsData[cat].sections)) ? window.suggestionsData[cat].sections : [];
-          if (secList && secList.length) {
-            sectionBlock += '<div class="assist-sep"></div>';
-            sectionBlock += '<div class="assist-group">';
-            sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
-            sectionBlock += '<ul class="assist-list">';
+           if (secList && secList.length) {
+             sectionBlock += '<div class="assist-sep"></div>';
+             sectionBlock += '<div class="assist-group">';
+             sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">Suggested sections</div>';
+             sectionBlock += '<ul class="assist-list">';
             secList.forEach(function(sec){
               var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
               var desc = (typeof sec === 'string') ? '' : (sec.description || '');
@@ -3006,6 +3124,8 @@
         var viewAllBtn = menu.querySelector('[data-view-all-sections]');
         if (viewAllBtn) viewAllBtn.addEventListener('click', function(){ buildSectionMenu(); });
         bindMenuHandlers();
+        // Active state
+        try { chip.classList.add('active'); chip.setAttribute('aria-expanded','true'); } catch(_) {}
       }
       
       function buildSectionMenu() {
@@ -3101,6 +3221,13 @@
         ev.preventDefault();
         ev.stopPropagation();
         frozen = true;
+      });
+      // Keyboard support
+      chip.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
+          ev.preventDefault();
+          try { if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip(); } catch(_) {}
+        }
       });
       chip.addEventListener('click', function(ev){
         ev.preventDefault(); ev.stopPropagation();
@@ -3217,30 +3344,25 @@
       window.addEventListener('resize', schedulePosition);
       // Reposition on any scroll that may shift editor
       document.addEventListener('scroll', schedulePosition, true);
-      // Placeholder chip key handling: clear default text on first type; Tab/Shift+Tab to navigate
+      // Chip keyboard handling: open menu/dialog on Enter/Space; Tab navigation among chips
       editor.addEventListener('keydown', function(e){
-        var sel = window.getSelection();
-        if (!sel.rangeCount) return;
-        var node = sel.anchorNode && sel.anchorNode.nodeType === Node.TEXT_NODE ? sel.anchorNode.parentElement : sel.anchorNode;
-        var ph = node && node.closest ? node.closest('.template-placeholder') : null;
-        if (!ph) return;
-        // Navigate with Tab between placeholders
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          var all = Array.from(editor.querySelectorAll('.template-placeholder'));
-          var idx = all.indexOf(ph);
-          var next = e.shiftKey ? all[idx-1] : all[idx+1];
-          if (next) {
-            try { selectPlaceholder(next); } catch(_) {}
-          }
+        var t = e.target;
+        var isPlaceholder = t && t.classList && t.classList.contains('template-placeholder');
+        var isRefChip = t && t.classList && t.classList.contains('ref-chip');
+        if (!(isPlaceholder || isRefChip)) return;
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault(); e.stopPropagation();
+          if (isPlaceholder) { try { showChipSuggestMenu(t); } catch(_) {} }
+          if (isRefChip) { try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); } }
           return;
         }
-        // Clear default label on first character
-        var txt = ph.textContent || '';
-        if (!ph.dataset.cleared && /^add\s/i.test(txt) && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
-          ph.textContent = '';
-          ph.dataset.cleared = '1';
-          // Let the keypress insert as usual
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          var all = Array.from(editor.querySelectorAll('.template-placeholder, .ref-chip'));
+          var idx = all.indexOf(t);
+          var next = e.shiftKey ? all[idx-1] : all[idx+1];
+          if (next) { try { next.focus(); } catch(_) {} }
+          return;
         }
       });
       // Initial position
@@ -3341,7 +3463,13 @@
             try {
               var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
               showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
-                try { if (textNode && textNode.parentNode) textNode.parentNode.replaceChild(original, textNode); } catch(_) {}
+                try {
+                  if (textNode && textNode.parentNode) textNode.parentNode.replaceChild(original, textNode);
+                  // Restore caret and placeholder selection
+                  try { var ed=document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
+              try { if (original && original.focus) original.focus(); } catch(_) {}
+                  return true; // handled caret
+                } catch(_) { return false; }
               }, block || parent);
             } catch(_) {}
           }
@@ -3385,7 +3513,12 @@
                 try {
                   var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
                   showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
-                    try { if (node && node.parentNode) node.parentNode.replaceChild(original, node); } catch(_) {}
+                    try {
+                      if (node && node.parentNode) node.parentNode.replaceChild(original, node);
+                      try { var ed=document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
+                      try { if (original && original.focus) original.focus(); } catch(_) {}
+                      return true; // handled caret
+                    } catch(_) { return false; }
                   }, block || parent);
                 } catch(_) {}
               }
@@ -3585,7 +3718,7 @@
       var category = (window.selectedCat || 'other');
       var text = (typeof generateTopicSentence === 'function') ? generateTopicSentence(title, category) : (title + ' — introduction.');
       var pid = 'simpleIntro-' + Date.now();
-      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">'+ text +'</p>';
+      var html = '<p id="'+pid+'">'+ text +'</p>';
       insertHTMLAtCursor(html, editor);
       editor.focus();
       // Anchor chip to the newly inserted paragraph and keep it visible when appropriate
@@ -3610,7 +3743,7 @@
     function insertIntroText(text) {
       var editor = document.getElementById('editor');
       var pid = 'introText-' + Date.now();
-      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">'+ escapeHtml(text) +'</p>';
+      var html = '<p id="'+pid+'">'+ escapeHtml(text) +'</p>';
       insertHTMLAtCursor(html, editor);
       editor.focus();
       var el = document.getElementById(pid);
@@ -3633,15 +3766,15 @@
 
     function insertChipStyleStarter(title, category) {
       var editor = document.getElementById('editor');
-      var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
+      var base = title + ' is ' + '[DEFINITION]' + '.<br>It is significant because ' + '[IMPORTANCE]' + '.';
       // Turn into placeholders like other templates
       var html = base.replace(/\[([^\]]+)\]/g, function(_, key){
         var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
-        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+        return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       // Append a Reference chip to encourage sourcing
       var pid = 'introTpl-'+Date.now();
-      html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">' + html + ' <span class="ref-chip action-chip">Reference</span></p>';
+      html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) { lead.outerHTML = html; } else { insertHTMLAtCursor(html, editor); }
       editor.focus();
@@ -3674,10 +3807,10 @@
       var base = getIntroTemplateBase(title, category);
       var htmlBody = base.replace(/\[([^\]]+)\]/g, function(_, key){
         var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
-        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+        return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       var pid = 'introTpl-' + Date.now();
-      var html = '<p id="'+pid+'" style="margin: 0.75em 0; line-height:1.6;">' + htmlBody + ' <span class="ref-chip action-chip">Reference</span></p>';
+      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
       suppressChipPositioning = true;
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
@@ -3698,7 +3831,7 @@
           // Focus first placeholder for immediate typing context
           var firstPh = el && el.querySelector('.template-placeholder');
           if (firstPh) {
-            try { selectPlaceholder(firstPh); } catch(_) {}
+            try { if (firstPh && firstPh.focus) firstPh.focus(); } catch(_) {}
           } else {
             // place caret at end of new paragraph
             try { placeCaretAtEnd(el); } catch(_) {}
@@ -3719,19 +3852,19 @@
       if (base) return base;
       switch(category) {
         case 'person':
-          return t + ' ([BIRTH_YEAR]' + ' – ' + '[DEATH_YEAR]' + ') was a [NATIONALITY] [OCCUPATION] who [ACHIEVEMENT].';
+          return t + ' ([BIRTH_YEAR]' + ' – ' + '[DEATH_YEAR]' + ') was a [NATIONALITY] [OCCUPATION]<br>who [ACHIEVEMENT].';
         case 'place':
-          return t + ' is the [TYPE] in [REGION], with [POPULATION] and known for [FEATURE].';
+          return t + ' is the [TYPE] in [REGION], with [POPULATION]<br>and known for [FEATURE].';
         case 'organization':
-          return t + ' is a [TYPE] of the [AFFILIATION] established in [YEAR], headquartered in [LOCATION], responsible for [PURPOSE].';
+          return t + ' is a [TYPE] of the [AFFILIATION] established in [YEAR],<br>headquartered in [LOCATION], responsible for [PURPOSE].';
         case 'species':
-          return 'The ' + t + ' ([SCIENTIFIC_NAME]) is a [TAXON_RANK] native to [HABITAT], noted for [FEATURE].';
+          return 'The ' + t + ' ([SCIENTIFIC_NAME]) is a [TAXON_RANK] native to [HABITAT],<br>noted for [FEATURE].';
         case 'academic':
-          return t + ' is a fundamental theory in [FIELD] that [DEFINITION].';
+          return t + ' is a fundamental theory in [FIELD]<br>that [DEFINITION].';
         case 'event':
-          return t + ' was the [TYPE] that took place in [LOCATION] on [DATE], noted for [SIGNIFICANCE].';
+          return t + ' was the [TYPE] that took place in [LOCATION] on [DATE],<br>noted for [SIGNIFICANCE].';
         default:
-          return t + ' is [DEFINITION] and is significant because [IMPORTANCE].';
+          return t + ' is [DEFINITION]<br>and is significant because [IMPORTANCE].';
       }
     }
 
@@ -3900,7 +4033,7 @@
         if (insertedPara) {
           var firstPh = insertedPara.querySelector('.template-placeholder');
           if (firstPh) {
-            selectPlaceholder(firstPh);
+            try { if (firstPh && firstPh.focus) firstPh.focus(); } catch(_) {}
           } else {
             // place caret at end of the new paragraph
             placeCaretAtEnd(insertedPara);
@@ -3931,9 +4064,9 @@
         tpl = tpl.replace(/\{\{ARTICLE\}\}/g, 'a');
         // Convert remaining placeholders to chips
         var htmlBody = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
-          return '<span class="template-placeholder" data-placeholder="'+key+'">'+prettifyPlaceholder(key)+'</span>';
+          return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
         });
-        return '<p style="margin:0.75em 0; line-height:1.6;">'+ htmlBody + ' <span class="ref-chip action-chip">Reference</span></p>';
+        return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
       }
       // Fallback: use suggestionsData include list to create chip prompts
       try{
@@ -3948,18 +4081,18 @@
         if (match && typeof match !== 'string' && Array.isArray(match.include)) {
           chips = match.include.slice(0,4).map(function(label){
             var key = label.toUpperCase().replace(/[^A-Z0-9]+/g,'_');
-            return '<span class="template-placeholder" data-placeholder="'+key+'">'+prettifyPlaceholder(key)+'</span>';
+            return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
           });
         }
         var prompt = chips.length ? chips.join(' ') : 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
         if (chips.length) {
-          return '<p style="margin:0.75em 0; line-height:1.6;">'+ prompt + ' <span class="ref-chip action-chip">Reference</span></p>';
+          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
         } else {
-          return '<p style="margin:0.75em 0; line-height:1.6; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
+          return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
         }
       } catch(_) {
         var p = 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
-        return '<p style="margin:0.75em 0; line-height:1.6; color:#72777d; font-style:italic;">'+ escapeHtml(p) +'</p>';
+        return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(p) +'</p>';
       }
     }
 
@@ -4227,8 +4360,8 @@
       // Focus first placeholder
       setTimeout(() => {
         const firstPlaceholder = editor.querySelector('.template-placeholder');
-        if (firstPlaceholder) {
-          selectPlaceholder(firstPlaceholder);
+        if (firstPlaceholder && firstPlaceholder.focus) {
+          firstPlaceholder.focus();
         }
         // Keep chips visible and reposition near current caret after insertion
         try {
@@ -4326,7 +4459,7 @@
       // Replace remaining placeholders with clickable, friendly chips
       html = html.replace(/\[([^\]]+)\]/g, function(_, key){
         const label = prettifyPlaceholder(key);
-        return '<span class="template-placeholder" data-placeholder="'+key+'">'+label+'</span>';
+        return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
 
       if (template.needsSource) {
