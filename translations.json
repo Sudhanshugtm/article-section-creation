@@ -1,0 +1,216 @@
+{
+  "en": {
+    "pageTitle": "Article Creator — Reference Chip Concept",
+    "header": {
+      "wikipedia": "Wikipedia",
+      "search": "Search Wikipedia",
+      "createAccount": "Create account",
+      "login": "Log in"
+    },
+    "steps": {
+      "step1": {
+        "title": "Step 1: Enter article title",
+        "placeholder": "What is the article title?",
+        "helper": "Enter the title of the article you want to create",
+        "continue": "Continue"
+      },
+      "step2": {
+        "title": "Step 2: Choose a category",
+        "helper": "Select the category that best describes your article",
+        "categories": {
+          "biography": {
+            "name": "Biography",
+            "description": "Person or group of people"
+          },
+          "location": {
+            "name": "Location", 
+            "description": "Place, building, or geographic area"
+          },
+          "species": {
+            "name": "Species",
+            "description": "Animal, plant, or other organism"
+          },
+          "event": {
+            "name": "Event",
+            "description": "Historical or current event"
+          },
+          "concept": {
+            "name": "Concept",
+            "description": "Theory, philosophy, or abstract idea"
+          },
+          "work": {
+            "name": "Creative Work",
+            "description": "Book, film, music, or artwork"
+          }
+        },
+        "continue": "Start writing"
+      },
+      "step3": {
+        "title": "Step 3: Write your article",
+        "placeholder": "Start writing your article here...",
+        "publish": "Publish",
+        "preview": "Preview",
+        "cancel": "Cancel"
+      }
+    },
+    "chips": {
+      "template": "Template",
+      "section": "Section", 
+      "source": "Source",
+      "help": "Help",
+      "reference": "Reference"
+    },
+    "guidance": {
+      "title": "Writing guidance",
+      "sections": "Suggested sections",
+      "tips": "Writing tips",
+      "eligibility": "Article eligibility",
+      "whatToInclude": "What to include",
+      "close": "Close"
+    },
+    "eligibility": {
+      "title": "Is this article eligible?",
+      "questions": {
+        "coverage": "Has the subject been covered in reliable sources?",
+        "independent": "Are the sources independent of the subject?",
+        "multiple": "Are there multiple sources about the subject?",
+        "depth": "Do the sources cover the subject in depth?"
+      },
+      "yes": "Yes",
+      "no": "No",
+      "maybe": "Maybe"
+    },
+    "templates": {
+      "biography": {
+        "intro": "Biography introduction",
+        "infobox": "Person infobox",
+        "earlyLife": "Early life section",
+        "career": "Career section"
+      },
+      "location": {
+        "intro": "Location introduction",
+        "infobox": "Location infobox",
+        "geography": "Geography section",
+        "history": "History section"
+      }
+    },
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "link": "Link",
+      "cite": "Cite",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "heading": "Heading",
+      "undo": "Undo",
+      "redo": "Redo"
+    }
+  },
+  "id": {
+    "pageTitle": "Pembuat Artikel — Konsep Chip Referensi",
+    "header": {
+      "wikipedia": "Wikipedia",
+      "search": "Cari Wikipedia",
+      "createAccount": "Buat akun",
+      "login": "Masuk log"
+    },
+    "steps": {
+      "step1": {
+        "title": "Langkah 1: Masukkan judul artikel",
+        "placeholder": "Apa judul artikelnya?",
+        "helper": "Masukkan judul artikel yang ingin Anda buat",
+        "continue": "Lanjutkan"
+      },
+      "step2": {
+        "title": "Langkah 2: Pilih kategori",
+        "helper": "Pilih kategori yang paling sesuai dengan artikel Anda",
+        "categories": {
+          "biography": {
+            "name": "Biografi",
+            "description": "Orang atau kelompok orang"
+          },
+          "location": {
+            "name": "Lokasi",
+            "description": "Tempat, bangunan, atau area geografis"
+          },
+          "species": {
+            "name": "Spesies",
+            "description": "Hewan, tumbuhan, atau organisme lainnya"
+          },
+          "event": {
+            "name": "Peristiwa",
+            "description": "Peristiwa sejarah atau terkini"
+          },
+          "concept": {
+            "name": "Konsep",
+            "description": "Teori, filosofi, atau ide abstrak"
+          },
+          "work": {
+            "name": "Karya Kreatif",
+            "description": "Buku, film, musik, atau karya seni"
+          }
+        },
+        "continue": "Mulai menulis"
+      },
+      "step3": {
+        "title": "Langkah 3: Tulis artikel Anda",
+        "placeholder": "Mulai menulis artikel Anda di sini...",
+        "publish": "Terbitkan",
+        "preview": "Pratinjau",
+        "cancel": "Batal"
+      }
+    },
+    "chips": {
+      "template": "Templat",
+      "section": "Bagian",
+      "source": "Sumber",
+      "help": "Bantuan",
+      "reference": "Referensi"
+    },
+    "guidance": {
+      "title": "Panduan menulis",
+      "sections": "Bagian yang disarankan",
+      "tips": "Tips menulis",
+      "eligibility": "Kelayakan artikel",
+      "whatToInclude": "Apa yang harus disertakan",
+      "close": "Tutup"
+    },
+    "eligibility": {
+      "title": "Apakah artikel ini layak?",
+      "questions": {
+        "coverage": "Apakah subjek telah diliput dalam sumber terpercaya?",
+        "independent": "Apakah sumber-sumber tersebut independen dari subjek?",
+        "multiple": "Apakah ada beberapa sumber tentang subjek tersebut?",
+        "depth": "Apakah sumber-sumber tersebut membahas subjek secara mendalam?"
+      },
+      "yes": "Ya",
+      "no": "Tidak",
+      "maybe": "Mungkin"
+    },
+    "templates": {
+      "biography": {
+        "intro": "Pengantar biografi",
+        "infobox": "Kotak info orang",
+        "earlyLife": "Bagian kehidupan awal",
+        "career": "Bagian karier"
+      },
+      "location": {
+        "intro": "Pengantar lokasi",
+        "infobox": "Kotak info lokasi",
+        "geography": "Bagian geografi",
+        "history": "Bagian sejarah"
+      }
+    },
+    "toolbar": {
+      "bold": "Tebal",
+      "italic": "Miring",
+      "link": "Pranala",
+      "cite": "Kutip",
+      "bulletList": "Daftar poin",
+      "numberedList": "Daftar bernomor",
+      "heading": "Judul",
+      "undo": "Batalkan",
+      "redo": "Ulangi"
+    }
+  }
+}

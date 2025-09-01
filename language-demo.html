@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Language Switcher Demo</title>
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+  <link rel="stylesheet" href="reading-styles.css">
+  <style>
+    body {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .demo-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #eaecf0;
+      border-radius: 4px;
+    }
+    .step-container {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .category-card {
+      padding: 12px;
+      border: 2px solid #eaecf0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .category-card:hover {
+      border-color: #36c;
+      background: #eef3ff;
+    }
+    .category-name {
+      font-weight: bold;
+      color: #202122;
+    }
+    .category-description {
+      font-size: 12px;
+      color: #54595d;
+      margin-top: 4px;
+    }
+    .chip-demo {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .smart-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border: 1px solid #c8ccd1;
+      border-radius: 12px;
+      background: #f8f9fa;
+      color: #36c;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .smart-chip:hover {
+      background: #eaecf0;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #a2a9b1;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button.primary {
+      background: #36c;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.primary:hover {
+      background: #2a4b8d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Language Switcher Integration Demo</h1>
+  <p>This demonstrates how to integrate the bilingual system into your prototypes.</p>
+
+  <!-- Step 1 Demo -->
+  <div class="demo-section">
+    <h2 data-i18n="steps.step1.title">Step 1: Enter article title</h2>
+    <p data-i18n="steps.step1.helper">Enter the title of the article you want to create</p>
+    <input type="text" data-i18n="steps.step1.placeholder" data-i18n-placeholder placeholder="What is the article title?">
+    <button class="primary" data-i18n="steps.step1.continue">Continue</button>
+  </div>
+
+  <!-- Step 2 Demo with Categories -->
+  <div class="demo-section">
+    <h2 data-i18n="steps.step2.title">Step 2: Choose a category</h2>
+    <p data-i18n="steps.step2.helper">Select the category that best describes your article</p>
+    
+    <div class="category-grid">
+      <div class="category-card" data-category="biography">
+        <div class="category-name">Biography</div>
+        <div class="category-description">Person or group of people</div>
+      </div>
+      <div class="category-card" data-category="location">
+        <div class="category-name">Location</div>
+        <div class="category-description">Place, building, or geographic area</div>
+      </div>
+      <div class="category-card" data-category="species">
+        <div class="category-name">Species</div>
+        <div class="category-description">Animal, plant, or other organism</div>
+      </div>
+      <div class="category-card" data-category="event">
+        <div class="category-name">Event</div>
+        <div class="category-description">Historical or current event</div>
+      </div>
+    </div>
+    
+    <button class="primary" data-i18n="steps.step2.continue">Start writing</button>
+  </div>
+
+  <!-- Smart Chips Demo -->
+  <div class="demo-section">
+    <h2>Smart Chips</h2>
+    <p>These chips automatically translate when language is switched:</p>
+    
+    <div class="chip-demo">
+      <div class="smart-chip" data-chip-type="template">
+        <span>📝</span> Template
+      </div>
+      <div class="smart-chip" data-chip-type="section">
+        <span>📑</span> Section
+      </div>
+      <div class="smart-chip" data-chip-type="source">
+        <span>🔗</span> Source
+      </div>
+      <div class="smart-chip" data-chip-type="help">
+        <span>✨</span> Help
+      </div>
+    </div>
+  </div>
+
+  <!-- Eligibility Questions Demo -->
+  <div class="demo-section">
+    <h2 data-i18n="eligibility.title">Is this article eligible?</h2>
+    <ul>
+      <li data-i18n="eligibility.questions.coverage">Has the subject been covered in reliable sources?</li>
+      <li data-i18n="eligibility.questions.independent">Are the sources independent of the subject?</li>
+      <li data-i18n="eligibility.questions.multiple">Are there multiple sources about the subject?</li>
+      <li data-i18n="eligibility.questions.depth">Do the sources cover the subject in depth?</li>
+    </ul>
+  </div>
+
+  <!-- Load the language switcher -->
+  <script src="language-switcher.js"></script>
+  
+  <script>
+    // Example of accessing translations programmatically
+    document.addEventListener('DOMContentLoaded', () => {
+      // Wait for language switcher to initialize
+      setTimeout(() => {
+        if (window.languageSwitcher) {
+          console.log('Current language:', window.languageSwitcher.currentLang);
+          console.log('Example translation:', window.languageSwitcher.t('steps.step1.title'));
+        }
+      }, 500);
+    });
+  </script>
+</body>
+</html>
