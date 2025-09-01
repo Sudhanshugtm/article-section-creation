@@ -1548,6 +1548,43 @@
       
       // Add input listener to activate publish/submit buttons when user starts typing
       ed.addEventListener('input', function() {
+        // If editor is effectively empty (ignoring assist UI), restore the lead placeholder
+        try {
+          var blocks = Array.from(ed.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
+          var hasNonEmpty = blocks.some(function(b){ return (b.textContent || '').trim().length > 0; });
+          if (!hasNonEmpty) {
+            var lp = document.getElementById('leadPlaceholder');
+            var placeholderHTML = 'Start writing about ' + (window.articleTitleText || safeTitle || 'Untitled') + ' or <strong>Press "\\/" for suggestions</strong>.';
+            var p = ed.querySelector('p');
+            if (lp) {
+              lp.innerHTML = placeholderHTML;
+              lp.style.color = '#72777d';
+              lp.style.fontStyle = 'italic';
+            } else if (p) {
+              p.id = 'leadPlaceholder';
+              if (p.classList) p.classList.add('lead-placeholder');
+              p.style.color = '#72777d';
+              p.style.fontStyle = 'italic';
+              p.innerHTML = placeholderHTML;
+            } else {
+              ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
+              lp = document.getElementById('leadPlaceholder');
+            }
+            // Place caret at beginning of the placeholder paragraph
+            try {
+              var target = document.getElementById('leadPlaceholder') || ed.querySelector('p');
+              if (target) {
+                var r = document.createRange();
+                var s = window.getSelection();
+                r.selectNodeContents(target);
+                r.collapse(true);
+                s.removeAllRanges();
+                s.addRange(r);
+                ed.focus();
+              }
+            } catch(_) {}
+          }
+        } catch(_) {}
         var publishBtn = document.getElementById('publish');
         var submitBtn = document.getElementById('submit');
         
