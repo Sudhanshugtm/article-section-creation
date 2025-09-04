@@ -2905,13 +2905,13 @@
             chipMenu.style.display = 'none';
             return;
           }
-          var assistMenuEl = document.getElementById('assistMenu');
-          var assistOpen = (typeof window.__assistMenuOpen === 'boolean') ? window.__assistMenuOpen : (assistMenuEl && assistMenuEl.style.display !== 'none');
-          if (assistOpen) {
-            if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
-            try { window.__assistMenuOpen = false; } catch(_) {}
-            return;
-          }
+          // If assist menu is open, close it and return (true toggle)
+          try {
+            if (typeof isAssistMenuOpen === 'function' && isAssistMenuOpen()) {
+              if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+              return;
+            }
+          } catch(_) {}
           // 1) If a template placeholder is focused or selection is inside one, open chip inline menu
           var active = document.activeElement;
           var focusedPh = (active && active.classList && active.classList.contains('template-placeholder')) ? active : null;
@@ -2946,8 +2946,11 @@
       var desktopBtn = document.getElementById('addSectionBtn');
       if (desktopBtn) {
         try { desktopBtn.title = 'Suggestions (press /)'; desktopBtn.setAttribute('aria-keyshortcuts','/'); } catch(_) {}
+        // Prevent focus/selection churn that can trigger re-anchoring side effects
+        desktopBtn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); });
         desktopBtn.addEventListener('click', function(e){
           e.preventDefault();
+          e.stopPropagation();
           openInlineSuggestionsFromToolbar();
         });
       }
@@ -3269,6 +3272,30 @@
             }
           }, 0);
         } catch(_) {}
+      }
+
+      // Menu state helpers
+      function isAssistMenuOpen(){
+        try {
+          var m = document.getElementById('assistMenu');
+          if (!m) return false;
+          if (window.__assistMenuOpen === true) return true;
+          if (m.style && m.style.display === 'none') return false;
+          var r = m.getBoundingClientRect();
+          return (r.width > 0 || r.height > 0);
+        } catch(_) { return false; }
+      }
+      function closeAssistMenu(){
+        try {
+          var m = document.getElementById('assistMenu');
+          if (!m) return false;
+          m.style.display = 'none';
+          window.__assistMenuOpen = false;
+          frozen = false;
+          schedulePosition();
+          window.restorePlaceholderIfEmpty();
+          return true;
+        } catch(_) { return false; }
       }
 
       // Helpers to hide/show the suggestions chip
@@ -3895,12 +3922,8 @@
         // Allow certain programmatic clicks (e.g., auto-focusing placeholders after insert)
         if (window.__suppressAssistMenuHide) return;
         const inAssist = !!e.target.closest('#assistChip') || !!e.target.closest('#assistMenu');
-        if (!inAssist && menu.style.display !== 'none') {
-          menu.style.display = 'none';
-          frozen = false;
-          schedulePosition();
-          window.restorePlaceholderIfEmpty();
-          try { window.__assistMenuOpen = false; } catch(_) {}
+        if (!inAssist && isAssistMenuOpen()) {
+          closeAssistMenu();
         }
       }, true);
 
@@ -4541,7 +4564,7 @@
           return (r.width > 0 || r.height > 0);
         } catch(_) { return false; }
       }
-      var isMenuOpen = isVisible(menu);
+      var isMenuOpen = (typeof isAssistMenuOpen === 'function') ? isAssistMenuOpen() : isVisible(menu);
       if (!isMenuOpen) {
         var editor = document.getElementById('editor');
         var lastAnchor = (typeof window.__assistGetLastAnchor === 'function') ? window.__assistGetLastAnchor() : null;
