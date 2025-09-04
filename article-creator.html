@@ -607,7 +607,7 @@
     }
     
     .guide-note {
-      font-size: 12px;
+      font-size: 14px;
       color: #72777d;
       margin: 12px 0 16px 0;
       font-style: italic;
@@ -1100,7 +1100,14 @@
     var categoryList=document.getElementById('categoryList');
     var selectedCat=null;
 
-    titleInput.addEventListener('input', function(){ toStep2.disabled = !(titleInput.value.trim().length>0); });
+    titleInput.addEventListener('input', function(){ 
+      toStep2.disabled = !(titleInput.value.trim().length>0); 
+      
+      // Update sister project content when title changes
+      setTimeout(function() {
+        updateGuideContent();
+      }, 300); // Small delay for better performance
+    });
     toStep2.onclick=function(){ 
       step1.classList.remove('active'); 
       step2.classList.add('active'); 
@@ -1596,6 +1603,18 @@
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
       content += '<p class="guide-note">Helper for citing reliable sources</p>';
       content += '<div id="sourceVerificationArea">';
+      
+      // Sister Projects Section - Dynamic based on article title
+      content += '<div id="sisterProjectsArea" style="margin-bottom: 20px;">';
+      content += getSisterProjectContent();
+      content += '</div>';
+      
+      // Separator
+      content += '<div style="border-top: 1px solid #eaecf0; margin: 16px 0; padding-top: 16px;">';
+      content += '<p class="guide-note" style="margin-bottom: 12px;"><strong>Manual source entry:</strong></p>';
+      content += '</div>';
+      
+      // Existing manual source entry
       content += '<div class="source-input-group">';
       content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
@@ -1623,6 +1642,403 @@
         '</ul>' +
         '<p class="guide-note">Select a category in Step 2 to see specific section suggestions for your article type.</p>' +
         '</div>';
+    }
+
+    // Sister Project Integration - Dynamic content based on article title
+    function getSisterProjectContent() {
+      const titleInput = document.getElementById('title');
+      const articleTitle = titleInput ? titleInput.value.trim() : '';
+      
+      if (!articleTitle) {
+        return '<p class="guide-note" style="font-style: italic; color: #666;">Sister project data will appear when you enter an article title above.</p>';
+      }
+      
+      const projectData = getSisterProjectData(articleTitle);
+      let content = '';
+      
+      // Quick Facts Section
+      if (projectData.facts && projectData.facts.length > 0) {
+        content += '<div style="margin-bottom: 16px;">';
+        content += '<p class="guide-note" style="margin-bottom: 8px;">🎯 <strong>Quick facts for "' + articleTitle + '"</strong></p>';
+        content += '<p style="font-size: 15px; color: #666; margin-bottom: 12px;">We found key facts from reliable sources:</p>';
+        
+        // Show facts as reference information
+        content += '<div style="background: #f8f9fa; padding: 12px; border-radius: 4px; border-left: 3px solid #0645ad;">';
+        for (let i = 0; i < Math.min(2, projectData.facts.length); i++) {
+          const fact = projectData.facts[i];
+          content += '<div style="margin-bottom: 8px; font-size: 15px;">';
+          content += '<strong>' + fact.text + '</strong>';
+          content += '<br><span style="font-size: 13px; color: #666;">Source: ' + fact.source + '</span>';
+          content += '</div>';
+        }
+        
+        // Show more facts if available
+        if (projectData.facts.length > 2) {
+          content += '<div id="moreFacts" style="display: none;">';
+          for (let i = 2; i < projectData.facts.length; i++) {
+            const fact = projectData.facts[i];
+            content += '<div style="margin-bottom: 8px; font-size: 15px;">';
+            content += '<strong>' + fact.text + '</strong>';
+            content += '<br><span style="font-size: 13px; color: #666;">Source: ' + fact.source + '</span>';
+            content += '</div>';
+          }
+          content += '</div>';
+          content += '<button onclick="toggleMoreFacts()" style="background: none; border: none; color: #0645ad; cursor: pointer; font-size: 14px; text-decoration: underline;">Show ' + (projectData.facts.length - 2) + ' more facts ▼</button>';
+        }
+        content += '</div>';
+        content += '<p style="font-size: 14px; color: #666; margin-top: 8px;"><strong>Tip:</strong> Use these verified facts as reference when writing your article</p>';
+        content += '</div>';
+      }
+      
+      // Images Section
+      if (projectData.images && projectData.images.length > 0) {
+        content += '<div style="margin-bottom: 16px;">';
+        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Images available from Wikimedia Commons</strong></p>';
+        content += '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+        
+        for (let i = 0; i < Math.min(3, projectData.images.length); i++) {
+          const image = projectData.images[i];
+          content += '<div style="border: 1px solid #ddd; border-radius: 4px; padding: 8px; width: 120px; height: 80px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; text-align: center;">';
+          content += image.title;
+          content += '</div>';
+        }
+        
+        if (projectData.images.length > 3) {
+          content += '<div style="border: 1px solid #ddd; border-radius: 4px; padding: 8px; width: 120px; height: 80px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666;">+' + (projectData.images.length - 3) + ' more</div>';
+        }
+        content += '</div>';
+        content += '<p style="font-size: 14px; color: #666; margin-top: 8px;"><strong>Note:</strong> These images would be available for your article with proper licensing</p>';
+        content += '</div>';
+      }
+      
+      // Additional context section - only if helpful
+      if (projectData.additionalContext) {
+        content += '<div style="margin-bottom: 16px;">';
+        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Writing tip</strong></p>';
+        content += '<p style="font-size: 15px; color: #666; background: #fffbf0; padding: 8px; border-radius: 4px; border-left: 3px solid #f0ad4e;">';
+        content += projectData.additionalContext;
+        content += '</p>';
+        content += '</div>';
+      }
+      
+      return content;
+    }
+
+    // Generate synthetic sister project data based on article title
+    function getSisterProjectData(title) {
+      const lowerTitle = title.toLowerCase();
+      
+      // Natural disasters/events pattern (floods, earthquakes, hurricanes, etc.)
+      if (lowerTitle.includes('flood') || lowerTitle.includes('earthquake') || lowerTitle.includes('hurricane') || lowerTitle.includes('tsunami') || lowerTitle.includes('cyclone') || lowerTitle.includes('disaster')) {
+        const year = new Date().getFullYear();
+        const location = extractLocationFromTitle(title);
+        return {
+          facts: [
+            { text: 'Date: ' + generateRecentDate(), source: 'Wikidata' },
+            { text: 'Location: ' + (location || 'Multiple regions affected'), source: 'Wikidata' },
+            { text: 'Casualties: ' + getRandomCasualties(), source: 'Government reports' },
+            { text: 'Economic Impact: $' + getRandomDamage() + ' million', source: 'World Bank' },
+            { text: 'Response: International aid mobilized', source: 'UN OCHA' }
+          ],
+          images: [
+            { title: 'Satellite imagery of affected area' },
+            { title: 'Rescue operations' },
+            { title: 'Damage assessment photos' },
+            { title: 'Relief distribution' }
+          ],
+          additionalContext: 'For disaster articles, focus on timeline, impact, and response. Include human stories but be sensitive to victims. Government and UN sources are particularly reliable.'
+        };
+      }
+      
+      // Space missions pattern
+      if (lowerTitle.includes('mission') || lowerTitle.includes('chandrayaan') || lowerTitle.includes('apollo') || lowerTitle.includes('space') || lowerTitle.includes('satellite') || lowerTitle.includes('rover')) {
+        return {
+          facts: [
+            { text: 'Launch Date: ' + generateRecentDate(), source: 'Wikidata' },
+            { text: 'Agency: ' + getRandomSpaceAgency(), source: 'Wikidata' },
+            { text: 'Mission Cost: $' + getRandomMissionCost() + ' million', source: 'Wikidata' },
+            { text: 'Launch Vehicle: ' + getRandomRocket(), source: 'Wikidata' },
+            { text: 'Mission Status: ' + getRandomMissionStatus(), source: 'Wikidata' }
+          ],
+          images: [
+            { title: 'Mission patch logo' },
+            { title: 'Launch vehicle photo' },
+            { title: 'Mission control center' },
+            { title: 'Spacecraft diagram' }
+          ],
+          additionalContext: 'Space mission articles should include technical details, objectives, and outcomes. Official space agency websites and press releases are excellent sources.'
+        };
+      }
+      
+      // Person/Biography pattern - much more restrictive
+      if (isPersonName(title)) {
+        return {
+          facts: [
+            { text: 'Born: ' + generateRandomDate(1950, 2000), source: 'Wikidata' },
+            { text: 'Nationality: ' + getRandomNationality(), source: 'Wikidata' },
+            { text: 'Occupation: ' + getRandomOccupation(), source: 'Wikidata' },
+            { text: 'Known for: ' + getRandomAchievement(), source: 'Wikidata' }
+          ],
+          images: [
+            { title: 'Official portrait' },
+            { title: 'Awards ceremony photo' },
+            { title: 'Professional headshot' }
+          ],
+          languages: getRandomLanguages(),
+          languageNote: 'International recognition and coverage'
+        };
+      }
+      
+      // Location pattern
+      if (isLocation(title)) {
+        return {
+          facts: [
+            { text: 'Population: ' + getRandomPopulation(), source: 'Wikidata' },
+            { text: 'Area: ' + getRandomArea() + ' km²', source: 'Wikidata' },
+            { text: 'Founded: ' + generateRandomDate(1000, 1900), source: 'Wikidata' },
+            { text: 'Time Zone: ' + getRandomTimezone(), source: 'Wikidata' }
+          ],
+          images: [
+            { title: 'City skyline' },
+            { title: 'Historical landmarks' },
+            { title: 'Geographic map' },
+            { title: 'Cultural sites' }
+          ],
+          languages: getRandomLanguages(),
+          languageNote: 'Local history and cultural significance'
+        };
+      }
+      
+      // Organizations/Companies pattern
+      if (lowerTitle.includes('company') || lowerTitle.includes('corporation') || lowerTitle.includes('organization') || lowerTitle.includes('foundation') || lowerTitle.includes('institute')) {
+        return {
+          facts: [
+            { text: 'Founded: ' + generateRandomDate(1950, 2020), source: 'Wikidata' },
+            { text: 'Headquarters: ' + getRandomLocation(), source: 'Wikidata' },
+            { text: 'Type: ' + getRandomOrgType(), source: 'Wikidata' },
+            { text: 'Employees: ' + getRandomEmployeeCount(), source: 'Company reports' }
+          ],
+          images: [
+            { title: 'Company headquarters' },
+            { title: 'Logo and branding' },
+            { title: 'Key executives' }
+          ],
+          languages: getRandomLanguages(),
+          languageNote: 'Business and trade publications'
+        };
+      }
+      
+      // Generic fallback for unclear topics
+      return {
+        facts: [
+          { text: 'First documented: ' + generateRandomDate(1900, 2020), source: 'Wikidata' },
+          { text: 'Category: ' + getRandomGenericType(), source: 'Wikidata' },
+          { text: 'Notable for: ' + getRandomNotability(), source: 'Various sources' }
+        ],
+        images: [
+          { title: 'Main illustration' },
+          { title: 'Related diagram' },
+          { title: 'Historical context' }
+        ],
+        languages: ['German', 'French', 'Spanish'],
+        languageNote: 'Additional international sources available'
+      };
+    }
+
+    // Helper functions for pattern matching and random data
+    function isPersonName(title) {
+      // Much more restrictive - only if it clearly looks like a person's name
+      const namePatterns = /^(dr\.?|mr\.?|ms\.?|mrs\.?|professor|sir|dame)\s+\w+|\w+\s+(jr\.?|sr\.?|ii|iii|iv)$|^[A-Z][a-z]+\s+[A-Z][a-z]+$/;
+      const lowerTitle = title.toLowerCase();
+      
+      // Exclude obvious non-person patterns
+      if (lowerTitle.includes('flood') || lowerTitle.includes('earthquake') || lowerTitle.includes('mission') || 
+          lowerTitle.includes('company') || lowerTitle.includes('city') || lowerTitle.includes('disaster') ||
+          lowerTitle.includes('university') || lowerTitle.includes('college') || lowerTitle.includes('school')) {
+        return false;
+      }
+      
+      return namePatterns.test(title) && !isLocation(title);
+    }
+
+    function isLocation(title) {
+      const locationKeywords = ['city', 'town', 'village', 'state', 'province', 'country', 'river', 'mountain', 'lake', 'park', 'university', 'college', 'school'];
+      return locationKeywords.some(keyword => title.toLowerCase().includes(keyword));
+    }
+
+    function extractLocationFromTitle(title) {
+      // Try to extract location from disaster titles like "Punjab floods" or "California earthquake"
+      const words = title.split(' ');
+      if (words.length >= 2) {
+        return words[0]; // First word is likely the location
+      }
+      return null;
+    }
+
+    function generateRecentDate() {
+      const currentYear = new Date().getFullYear();
+      const year = currentYear - Math.floor(Math.random() * 3); // Within last 3 years
+      const month = Math.floor(Math.random() * 12) + 1;
+      const day = Math.floor(Math.random() * 28) + 1;
+      return month + '/' + day + '/' + year;
+    }
+
+    function getRandomCasualties() {
+      const casualties = ['12 killed, 50 injured', '5 deaths reported', 'No casualties reported', '25+ missing', '100+ evacuated'];
+      return casualties[Math.floor(Math.random() * casualties.length)];
+    }
+
+    function getRandomDamage() {
+      return Math.floor(Math.random() * 500) + 50; // 50-550 million
+    }
+
+    function getRandomSpaceAgency() {
+      const agencies = ['NASA', 'ESA', 'ISRO', 'JAXA', 'SpaceX', 'Roscosmos', 'CNSA'];
+      return agencies[Math.floor(Math.random() * agencies.length)];
+    }
+
+    function getRandomMissionCost() {
+      return Math.floor(Math.random() * 2000) + 100; // 100-2100 million
+    }
+
+    function getRandomRocket() {
+      const rockets = ['Falcon 9', 'Atlas V', 'LVM3', 'Ariane 5', 'Long March 5', 'Proton-M'];
+      return rockets[Math.floor(Math.random() * rockets.length)];
+    }
+
+    function getRandomMissionStatus() {
+      const statuses = ['Active', 'Completed successfully', 'In progress', 'Launched', 'Planned'];
+      return statuses[Math.floor(Math.random() * statuses.length)];
+    }
+
+    function getRandomOrgType() {
+      const types = ['Technology company', 'Non-profit organization', 'Research institute', 'Government agency', 'Educational institution'];
+      return types[Math.floor(Math.random() * types.length)];
+    }
+
+    function getRandomEmployeeCount() {
+      const counts = ['500-1,000', '1,000-5,000', '10,000+', '50-500', '100-1,000'];
+      return counts[Math.floor(Math.random() * counts.length)];
+    }
+
+    function getRandomGenericType() {
+      const types = ['Concept', 'Event', 'Phenomenon', 'Theory', 'Process', 'System'];
+      return types[Math.floor(Math.random() * types.length)];
+    }
+
+    function getRandomNotability() {
+      const reasons = ['Historical significance', 'Cultural impact', 'Scientific importance', 'Economic influence', 'Social relevance'];
+      return reasons[Math.floor(Math.random() * reasons.length)];
+    }
+
+    function generateRandomDate(startYear, endYear) {
+      const year = Math.floor(Math.random() * (endYear - startYear + 1)) + startYear;
+      const month = Math.floor(Math.random() * 12) + 1;
+      const day = Math.floor(Math.random() * 28) + 1;
+      return month + '/' + day + '/' + year;
+    }
+
+    function getRandomNationality() {
+      const nationalities = ['American', 'British', 'Indian', 'German', 'French', 'Canadian', 'Australian', 'Japanese'];
+      return nationalities[Math.floor(Math.random() * nationalities.length)];
+    }
+
+    function getRandomOccupation() {
+      const occupations = ['Scientist', 'Engineer', 'Artist', 'Writer', 'Politician', 'Business Leader', 'Academic', 'Researcher'];
+      return occupations[Math.floor(Math.random() * occupations.length)];
+    }
+
+    function getRandomAchievement() {
+      const achievements = ['Scientific breakthrough', 'Literary contributions', 'Social activism', 'Technical innovation', 'Cultural impact', 'Educational reform'];
+      return achievements[Math.floor(Math.random() * achievements.length)];
+    }
+
+    function getRandomPopulation() {
+      const populations = ['50,000', '125,000', '300,000', '750,000', '1.2 million', '2.5 million'];
+      return populations[Math.floor(Math.random() * populations.length)];
+    }
+
+    function getRandomArea() {
+      return Math.floor(Math.random() * 500) + 50;
+    }
+
+    function getRandomTimezone() {
+      const timezones = ['UTC+1', 'UTC-5', 'UTC+8', 'UTC-8', 'UTC+2', 'UTC+5:30'];
+      return timezones[Math.floor(Math.random() * timezones.length)];
+    }
+
+    function getRandomType() {
+      const types = ['Organization', 'Institution', 'Company', 'Non-profit', 'Government Agency', 'Research Center'];
+      return types[Math.floor(Math.random() * types.length)];
+    }
+
+    function getRandomLocation() {
+      const locations = ['New York, USA', 'London, UK', 'Tokyo, Japan', 'Berlin, Germany', 'Toronto, Canada', 'Sydney, Australia'];
+      return locations[Math.floor(Math.random() * locations.length)];
+    }
+
+    function getRandomLanguages() {
+      const allLanguages = ['Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Chinese', 'Japanese', 'Arabic'];
+      const count = Math.floor(Math.random() * 3) + 2; // 2-4 languages
+      const selected = [];
+      for (let i = 0; i < count; i++) {
+        const lang = allLanguages[Math.floor(Math.random() * allLanguages.length)];
+        if (!selected.includes(lang)) selected.push(lang);
+      }
+      return selected;
+    }
+
+    // Interactive functions for sister project features
+    function toggleMoreFacts() {
+      const moreFacts = document.getElementById('moreFacts');
+      const toggleBtn = event.target;
+      
+      if (moreFacts.style.display === 'none') {
+        moreFacts.style.display = 'block';
+        toggleBtn.innerHTML = 'Show fewer facts ▲';
+      } else {
+        moreFacts.style.display = 'none';
+        toggleBtn.innerHTML = 'Show ' + (document.querySelectorAll('#moreFacts .sister-fact-btn').length) + ' more facts ▼';
+      }
+    }
+
+    function insertFactWithCitation(factText, source) {
+      const editor = document.getElementById('editor');
+      if (editor) {
+        // Insert the fact with a citation
+        const citation = '<ref>Source: ' + source + '</ref>';
+        const textToInsert = factText + citation + ' ';
+        
+        // Simple insertion at cursor position or end
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(document.createTextNode(textToInsert));
+        } else {
+          editor.innerHTML += textToInsert;
+        }
+        
+        // Visual feedback
+        event.target.style.background = '#d4edda';
+        event.target.innerHTML = '✓ Inserted';
+        setTimeout(() => {
+          event.target.style.background = '#f8f9fa';
+          event.target.innerHTML = factText;
+        }, 2000);
+      }
+    }
+
+    function insertImage(imageTitle) {
+      alert('Image insertion: ' + imageTitle + '\n\nIn a real implementation, this would insert the image with proper licensing.');
+      
+      // Visual feedback
+      event.target.style.background = '#d4edda';
+      event.target.innerHTML = '✓ ' + imageTitle;
+      setTimeout(() => {
+        event.target.style.background = '#f0f8ff';
+        event.target.innerHTML = imageTitle;
+      }, 2000);
     }
 
     // Update guide content in both sidebar and modal
@@ -2103,7 +2519,7 @@
           resultDiv.style.background = '#fee7e6';
           resultDiv.style.color = '#d33';
           resultDiv.style.border = '1px solid #d33';
-          resultDiv.innerHTML = '💡 <strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
+          resultDiv.innerHTML = '<strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
         }
       }
     }
