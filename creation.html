@@ -895,6 +895,12 @@
       color: #202122;
       box-shadow: none;
     }
+
+    /* Override: ensure VE toolbar does not scroll; clip overflow for stability */
+    .ve-bar {
+      overflow: hidden !important;
+      overflow-x: hidden !important;
+    }
   </style>
 </head>
 <body>
