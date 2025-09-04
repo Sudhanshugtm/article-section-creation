@@ -2823,12 +2823,68 @@
 
     // Bring back Suggestions via toolbar buttons
     (function bindSuggestionsToolbar(){
+      function openInlineSuggestionsFromToolbar() {
+        function isVisible(el){
+          try {
+            if (!el) return false;
+            if (el.style && el.style.display === 'none') return false;
+            const r = el.getBoundingClientRect();
+            return (r.width > 0 || r.height > 0);
+          } catch(_) { return false; }
+        }
+        try {
+          var editor = document.getElementById('editor');
+          if (!editor) return;
+          // Toggle behavior: if a suggestion menu is already open, close it
+          var chipMenu = document.getElementById('chipSuggestMenu');
+          if (chipMenu && chipMenu.style.display !== 'none') {
+            chipMenu.style.display = 'none';
+            return;
+          }
+          var assistMenuEl = document.getElementById('assistMenu');
+          var assistOpen = (typeof window.__assistMenuOpen === 'boolean') ? window.__assistMenuOpen : (assistMenuEl && assistMenuEl.style.display !== 'none');
+          if (assistOpen) {
+            if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip();
+            try { window.__assistMenuOpen = false; } catch(_) {}
+            return;
+          }
+          // 1) If a template placeholder is focused or selection is inside one, open chip inline menu
+          var active = document.activeElement;
+          var focusedPh = (active && active.classList && active.classList.contains('template-placeholder')) ? active : null;
+          if (!focusedPh) {
+            try {
+              var sel = window.getSelection();
+              if (sel && sel.rangeCount) {
+                var node = sel.getRangeAt(0).startContainer;
+                if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+                if (node && node.closest) focusedPh = node.closest('.template-placeholder');
+              }
+            } catch(_) {}
+          }
+          if (focusedPh && typeof showChipSuggestMenu === 'function') {
+            showChipSuggestMenu(focusedPh);
+            return;
+          }
+          // 2) Otherwise, prefer the inline Suggestions panel at caret (slash-style)
+          if (typeof window.showSlashSuggestions === 'function') {
+            window.showSlashSuggestions();
+            try { window.__assistMenuOpen = true; } catch(_) {}
+            return;
+          }
+          // 3) Fallback to toggling the floating Suggestions chip
+          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+        } catch(_) {
+          // Final fallback
+          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+        }
+      }
+
       var desktopBtn = document.getElementById('addSectionBtn');
       if (desktopBtn) {
         try { desktopBtn.title = 'Suggestions (press /)'; desktopBtn.setAttribute('aria-keyshortcuts','/'); } catch(_) {}
         desktopBtn.addEventListener('click', function(e){
           e.preventDefault();
-          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+          openInlineSuggestionsFromToolbar();
         });
       }
       var srcBtn = document.getElementById('openSourceBtn');
@@ -2842,7 +2898,7 @@
       if (mobileBtn) {
         mobileBtn.addEventListener('click', function(e){
           e.preventDefault();
-          if (typeof toggleSuggestionsChip === 'function') toggleSuggestionsChip();
+          openInlineSuggestionsFromToolbar();
         });
       }
     })();
@@ -2861,7 +2917,63 @@
     Promise.all([loadSuggestions(), loadReliableSources(), loadTemplates()]).then(function() {
       updateGuideContent();
       initializeSourceModal();
+      initializeInsertMenu();
     });
+
+    // Basic handlers for the Insert dropdown (image/table/special char)
+    function initializeInsertMenu() {
+      var menu = document.getElementById('menu-insert');
+      if (!menu) return;
+
+      function ensureEditorFocus() {
+        try { var ed = document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
+      }
+
+      menu.querySelectorAll('[data-insert]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          var editor = document.getElementById('editor');
+          var kind = this.getAttribute('data-insert');
+          // Make sure we are in the editor before inserting
+          if (editor) ensureSelectionInEditor(editor);
+          switch(kind) {
+            case 'image': {
+              var url = prompt('Image URL');
+              if (!url) return;
+              var html = '<p><img src="'+ url.replace(/"/g,'&quot;') +'" alt="" style="max-width:100%; height:auto;"/></p>';
+              insertHTMLAtCursor(html, editor);
+              ensureEditorFocus();
+              break;
+            }
+            case 'table': {
+              var html = ''+
+                '<table style="border-collapse:collapse; width:100%; max-width:100%; margin:8px 0;">'+
+                  '<tbody>'+[
+                    '<tr><td style="border:1px solid #c8ccd1; padding:6px;">Cell</td><td style="border:1px solid #c8ccd1; padding:6px;">Cell</td></tr>',
+                    '<tr><td style="border:1px solid #c8ccd1; padding:6px;">Cell</td><td style="border:1px solid #c8ccd1; padding:6px;">Cell</td></tr>'
+                  ].join('') + '</tbody>'+
+                '</table>';
+              insertHTMLAtCursor(html, editor);
+              ensureEditorFocus();
+              break;
+            }
+            case 'char': {
+              var ch = prompt('Enter a special character to insert');
+              if (!ch) return;
+              insertHTMLAtCursor(ch, editor);
+              ensureEditorFocus();
+              break;
+            }
+            case 'template':
+            case 'math':
+            default: {
+              alert('This insert is mocked in the demo.');
+              break;
+            }
+          }
+        });
+      });
+    }
 
     // Smart Chips functionality
     let smartChipsContainer, templatePopup, currentCursorPosition;
@@ -3098,6 +3210,7 @@
         frozen = false;
         // After hiding, if the editor is empty, bring back the placeholder
         window.restorePlaceholderIfEmpty();
+        try { window.__assistMenuOpen = false; } catch(_) {}
       };
       window.showSuggestionsChip = function(anchorEl) {
         if (chip) chip.style.display = 'inline-flex';
@@ -3107,6 +3220,7 @@
         } else {
           schedulePosition();
         }
+        // Only mark menu open when the actual menu is shown; this keeps anchor-only cases neutral.
       };
       // Expose small control for other handlers
       window.__assistSetFrozen = function(v){
@@ -3287,6 +3401,10 @@
       }
       
       function buildMainMenu() {
+        // Always get fresh menu reference to avoid stale closures
+        var currentMenu = document.getElementById('assistMenu');
+        if (!currentMenu) return;
+        
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
         // Context-aware header: Lead vs current section
@@ -3464,9 +3582,9 @@
           contextBlock +
           leadSectionBlock +
           sectionBlock;
-        menu.innerHTML = html;
+        currentMenu.innerHTML = html;
         // Bind actions - handle multiple intro template buttons
-        var tplBtns = menu.querySelectorAll('[data-insert-intro-template]');
+        var tplBtns = currentMenu.querySelectorAll('[data-insert-intro-template]');
         tplBtns.forEach(function(tplBtn) {
           // Prevent focus from moving off the editor
           tplBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
@@ -3474,7 +3592,7 @@
             e.preventDefault();
             e.stopPropagation();
             insertIntroTemplate(title, cat);
-            menu.style.display='none';
+            currentMenu.style.display='none';
             if (window.__assistSetFrozen) window.__assistSetFrozen(false);
             // Ensure caret is positioned inside the inserted template
             setTimeout(function(){
@@ -3483,24 +3601,28 @@
             }, 0);
           });
         });
-        var hideBtn = menu.querySelector('#assistHideBtn');
+        var hideBtn = currentMenu.querySelector('#assistHideBtn');
         if (hideBtn) hideBtn.addEventListener('click', function(e){ e.preventDefault(); if (typeof hideSuggestionsChip === 'function') hideSuggestionsChip(); });
         // Bind insert buttons for sections in preview
-        menu.querySelectorAll('[data-insert-section]').forEach(function(btn){
+        currentMenu.querySelectorAll('[data-insert-section]').forEach(function(btn){
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name);
             // Keep the menu open and refresh to reflect the new "Added" state
             setTimeout(function(){
               try {
-                buildMainMenu();
-                menu.style.display = 'block';
+                // Get fresh menu reference to avoid stale closure issues
+                var currentMenu = document.getElementById('assistMenu');
+                if (currentMenu && window.buildMainMenu) {
+                  window.buildMainMenu();
+                  currentMenu.style.display = 'block';
+                }
                 if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
               } catch(_) {}
             }, 50);
           });
         });
-        var viewAllBtn = menu.querySelector('[data-view-all-sections]');
+        var viewAllBtn = currentMenu.querySelector('[data-view-all-sections]');
         if (viewAllBtn) viewAllBtn.addEventListener('click', function(){ buildSectionMenu(); });
         bindMenuHandlers();
         // Active state
@@ -3508,6 +3630,10 @@
       }
       
       function buildSectionMenu() {
+        // Always get fresh menu reference to avoid stale closures
+        var currentMenu = document.getElementById('assistMenu');
+        if (!currentMenu) return;
+        
         var cat = (window.selectedCat || 'other');
         function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
         var tpl = window.templatesData;
@@ -3535,18 +3661,24 @@
           });
         }
         html += '<div class="assist-sep"></div><button class="assist-item" data-back="1"><div class="template-option-title">Back</div></button>';
-        menu.innerHTML = html;
+        currentMenu.innerHTML = html;
         bindSectionHandlers();
       }
       
       function bindMenuHandlers() {
-        var items = menu.querySelectorAll('[data-assist]');
+        // Get fresh menu reference to avoid stale closures
+        var currentMenu = document.getElementById('assistMenu');
+        if (!currentMenu) return;
+        
+        var items = currentMenu.querySelectorAll('[data-assist]');
         items.forEach(function(btn){
           btn.addEventListener('click', function(ev){
             var action = this.getAttribute('data-assist');
             if (action === 'source') {
               try { if (typeof openSourceModalDialog === 'function') { openSourceModalDialog(); } else { openReferenceDialog(); } } catch(_) { openReferenceDialog(); }
-              menu.style.display = 'none';
+              // Get fresh menu reference for display property
+              var menuForHide = document.getElementById('assistMenu');
+              if (menuForHide) menuForHide.style.display = 'none';
             } else if (action === 'section') {
               buildSectionMenu();
             }
@@ -3555,6 +3687,10 @@
       }
 
       function buildIntroMenu() {
+        // Always get fresh menu reference to avoid stale closures
+        var currentMenu = document.getElementById('assistMenu');
+        if (!currentMenu) return;
+        
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
         var samples = generateSampleIntroductions(title, cat);
@@ -3565,24 +3701,34 @@
         // Chip-style starter
         html += '<div class="assist-sep"></div>';
         html += '<div class="intro-sample"><div class="intro-text">'+ escapeHtml(getChipStyleStarterPreview(title, cat)) +'</div><div class="action-row"><button class="action-chip" data-insert-chip-starter>Insert</button><button class="action-chip" data-back="1">Back</button></div></div>';
-        menu.innerHTML = html;
+        currentMenu.innerHTML = html;
         // Bind actions
-        menu.querySelectorAll('[data-insert-intro]').forEach(function(btn){
+        currentMenu.querySelectorAll('[data-insert-intro]').forEach(function(btn){
           btn.addEventListener('click', function(){
             var idx = parseInt(this.getAttribute('data-insert-intro'), 10);
             insertIntroText(samples[idx]);
-            menu.style.display = 'none';
+            // Get fresh menu reference for display property
+            var menuForHide = document.getElementById('assistMenu');
+            if (menuForHide) menuForHide.style.display = 'none';
             if (window.__assistSetFrozen) window.__assistSetFrozen(false);
           });
         });
-        var chipBtn = menu.querySelector('[data-insert-chip-starter]');
-        if (chipBtn) chipBtn.addEventListener('click', function(){ insertChipStyleStarter(title, cat); menu.style.display = 'none'; if (window.__assistSetFrozen) window.__assistSetFrozen(false); });
-        var back = menu.querySelector('[data-back]');
-        if (back) back.addEventListener('click', function(){ buildMainMenu(); });
+        var chipBtn = currentMenu.querySelector('[data-insert-chip-starter]');
+        if (chipBtn) chipBtn.addEventListener('click', function(){ insertChipStyleStarter(title, cat); 
+          var menuForHide = document.getElementById('assistMenu');
+          if (menuForHide) menuForHide.style.display = 'none';
+          if (window.__assistSetFrozen) window.__assistSetFrozen(false); 
+        });
+        var back = currentMenu.querySelector('[data-back]');
+        if (back) back.addEventListener('click', function(){ if (window.buildMainMenu) window.buildMainMenu(); });
       }
       
       function bindSectionHandlers() {
-        var items = menu.querySelectorAll('[data-insert-section]');
+        // Get fresh menu reference to avoid stale closures
+        var currentMenu = document.getElementById('assistMenu');
+        if (!currentMenu) return;
+        
+        var items = currentMenu.querySelectorAll('[data-insert-section]');
         items.forEach(function(btn){
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
@@ -3590,15 +3736,19 @@
             // Keep the menu open and refresh to reflect the new "Added" state
             setTimeout(function(){
               try {
-                buildMainMenu();
-                menu.style.display = 'block';
+                // Get fresh menu reference to avoid stale closure issues
+                var refreshedMenu = document.getElementById('assistMenu');
+                if (refreshedMenu && window.buildMainMenu) {
+                  window.buildMainMenu();
+                  refreshedMenu.style.display = 'block';
+                }
                 if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
               } catch(_) {}
             }, 50);
           });
         });
-        var back = menu.querySelector('[data-back]');
-        if (back) back.addEventListener('click', function(){ buildMainMenu(); });
+        var back = currentMenu.querySelector('[data-back]');
+        if (back) back.addEventListener('click', function(){ if (window.buildMainMenu) window.buildMainMenu(); });
       }
       
       // Freeze on mousedown to prevent selectionchange from moving chip before click
@@ -3659,10 +3809,12 @@
           buildMainMenu();
           menu.style.display = 'block';
           frozen = true;
+          try { window.__assistMenuOpen = true; } catch(_) {}
         } else {
           menu.style.display = 'none';
           frozen = false;
           schedulePosition();
+          try { window.__assistMenuOpen = false; } catch(_) {}
         }
       });
 
@@ -3676,12 +3828,43 @@
           frozen = false;
           schedulePosition();
           window.restorePlaceholderIfEmpty();
+          try { window.__assistMenuOpen = false; } catch(_) {}
         }
       }, true);
 
       // Expose helpers globally for external callers
       window.buildMainMenu = buildMainMenu;
+      window.buildSectionMenu = buildSectionMenu;
       window.positionChipBelowElement = positionChipBelowElement;
+      window.showSlashSuggestions = showSlashSuggestions;
+
+      // Robust event delegation for section insertion from Suggestions menu
+      if (!window.__assistMenuDelegated) {
+        window.__assistMenuDelegated = true;
+        document.addEventListener('click', function(ev){
+          var target = ev.target && ev.target.closest && ev.target.closest('#assistMenu [data-insert-section]');
+          if (!target) return;
+          ev.preventDefault();
+          ev.stopPropagation();
+          try {
+            var name = target.getAttribute('data-insert-section');
+            if (name && typeof insertSectionSkeleton === 'function') {
+              insertSectionSkeleton(name);
+              // Keep menu open and refreshed to reflect Added state
+              setTimeout(function(){
+                try {
+                  var menu = document.getElementById('assistMenu');
+                  if (menu && window.buildMainMenu) {
+                    window.buildMainMenu();
+                    menu.style.display = 'block';
+                  }
+                  if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
+                } catch(_) {}
+              }, 50);
+            }
+          } catch(_) {}
+        }, true);
+      }
 
       // Slash command: open Suggestions (Notion-style)
       function showSlashSuggestions() {
@@ -3711,6 +3894,7 @@
             menu.style.display = 'block';
             menu.style.left = (document.getElementById('assistChip')?.style.left || '0px');
             menu.style.top = ((parseInt(document.getElementById('assistChip')?.style.top || '0', 10) + 32) + 'px');
+            try { window.__assistMenuOpen = true; } catch(_) {}
           }
         } catch(_) {}
       }
@@ -4239,6 +4423,7 @@
     // Toggle Suggestions chip via toolbar button
     function toggleSuggestionsChip() {
       var chip = document.getElementById('assistChip');
+      var menu = document.getElementById('assistMenu');
       if (!chip) return;
       var editor = document.getElementById('editor');
       function selectionInsideEditor() {
@@ -4263,7 +4448,17 @@
         if (!best) best = blocks.find(function(el){ return el.tagName === 'P'; }) || blocks[0] || null;
         return best;
       }
-      if (chip.style.display === 'none') {
+      // Open when menu is not visible; otherwise close
+      function isVisible(el){
+        try {
+          if (!el) return false;
+          if (el.style && el.style.display === 'none') return false;
+          const r = el.getBoundingClientRect();
+          return (r.width > 0 || r.height > 0);
+        } catch(_) { return false; }
+      }
+      var isMenuOpen = isVisible(menu);
+      if (!isMenuOpen) {
         var editor = document.getElementById('editor');
         var lastAnchor = (typeof window.__assistGetLastAnchor === 'function') ? window.__assistGetLastAnchor() : null;
         var anchor = null;
@@ -4282,7 +4477,6 @@
         }
         showSuggestionsChip(anchor);
         // Also open the menu for convenience
-        var menu = document.getElementById('assistMenu');
         if (menu) {
           if (window.buildMainMenu) window.buildMainMenu();
           menu.style.display = 'block';
@@ -4304,7 +4498,18 @@
       var text = (typeof generateTopicSentence === 'function') ? generateTopicSentence(title, category) : (title + ' — introduction.');
       var pid = 'simpleIntro-' + Date.now();
       var html = '<p id="'+pid+'">'+ text +'</p>';
-      insertHTMLAtCursor(html, editor);
+      // Always place intro at the top (before any sections), or replace the lead placeholder if present
+      var lead = document.getElementById('leadPlaceholder');
+      if (lead && lead.parentNode === editor) {
+        lead.outerHTML = html;
+      } else {
+        var firstH2 = editor.querySelector('h2');
+        if (firstH2) {
+          firstH2.insertAdjacentHTML('beforebegin', html);
+        } else {
+          editor.insertAdjacentHTML('afterbegin', html);
+        }
+      }
       editor.focus();
       // Anchor chip to the newly inserted paragraph and keep it visible when appropriate
       var el = document.getElementById(pid);
@@ -4375,7 +4580,16 @@
       var pid = 'introTpl-'+Date.now();
       html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
       var lead = document.getElementById('leadPlaceholder');
-      if (lead && lead.parentNode === editor) { lead.outerHTML = html; } else { insertHTMLAtCursor(html, editor); }
+      if (lead && lead.parentNode === editor) {
+        lead.outerHTML = html;
+      } else {
+        var firstH2 = editor.querySelector('h2');
+        if (firstH2) {
+          firstH2.insertAdjacentHTML('beforebegin', html);
+        } else {
+          editor.insertAdjacentHTML('afterbegin', html);
+        }
+      }
       editor.focus();
       var el = document.getElementById(pid);
       if (el) {
@@ -4572,6 +4786,21 @@
 
     function insertSectionSkeleton(name) {
       var editor = document.getElementById('editor');
+      if (!editor) return;
+      // Prevent duplicates: if a section with the same title already exists, don't insert again
+      try {
+        var normName = String(name||'').trim().toLowerCase();
+        var headers = Array.from(editor.querySelectorAll('h2'));
+        for (var i=0;i<headers.length;i++){
+          var t = (headers[i].textContent||'').trim().toLowerCase();
+          if (t === normName) {
+            // Ensure chip anchors to the existing section for user feedback
+            if (typeof positionChipBelowElement === 'function') positionChipBelowElement(headers[i]);
+            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(headers[i]);
+            return;
+          }
+        }
+      } catch(_) {}
       var id = name.replace(/\s+/g,'_');
       var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
       var para = buildSectionParagraphWithChips(name);
@@ -5192,16 +5421,33 @@
     }
 
     function insertNewSection() {
-      // Use existing section functionality from sidebar
-      const guideSidebar = document.getElementById('guideSidebar');
-      if (window.innerWidth > 768) {
-        guideSidebar.classList.add('open');
-      } else {
-        const guideModalBackdrop = document.getElementById('guideModalBackdrop');
-        guideModalBackdrop.classList.add('show');
-        guideModalBackdrop.style.display = 'block';
-      }
-      updateGuideContent();
+      // Open the inline Suggestions panel focused on Sections
+      try {
+        // Ensure the chip is anchored near the current block for correct positioning
+        var anchor = null;
+        try { if (typeof getActiveBlockElement === 'function') anchor = getActiveBlockElement(); } catch(_) {}
+        if (typeof showSuggestionsChip === 'function') showSuggestionsChip(anchor);
+        var menu = document.getElementById('assistMenu');
+        if (menu) {
+          // Build the main menu, then switch to the sections view directly
+          if (typeof window.buildMainMenu === 'function') window.buildMainMenu();
+          if (typeof window.buildSectionMenu === 'function') window.buildSectionMenu();
+          // Position menu under the chip for a tidy inline feel
+          var chip = document.getElementById('assistChip');
+          if (chip) {
+            menu.style.left = chip.style.left;
+            menu.style.top = ((parseInt(chip.style.top || '0', 10) + 32) + 'px');
+          }
+          menu.style.display = 'block';
+          if (window.__assistSetFrozen) window.__assistSetFrozen(false);
+          return;
+        }
+      } catch(_) {}
+      // Fallback: prompt for a section name and insert skeleton directly
+      try {
+        var name = prompt('Section name');
+        if (name && typeof insertSectionSkeleton === 'function') insertSectionSkeleton(name);
+      } catch(_) {}
     }
 
     function openReferenceDialog() {
