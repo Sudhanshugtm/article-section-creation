@@ -3029,6 +3029,9 @@
       
       // Hide popups when clicking outside chips, popup, editor, and assistance menu
       document.addEventListener('click', function(e) {
+        // Respect UI atomic operations; do not auto-hide mid‑insert
+        if (window.__uiAtomic && window.__uiAtomic > 0) return;
+        if (window.__suppressAssistMenuHide) return;
         var inChips = !!e.target.closest('.smart-chips-container');
         var inPopup = !!e.target.closest('.template-popup');
         var inEditor = !!e.target.closest('#editor');
@@ -3056,6 +3059,11 @@
       let rafId = null;
       let frozen = false; // freeze while menu open
       let lastAnchorEl = null; // remember last anchor paragraph for stable re-show
+
+      // Atomic UI helpers to stabilize operations (e.g., inserting sections)
+      window.__uiAtomic = window.__uiAtomic || 0;
+      function beginAtomic(){ try { window.__uiAtomic = (window.__uiAtomic||0) + 1; } catch(_) {} }
+      function endAtomic(){ try { window.__uiAtomic = Math.max(0, (window.__uiAtomic||0) - 1); } catch(_) {} }
 
       // Setup DOM mutation observer to detect content changes
       setupMutationObserver();
@@ -3847,9 +3855,15 @@
           ev.preventDefault();
           ev.stopPropagation();
           try {
+            if (target.getAttribute('aria-busy') === 'true') return; // ignore re-entrant clicks
+            target.setAttribute('aria-busy','true');
+            target.style.opacity = '0.7';
+            beginAtomic();
             var name = target.getAttribute('data-insert-section');
             if (name && typeof insertSectionSkeleton === 'function') {
-              insertSectionSkeleton(name);
+              // Avoid auto-hide during insertion and keep menu open after
+              try { window.__suppressAssistMenuHide = true; } catch(_) {}
+              var inserted = insertSectionSkeleton(name);
               // Keep menu open and refreshed to reflect Added state
               setTimeout(function(){
                 try {
@@ -3857,10 +3871,16 @@
                   if (menu && window.buildMainMenu) {
                     window.buildMainMenu();
                     menu.style.display = 'block';
+                    window.__assistMenuOpen = true;
                   }
                   if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
                 } catch(_) {}
-              }, 50);
+              }, 80);
+              setTimeout(function(){ 
+                try { window.__suppressAssistMenuHide = false; } catch(_) {}
+                endAtomic();
+                try { target.removeAttribute('aria-busy'); target.style.opacity = ''; } catch(_) {}
+              }, 200);
             }
           } catch(_) {}
         }, true);
@@ -4784,9 +4804,14 @@
       }
     }
 
+    // Monotonic counter to build unique IDs for inserted paragraphs
+    window.__sectionInsertSeq = window.__sectionInsertSeq || 0;
+
     function insertSectionSkeleton(name) {
       var editor = document.getElementById('editor');
-      if (!editor) return;
+      if (!editor) return null;
+      // Prevent the assist menu from auto-hiding due to outside-click logic during insertion
+      try { window.__suppressAssistMenuHide = true; } catch(_) {}
       // Prevent duplicates: if a section with the same title already exists, don't insert again
       try {
         var normName = String(name||'').trim().toLowerCase();
@@ -4797,7 +4822,9 @@
             // Ensure chip anchors to the existing section for user feedback
             if (typeof positionChipBelowElement === 'function') positionChipBelowElement(headers[i]);
             if (typeof showSuggestionsChip === 'function') showSuggestionsChip(headers[i]);
-            return;
+            // Clear suppression shortly after
+            setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 120);
+            return headers[i].closest('.section-block') || headers[i];
           }
         }
       } catch(_) {}
@@ -4805,7 +4832,8 @@
       var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
       var para = buildSectionParagraphWithChips(name);
       // Ensure we can reference the new paragraph element after insertion
-      var newParaId = 'sectionPara-' + Date.now();
+      window.__sectionInsertSeq += 1;
+      var newParaId = 'sectionPara-' + Date.now() + '-' + window.__sectionInsertSeq;
       // Replace <p> or <p > with <p id="...">
       if (para.indexOf('<p>') !== -1) {
         para = para.replace('<p>', '<p id="'+newParaId+'">');
@@ -4882,71 +4910,26 @@
       } catch(_) {}
       // Move caret into the new section paragraph (first placeholder if available) and keep chip visible
       try {
-        // Use multiple attempts with increasing delays to ensure cursor positioning works
-        var attempts = 0;
-        var maxAttempts = 3;
-        
-        function attemptCursorPositioning() {
-          attempts++;
-          
+        requestAnimationFrame(function(){
           try {
             var insertedPara = document.querySelector('#'+newParaId);
-            console.log('Attempt', attempts, '- Para found:', !!insertedPara, insertedPara?.id);
-            
-            if (insertedPara) {
-              var firstPh = insertedPara.querySelector('.template-placeholder');
-              console.log('Template placeholder found:', !!firstPh);
-              
-              if (firstPh) {
-                // Focus and click the first template placeholder to activate it
-                console.log('Focusing template placeholder...');
-                firstPh.focus();
-                // Suppress assist menu auto-hide during this programmatic click
-                try { window.__suppressAssistMenuHide = true; } catch(_) {}
-                firstPh.click();
-                // Clear suppression shortly after
-                setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 150);
-                // Verify focus worked
-                setTimeout(function() {
-                  console.log('After placeholder focus - active element:', document.activeElement?.tagName, document.activeElement?.textContent?.substring(0, 30));
-                }, 10);
-              } else {
-                // Make paragraph contenteditable and focus it directly
-                console.log('No placeholder - focusing paragraph directly...');
-                insertedPara.setAttribute('contenteditable', 'true');
-                insertedPara.focus();
-                
-                // Clear any existing selection first
-                var selection = window.getSelection();
-                selection.removeAllRanges();
-                // Create new range at end of paragraph  
-                var range = document.createRange();
-                range.selectNodeContents(insertedPara);
-                range.collapse(false); // Collapse to end
-                selection.addRange(range);
-                
-                setTimeout(function() {
-                  console.log('After paragraph focus - active element:', document.activeElement?.tagName, document.activeElement?.id);
-                }, 10);
-              }
-              
-              // Remember this as the last anchor for chip positioning
-              if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
-              if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
-              
-              return; // Success, exit
+            if (!insertedPara) return;
+            var firstPh = insertedPara.querySelector('.template-placeholder');
+            if (firstPh && firstPh.focus) {
+              try { window.__suppressAssistMenuHide = true; } catch(_) {}
+              firstPh.focus();
+              setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 150);
+            } else {
+              // Fallback: focus the paragraph end
+              insertedPara.setAttribute('contenteditable', 'true');
+              insertedPara.focus();
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange(); rg.selectNodeContents(insertedPara); rg.collapse(false); sel.addRange(rg);
             }
-          } catch(e) {
-            console.log('Cursor positioning error on attempt', attempts, ':', e);
-          }
-          
-          // Retry if failed and haven't exceeded max attempts
-          if (attempts < maxAttempts) {
-            setTimeout(attemptCursorPositioning, 50 * attempts); // Increasing delay
-          }
-        }
-        
-        setTimeout(attemptCursorPositioning, 100); // Start first attempt
+            if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
+            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
+          } catch(_) {}
+        });
         
         // Feedback + undo (find block immediately after insertion)  
         try {
@@ -4967,6 +4950,9 @@
       } catch(_) {}
       editor.focus();
       // Keep chip visible after insertion
+      // Clear suppression a bit later in case any async focus happens
+      setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 200);
+      try { return document.querySelector('#'+newParaId)?.closest('.section-block') || document.querySelector('#'+newParaId) || null; } catch(_) { return null; }
     }
 
     function buildSectionParagraphWithChips(sectionName) {
