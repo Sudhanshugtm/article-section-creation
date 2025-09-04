@@ -1230,6 +1230,19 @@
       sel.addRange(range);
     }
 
+    // Utility: place caret at start of a contenteditable or element's contents
+    function placeCaretAtStart(el) {
+      try {
+        el.focus();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(true); // start of contents
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch(_) {}
+    }
+
     function insertNodeAtCaret(node, editor) {
       const sel = window.getSelection();
       if (!sel.rangeCount) placeCaretAtEnd(editor);
@@ -1567,6 +1580,32 @@
         }
       })();
       
+      // Ensure that when the lead placeholder becomes active, caret is at the very start
+      (function bindLeadPlaceholderCaretStart(){
+        try {
+          var ed = document.getElementById('editor');
+          if (!ed) return;
+          var handler = function(e){
+            try {
+              var lp = document.getElementById('leadPlaceholder');
+              if (!lp) return;
+              if (e && e.target && (e.target === lp || lp.contains(e.target))) {
+                // Defer to avoid interfering with native focus processing
+                setTimeout(function(){ placeCaretAtStart(lp); }, 0);
+              } else {
+                // Also handle cases where the placeholder itself gains focus
+                if (document.activeElement === lp) {
+                  setTimeout(function(){ placeCaretAtStart(lp); }, 0);
+                }
+              }
+            } catch(_) {}
+          };
+          // Listen to both focusin and click to cover keyboard/mouse activation
+          ed.addEventListener('focusin', handler);
+          ed.addEventListener('click', handler);
+        } catch(_) {}
+      })();
+
       // Add input listener to activate publish/submit buttons when user starts typing
       ed.addEventListener('input', function() {
         // Use unified placeholder restoration logic
