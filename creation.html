@@ -171,7 +171,16 @@
     .chip-menu-item[data-chip-submit]:hover { background:#2a4b8d; }
 
     /* Simplified Suggestions panel */
-    .assist-menu { width: 520px; max-width: calc(100vw - 32px); padding: 6px 0; }
+    /* Responsive sizing for assist menu */
+    .assist-menu {
+      width: 90%;                 /* scale with container */
+      max-width: 800px;           /* cap on large screens */
+      min-width: 280px;           /* ensure usable on small screens */
+      height: auto;               /* grow with content */
+      max-height: 75vh;           /* avoid exceeding viewport */
+      overflow-y: auto;           /* scroll when content too tall */
+      padding: 6px 0;
+    }
     .assist-group { padding: 8px 12px; }
     .assist-actions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 4px; }
     .assist-actions .action-chip { padding:6px 10px; border-radius:8px; }
@@ -846,7 +855,17 @@
       }
     }
     /* Assistance menu styling */
-    .assist-menu { min-width: 520px; max-width: calc(100vw - 32px); width: 760px; min-height: 200px; padding: 0; border-radius: 8px; }
+    .assist-menu {
+      width: 90%;
+      max-width: 800px;
+      min-width: 280px;
+      height: auto;
+      max-height: 75vh;
+      overflow-y: auto;
+      min-height: 200px;
+      padding: 0;
+      border-radius: 8px;
+    }
     .assist-menu-header { font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
     .assist-item { display: block; width: 100%; text-align: left; padding: 12px 14px; background: #fff; border: none; cursor: pointer; }
     .assist-item:hover { background: #f8f9fa; }
