@@ -63,10 +63,10 @@ jobs:
             sed -i 's|href=\"index.html\"|href=\"../../index.html\"|g' "$f"
           done
 
-      - name: Aggregate landing indexes (EN + ID)
+      - name: Write English homepage
         run: |
-          # EN homepage at /index.html
-          cat > site/index.html <<'HTML'
+          set -euo pipefail
+          cat <<'EOF' > site/index.html
           <!doctype html>
           <html lang="en">
           <head>
@@ -145,11 +145,13 @@ jobs:
             </div>
           </body>
           </html>
-          HTML
+          EOF
 
-          # ID homepage at /id/index.html
+      - name: Write Indonesian homepage
+        run: |
+          set -euo pipefail
           mkdir -p site/id
-          cat > site/id/index.html <<'HTML'
+          cat <<'EOF' > site/id/index.html
           <!doctype html>
           <html lang="id">
           <head>
@@ -168,7 +170,7 @@ jobs:
               .group { margin: 28px 0; }
               .card { border: 1px solid #eaecf0; border-radius: 6px; padding: 14px 16px; margin: 12px 0; }
               .card h3 { margin: 0 0 6px; font-size: 1.05rem; }
-              .links { display: flex; gap: 12px; flex-wrap: wrap; }
+              .links { display: flex; gap: 12px; flex-wrap:  wrap; }
 
               /* Language switcher */
               .topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
@@ -228,145 +230,7 @@ jobs:
             </div>
           </body>
           </html>
-          HTML'
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            <title>Article creation and Section expansion prototype</title>
-            <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 40px 20px; }
-              .container { max-width: 820px; margin: 0 auto; }
-              h1 { font-size: 1.8rem; font-weight: 600; margin: 0 0 16px; }
-              h2 { font-size: 1.2rem; margin: 24px 0 8px; }
-              ul { padding-left: 18px; }
-              li { margin: 8px 0; }
-              a { color: #0645ad; text-decoration: none; }
-              a:hover { text-decoration: underline; }
-              .note { color: #555; }
-              .group { margin: 28px 0; }
-              .card { border: 1px solid #eaecf0; border-radius: 6px; padding: 14px 16px; margin: 12px 0; }
-              .card h3 { margin: 0 0 6px; font-size: 1.05rem; }
-              .card p { margin: 0 0 8px; color: #555; }
-              .links { display: flex; gap: 12px; flex-wrap: wrap; }
-              .badge { display:inline-block; font-size: 12px; padding: 2px 8px; border:1px solid #c8ccd1; border-radius: 999px; color:#555; }
-
-              /* Language switcher */
-              .topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-              .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 999px; background: #fff; }
-              .lang-btn { appearance: none; border: 0; background: transparent; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; cursor: default; }
-              .lang-btn.active { background: #f8f9fa; font-weight: 600; box-shadow: inset 0 0 0 1px #c8ccd1; }
-              .lang-btn:focus { outline: 2px solid #36c; outline-offset: 2px; }
-              @media (max-width: 480px) { .lang-btn { padding: 6px 8px; font-size: 11px; } }
-              .lang-hint { position: absolute; left: -10000px; }
-              
-              /* Work in Progress Banners */
-              .wip-banner {
-                position: fixed;
-                padding: 8px 40px;
-                background: #ff6b6b;
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                z-index: 1000;
-                transform: rotate(-45deg);
-                transform-origin: center;
-              }
-              
-              .wip-left { top: 30px; left: -40px; }
-              .wip-right { top: 30px; right: -40px; transform: rotate(45deg); }
-              
-              /* Mobile adjustments */
-              @media (max-width: 768px) {
-                .wip-banner { font-size: 11px; padding: 5px 30px; }
-                .wip-left { top: 20px; left: -35px; }
-                .wip-right { top: 20px; right: -35px; }
-                body { padding-top: 60px; }
-              }
-              
-              /* Alternative mobile-only banner */
-              .wip-mobile-banner {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                background: #ff6b6b;
-                color: white;
-                text-align: center;
-                padding: 8px;
-                font-weight: bold;
-                font-size: 13px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                z-index: 1000;
-              }
-              
-              @media (max-width: 480px) {
-                .wip-left, .wip-right { display: none; }
-                .wip-mobile-banner { display: block; }
-                body { padding-top: 70px; }
-              }
-            </style>
-          </head>
-          <body>
-            <!-- Work in Progress Banners -->
-            <div class="wip-banner wip-left">Work in Progress</div>
-            <div class="wip-banner wip-right">Work in Progress</div>
-            <div class="wip-mobile-banner">🚧 Work in Progress 🚧</div>
-            
-            <div class="container">
-              <!-- Simple (no-op) language switcher: En / Id -->
-              <div class="topbar">
-                <nav class="lang-switch" aria-label="Language">
-                  <span class="lang-hint">Language:</span>
-                  <button class="lang-btn active" type="button" lang="en" aria-pressed="true" title="English">En</button>
-                  <button class="lang-btn" type="button" lang="id" aria-pressed="false" title="Bahasa Indonesia">Id</button>
-                </nav>
-              </div>
-
-              <h1>Article creation and Section expansion prototype</h1>
-              
-              <div class="group">
-                <h2>Article Creation</h2>
-                <div class="card">
-                  <h3>Concept A — Sidebar assistance</h3>
-                  <div class="links">
-                    <a href="creation/article-creator.html">Open concept</a>
-                  </div>
-                </div>
-                <div class="card">
-                  <h3>Concept B — Incontext assistance</h3>
-                  <div class="links">
-                    <a href="creation/creation.html">Open concept</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="group">
-                <h2>Section Expansion</h2>
-                <!-- <div class="card">
-                  <h3>Concept 1 — Overlay Wizard</h3>
-                  <div class="links">
-                    <a href="expansion/concept1/articles-concept1.html">Open article list</a>
-                  </div>
-                </div> -->
-                <div class="card">
-                  <h3>Sidebar panel</h3>
-                  <div class="links">
-                    <a href="expansion/concept2/articles-concept2.html">Open article list</a>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-          </body>
-          </html>
-          HTML
+          EOF
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
