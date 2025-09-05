@@ -1542,6 +1542,15 @@
       
       // Update guide content when category changes
       setTimeout(updateGuideContent, 100);
+      
+      // Preload templates data when category is selected for smoother Step 3 experience
+      if (!window.templatesData || window.templatesData === undefined) {
+        loadTemplates().then(function() {
+          console.log('Templates preloaded for category:', selectedCat);
+        }).catch(function() {
+          console.warn('Failed to preload templates for category:', selectedCat);
+        });
+      }
     });
     toStep3 && (toStep3.onclick=function(){
       step2.classList.remove('active');
@@ -2976,12 +2985,14 @@
 
     // Load advanced intro templates (read-only)
     function loadTemplates() {
-      // Bust caches to ensure latest templates.json is used
-      var url = 'templates.json?v=' + Date.now();
-      return fetch(url, { cache: 'no-cache' })
+      // Cache templates.json after first load for better performance
+      if (window.templatesData !== undefined) {
+        return Promise.resolve(window.templatesData);
+      }
+      return fetch('templates.json')
         .then(function(r){ return r.json(); })
-        .then(function(data){ window.templatesData = data; })
-        .catch(function(err){ window.templatesData = null; console && console.warn && console.warn('Failed to load templates.json', err); });
+        .then(function(data){ window.templatesData = data; return data; })
+        .catch(function(err){ window.templatesData = null; console && console.warn && console.warn('Failed to load templates.json', err); return null; });
     }
 
     // Initialize suggestions and sources on page load
@@ -3508,6 +3519,17 @@
         var currentMenu = document.getElementById('assistMenu');
         if (!currentMenu) return;
         
+        // Show loading state if templates not yet loaded
+        if (window.templatesData === undefined) {
+          currentMenu.innerHTML = '<div class="assist-menu-header">Loading suggestions...</div><div style="padding: 16px; color: #72777d; font-size: 13px;">Loading section suggestions...</div>';
+          currentMenu.style.display = 'block';
+          // Retry after templates load
+          setTimeout(function() {
+            if (window.templatesData !== undefined) buildMainMenu();
+          }, 100);
+          return;
+        }
+        
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
         // Context-aware header: Lead vs current section
@@ -3598,19 +3620,11 @@
         var hasIntroTemplate = false;
         try {
           var editor = document.getElementById('editor');
-          // Look for intro template paragraph - it typically has an id starting with 'introTpl'
-          hasIntroTemplate = !!(editor.querySelector('p[id*="introTpl"]') || 
-                               // Also check for first paragraph with template placeholders before any h2
-                               (function(){
-                                 var firstH2 = editor.querySelector('h2');
-                                 var paras = Array.from(editor.querySelectorAll('p'));
-                                 for (var i = 0; i < paras.length; i++) {
-                                   var p = paras[i];
-                                   if (firstH2 && p.compareDocumentPosition(firstH2) & Node.DOCUMENT_POSITION_FOLLOWING) break;
-                                   if (p.querySelector('.template-placeholder') || p.querySelector('.ref-chip')) return true;
-                                 }
-                                 return false;
-                               })());
+          // Only look for intro template paragraph with specific ID (not section paragraphs)
+          hasIntroTemplate = !!(editor.querySelector('p[id*="introTpl"]'));
+          
+          // DEBUG: Log the detection result
+          console.log('[INTRO-TEMPLATE] hasIntroTemplate check:', hasIntroTemplate, 'Found intro elements:', editor.querySelectorAll('p[id*="introTpl"]').length);
         } catch(_) {}
 
         // Show current section context
@@ -3777,7 +3791,9 @@
         items.forEach(function(btn){
           btn.addEventListener('click', function(ev){
             var action = this.getAttribute('data-assist');
-            if (action === 'source') {
+            if (action === 'intro') {
+              buildIntroMenu();
+            } else if (action === 'source') {
               try { if (typeof openSourceModalDialog === 'function') { openSourceModalDialog(); } else { openReferenceDialog(); } } catch(_) { openReferenceDialog(); }
               // Get fresh menu reference for display property
               var menuForHide = document.getElementById('assistMenu');
@@ -3836,14 +3852,13 @@
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
             insertSectionSkeleton(name).catch(function(){});
-            // Keep the menu open and refresh to reflect the new "Added" state
+            // Close menu after successful section insertion
             setTimeout(function(){
               try {
-                // Get fresh menu reference to avoid stale closure issues
                 var refreshedMenu = document.getElementById('assistMenu');
-                if (refreshedMenu && window.buildMainMenu) {
-                  window.buildMainMenu();
-                  refreshedMenu.style.display = 'block';
+                if (refreshedMenu) {
+                  refreshedMenu.style.display = 'none';
+                  window.__assistMenuOpen = false;
                 }
                 if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
               } catch(_) {}
@@ -3958,18 +3973,17 @@
                 // Handle successful insertion
                 if (inserted && typeof reanchorAssistChip === 'function') reanchorAssistChip();
               }).catch(function(){});
-              // Keep menu open and refreshed to reflect Added state
+              // Close menu after successful insertion
               setTimeout(function(){
                 try {
                   var menu = document.getElementById('assistMenu');
-                  if (menu && window.buildMainMenu) {
-                    window.buildMainMenu();
-                    menu.style.display = 'block';
-                    window.__assistMenuOpen = true;
+                  if (menu) {
+                    menu.style.display = 'none';
+                    window.__assistMenuOpen = false;
                   }
                   if (typeof reanchorAssistChip === 'function') reanchorAssistChip();
                 } catch(_) {}
-              }, 80);
+              }, 20);
               setTimeout(function(){ 
                 try { window.__suppressAssistMenuHide = false; } catch(_) {}
                 endAtomic();
@@ -5064,13 +5078,9 @@
           }
         }
       }
-      // Remove lead placeholder if it exists - sections should clear placeholder
-      try {
-        var leadPlaceholder = document.getElementById('leadPlaceholder');
-        if (leadPlaceholder && leadPlaceholder.parentNode === editor) {
-          leadPlaceholder.parentNode.removeChild(leadPlaceholder);
-        }
-      } catch(_) {}
+      // Keep lead placeholder available - only remove when user actually writes intro content
+      // This ensures "Insert intro template" remains accessible even after adding sections
+      console.log('[SECTION-INSERT] 📝 Keeping leadPlaceholder available for intro template access');
       // Track section as added
       try {
         if (Array.isArray(window.addedSections)) {
@@ -5089,7 +5099,7 @@
             if (firstPh && firstPh.focus) {
               try { window.__suppressAssistMenuHide = true; } catch(_) {}
               firstPh.focus();
-              setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 150);
+              setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 50);
             } else {
               // Fallback: focus the paragraph end
               insertedPara.setAttribute('contenteditable', 'true');
@@ -5122,7 +5132,7 @@
       editor.focus();
       // Keep chip visible after insertion
       // Clear suppression a bit later in case any async focus happens
-      setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 200);
+      setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 50);
       try { return document.querySelector('#'+newParaId)?.closest('.section-block') || document.querySelector('#'+newParaId) || null; } catch(_) { return null; }
     }
 
