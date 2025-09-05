@@ -56,26 +56,20 @@ jobs:
           git checkout concept-creation
           rsync -a --delete --exclude '.git' ./ site/creation/
 
-      - name: Copy concept-creation → creation (source-based)
-          run: |
-            git checkout concept-creation
-            rsync -a --delete --exclude '.git' ./ site/creation/
-
-        - name: Generate Indonesian prototypes    # ← ADD THIS STEP HERE
-          run: |
-            git checkout concept-creation
-            # Generate Indonesian versions of creation prototypes
-            if [ -f translate-build.js ] && [ -f translations.json ]; then
-              echo "🌍 Generating Indonesian prototypes..."
-              node translate-build.js creation.html site/id/creation/creation.html
-              node translate-build.js article-creator.html site/id/creation/article-creator.html
-              # Copy supporting files
-              cp translations.json article-creation-suggestions.json templates.json reliable-sources.json 
-  reading-styles.css site/id/creation/
-              echo "✅ Indonesian prototypes generated"
-            else
-              echo "⚠️  Translation files not found, skipping Indonesian generation"
-            fi
+      - name: Generate Indonesian prototypes
+        run: |
+          git checkout concept-creation
+          # Generate Indonesian versions of creation prototypes
+          if [ -f translate-build.js ] && [ -f translations.json ]; then
+            echo "🌍 Generating Indonesian prototypes..."
+            node translate-build.js creation.html site/id/creation/creation.html
+            node translate-build.js article-creator.html site/id/creation/article-creator.html
+            # Copy supporting files
+            cp translations.json article-creation-suggestions.json templates.json reliable-sources.json reading-styles.css site/id/creation/
+            echo "✅ Indonesian prototypes generated"
+          else
+            echo "⚠️  Translation files not found, skipping Indonesian generation"
+          fi
 
       - name: Normalize back links to hub (no intermediate choosers)
         run: |
@@ -228,13 +222,13 @@ jobs:
                 <div class="card">
                   <h3>Konsep A — Bantuan bilah samping</h3>
                   <div class="links">
-                    <a href="../creation/article-creator.html">Buka konsep</a>
+                    <a href="creation/article-creator.html">Buka konsep</a>
                   </div>
                 </div>
                 <div class="card">
                   <h3>Konsep B — Bantuan dalam konteks</h3>
                   <div class="links">
-                    <a href="../creation/creation.html">Buka konsep</a>
+                    <a href="creation/creation.html">Buka konsep</a>
                   </div>
                 </div>
               </div>
