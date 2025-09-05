@@ -145,6 +145,27 @@ function main() {
       console.log('  ✓ Eligibility questions translated');
     }
     
+    // Detailed guidance content in sidebar
+    html = html.replace(/Write a clear opening that summarizes the topic, explains why it\\'s important, and covers the main points readers will find in the article\./g, 
+      'Tulis pembukaan yang jelas yang merangkum topik, menjelaskan mengapa penting, dan mencakup poin-poin utama yang akan ditemukan pembaca dalam artikel.');
+    html = html.replace(/Examples from Wikipedia:/g, 'Contoh dari Wikipedia:');
+    html = html.replace(/Template structure:/g, 'Struktur templat:');
+    html = html.replace(/Quick check: Does your topic have what Wikipedia needs\?/g, 'Pemeriksaan cepat: Apakah topik Anda memiliki apa yang dibutuhkan Wikipedia?');
+    html = html.replace(/Helper for citing reliable sources/g, 'Bantuan untuk mengutip sumber terpercaya');
+    html = html.replace(/Manual source entry:/g, 'Entri sumber manual:');
+    html = html.replace(/Include key facts in the first paragraph/g, 'Sertakan fakta kunci di paragraf pertama');
+    html = html.replace(/Use reliable sources throughout/g, 'Gunakan sumber terpercaya di seluruh artikel');
+    html = html.replace(/Select a category in Step 2 to see specific section suggestions for your article type\./g, 
+      'Pilih kategori di Langkah 2 untuk melihat saran bagian spesifik untuk jenis artikel Anda.');
+    html = html.replace(/Sister project data will appear when you enter an article title above\./g, 
+      'Data proyek saudara akan muncul ketika Anda memasukkan judul artikel di atas.');
+    html = html.replace(/Quick facts for/g, 'Fakta cepat untuk');
+    html = html.replace(/We found key facts from reliable sources:/g, 'Kami menemukan fakta kunci dari sumber terpercaya:');
+    html = html.replace(/Images available from Wikimedia Commons/g, 'Gambar tersedia dari Wikimedia Commons');
+    html = html.replace(/Writing tip/g, 'Tips menulis');
+    
+    console.log('  ✓ Detailed guidance content translated');
+    
     // Update language attribute
     html = html.replace(/html lang="en"/, 'html lang="id"');
     console.log('  ✓ Language attribute updated');
