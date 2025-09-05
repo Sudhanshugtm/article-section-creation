@@ -166,6 +166,21 @@ function main() {
     
     console.log('  ✓ Detailed guidance content translated');
     
+    // Sample article content (from article-creation-suggestions.json)
+    html = html.replace(/Marie Curie \(born Maria Salomea Skłodowska; 7 November 1867 – 4 July 1934\) was a Polish and naturalized-French physicist and chemist who conducted pioneering research on radioactivity\./g,
+      'Marie Curie (lahir Maria Salomea Skłodowska; 7 November 1867 – 4 Juli 1934) adalah seorang fisikawan dan kimiawan Polandia-Prancis yang melakukan penelitian perintis tentang radioaktivitas.');
+    
+    // Source checker draft generation content
+    html = html.replace(/DRAFT: Needs editing/g, 'DRAFT: Perlu pengeditan');
+    html = html.replace(/This is a draft stub\. Please expand with your own analysis and additional sources before publishing\./g,
+      'Ini adalah draft stub. Harap kembangkan dengan analisis Anda sendiri dan sumber tambahan sebelum dipublikasikan.');
+    html = html.replace(/According to \[SOURCE\], "\[TITLE\]" was reported on \[DATE\]\.\[1\] The article discusses \[TOPIC\]\./g,
+      'Menurut [SOURCE], "[TITLE]" dilaporkan pada [DATE].[1] Artikel membahas [TOPIC].');
+    html = html.replace(/This is a DRAFT stub created from source metadata\. Please expand with your own analysis and additional sources before publishing\./g,
+      'Ini adalah DRAFT stub yang dibuat dari metadata sumber. Harap kembangkan dengan analisis Anda sendiri dan sumber tambahan sebelum dipublikasikan.');
+    
+    console.log('  ✓ Sample content and draft templates translated');
+    
     // Update language attribute
     html = html.replace(/html lang="en"/, 'html lang="id"');
     console.log('  ✓ Language attribute updated');
@@ -174,6 +189,61 @@ function main() {
     fs.writeFileSync(outputFile, html, 'utf8');
     console.log(`✅ Successfully created ${outputFile}`);
     console.log(`📊 Size: ${Math.round(fs.statSync(outputFile).size / 1024)}KB`);
+    
+    // Also translate reliable-sources.json templates if it exists and the output is article-creator.html
+    if (outputFile.includes('article-creator') && fs.existsSync('reliable-sources.json')) {
+      console.log('📝 Updating reliable-sources.json templates...');
+      const sourcesData = JSON.parse(fs.readFileSync('reliable-sources.json', 'utf8'));
+      
+      // Update draft templates
+      if (sourcesData.draft_templates) {
+        Object.keys(sourcesData.draft_templates).forEach(key => {
+          if (sourcesData.draft_templates[key].stub) {
+            sourcesData.draft_templates[key].stub = sourcesData.draft_templates[key].stub
+              .replace(/According to \[SOURCE\], "\[TITLE\]" was reported on \[DATE\]\.\[1\] The article discusses \[TOPIC\]\./g,
+                'Menurut [SOURCE], "[TITLE]" dilaporkan pada [DATE].[1] Artikel membahas [TOPIC].');
+          }
+        });
+      }
+      
+      // Update warning messages
+      if (sourcesData.warning_messages) {
+        if (sourcesData.warning_messages.draft_notice) {
+          sourcesData.warning_messages.draft_notice = 'Ini adalah DRAFT stub yang dibuat dari metadata sumber. Harap kembangkan dengan analisis Anda sendiri dan sumber tambahan sebelum dipublikasikan.';
+        }
+        if (sourcesData.warning_messages.review_required) {
+          sourcesData.warning_messages.review_required = 'Selalu verifikasi informasi dan tambahkan konteks dari berbagai sumber terpercaya.';
+        }
+        if (sourcesData.warning_messages.not_ai) {
+          sourcesData.warning_messages.not_ai = 'Tool ini hanya mengekstrak informasi kutipan dasar. Pengeditan manusia diperlukan.';
+        }
+      }
+      
+      // Write updated reliable-sources.json (for Indonesian version)
+      const sourcesOutputFile = outputFile.replace('.html', '-reliable-sources.json');
+      fs.writeFileSync(sourcesOutputFile, JSON.stringify(sourcesData, null, 2), 'utf8');
+      console.log(`✅ Updated ${sourcesOutputFile}`);
+    }
+    
+    // Also translate article-creation-suggestions.json if it exists
+    if (fs.existsSync('article-creation-suggestions.json')) {
+      console.log('📝 Updating article-creation-suggestions.json...');
+      const suggestionsData = JSON.parse(fs.readFileSync('article-creation-suggestions.json', 'utf8'));
+      
+      // Update Marie Curie example
+      if (suggestionsData.person && suggestionsData.person.introduction && suggestionsData.person.introduction.examples) {
+        suggestionsData.person.introduction.examples.forEach(example => {
+          if (example.title === 'Marie Curie') {
+            example.text = 'Marie Curie (lahir Maria Salomea Skłodowska; 7 November 1867 – 4 Juli 1934) adalah seorang fisikawan dan kimiawan Polandia-Prancis yang melakukan penelitian perintis tentang radioaktivitas.';
+          }
+        });
+      }
+      
+      // Write updated suggestions file (for Indonesian version)  
+      const suggestionsOutputFile = outputFile.replace('.html', '-suggestions.json');
+      fs.writeFileSync(suggestionsOutputFile, JSON.stringify(suggestionsData, null, 2), 'utf8');
+      console.log(`✅ Updated ${suggestionsOutputFile}`);
+    }
     
   } catch (error) {
     console.error('❌ Error:', error.message);
