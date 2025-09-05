@@ -59,16 +59,24 @@ jobs:
       - name: Generate Indonesian prototypes
         run: |
           git checkout concept-creation
+          # Ensure directories exist
+          mkdir -p site/id/creation
           # Generate Indonesian versions of creation prototypes
           if [ -f translate-build.js ] && [ -f translations.json ]; then
             echo "🌍 Generating Indonesian prototypes..."
-            node translate-build.js creation.html site/id/creation/creation.html
-            node translate-build.js article-creator.html site/id/creation/article-creator.html
+            node translate-build.js creation.html site/id/creation/creation.html || echo "Failed to generate creation.html"
+            node translate-build.js article-creator.html site/id/creation/article-creator.html || echo "Failed to generate article-creator.html" 
             # Copy supporting files
-            cp translations.json article-creation-suggestions.json templates.json reliable-sources.json reading-styles.css site/id/creation/
-            echo "✅ Indonesian prototypes generated"
+            cp translations.json site/id/creation/ || echo "Failed to copy translations.json"
+            cp article-creation-suggestions.json site/id/creation/ || echo "Failed to copy suggestions"
+            cp templates.json site/id/creation/ || echo "Failed to copy templates"
+            cp reliable-sources.json site/id/creation/ || echo "Failed to copy sources"
+            cp reading-styles.css site/id/creation/ || echo "Failed to copy styles"
+            echo "✅ Indonesian prototypes generation completed"
           else
             echo "⚠️  Translation files not found, skipping Indonesian generation"
+            echo "Current directory: $(pwd)"
+            echo "Files present: $(ls -la)"
           fi
 
       - name: Normalize back links to hub (no intermediate choosers)
