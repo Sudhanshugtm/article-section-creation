@@ -4001,6 +4001,7 @@
             menu.style.display = 'block';
             menu.style.left = (document.getElementById('assistChip')?.style.left || '0px');
             menu.style.top = ((parseInt(document.getElementById('assistChip')?.style.top || '0', 10) + 32) + 'px');
+            try { menu.style.zIndex = '5001'; } catch(_) {}
             try { window.__assistMenuOpen = true; } catch(_) {}
           }
         } catch(_) {}
@@ -4309,6 +4310,7 @@
       menu.style.left = rect.left + 'px';
       menu.style.top = (rect.bottom + 6) + 'px';
       menu.style.display = 'block';
+      try { menu.style.zIndex = '5002'; } catch(_) {}
 
       // Handlers
       menu.querySelectorAll('[data-chip-value]').forEach(function(btn){
@@ -4590,6 +4592,7 @@
           menu.style.left = chip.style.left;
           menu.style.top = (parseInt(chip.style.top||'0',10)+32)+'px';
           // Keep chip/menu responsive; do not freeze positioning while menu is open
+          try { menu.style.zIndex = '5001'; } catch(_) {}
           if (window.__assistSetFrozen) window.__assistSetFrozen(false);
         }
       } else {
