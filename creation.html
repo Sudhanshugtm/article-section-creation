@@ -241,6 +241,8 @@
       gap: 12px;
       z-index: 4000;
       font-size: 13px;
+      /* Allow clicks to pass through the toast background so it doesn't block UI beneath. */
+      pointer-events: none;
     }
     .undo-toast.show { display: flex; }
     .undo-toast .btn-undo {
@@ -250,6 +252,8 @@
       border-radius: 4px;
       padding: 4px 10px;
       cursor: pointer;
+      /* Re-enable pointer events on the button only so it's clickable */
+      pointer-events: auto;
     }
     .undo-toast .btn-undo:hover { background: #f0f0f0; }
 
@@ -3706,7 +3710,7 @@
         currentMenu.querySelectorAll('[data-insert-section]').forEach(function(btn){
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
-            insertSectionSkeleton(name);
+            insertSectionSkeleton(name).catch(function(){});
             // Keep the menu open and refresh to reflect the new "Added" state
             setTimeout(function(){
               try {
@@ -3831,7 +3835,7 @@
         items.forEach(function(btn){
           btn.addEventListener('click', function(){
             var name = this.getAttribute('data-insert-section');
-            insertSectionSkeleton(name);
+            insertSectionSkeleton(name).catch(function(){});
             // Keep the menu open and refresh to reflect the new "Added" state
             setTimeout(function(){
               try {
@@ -3950,7 +3954,10 @@
             if (name && typeof insertSectionSkeleton === 'function') {
               // Avoid auto-hide during insertion and keep menu open after
               try { window.__suppressAssistMenuHide = true; } catch(_) {}
-              var inserted = insertSectionSkeleton(name);
+              insertSectionSkeleton(name).then(function(inserted) {
+                // Handle successful insertion
+                if (inserted && typeof reanchorAssistChip === 'function') reanchorAssistChip();
+              }).catch(function(){});
               // Keep menu open and refreshed to reflect Added state
               setTimeout(function(){
                 try {
@@ -4897,18 +4904,71 @@
     // Monotonic counter to build unique IDs for inserted paragraphs
     window.__sectionInsertSeq = window.__sectionInsertSeq || 0;
 
+    // Global insertion queue to prevent race conditions during rapid section additions
+    window.__sectionInsertionQueue = window.__sectionInsertionQueue || [];
+    window.__sectionInsertionActive = window.__sectionInsertionActive || false;
+
     function insertSectionSkeleton(name) {
+      // Queue this insertion to prevent race conditions
+      console.log('[SECTION-INSERT] 🚀 Queueing section:', name, 'Queue length:', window.__sectionInsertionQueue.length, 'Active:', window.__sectionInsertionActive);
+      return new Promise(function(resolve) {
+        var startTime = performance.now();
+        window.__sectionInsertionQueue.push({ name: name, resolve: resolve, startTime: startTime });
+        
+        // Process queue if not already processing
+        if (!window.__sectionInsertionActive) {
+          console.log('[SECTION-INSERT] 🎬 Starting queue processing');
+          processInsertionQueue();
+        }
+      });
+    }
+
+    function processInsertionQueue() {
+      if (window.__sectionInsertionQueue.length === 0) {
+        console.log('[SECTION-INSERT] 🏁 Queue empty, stopping processing');
+        window.__sectionInsertionActive = false;
+        return;
+      }
+      
+      window.__sectionInsertionActive = true;
+      var next = window.__sectionInsertionQueue.shift();
+      var queueTime = performance.now() - next.startTime;
+      console.log('[SECTION-INSERT] 🔄 Processing:', next.name, 'Queue time:', Math.round(queueTime) + 'ms', 'Remaining:', window.__sectionInsertionQueue.length);
+      
+      // Execute the original insertion logic
+      var insertStart = performance.now();
+      var result = actualInsertSectionSkeleton(next.name);
+      var insertTime = performance.now() - insertStart;
+      console.log('[SECTION-INSERT] ⚡ Insert completed:', next.name, 'Insert time:', Math.round(insertTime) + 'ms');
+      
+      // Continue processing queue after a brief delay to ensure DOM settles
+      setTimeout(function() {
+        var totalTime = performance.now() - next.startTime;
+        console.log('[SECTION-INSERT] ✅ Total time for', next.name + ':', Math.round(totalTime) + 'ms');
+        next.resolve(result);
+        processInsertionQueue();
+      }, 10);
+    }
+
+    function actualInsertSectionSkeleton(name) {
+      console.log('[SECTION-INSERT] 🔍 Starting actualInsertSectionSkeleton for:', name);
       var editor = document.getElementById('editor');
-      if (!editor) return null;
+      if (!editor) {
+        console.log('[SECTION-INSERT] ❌ No editor found');
+        return null;
+      }
       // Prevent the assist menu from auto-hiding due to outside-click logic during insertion
       try { window.__suppressAssistMenuHide = true; } catch(_) {}
       // Prevent duplicates: if a section with the same title already exists, don't insert again
+      console.log('[SECTION-INSERT] 🔎 Checking for duplicate sections');
       try {
         var normName = String(name||'').trim().toLowerCase();
         var headers = Array.from(editor.querySelectorAll('h2'));
+        console.log('[SECTION-INSERT] 📊 Found', headers.length, 'existing h2 headers');
         for (var i=0;i<headers.length;i++){
           var t = (headers[i].textContent||'').trim().toLowerCase();
           if (t === normName) {
+            console.log('[SECTION-INSERT] 🚫 Duplicate found, skipping:', name);
             // Ensure chip anchors to the existing section for user feedback
             if (typeof positionChipBelowElement === 'function') positionChipBelowElement(headers[i]);
             if (typeof showSuggestionsChip === 'function') showSuggestionsChip(headers[i]);
@@ -4918,12 +4978,17 @@
           }
         }
       } catch(_) {}
+      console.log('[SECTION-INSERT] 🏗️ Building HTML for new section:', name);
       var id = name.replace(/\s+/g,'_');
       var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
+      var paraStart = performance.now();
       var para = buildSectionParagraphWithChips(name);
+      var paraTime = performance.now() - paraStart;
+      console.log('[SECTION-INSERT] 📝 buildSectionParagraphWithChips time:', Math.round(paraTime) + 'ms');
       // Ensure we can reference the new paragraph element after insertion
       window.__sectionInsertSeq += 1;
       var newParaId = 'sectionPara-' + Date.now() + '-' + window.__sectionInsertSeq;
+      console.log('[SECTION-INSERT] 🆔 Generated para ID:', newParaId);
       // Replace <p> or <p > with <p id="...">
       if (para.indexOf('<p>') !== -1) {
         para = para.replace('<p>', '<p id="'+newParaId+'">');
@@ -4935,7 +5000,9 @@
                    heading + para +
                  '</div>';
       // Placement: respect templates.json defaultSections order when available
+      console.log('[SECTION-INSERT] 📍 Determining placement for:', name);
       var placed = false;
+      var placementStart = performance.now();
       try {
         function norm(s){ return String(s||'').trim().toLowerCase(); }
         function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
@@ -4955,31 +5022,43 @@
           var next = null; var minHigher = Infinity;
           existing.forEach(function(e){ if (e.idx > targetIdx && e.idx < minHigher) { minHigher = e.idx; next = e.el; } });
           if (next) {
+            console.log('[SECTION-INSERT] 📌 Placing before existing section:', next.textContent);
             next.insertAdjacentHTML('beforebegin', html);
             placed = true;
           } else {
             var refs = editor.querySelector('#References');
-            if (refs) { refs.insertAdjacentHTML('beforebegin', html); placed = true; }
+            if (refs) { 
+              console.log('[SECTION-INSERT] 📌 Placing before References section');
+              refs.insertAdjacentHTML('beforebegin', html); 
+              placed = true; 
+            }
           }
         }
-      } catch(_) {}
+      } catch(e) { console.log('[SECTION-INSERT] ❌ Placement error:', e); }
+      var placementTime = performance.now() - placementStart;
+      console.log('[SECTION-INSERT] ⏱️ Placement logic time:', Math.round(placementTime) + 'ms');
       if (!placed) {
+        console.log('[SECTION-INSERT] 🔄 Using fallback placement');
         // Fallback deterministic placement:
         // - before References if present
         // - else append at end if any sections already exist
         // - else after lead placeholder if present
         var refs = editor.querySelector('#References');
         if (refs) {
+          console.log('[SECTION-INSERT] 📌 Fallback: before References');
           refs.insertAdjacentHTML('beforebegin', html);
         } else {
           var existingH2 = editor.querySelectorAll('h2').length;
           if (existingH2 > 0) {
+            console.log('[SECTION-INSERT] 📌 Fallback: append at end (', existingH2, 'existing sections)');
             editor.insertAdjacentHTML('beforeend', html);
           } else {
             var lead = document.getElementById('leadPlaceholder');
             if (lead && lead.parentNode === editor) {
+              console.log('[SECTION-INSERT] 📌 Fallback: after lead placeholder');
               lead.insertAdjacentHTML('afterend', html);
             } else {
+              console.log('[SECTION-INSERT] 📌 Fallback: append at very end');
               editor.insertAdjacentHTML('beforeend', html);
             }
           }
@@ -4999,8 +5078,10 @@
         }
       } catch(_) {}
       // Move caret into the new section paragraph (first placeholder if available) and keep chip visible
+      console.log('[SECTION-INSERT] 🎯 Setting up focus and positioning');
       try {
         requestAnimationFrame(function(){
+          console.log('[SECTION-INSERT] 🎬 RequestAnimationFrame callback executing');
           try {
             var insertedPara = document.querySelector('#'+newParaId);
             if (!insertedPara) return;
@@ -5522,7 +5603,7 @@
       // Fallback: prompt for a section name and insert skeleton directly
       try {
         var name = prompt('Section name');
-        if (name && typeof insertSectionSkeleton === 'function') insertSectionSkeleton(name);
+        if (name && typeof insertSectionSkeleton === 'function') insertSectionSkeleton(name).catch(function(){});
       } catch(_) {}
     }
 
