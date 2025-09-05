@@ -63,7 +63,7 @@ jobs:
             sed -i 's|href=\"index.html\"|href=\"../../index.html\"|g' "$f"
           done
 
-      - name: Aggregate landing index
+      - name: Aggregate landing index (with simple language switcher)
         run: |
           cat > site/index.html <<'HTML'
           <!doctype html>
@@ -88,6 +88,15 @@ jobs:
               .card p { margin: 0 0 8px; color: #555; }
               .links { display: flex; gap: 12px; flex-wrap: wrap; }
               .badge { display:inline-block; font-size: 12px; padding: 2px 8px; border:1px solid #c8ccd1; border-radius: 999px; color:#555; }
+
+              /* Language switcher */
+              .topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+              .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 999px; background: #fff; }
+              .lang-btn { appearance: none; border: 0; background: transparent; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; cursor: default; }
+              .lang-btn.active { background: #f8f9fa; font-weight: 600; box-shadow: inset 0 0 0 1px #c8ccd1; }
+              .lang-btn:focus { outline: 2px solid #36c; outline-offset: 2px; }
+              @media (max-width: 480px) { .lang-btn { padding: 6px 8px; font-size: 11px; } }
+              .lang-hint { position: absolute; left: -10000px; }
               
               /* Work in Progress Banners */
               .wip-banner {
@@ -105,34 +114,15 @@ jobs:
                 transform-origin: center;
               }
               
-              .wip-left {
-                top: 30px;
-                left: -40px;
-              }
-              
-              .wip-right {
-                top: 30px;
-                right: -40px;
-                transform: rotate(45deg);
-              }
+              .wip-left { top: 30px; left: -40px; }
+              .wip-right { top: 30px; right: -40px; transform: rotate(45deg); }
               
               /* Mobile adjustments */
               @media (max-width: 768px) {
-                .wip-banner {
-                  font-size: 11px;
-                  padding: 5px 30px;
-                }
-                .wip-left {
-                  top: 20px;
-                  left: -35px;
-                }
-                .wip-right {
-                  top: 20px;
-                  right: -35px;
-                }
-                body {
-                  padding-top: 60px;
-                }
+                .wip-banner { font-size: 11px; padding: 5px 30px; }
+                .wip-left { top: 20px; left: -35px; }
+                .wip-right { top: 20px; right: -35px; }
+                body { padding-top: 60px; }
               }
               
               /* Alternative mobile-only banner */
@@ -154,15 +144,9 @@ jobs:
               }
               
               @media (max-width: 480px) {
-                .wip-left, .wip-right {
-                  display: none;
-                }
-                .wip-mobile-banner {
-                  display: block;
-                }
-                body {
-                  padding-top: 70px;
-                }
+                .wip-left, .wip-right { display: none; }
+                .wip-mobile-banner { display: block; }
+                body { padding-top: 70px; }
               }
             </style>
           </head>
@@ -173,6 +157,15 @@ jobs:
             <div class="wip-mobile-banner">🚧 Work in Progress 🚧</div>
             
             <div class="container">
+              <!-- Simple (no-op) language switcher: En / Id -->
+              <div class="topbar">
+                <nav class="lang-switch" aria-label="Language">
+                  <span class="lang-hint">Language:</span>
+                  <button class="lang-btn active" type="button" lang="en" aria-pressed="true" title="English">En</button>
+                  <button class="lang-btn" type="button" lang="id" aria-pressed="false" title="Bahasa Indonesia">Id</button>
+                </nav>
+              </div>
+
               <h1>Article creation and Section expansion prototype</h1>
               
               <div class="group">
@@ -211,7 +204,6 @@ jobs:
           </body>
           </html>
           HTML
-
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
