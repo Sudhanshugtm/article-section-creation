@@ -74,14 +74,23 @@ function main() {
     html = html.replace(/\>Start editing</g, '>Mulai mengedit<');
     console.log('  ✓ Buttons translated');
     
-    // Categories (safe replacements)
+    // Categories (safe replacements - avoid JavaScript keywords)
     html = html.replace(/Person \/ Biography/g, 'Orang / Biografi');
     html = html.replace(/Geographic Location/g, 'Lokasi Geografis');
     html = html.replace(/Species \/ Biology/g, 'Spesies / Biologi');
     html = html.replace(/Organization/g, 'Organisasi');
     html = html.replace(/Academic \/ Concept/g, 'Akademik / Konsep');
     html = html.replace(/Creative Work/g, 'Karya Kreatif');
-    html = html.replace(/Event/g, 'Peristiwa');
+    // Only replace "Event" when it's in category context, not in JavaScript
+    html = html.replace(/data-cat="event">Event</g, 'data-cat="event">Peristiwa<');
+    html = html.replace(/>Event</g, function(match, offset) {
+      // Only replace if it's in a category context, not in JavaScript
+      const before = html.substring(offset - 50, offset);
+      if (before.includes('category-item') && !before.includes('addEventListener')) {
+        return '>Peristiwa<';
+      }
+      return match;
+    });
     html = html.replace(/Other/g, 'Lainnya');
     console.log('  ✓ Categories translated');
     
