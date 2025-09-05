@@ -107,6 +107,44 @@ function main() {
     html = html.replace(/return 'add '\+label;/g, "return 'tambah '+label;");
     console.log('  ✓ Chip tooltips translated');
     
+    // Sidebar guidance content
+    if (t.guidance) {
+      if (t.guidance.title) {
+        html = html.replace(/Writing guidance/g, t.guidance.title);
+      }
+      if (t.guidance.sections) {
+        html = html.replace(/Suggested sections/g, t.guidance.sections);
+      }
+      if (t.guidance.eligibility) {
+        html = html.replace(/Article eligibility check/g, t.guidance.eligibility + ' check');
+      }
+      console.log('  ✓ Sidebar guidance translated');
+    }
+    
+    // Eligibility questions
+    if (t.eligibility) {
+      if (t.eligibility.title) {
+        html = html.replace(/Is this article eligible\?/g, t.eligibility.title);
+      }
+      if (t.eligibility.questions) {
+        // Actual questions from article-creator.html
+        html = html.replace(/Has your topic been covered in newspapers or magazines\?/g, 'Apakah topik Anda telah diliput di koran atau majalah?');
+        html = html.replace(/Are these sources from well-known news sites or publications\?/g, 'Apakah sumber-sumber ini dari situs berita atau publikasi terkenal?');
+        html = html.replace(/Were these written by independent journalists \(not press releases\)\?/g, 'Apakah ini ditulis oleh jurnalis independen (bukan siaran pers)?');
+        html = html.replace(/Do you have at least 2 different sources\?/g, 'Apakah Anda memiliki setidaknya 2 sumber yang berbeda?');
+      }
+      if (t.eligibility.yes) {
+        html = html.replace(/\>Yes</g, `>${t.eligibility.yes}<`);
+      }
+      if (t.eligibility.no) {
+        html = html.replace(/\>No</g, `>${t.eligibility.no}<`);
+      }
+      if (t.eligibility.maybe) {
+        html = html.replace(/\>Maybe</g, `>${t.eligibility.maybe}<`);
+      }
+      console.log('  ✓ Eligibility questions translated');
+    }
+    
     // Update language attribute
     html = html.replace(/html lang="en"/, 'html lang="id"');
     console.log('  ✓ Language attribute updated');
