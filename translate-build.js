@@ -94,6 +94,19 @@ function main() {
     html = html.replace(/Other/g, 'Lainnya');
     console.log('  ✓ Categories translated');
     
+    // Smart Chips translations
+    if (t.chips) {
+      // Reference chip
+      if (t.chips.reference) {
+        html = html.replace(/\>Reference</g, `>${t.chips.reference}<`);
+      }
+      console.log('  ✓ Smart chips translated');
+    }
+    
+    // Dynamic chip tooltips ("add" prefix in prettifyPlaceholder function)
+    html = html.replace(/return 'add '\+label;/g, "return 'tambah '+label;");
+    console.log('  ✓ Chip tooltips translated');
+    
     // Update language attribute
     html = html.replace(/html lang="en"/, 'html lang="id"');
     console.log('  ✓ Language attribute updated');
