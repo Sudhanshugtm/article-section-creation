@@ -1068,28 +1068,28 @@
       <div class="creator-wrap">
         <div class="ac-steps">
           <section class="ac-step active" id="creation-step1">
-            <h3>What article would you like to create?</h3>
-            <input id="creation-title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
+            <h3 data-i18n="creation.step1.title">What article would you like to create?</h3>
+            <input id="creation-title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title" data-i18n-placeholder="creation.step1.placeholder" data-i18n-attr="placeholder">
             <div class="ac-actions">
-              <button class="btn primary" id="creation-toStep2" disabled>Continue</button>
+              <button class="btn primary" id="creation-toStep2" disabled data-i18n="creation.step1.continue">Continue</button>
             </div>
           </section>
           <section class="ac-step" id="creation-step2">
-            <h3>Assign a topic category</h3>
+            <h3 data-i18n="creation.step2.title.static" data-i18n-template='What is "{topic}"?'>Assign a topic category</h3>
             <div class="category-list" id="creation-categoryList">
-              <div class="category-item" data-cat="person">Person / Biography</div>
-              <div class="category-item" data-cat="place">Geographic Location</div>
-              <div class="category-item" data-cat="species">Species / Biology</div>
-              <div class="category-item" data-cat="organization">Organization</div>
-              <div class="category-item" data-cat="academic">Academic / Concept</div>
-              <div class="category-item" data-cat="creative">Creative Work</div>
-              <div class="category-item" data-cat="event">Event</div>
-              <div class="category-item" data-cat="other">Other</div>
+              <div class="category-item" data-cat="person" data-i18n="creation.cat.person">Person / Biography</div>
+              <div class="category-item" data-cat="place" data-i18n="creation.cat.place">Geographic Location</div>
+              <div class="category-item" data-cat="species" data-i18n="creation.cat.species">Species / Biology</div>
+              <div class="category-item" data-cat="organization" data-i18n="creation.cat.organization">Organization</div>
+              <div class="category-item" data-cat="academic" data-i18n="creation.cat.academic">Academic / Concept</div>
+              <div class="category-item" data-cat="creative" data-i18n="creation.cat.creative">Creative Work</div>
+              <div class="category-item" data-cat="event" data-i18n="creation.cat.event">Event</div>
+              <div class="category-item" data-cat="other" data-i18n="creation.cat.other">Other</div>
             </div>
-            <div class="hint">This helps us suggest the right structure and policies.</div>
+            <div class="hint" data-i18n="creation.step2.hint">This helps us suggest the right structure and policies.</div>
             <div class="ac-actions">
-              <button class="btn" id="creation-backTo1">Back</button>
-              <button class="btn primary" id="creation-toStep3" disabled>Start editing</button>
+              <button class="btn" id="creation-backTo1" data-i18n="creation.step2.back">Back</button>
+              <button class="btn primary" id="creation-toStep3" disabled data-i18n="creation.step2.start">Start editing</button>
             </div>
           </section>
           <section class="ac-step" id="creation-step3">
@@ -1229,6 +1229,52 @@
           }
         });
       }).catch(console.error);
+    })();
+
+    // === Minimal runtime i18n apply for this page ===
+    (function runtimeI18n(){
+      // Determine language: try window.currentLang, then URL first segment, then 'en'
+      var lang = window.currentLang || (location.pathname.split('/').filter(Boolean)[0]) || 'en';
+      window.currentLang = lang;
+
+      // Helper to apply a translations map to the DOM
+      function applyMap(map) {
+        if (!map) return;
+        // Text content
+        document.querySelectorAll('[data-i18n]').forEach(function(el){
+          var key = el.getAttribute('data-i18n');
+          var v = map[key];
+          if (v && v[lang]) el.textContent = v[lang];
+        });
+        // Attributes like placeholder
+        document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+          var attr = el.getAttribute('data-i18n-attr');
+          var key = el.getAttribute('data-i18n-placeholder') || el.getAttribute('data-i18n-attr-key') || el.getAttribute('data-i18n-attr');
+          var v = map[key];
+          if (v && v[lang]) el.setAttribute(attr, v[lang]);
+        });
+        // Specific placeholder helper
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+          var key = el.getAttribute('data-i18n-placeholder');
+          var v = map[key];
+          if (v && v[lang]) el.placeholder = v[lang];
+        });
+      }
+
+      // If translations are already loaded on window.translations, use them
+      if (window.translations) {
+        applyMap(window.translations);
+        return;
+      }
+
+      // Otherwise try to fetch a built translations.json next to this site root
+      var p = '/translations.json';
+      fetch(p).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
+        window.translations = json;
+        applyMap(json);
+      }).catch(function(){
+        // Silent fallback if translations unavailable
+      });
     })();
 
     // === Referencing helpers (concept demo) ===
@@ -1523,7 +1569,30 @@
       var step2Title = step2.querySelector('h3');
       var userTopic = titleInput.value.trim();
       if (step2Title && userTopic) {
-        step2Title.textContent = 'What is "' + userTopic + '"?';
+        // If a data-i18n-template attribute exists, use it for interpolation (template may contain {topic})
+        var tmpl = step2Title.getAttribute('data-i18n-template');
+        if (tmpl) {
+          step2Title.textContent = tmpl.replace('{topic}', userTopic);
+        } else {
+          // Fallback: if a translation key exists, try to fetch translated template from global translations object
+          try {
+            if (window.translations && step2Title.getAttribute('data-i18n')) {
+              var key = step2Title.getAttribute('data-i18n');
+              var lang = window.currentLang || (location.pathname.split('/').filter(Boolean)[0]) || 'en';
+              var entry = window.translations[key];
+              if (entry && entry[lang]) {
+                // If the entry contains a placeholder {topic}, replace it
+                step2Title.textContent = entry[lang].replace('{topic}', userTopic);
+              } else {
+                step2Title.textContent = 'What is "' + userTopic + '"?';
+              }
+            } else {
+              step2Title.textContent = 'What is "' + userTopic + '"?';
+            }
+          } catch (e) {
+            step2Title.textContent = 'What is "' + userTopic + '"?';
+          }
+        }
       }
     };
     backTo1 && (backTo1.onclick=function(){ step2.classList.remove('active'); step1.classList.add('active'); });

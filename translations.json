@@ -105,6 +105,31 @@
       "undo": "Undo",
       "redo": "Redo"
     }
+    ,
+    "creation": {
+      "step1": {
+        "title": "What article would you like to create?",
+        "placeholder": "e.g., Jane Doe / Example Software",
+        "continue": "Continue"
+      },
+      "step2": {
+        "title_static": "Assign a topic category",
+        "title_template": "What is \"{topic}\"?",
+        "hint": "This helps us suggest the right structure and policies.",
+        "back": "Back",
+        "start": "Start editing",
+        "categories": {
+          "person": "Person / Biography",
+          "place": "Geographic Location",
+          "species": "Species / Biology",
+          "organization": "Organization",
+          "academic": "Academic / Concept",
+          "creative": "Creative Work",
+          "event": "Event",
+          "other": "Other"
+        }
+      }
+    }
   },
   "id": {
     "pageTitle": "Pembuat Artikel — Konsep Chip Referensi",
@@ -211,6 +236,31 @@
       "heading": "Judul",
       "undo": "Batalkan",
       "redo": "Ulangi"
+    }
+    ,
+    "creation": {
+      "step1": {
+        "title": "Artikel apa yang ingin Anda buat?",
+        "placeholder": "mis., Jane Doe / Contoh Perangkat Lunak",
+        "continue": "Lanjutkan"
+      },
+      "step2": {
+        "title_static": "Tetapkan kategori topik",
+        "title_template": "Apa itu \"{topic}\"?",
+        "hint": "Ini membantu kami menyarankan struktur dan kebijakan yang tepat.",
+        "back": "Kembali",
+        "start": "Mulai mengedit",
+        "categories": {
+          "person": "Orang / Biografi",
+          "place": "Lokasi geografis",
+          "species": "Spesies / Biologi",
+          "organization": "Organisasi",
+          "academic": "Akademik / Konsep",
+          "creative": "Karya Kreatif",
+          "event": "Peristiwa",
+          "other": "Lainnya"
+        }
+      }
     }
   }
 }
