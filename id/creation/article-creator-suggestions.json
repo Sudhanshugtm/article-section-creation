@@ -1,0 +1,274 @@
+{
+  "person": {
+    "label": "Biography",
+    "note": "Most biography articles include these sections to give readers a complete picture of the person's life and significance:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Marie Curie",
+          "text": "Marie Curie (lahir Maria Salomea Skłodowska; 7 November 1867 – 4 Juli 1934) adalah seorang fisikawan dan kimiawan Polandia-Prancis yang melakukan penelitian perintis tentang radioaktivitas."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Early life",
+        "description": "Birth, childhood, education, and formative experiences",
+        "include": [
+          "Birth date and location",
+          "Family background and upbringing",
+          "Education and early influences",
+          "Formative childhood experiences"
+        ]
+      },
+      {
+        "name": "Career",
+        "description": "Professional achievements and major work",
+        "include": [
+          "Major jobs and positions held",
+          "Key achievements and breakthroughs",
+          "Important works or contributions",
+          "Career timeline and progression"
+        ]
+      }
+    ]
+  },
+  "place": {
+    "label": "Geographic Location",
+    "note": "Location articles help readers understand both the physical place and human activity there:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Paris",
+          "text": "Paris is the capital and most populous city of France. With an official estimated population of 2,102,650 residents as of 1 January 2023 in an area of more than 105 km2 (41 sq mi), Paris is the fourth-most populated city in the European Union and the 30th most densely populated city in the world in 2022."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Geography",
+        "description": "Physical features, climate, and natural characteristics",
+        "include": [
+          "Exact location and coordinates",
+          "Physical terrain and landscape features",
+          "Climate and weather patterns",
+          "Natural resources and environment"
+        ]
+      },
+      {
+        "name": "History",
+        "description": "How the area developed over time",
+        "include": [
+          "First settlement and founding date",
+          "Major historical periods and events",
+          "Key developments and changes",
+          "Important historical figures"
+        ]
+      }
+    ]
+  },
+  "species": {
+    "label": "Species",
+    "note": "Species articles help readers identify and understand the organism in its natural context:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Giant Panda",
+          "text": "The giant panda (Ailuropoda melanoleuca), sometimes called a panda bear or simply panda, is a bear species endemic to China. It is characterised by its black-and-white coat and rotund body. The name \"giant panda\" is sometimes used to distinguish it from the red panda, a neighboring musteloid."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Description",
+        "description": "Physical appearance and distinguishing features",
+        "include": [
+          "Size and physical measurements",
+          "Distinctive physical characteristics",
+          "How to identify this species",
+          "Differences from similar species"
+        ]
+      },
+      {
+        "name": "Habitat",
+        "description": "Where the species lives and environmental needs",
+        "include": [
+          "Geographic range and distribution",
+          "Preferred environmental conditions",
+          "Specific habitat types",
+          "Environmental requirements for survival"
+        ]
+      }
+    ]
+  },
+  "organization": {
+    "label": "Organization",
+    "note": "Organization articles explain what the group does and how it operates:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "World Health Organization",
+          "text": "The World Health Organization (WHO) is a specialized agency of the United Nations responsible for international public health. It is headquartered in Geneva, Switzerland, and has six regional offices and 150 field offices worldwide."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "History",
+        "description": "How and why the organization was founded",
+        "include": [
+          "Founding date and founders",
+          "Original mission and goals",
+          "Circumstances that led to creation",
+          "Early development and growth"
+        ]
+      },
+      {
+        "name": "Activities",
+        "description": "Main work, programs, and services",
+        "include": [
+          "Core programs and services",
+          "Target audience or beneficiaries",
+          "Key initiatives and campaigns",
+          "Impact and achievements"
+        ]
+      }
+    ]
+  },
+  "academic": {
+    "label": "Academic Concept",
+    "note": "Academic articles explain complex ideas clearly for readers at different knowledge levels:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Quantum Mechanics",
+          "text": "Quantum mechanics is a fundamental theory in physics that describes the physical properties of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Definition",
+        "description": "Clear explanation of what the concept means",
+        "include": [
+          "Clear, simple definition",
+          "Key characteristics and features",
+          "How it differs from related concepts",
+          "Context within its field"
+        ]
+      },
+      {
+        "name": "Background",
+        "description": "Historical development and key contributors",
+        "include": [
+          "When and how it was first developed",
+          "Key researchers and contributors",
+          "Major milestones in development",
+          "Evolution of understanding over time"
+        ]
+      }
+    ]
+  },
+  "creative": {
+    "label": "Creative Work",
+    "note": "Creative work articles cover both the content and the story behind its creation:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "The Beatles - Abbey Road",
+          "text": "Abbey Road is the eleventh studio album by the English rock band the Beatles, released on 26 September 1969. It is the last album the four members recorded together, although Let It Be was the last album completed before the band's break-up in April 1970."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Plot",
+        "description": "Story summary without major spoilers",
+        "include": [
+          "Main characters and setting",
+          "Central conflict or premise",
+          "Key themes explored",
+          "General story arc (no spoilers)"
+        ]
+      },
+      {
+        "name": "Production",
+        "description": "How the work was created or developed",
+        "include": [
+          "Creator(s) and key personnel",
+          "Development timeline",
+          "Production locations and methods",
+          "Notable production details"
+        ]
+      }
+    ]
+  },
+  "event": {
+    "label": "Event",
+    "note": "Event articles help readers understand what happened and why it mattered:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Moon Landing",
+          "text": "The Apollo 11 mission was the spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969, at 20:17 UTC, and Armstrong became the first person to step onto the Moon's surface six hours and 39 minutes later, on July 21 at 02:56 UTC."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Background",
+        "description": "Circumstances leading up to the event",
+        "include": [
+          "Underlying causes and factors",
+          "Prior events that led to this",
+          "Key people and organizations involved",
+          "Context and setting"
+        ]
+      },
+      {
+        "name": "Timeline",
+        "description": "Key moments and how events unfolded",
+        "include": [
+          "Chronological sequence of events",
+          "Key dates and milestones",
+          "Major developments and turning points",
+          "Immediate outcomes and results"
+        ]
+      }
+    ]
+  },
+  "other": {
+    "label": "Other Topic",
+    "note": "Here are some flexible sections that work for many different types of articles:",
+    "introduction": {
+      "examples": [
+        {
+          "title": "Climate Change",
+          "text": "Climate change refers to long-term shifts in global or regional climate patterns, attributed largely to human activities since the mid-20th century, particularly the increased levels of greenhouse gases produced by burning fossil fuels."
+        }
+      ]
+    },
+    "sections": [
+      {
+        "name": "Background",
+        "description": "Context, history, or foundational information",
+        "include": [
+          "Historical context and origins",
+          "How this topic developed",
+          "Important foundational concepts",
+          "Why this topic is significant"
+        ]
+      },
+      {
+        "name": "Overview",
+        "description": "Main aspects, components, or key characteristics",
+        "include": [
+          "Key components and elements",
+          "Main characteristics and features",
+          "Different aspects or categories",
+          "How everything fits together"
+        ]
+      }
+    ]
+  }
+}

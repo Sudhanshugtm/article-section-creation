@@ -26,6 +26,7 @@ function main() {
     // Load translation data
     const translations = JSON.parse(fs.readFileSync('translations.json', 'utf8'));
     const t = translations.id; // Indonesian translations
+    const outBase = path.basename(outputFile, '.html');
     
     // Read source HTML
     let html = fs.readFileSync(inputFile, 'utf8');
@@ -184,6 +185,61 @@ function main() {
     // Update language attribute
     html = html.replace(/html lang="en"/, 'html lang="id"');
     console.log('  ✓ Language attribute updated');
+
+    // Toolbar and common UI labels
+    html = html.replace(/title=\"Close\"/g, 'title="Tutup"');
+    html = html.replace(/\>Suggestions</g, '>Saran');
+    html = html.replace(/title=\"Get suggestions\"/g, 'title="Dapatkan saran"');
+    html = html.replace(/\>Source</g, '>Sumber');
+    html = html.replace(/\>Publish</g, '>Terbitkan');
+    html = html.replace(/Add link/g, 'Tambah pranala');
+    html = html.replace(/Insert/g, 'Sisipkan');
+    html = html.replace(/Template… \(mock\)/g, 'Templat… (mock)');
+    html = html.replace(/Math… \(mock\)/g, 'Matematika… (mock)');
+    html = html.replace(/Table… \(mock\)/g, 'Tabel… (mock)');
+    html = html.replace(/Special character…/g, 'Karakter khusus…');
+    console.log('  ✓ Toolbar labels translated');
+
+    // Step 2 dynamic title template
+    html = html.replace(/step2Title\.textContent = 'What is \"' \+ userTopic \+ '\"\?';/g,
+      "step2Title.textContent = 'Apa itu \\\"' + userTopic + '\\\"?';");
+    console.log('  ✓ Dynamic Step 2 title translated');
+
+    // Source modal and sidebar strings
+    html = html.replace(/Add content from a reliable source/g, 'Tambahkan konten dari sumber terpercaya');
+    html = html.replace(/Source verification/g, 'Verifikasi sumber');
+    html = html.replace(/Source URL/g, 'URL sumber');
+    html = html.replace(/Title \(optional\)/g, 'Judul (opsional)');
+    html = html.replace(/Article title/g, 'Judul artikel');
+    html = html.replace(/Draft content preview/g, 'Pratinjau konten draf');
+    html = html.replace(/\>Cancel</g, '>Batal<');
+    html = html.replace(/\>Check source</g, '>Periksa sumber<');
+    html = html.replace(/textContent = 'Check source';/g, "textContent = 'Periksa sumber';");
+    html = html.replace(/Create draft from source/g, 'Buat draf dari sumber');
+    html = html.replace(/Insert as draft/g, 'Sisipkan sebagai draf');
+    html = html.replace(/Add reference/g, 'Tambahkan referensi');
+    html = html.replace(/Insert cite/g, 'Sisipkan kutipan');
+    html = html.replace(/unclassified/g, 'tidak terklasifikasi');
+
+    // Verification steps (modal and sidebar)
+    html = html.replace(/Checking domain\.\.\./g, 'Memeriksa domain...');
+    html = html.replace(/Verifying reliability\.\.\./g, 'Memverifikasi keandalan...');
+    html = html.replace(/Checking HTTPS security\.\.\./g, 'Memeriksa keamanan HTTPS...');
+    html = html.replace(/Verifying source reliability\.\.\./g, 'Memverifikasi keandalan sumber...');
+    html = html.replace(/Checking\.\.\./g, 'Memeriksa...');
+    html = html.replace(/Domain verified: /g, 'Domain terverifikasi: ');
+    html = html.replace(/Source reliability checked/g, 'Keandalan sumber telah diperiksa');
+    html = html.replace(/Insert into article/g, 'Sisipkan ke artikel');
+
+    // Sidebar helper and facts labels
+    html = html.replace(/External source/g, 'Sumber eksternal');
+    html = html.replace(/Source checking available/g, 'Pemeriksaan sumber tersedia');
+
+    // Update fetch paths inside the localized HTML to point to localized assets next to it
+    // reliable-sources.json → <outBase>-reliable-sources.json
+    html = html.replace(/fetch\('\s*reliable-sources\.json'\)/g, `fetch('${outBase}-reliable-sources.json')`);
+    // article-creation-suggestions.json → <outBase>-suggestions.json
+    html = html.replace(/fetch\('\s*article-creation-suggestions\.json'\)/g, `fetch('${outBase}-suggestions.json')`);
     
     // Write output
     fs.writeFileSync(outputFile, html, 'utf8');
