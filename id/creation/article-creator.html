@@ -1467,7 +1467,7 @@
       // Introduction Accordion
       content += '<div class="accordion-item">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Introduction</h4>';
+      content += '<h4 style="margin: 0;">Pengantar</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
@@ -1488,7 +1488,7 @@
       content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">Struktur templat:</p>';
       var template = getIntroductionTemplate(selectedCat);
       content += '<div class="intro-template" style="background: #f0f8ff; border-left: 3px solid #36c; padding: 12px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
-      content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Typically, introduction sections have this structure:</div>';
+      content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Biasanya, bagian pengantar memiliki struktur seperti ini:</div>';
       content += '<div style="color: #222; font-family: monospace; background: #fff; padding: 8px; border-radius: 3px; border: 1px solid #c8ccd1;">' + template + '</div>';
       content += '</div>';
       
@@ -2187,14 +2187,14 @@
     // Get introduction template based on category
     function getIntroductionTemplate(category) {
       var templates = {
-        'person': '[Person\'s Name] was born on [Date] and is known for [notable achievements]. They are [brief description of what makes them notable].',
-        'place': '[Place Name] is [type of location] located in [geographic area]. It has a population of [number] and is known for [key features or significance].',
-        'species': 'The [common name] ([Scientific name]) is a [type of organism] that [key characteristics]. It is [distinctive features or behaviors].',
+        'person': '[Person's Name] lahir pada [Date] dan dikenal karena [notable achievements]. Ia [brief description of what makes them notable].',
+        'place': '[Place Name] adalah [type of location] yang terletak di [geographic area]. Memiliki populasi [number] dan dikenal karena [key features or significance].',
+        'species': '[common name] ([Scientific name]) adalah [type of organism] yang [key characteristics]. Memiliki [distinctive features or behaviors].',
         'organization': '[Organisasi Name] is a [type of organization] founded in [year] by [founder]. It [main purpose or mission].',
-        'academic': '[Term/Concept] is [definition] that [main characteristics or applications]. It was [development or discovery context].',
-        'creative': '[Title] is a [type of work] [created/written/directed] by [creator] in [year]. It [brief description of content or significance].',
-        'event': '[Event Name] was [type of event] that occurred on [date] in [location]. It [significance or impact].',
-        'other': '[Topic Name] is [definition or description] that [key characteristics or significance]. It [additional context].'
+        'academic': '[Term/Concept] adalah [definition] yang [main characteristics or applications]. [development or discovery context].',
+        'creative': '[Title] adalah [type of work] yang [created/written/directed] oleh [creator] pada [year]. [brief description of content or significance].',
+        'event': '[Event Name] adalah [type of event] yang terjadi pada [date] di [location]. [significance or impact].',
+        'other': '[Topic Name] adalah [definition or description] yang [key characteristics or significance]. [additional context].'
       };
       
       return templates[category] || templates['other'];

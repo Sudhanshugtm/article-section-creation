@@ -244,6 +244,27 @@ function main() {
     html = html.replace(/External source/g, 'Sumber eksternal');
     html = html.replace(/Source checking available/g, 'Pemeriksaan sumber tersedia');
 
+    // Introduction accordion and template helpers
+    html = html.replace(/<h4 style=\"margin: 0;\">Introduction<\/h4>/g, '<h4 style="margin: 0;">Pengantar</h4>');
+    html = html.replace(/Typically, introduction sections have this structure:/g, 'Biasanya, bagian pengantar memiliki struktur seperti ini:');
+    // Translate getIntroductionTemplate() string templates
+    html = html.replace(/\[Person\\'s Name\] was born on \[Date\] and is known for \[notable achievements\]\. They are \[brief description of what makes them notable\]\./g,
+      "[Person's Name] lahir pada [Date] dan dikenal karena [notable achievements]. Ia [brief description of what makes them notable].");
+    html = html.replace(/\[Place Name\] is \[type of location\] located in \[geographic area\]\. It has a population of \[number\] and is known for \[key features or significance\]\./g,
+      '[Place Name] adalah [type of location] yang terletak di [geographic area]. Memiliki populasi [number] dan dikenal karena [key features or significance].');
+    html = html.replace(/The \[common name\] \(\[Scientific name\]\) is a \[type of organism\] that \[key characteristics\]\. It is \[distinctive features or behaviors\]\./g,
+      '[common name] ([Scientific name]) adalah [type of organism] yang [key characteristics]. Memiliki [distinctive features or behaviors].');
+    html = html.replace(/\[Organization Name\] is a \[type of organization\] founded in \[year\] by \[founder\]\. It \[main purpose or mission\]\./g,
+      '[Organization Name] adalah [type of organization] yang didirikan pada [year] oleh [founder]. [main purpose or mission].');
+    html = html.replace(/\[Term\/Concept\] is \[definition\] that \[main characteristics or applications\]\. It was \[development or discovery context\]\./g,
+      '[Term/Concept] adalah [definition] yang [main characteristics or applications]. [development or discovery context].');
+    html = html.replace(/\[Title\] is a \[type of work\] \[created\/written\/directed\] by \[creator\] in \[year\]\. It \[brief description of content or significance\]\./g,
+      '[Title] adalah [type of work] yang [created/written/directed] oleh [creator] pada [year]. [brief description of content or significance].');
+    html = html.replace(/\[Event Name\] was \[type of event\] that occurred on \[date\] in \[location\]\. It \[significance or impact\]\./g,
+      '[Event Name] adalah [type of event] yang terjadi pada [date] di [location]. [significance or impact].');
+    html = html.replace(/\[Topic Name\] is \[definition or description\] that \[key characteristics or significance\]\. It \[additional context\]\./g,
+      '[Topic Name] adalah [definition or description] yang [key characteristics or significance]. [additional context].');
+
     // Update fetch paths inside the localized HTML to point to localized assets next to it
     // reliable-sources.json → <outBase>-reliable-sources.json
     html = html.replace(/fetch\('\s*reliable-sources\.json'\)/g, `fetch('${outBase}-reliable-sources.json')`);
