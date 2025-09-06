@@ -198,6 +198,14 @@ function main() {
     html = html.replace(/Math… \(mock\)/g, 'Matematika… (mock)');
     html = html.replace(/Table… \(mock\)/g, 'Tabel… (mock)');
     html = html.replace(/Special character…/g, 'Karakter khusus…');
+    html = html.replace(/Cite web… \(mock\)/g, 'Kutip web… (mock)');
+    html = html.replace(/Cite book… \(mock\)/g, 'Kutip buku… (mock)');
+    html = html.replace(/Cite news… \(mock\)/g, 'Kutip berita… (mock)');
+    html = html.replace(/title=\"Page options\"/g, 'title="Opsi halaman"');
+    html = html.replace(/title=\"Help\"/g, 'title="Bantuan"');
+    html = html.replace(/title=\"Add from a source\"/g, 'title="Tambahkan dari sumber"');
+    html = html.replace(/title=\"Numbered list\"/g, 'title="Daftar bernomor"');
+    html = html.replace(/title=\"Bullet list\"/g, 'title="Daftar poin"');
     console.log('  ✓ Toolbar labels translated');
 
     // Step 2 dynamic title template
@@ -220,6 +228,7 @@ function main() {
     html = html.replace(/Add reference/g, 'Tambahkan referensi');
     html = html.replace(/Insert cite/g, 'Sisipkan kutipan');
     html = html.replace(/unclassified/g, 'tidak terklasifikasi');
+    html = html.replace(/Add from source/g, 'Tambahkan dari sumber');
 
     // Verification steps (modal and sidebar)
     html = html.replace(/Checking domain\.\.\./g, 'Memeriksa domain...');
