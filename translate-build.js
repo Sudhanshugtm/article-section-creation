@@ -206,6 +206,35 @@ function main() {
     html = html.replace(/title=\"Add from a source\"/g, 'title="Tambahkan dari sumber"');
     html = html.replace(/title=\"Numbered list\"/g, 'title="Daftar bernomor"');
     html = html.replace(/title=\"Bullet list\"/g, 'title="Daftar poin"');
+    // VE toolbar additional labels/titles
+    html = html.replace(/title=\"Undo\"/g, 'title="Batalkan"');
+    html = html.replace(/title=\"Redo\"/g, 'title="Ulangi"');
+    html = html.replace(/title=\"Quote\"/g, 'title="Kutipan"');
+    html = html.replace(/title=\"Submit\"/g, 'title="Kirim"');
+    // Paragraph dropdown label and items
+    html = html.replace(/<span class=\"cdx-button__label\">Paragraph<\/span>/g, '<span class="cdx-button__label">Paragraf<\/span>');
+    html = html.replace(/<button data-header=\"\">Paragraph<\/button>/g, '<button data-header="">Paragraf<\/button>');
+    html = html.replace(/<button data-header=\"1\">Heading 1<\/button>/g, '<button data-header="1">Judul 1<\/button>');
+    html = html.replace(/<button data-header=\"2\">Heading 2<\/button>/g, '<button data-header="2">Judul 2<\/button>');
+    html = html.replace(/<button data-header=\"3\">Heading 3<\/button>/g, '<button data-header="3">Judul 3<\/button>');
+    html = html.replace(/<button data-header=\"4\">Heading 4<\/button>/g, '<button data-header="4">Judul 4<\/button>');
+    html = html.replace(/<button data-header=\"5\">Heading 5<\/button>/g, '<button data-header="5">Judul 5<\/button>');
+    html = html.replace(/<button data-header=\"6\">Heading 6<\/button>/g, '<button data-header="6">Judul 6<\/button>');
+    html = html.replace(/<button data-header=\"code\">Preformatted<\/button>/g, '<button data-header="code">Praformat<\/button>');
+    // Style menu items
+    html = html.replace(/<button data-style=\"bold\">Bold<\/button>/g, '<button data-style="bold">Tebal<\/button>');
+    html = html.replace(/<button data-style=\"italic\">Italic<\/button>/g, '<button data-style="italic">Miring<\/button>');
+    html = html.replace(/<button data-style=\"underline\">Underline<\/button>/g, '<button data-style="underline">Garis bawah<\/button>');
+    html = html.replace(/<button data-style=\"strike\">Strikethrough<\/button>/g, '<button data-style="strike">Coret<\/button>');
+    html = html.replace(/<button data-style=\"clean\">Clear styling<\/button>/g, '<button data-style="clean">Hapus gaya<\/button>');
+    // Link/Cite labels
+    html = html.replace(/<span class=\"cdx-button__label\">Link<\/span>/g, '<span class="cdx-button__label">Pranala<\/span>');
+    html = html.replace(/<span class=\"cdx-button__label\">Cite<\/span>/g, '<span class="cdx-button__label">Kutip<\/span>');
+    // Suggestions and Publish labels (fix any malformed tags)
+    html = html.replace(/<span class=\"cdx-button__label\">Suggestions<\/span>/g, '<span class="cdx-button__label">Saran<\/span>');
+    html = html.replace(/Saran\/span>/g, 'Saran<\/span>');
+    html = html.replace(/>Publish<\/button>/g, '>Terbitkan<\/button>');
+    html = html.replace(/Terbitkan\/button>/g, 'Terbitkan<\/button>');
     console.log('  ✓ Toolbar labels translated');
 
     // Step 2 dynamic title template
