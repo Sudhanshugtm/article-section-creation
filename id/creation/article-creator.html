@@ -1039,7 +1039,7 @@
         <button class="btn" id="cancelSource">Batal</button>
         <button class="btn" id="checkSourceBtn">Periksa sumber</button>
         <button class="btn primary" id="generateDraftBtn" style="display: none;">Buat draf dari sumber</button>
-        <button class="btn primary" id="insertDraftBtn" style="display: none;">Sisipkan as draft</button>
+        <button class="btn primary" id="insertDraftBtn" style="display: none;">Sisipkan sebagai draf</button>
       </div>
     </div>
   </div>
@@ -1051,7 +1051,7 @@
       <div class="ref-row"><label for="refTitleInput">Judul (opsional)</label><input id="refTitleInput" type="text" placeholder="Judul artikel"></div>
       <div class="ref-actions">
         <button class="btn" id="refCancel">Batal</button>
-        <button class="btn primary" id="refSisipkan">Sisipkan cite</button>
+        <button class="btn primary" id="refInsert">Sisipkan kutipan</button>
       </div>
     </div>
   </div>
@@ -1266,7 +1266,7 @@
           if (atStart) {
             h2.parentNode.insertBefore(p, h2);
           } else {
-            // Sisipkan after H2
+            // Insert after H2
             if (h2.nextSibling) {
               h2.parentNode.insertBefore(p, h2.nextSibling);
             } else {
@@ -1368,7 +1368,7 @@
               selection.removeAllRanges();
               selection.addRange(newRange);
               
-              // Sisipkan a zero-width space to break formatting
+              // Insert a zero-width space to break formatting
               document.execCommand('insertText', false, '\u200B');
             }
           } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
@@ -1379,7 +1379,7 @@
             selection.removeAllRanges();
             selection.addRange(newRange);
             
-            // Sisipkan a zero-width space to break formatting
+            // Insert a zero-width space to break formatting
             document.execCommand('insertText', false, '\u200B');
           }
         }
@@ -1414,7 +1414,7 @@
     var openBtn=null;
     var backdrop=document.getElementById('refBackdrop');
     var cancelBtn=document.getElementById('refCancel');
-    var insertBtn=document.getElementById('refSisipkan');
+    var insertBtn=document.getElementById('refInsert');
     var urlInput=document.getElementById('refUrl');
     var hint=document.getElementById('refHint');
     var editor=document.getElementById('editor');
@@ -1536,7 +1536,7 @@
         }
         
         content += '</div>';
-        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Sisipkan') + '</span>';
+        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Insert') + '</span>';
         content += '</button>';
       });
       content += '</div>';
@@ -2005,23 +2005,23 @@
     function insertFactWithCitation(factText, source) {
       const editor = document.getElementById('editor');
       if (editor) {
-        // Sisipkan the fact with a citation
+        // Insert the fact with a citation
         const citation = '<ref>Source: ' + source + '</ref>';
-        const textToSisipkan = factText + citation + ' ';
+        const textToInsert = factText + citation + ' ';
         
         // Simple insertion at cursor position or end
         const selection = window.getSelection();
         if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
           const range = selection.getRangeAt(0);
           range.deleteContents();
-          range.insertNode(document.createTextNode(textToSisipkan));
+          range.insertNode(document.createTextNode(textToInsert));
         } else {
-          editor.innerHTML += textToSisipkan;
+          editor.innerHTML += textToInsert;
         }
         
         // Visual feedback
         event.target.style.background = '#d4edda';
-        event.target.innerHTML = '✓ Sisipkaned';
+        event.target.innerHTML = '✓ Inserted';
         setTimeout(() => {
           event.target.style.background = '#f8f9fa';
           event.target.innerHTML = factText;
@@ -2796,7 +2796,7 @@
       return 'default';
     }
     
-    // Sisipkan draft into editor
+    // Insert draft into editor
     function insertDraft() {
       var draftText = document.getElementById('draftContent').textContent;
       var editor = document.getElementById('editor');
@@ -2966,7 +2966,7 @@
       var previewHTML = '';
       previewHTML += '<div class="sidebar-draft-content">' + fullDraft + '</div>';
       previewHTML += '<div class="sidebar-action-buttons">';
-      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarSisipkanBtn">Sisipkan into article</button>';
+      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarInsertBtn">Sisipkan ke artikel</button>';
       previewHTML += '<button class="sidebar-action-btn" id="sidebarCancelBtn">Batal</button>';
       previewHTML += '</div>';
       
@@ -2974,7 +2974,7 @@
       previewDiv.style.display = 'block';
       
       // Bind action buttons
-      var insertBtn = document.getElementById('sidebarSisipkanBtn');
+      var insertBtn = document.getElementById('sidebarInsertBtn');
       var cancelBtn = document.getElementById('sidebarCancelBtn');
       
       if (insertBtn) {
@@ -2990,7 +2990,7 @@
       }
     }
 
-    // Sisipkan draft from sidebar into editor
+    // Insert draft from sidebar into editor
     function insertSidebarDraft(draftText) {
       var editor = document.getElementById('editor');
       
@@ -3208,7 +3208,7 @@
         generateBtn.addEventListener('click', generateDraft);
       }
       
-      // Sisipkan draft button
+      // Insert draft button
       if (insertBtn) {
         insertBtn.addEventListener('click', insertDraft);
       }

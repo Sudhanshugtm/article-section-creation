@@ -193,7 +193,8 @@ function main() {
     html = html.replace(/\>Source</g, '>Sumber');
     html = html.replace(/\>Publish</g, '>Terbitkan');
     html = html.replace(/Add link/g, 'Tambah pranala');
-    html = html.replace(/Insert/g, 'Sisipkan');
+    // Avoid global 'Insert' replacement to not break IDs; replace labels explicitly
+    html = html.replace(/<span class=\"cdx-button__label\">Insert<\/span>/g, '<span class="cdx-button__label">Sisipkan<\/span>');
     html = html.replace(/Template… \(mock\)/g, 'Templat… (mock)');
     html = html.replace(/Math… \(mock\)/g, 'Matematika… (mock)');
     html = html.replace(/Table… \(mock\)/g, 'Tabel… (mock)');
