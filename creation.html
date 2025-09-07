@@ -150,6 +150,18 @@
       outline-offset: 1px;
     }
 
+    /* Filled chip values: look like text but remain editable on click */
+    .chip-value {
+      display: inline;
+      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 1px dotted transparent;
+    }
+    .chip-value:hover, .chip-value:focus-visible {
+      border-bottom-color: #a2a9b1;
+      outline: none;
+    }
+
     /* Chip suggestion menu */
     .chip-menu {
       position: absolute;
@@ -3144,13 +3156,22 @@
       // Prevent caret from entering placeholders/ref chips; open menu/dialog instead
       editor.addEventListener('mousedown', function(e){
         var t = e.target;
-        if (t && t.classList && (t.classList.contains('template-placeholder') || t.classList.contains('ref-chip'))) {
+        if (t && t.classList && (t.classList.contains('template-placeholder') || t.classList.contains('ref-chip') || t.classList.contains('chip-value'))) {
           e.preventDefault();
         }
       });
       editor.addEventListener('click', function(e){
         var t = e.target;
         if (t && t.classList && t.classList.contains('template-placeholder')) {
+          e.preventDefault(); e.stopPropagation();
+          try { showChipSuggestMenu(t); } catch(_) {}
+          try {
+            var blk = t.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+            if (blk) { lastAnchorEl = blk; if (typeof positionChipBelowElement === 'function') positionChipBelowElement(blk); }
+          } catch(_) {}
+          return;
+        }
+        if (t && t.classList && t.classList.contains('chip-value')) {
           e.preventDefault(); e.stopPropagation();
           try { showChipSuggestMenu(t); } catch(_) {}
           try {
@@ -3167,6 +3188,22 @@
             if (blk) { lastAnchorEl = blk; if (typeof positionChipBelowElement === 'function') positionChipBelowElement(blk); }
           } catch(_) {}
           return;
+        }
+      });
+
+      // Keyboard navigation across chips
+      editor.addEventListener('keydown', function(e){
+        if (e.key === 'Tab') {
+          var chips = Array.from(editor.querySelectorAll('.template-placeholder, .chip-value'));
+          if (!chips.length) return;
+          var active = document.activeElement;
+          var idx = chips.indexOf(active);
+          var forward = !e.shiftKey;
+          var nextIdx = -1;
+          if (idx === -1) nextIdx = forward ? 0 : chips.length - 1;
+          else nextIdx = (idx + (forward ? 1 : -1) + chips.length) % chips.length;
+          e.preventDefault();
+          try { chips[nextIdx].focus(); } catch(_) {}
         }
       });
       // Also show chips when the editor gains focus and conditions match
@@ -3602,7 +3639,7 @@
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
         // Context-aware header: Lead vs current section
-        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; case 'creative': return 'CREATIVE'; case 'other': return 'OTHER'; default: return null; } }
         function toId(n){ return String(n||'').trim().replace(/\s+/g,'_'); }
         function sectionExistsByName(nm){
           try{
@@ -3821,7 +3858,7 @@
         if (!currentMenu) return;
         
         var cat = (window.selectedCat || 'other');
-        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; case 'creative': return 'CREATIVE'; case 'other': return 'OTHER'; default: return null; } }
         var tpl = window.templatesData;
         var catKey = catToKey(cat);
         var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : [];
@@ -4354,7 +4391,7 @@
 
     function showChipSuggestMenu(chipEl) {
       const menu = ensureChipMenu();
-      const key = (chipEl.getAttribute('data-placeholder') || '').toLowerCase();
+      const key = (chipEl.getAttribute('data-placeholder') || chipEl.getAttribute('data-key') || '').toLowerCase();
       const cat = (window.selectedCat || 'other');
       const td = window.templatesData || null;
       const headerHint = getChipHeaderHintFromTemplates(td, key);
@@ -4420,18 +4457,25 @@
             menu.style.display = 'none';
             return;
           }
-          // Replace chip with plain text (no chip styling)
-          var textNode = document.createTextNode(val);
+          // Replace chip with a filled, editable value span
+          var filled = document.createElement('span');
+          filled.className = 'chip-value';
+          filled.setAttribute('data-placeholder', (chipEl.getAttribute('data-placeholder')||key).toUpperCase());
+          filled.setAttribute('data-key', key);
+          filled.setAttribute('contenteditable','false');
+          filled.setAttribute('role','button');
+          filled.setAttribute('tabindex','0');
+          filled.textContent = val;
           if (chipEl && chipEl.parentNode) {
             var original = chipEl.cloneNode(true);
             var parent = chipEl.parentNode;
-            parent.replaceChild(textNode, chipEl);
+            parent.replaceChild(filled, chipEl);
             // Feedback + undo
             try {
               var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
               showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
                 try {
-                  if (textNode && textNode.parentNode) textNode.parentNode.replaceChild(original, textNode);
+                  if (filled && filled.parentNode) filled.parentNode.replaceChild(original, filled);
                   // Restore caret and placeholder selection
                   try { var ed=document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
               try { if (original && original.focus) original.focus(); } catch(_) {}
@@ -4440,6 +4484,8 @@
               }, block || parent);
             } catch(_) {}
           }
+          try { if (key === 'occupation' || key === 'work_type') updateArticleHeuristic(filled); } catch(_) {}
+          try { tidyLeadPunctuation(filled); } catch(_) {}
           menu.style.display = 'none';
         });
       });
@@ -4471,17 +4517,24 @@
             var submit = function(){
               var val = (input.value || '').trim();
               if (!val) { input.focus(); return; }
-              var node = document.createTextNode(val);
+              var filled = document.createElement('span');
+              filled.className = 'chip-value';
+              filled.setAttribute('data-placeholder', (chipEl.getAttribute('data-placeholder')||key).toUpperCase());
+              filled.setAttribute('data-key', key);
+              filled.setAttribute('contenteditable','false');
+              filled.setAttribute('role','button');
+              filled.setAttribute('tabindex','0');
+              filled.textContent = val;
               if (chipEl && chipEl.parentNode) {
                 var original = chipEl.cloneNode(true);
                 var parent = chipEl.parentNode;
-                parent.replaceChild(node, chipEl);
+                parent.replaceChild(filled, chipEl);
                 // Feedback + undo
                 try {
                   var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
                   showUndoToast('Filled "'+ (key.replace(/_/g,' ')) +'"', function(){
                     try {
-                      if (node && node.parentNode) node.parentNode.replaceChild(original, node);
+                      if (filled && filled.parentNode) filled.parentNode.replaceChild(original, filled);
                       try { var ed=document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
                       try { if (original && original.focus) original.focus(); } catch(_) {}
                       return true; // handled caret
@@ -4489,6 +4542,8 @@
                   }, block || parent);
                 } catch(_) {}
               }
+              try { if (key === 'occupation' || key === 'work_type') updateArticleHeuristic(filled); } catch(_) {}
+              try { tidyLeadPunctuation(filled); } catch(_) {}
               menu.style.display = 'none';
             };
             var cancel = function(){
@@ -4839,6 +4894,11 @@
         // ALWAYS insert intro at the very beginning of the editor, before any existing content
         editor.insertAdjacentHTML('afterbegin', html);
       }
+      // After insertion, run simple punctuation cleanup and article heuristic
+      try {
+        var __introEl = document.getElementById(pid);
+        if (__introEl) { updateArticleHeuristic(__introEl); tidyLeadPunctuation(__introEl); }
+      } catch(_) {}
       // Position chip/menu below the inserted paragraph without using selection
       setTimeout(function(){
         var el = document.getElementById(pid);
@@ -4908,21 +4968,88 @@
             case 'organization': return 'ORGANIZATION';
             case 'academic': return 'ACADEMIC';
             case 'event': return 'EVENT';
+            case 'creative': return 'CREATIVE';
+            case 'other': return 'OTHER';
             default: return null;
           }
         })(category);
         if (!catKey || !data.categories[catKey]) return null;
         var cat = data.categories[catKey];
-        var tpl = (cat.defaultTemplate && cat.defaultTemplate.formal) || null;
+        // Try subcategory detection using simple keyword match on the title
+        var tpl = null;
+        try {
+          if (cat.subcategories) {
+            var t = String(title||'').toLowerCase();
+            var keys = Object.keys(cat.subcategories);
+            for (var i=0;i<keys.length;i++) {
+              var sc = cat.subcategories[keys[i]];
+              var kws = (sc && Array.isArray(sc.detectionKeywords)) ? sc.detectionKeywords : [];
+              var hit = kws.some(function(k){ return t.indexOf(String(k||'').toLowerCase()) !== -1; });
+              if (hit) { tpl = (sc.introductionTemplates && sc.introductionTemplates.formal) || null; break; }
+            }
+          }
+        } catch(_) {}
+        if (!tpl) tpl = (cat.defaultTemplate && cat.defaultTemplate.formal) || null;
         if (!tpl) return null;
         // Convert {{KEY}} syntax to our [KEY] chips, with a couple direct replacements
         var out = tpl;
         out = out.replace(/\{\{FULL_NAME\}\}/g, title);
-        // Simplify article for now
-        out = out.replace(/\{\{ARTICLE\}\}/g, 'a');
+        // Insert an adjustable article token (a/an)
+        out = out.replace(/\{\{ARTICLE\}\}/g, '<span class="article-chip" contenteditable="false" data-article="a">a</span>');
         out = out.replace(/\{\{([A-Z0-9_]+)\}\}/g, function(_, key){ return '['+key+']'; });
         return out;
       } catch(_) { return null; }
+    }
+
+    // Heuristic: compute a/an for ARTICLE spans based on following term
+    function updateArticleHeuristic(scopeEl) {
+      try {
+        var root = scopeEl || document;
+        var art = root.querySelector('.article-chip');
+        if (!art) return;
+        function chooseArticle(word){
+          if (!word) return 'a';
+          var w = String(word).trim();
+          var first = w.charAt(0).toLowerCase();
+          var anList = ['a','e','i','o','u'];
+          var specialAn = [/^honest/i, /^hour/i, /^heir/i, /^herb/i];
+          var specialA = [/^uni(\b|[^a-z])/i, /^use/i, /^euro/i];
+          if (specialA.some(function(r){return r.test(w);})){ return 'a'; }
+          if (specialAn.some(function(r){return r.test(w);})){ return 'an'; }
+          return anList.indexOf(first) !== -1 ? 'an' : 'a';
+        }
+        // Prefer a filled chip-value sibling, otherwise fallback to placeholder key
+        var val = '';
+        // Check immediate next siblings in paragraph order
+        var node = art.nextSibling;
+        while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) node = node.nextSibling;
+        if (node && node.nodeType === Node.ELEMENT_NODE && node.classList.contains('chip-value')) {
+          val = node.textContent || '';
+        } else {
+          var p = art.closest('p');
+          if (p) {
+            var ph = p.querySelector('.template-placeholder[data-placeholder="OCCUPATION"]') || p.querySelector('.template-placeholder[data-placeholder="WORK_TYPE"]');
+            if (ph) val = (ph.getAttribute('data-placeholder')||'').replace(/_/g,' ').toLowerCase();
+          }
+        }
+        var chosen = chooseArticle(val);
+        art.textContent = chosen;
+        art.setAttribute('data-article', chosen);
+      } catch(_) {}
+    }
+
+    // Simple punctuation tidy for lead parenthesis (no external lookups)
+    function tidyLeadPunctuation(scopeEl){
+      try {
+        var p = scopeEl && scopeEl.closest ? scopeEl.closest('p') : document.querySelector('#editor p');
+        if (!p) return;
+        var html = p.innerHTML;
+        html = html.replace(/\s+([,;:.])/g, '$1').replace(/\(\s+/g,'(').replace(/\s+\)/g,')').replace(/\s{2,}/g,' ');
+        // Drop ";" after opening paren if there is no pronunciation chip/value
+        var hasPron = /data-placeholder="PRONUNCIATION"|data-key="pronunciation"|data-prop="P898"|ipa/i.test(html);
+        if (!hasPron) html = html.replace(/\(\s*;\s*/,'(');
+        p.innerHTML = html;
+      } catch(_) {}
     }
 
     function getChipStyleStarterPreview(title, category) {
@@ -5088,7 +5215,7 @@
       var placementStart = performance.now();
       try {
         function norm(s){ return String(s||'').trim().toLowerCase(); }
-        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; default: return null; } }
+        function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; case 'creative': return 'CREATIVE'; case 'other': return 'OTHER'; default: return null; } }
         var cat = (window.selectedCat || 'other');
         var catKey = catToKey(cat);
         var tdata = window.templatesData;
@@ -5293,24 +5420,16 @@
       } catch(_) { return null; }
     }
 
-    function handleEditorKeyup(e) {
-      // Show chips in certain conditions
-      if (shouldShowSmartChips()) {
-        showSmartChipsAtCursor();
-      } else {
-        hideSmartChips();
-      }
+    let __smartChipsTimer = null;
+    function scheduleSmartChipsUpdate() {
+      if (__smartChipsTimer) { try { clearTimeout(__smartChipsTimer); } catch(_) {} }
+      __smartChipsTimer = setTimeout(function(){
+        if (shouldShowSmartChips()) { showSmartChipsAtCursor(); } else { hideSmartChips(); }
+      }, 60);
     }
+    function handleEditorKeyup(e) { scheduleSmartChipsUpdate(); }
 
-    function handleEditorClick(e) {
-      setTimeout(() => {
-        if (shouldShowSmartChips()) {
-          showSmartChipsAtCursor();
-        } else {
-          hideSmartChips();
-        }
-      }, 10);
-    }
+    function handleEditorClick(e) { scheduleSmartChipsUpdate(); }
 
     function shouldShowSmartChips() {
       const editor = document.getElementById('editor');

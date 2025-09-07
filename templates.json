@@ -171,7 +171,7 @@
         }
       },
       "defaultTemplate": {
-        "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} {{KNOWN_FOR}}. {{CURRENT_STATUS}} {{MAJOR_ACHIEVEMENTS}} {{RECOGNITION}}",
+        "formal": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} best known for {{KNOWN_FOR}}. {{CURRENT_STATUS}} {{MAJOR_ACHIEVEMENTS}} {{RECOGNITION}}",
         "concise": "{{FULL_NAME}} (born {{BIRTH_DATE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} known for {{PRIMARY_ACHIEVEMENT}}.",
         "detailed": "{{FULL_NAME}} ({{PRONUNCIATION}}; born {{BIRTH_DATE}}, {{BIRTH_PLACE}}) is {{ARTICLE}} {{NATIONALITY}} {{OCCUPATION}} and {{SECONDARY_ROLES}}. {{CURRENT_POSITION}} {{CAREER_HIGHLIGHTS}} {{SIGNIFICANCE_STATEMENT}}"
       },
@@ -275,10 +275,51 @@
         }
       },
       "defaultTemplate": {
-        "formal": "{{NAME}} is {{ARTICLE}} {{TYPE}} in {{PARENT_LOCATION}}. {{POPULATION_INFO}}{{AREA_INFO}}{{SIGNIFICANCE}}{{HISTORY}}",
+        "formal": "{{NAME}} is {{ARTICLE}} {{TYPE}} in {{PARENT_LOCATION}}. {{POPULATION_INFO}}{{AREA_INFO}} It is best known for {{SIGNIFICANCE}}. {{HISTORY}}",
         "concise": "{{NAME}} is {{ARTICLE}} {{TYPE}} in {{PARENT_LOCATION}} with {{PRIMARY_STATISTIC}}.",
         "detailed": "{{NAME}} is {{ARTICLE}} {{TYPE}} located in {{PARENT_LOCATION}}. {{ADMIN_INFO}} {{DETAILED_STATISTICS}}{{GEOGRAPHY}}{{ECONOMY}}{{CULTURE}}"
       },
+      "defaultSections": [
+        {
+          "title": "History",
+          "description": "Founding, development, and major historical events",
+          "icon": "📚",
+          "contentTemplate": "{{NAME}} was {{FOUNDING_DETAILS}}. {{HISTORICAL_DEVELOPMENT}} {{MAJOR_EVENTS}}",
+          "wikidataProperties": ["P571", "P112", "P793"],
+          "priority": 1
+        },
+        {
+          "title": "Geography",
+          "description": "Location, climate, and physical features",
+          "icon": "🗺️",
+          "contentTemplate": "{{NAME}} is located {{GEOGRAPHICAL_POSITION}}. {{CLIMATE}} {{GEOGRAPHICAL_FEATURES}} {{TOPOGRAPHY}}",
+          "wikidataProperties": ["P625", "P706", "P206", "P2044"],
+          "priority": 2
+        },
+        {
+          "title": "Demographics",
+          "description": "Population and composition",
+          "icon": "👥",
+          "contentTemplate": "As of {{CENSUS_YEAR}}, {{NAME}} has a population of {{POPULATION}}. {{DEMOGRAPHIC_BREAKDOWN}} {{POPULATION_TRENDS}}",
+          "wikidataProperties": ["P1082"],
+          "priority": 3
+        },
+        {
+          "title": "Economy",
+          "description": "Sectors, employers, and indicators",
+          "icon": "💼",
+          "contentTemplate": "The economy of {{NAME}} is based on {{PRIMARY_SECTORS}}. {{MAJOR_EMPLOYERS}} {{ECONOMIC_INDICATORS}}",
+          "wikidataProperties": ["P452"],
+          "priority": 4
+        },
+        {
+          "title": "Culture",
+          "description": "Landmarks, festivals, and cultural life",
+          "icon": "🎭",
+          "contentTemplate": "{{NAME}} is known for {{CULTURAL_ASPECTS}}. {{LANDMARKS}} {{FESTIVALS}} {{CUISINE}}",
+          "priority": 5
+        }
+      ],
       "wikidataProperties": ["P31", "P17", "P131", "P1082", "P2046", "P571", "P421", "P281", "P36", "P610", "P706", "P206"]
     },
     "SPECIES": {
@@ -311,11 +352,216 @@
         }
       },
       "defaultTemplate": {
-        "formal": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} of {{PARENT_TAXON}}{{CONSERVATION_STATUS}}. {{RANGE_INFO}}{{CHARACTERISTICS}}{{DISCOVERY_INFO}}",
+        "formal": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} of {{PARENT_TAXON}}. It is native to {{HABITAT}} and is classified as {{CONSERVATION_STATUS}}. {{RANGE_INFO}}{{CHARACTERISTICS}}{{DISCOVERY_INFO}}",
         "concise": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} native to {{HABITAT}}.",
         "detailed": "The {{COMMON_NAME}} ({{SCIENTIFIC_NAME}}) is {{ARTICLE}} {{TAXON_RANK}} of {{PARENT_TAXON}} in the {{FAMILY}} family. {{DETAILED_CLASSIFICATION}} {{MORPHOLOGY}}{{ECOLOGY}}{{BEHAVIOR}}{{DISTRIBUTION}}"
       },
+      "defaultSections": [
+        {
+          "title": "Taxonomy",
+          "description": "Classification and naming",
+          "icon": "🧬",
+          "contentTemplate": "{{SCIENTIFIC_NAME}} is classified as {{TAXON_RANK}} within {{PARENT_TAXON}}. {{TAXONOMY_DETAILS}}",
+          "wikidataProperties": ["P225", "P105", "P171"],
+          "priority": 1
+        },
+        {
+          "title": "Description",
+          "description": "Physical characteristics and morphology",
+          "icon": "🔎",
+          "contentTemplate": "{{COMMON_NAME}} is characterized by {{MORPHOLOGY}}. {{SIZE_MEASUREMENTS}} {{DISTINCTIVE_FEATURES}}",
+          "wikidataProperties": ["P2048", "P2049"],
+          "priority": 2
+        },
+        {
+          "title": "Distribution and habitat",
+          "description": "Geographic range and habitats",
+          "icon": "🗺️",
+          "contentTemplate": "The species occurs in {{DISTRIBUTION}} and inhabits {{HABITATS}}.",
+          "wikidataProperties": ["P183"],
+          "priority": 3
+        },
+        {
+          "title": "Behavior and ecology",
+          "description": "Diet, life cycle, and ecological role",
+          "icon": "🐾",
+          "contentTemplate": "{{BEHAVIOR}} {{DIET}} {{LIFE_CYCLE}} {{ECOLOGICAL_ROLE}}",
+          "priority": 4
+        },
+        {
+          "title": "Conservation",
+          "description": "Status, threats, and efforts",
+          "icon": "🛡️",
+          "contentTemplate": "It is classified as {{CONSERVATION_STATUS}}. {{THREATS}} {{CONSERVATION_EFFORTS}}",
+          "wikidataProperties": ["P141"],
+          "priority": 5
+        }
+      ],
       "wikidataProperties": ["P225", "P171", "P105", "P141", "P183", "P181", "P1843", "P935", "P2067", "P2048", "P2049", "P2044"]
+    }
+    ,
+    "ORGANIZATION": {
+      "defaultTemplate": {
+        "formal": "{{NAME}} is {{ARTICLE}} {{TYPE}} founded in {{YEAR}} and headquartered in {{LOCATION}}. It is best known for {{KNOWN_FOR}}. {{PURPOSE}} {{KEY_AREAS}} {{NOTABLE_PRODUCTS}}",
+        "concise": "{{NAME}} is {{ARTICLE}} {{TYPE}} based in {{LOCATION}} founded in {{YEAR}}.",
+        "detailed": "{{NAME}} is {{ARTICLE}} {{TYPE}} established in {{YEAR}} and headquartered in {{LOCATION}}. {{MISSION}} {{OPERATIONS}} {{MAJOR_MILESTONES}} {{RECOGNITION}}"
+      },
+      "defaultSections": [
+        {"title": "History", "description": "Founding and growth", "icon": "📚", "contentTemplate": "{{NAME}} was founded in {{YEAR}} by {{FOUNDERS}}. {{EARLY_HISTORY}} {{GROWTH}}", "wikidataProperties": ["P571", "P112"], "priority": 1},
+        {"title": "Operations", "description": "Business model and markets", "icon": "🔧", "contentTemplate": "{{NAME}} operates in {{INDUSTRIES}} with key markets in {{MARKETS}}. {{BUSINESS_MODEL}}", "wikidataProperties": ["P452"], "priority": 2},
+        {"title": "Products and services", "description": "Offerings and innovations", "icon": "🧩", "contentTemplate": "The organization offers {{PRODUCTS_SERVICES}}. {{FLAGSHIP_PRODUCTS}} {{INNOVATIONS}}", "priority": 3},
+        {"title": "Leadership and structure", "description": "Management and subsidiaries", "icon": "👥", "contentTemplate": "{{LEADERSHIP}} {{CORPORATE_STRUCTURE}} {{SUBSIDIARIES}}", "wikidataProperties": ["P355", "P749"], "priority": 4},
+        {"title": "Recognition and controversies", "description": "Awards and notable issues", "icon": "🏅", "contentTemplate": "{{AWARDS}} {{RECOGNITION}} {{CONTROVERSIES}}", "wikidataProperties": ["P166"], "priority": 5}
+      ],
+      "wikidataProperties": ["P571", "P159", "P112", "P452", "P127", "P749", "P355", "P856"]
+    },
+    "ACADEMIC": {
+      "defaultTemplate": {
+        "formal": "{{NAME}} is {{ARTICLE}} concept in {{FIELD}} that {{DEFINITION}}. It is significant because {{IMPORTANCE}}. {{APPLICATIONS}} {{HISTORICAL_CONTEXT}}",
+        "concise": "{{NAME}} is {{ARTICLE}} concept in {{FIELD}}.",
+        "detailed": "{{NAME}} is {{ARTICLE}} concept in {{FIELD}} that {{DETAILED_DEFINITION}}. {{ORIGINS}} {{DEVELOPMENT}} {{KEY_THEORISTS}} {{APPLICATIONS}}"
+      },
+      "defaultSections": [
+        {"title": "Definition", "description": "Core definition and scope", "icon": "📖", "contentTemplate": "{{DEFINITION}} {{SCOPE}}", "priority": 1},
+        {"title": "History", "description": "Origins and development", "icon": "📚", "contentTemplate": "The concept originated in {{ORIGIN}}. {{DEVELOPMENT}} {{KEY_THEORISTS}}", "priority": 2},
+        {"title": "Key concepts", "description": "Related ideas and frameworks", "icon": "🧠", "contentTemplate": "{{CORE_CONCEPTS}} {{RELATED_THEORIES}}", "priority": 3},
+        {"title": "Applications", "description": "Use in practice", "icon": "🧪", "contentTemplate": "{{APPLICATION_AREAS}} {{EXAMPLES}}", "priority": 4},
+        {"title": "Criticism and debates", "description": "Points of contention", "icon": "⚖️", "contentTemplate": "{{CRITICISMS}} {{OPEN_QUESTIONS}}", "priority": 5}
+      ],
+      "wikidataProperties": ["P279", "P2579", "P366", "P2348"]
+    },
+    "EVENT": {
+      "defaultTemplate": {
+        "formal": "{{NAME}} was {{ARTICLE}} {{TYPE}} that took place in {{LOCATION}} on {{DATE}}. It is best known for {{SIGNIFICANCE}}. {{BACKGROUND}} {{AFTERMATH}}",
+        "concise": "{{NAME}} was {{ARTICLE}} {{TYPE}} held in {{LOCATION}} on {{DATE}}.",
+        "detailed": "{{NAME}} was {{ARTICLE}} {{TYPE}} that occurred in {{LOCATION}} on {{DATE}}. {{CONTEXT}} {{PARTICIPANTS}} {{COURSE_OF_EVENTS}} {{OUTCOMES}}"
+      },
+      "defaultSections": [
+        {"title": "Background", "description": "Context and causes", "icon": "🧭", "contentTemplate": "{{CONTEXT}} {{PRECEDING_EVENTS}}", "priority": 1},
+        {"title": "Timeline", "description": "Chronology of events", "icon": "⏱️", "contentTemplate": "{{CHRONOLOGY}} {{KEY_DATES}}", "priority": 2},
+        {"title": "Participants", "description": "Key people and organizations", "icon": "👥", "contentTemplate": "{{PARTICIPANTS}} {{ORGANIZERS}} {{NOTABLE_FIGURES}}", "wikidataProperties": ["P710"], "priority": 3},
+        {"title": "Impact and aftermath", "description": "Consequences and legacy", "icon": "🌍", "contentTemplate": "{{IMMEDIATE_EFFECTS}} {{LONG_TERM_IMPACT}}", "priority": 4},
+        {"title": "Media and reception", "description": "Coverage and public reaction", "icon": "📰", "contentTemplate": "{{MEDIA_COVERAGE}} {{PUBLIC_REACTION}}", "priority": 5}
+      ],
+      "wikidataProperties": ["P585", "P580", "P582", "P276", "P17", "P710", "P793", "P1440"]
+    }
+    ,
+    "CREATIVE": {
+      "subcategories": {
+        "film": {
+          "name": "Film",
+          "detectionKeywords": ["film", "movie", "feature", "short film"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is a {{RELEASE_YEAR}} {{COUNTRY}} {{LANGUAGE}} {{GENRE}} film directed by {{DIRECTOR}} and written by {{WRITER}}. It stars {{STARRING}} and was produced by {{PRODUCTION_COMPANY}}.",
+            "concise": "{{NAME}} is a {{GENRE}} film directed by {{DIRECTOR}}, released in {{RELEASE_YEAR}}.",
+            "detailed": "{{NAME}} is a {{RELEASE_YEAR}} {{COUNTRY}} {{LANGUAGE}} {{GENRE}} film directed by {{DIRECTOR}} and written by {{WRITER}}. Produced by {{PRODUCTION_COMPANY}} and distributed by {{DISTRIBUTOR}}, it premiered on {{PREMIERE_DATE}} and was released on {{RELEASE_DATE}}."
+          },
+          "contextualChips": ["+ director", "+ writer", "+ starring", "+ production company", "+ distributor", "+ country", "+ language", "+ premiere date", "+ release date"],
+          "sections": [
+            {"title": "Plot", "description": "Story summary", "icon": "📘", "contentTemplate": "{{SYNOPSIS}}", "priority": 1},
+            {"title": "Cast", "description": "Principal cast members", "icon": "🎭", "contentTemplate": "{{CAST_LIST}}", "priority": 2},
+            {"title": "Production", "description": "Development and filming", "icon": "🎬", "contentTemplate": "{{DEVELOPMENT}} {{FILMING}} {{POST_PRODUCTION}}", "priority": 3},
+            {"title": "Release", "description": "Festival and theatrical release", "icon": "📅", "contentTemplate": "{{PREMIERES}} {{DISTRIBUTION}} {{BOX_OFFICE}}", "priority": 4},
+            {"title": "Reception", "description": "Critical and audience response", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}} {{AGGREGATOR_SCORES}}", "priority": 5},
+            {"title": "Accolades", "description": "Awards and nominations", "icon": "🏆", "contentTemplate": "{{AWARDS}} {{NOMINATIONS}}", "priority": 6}
+          ]
+        },
+        "album": {
+          "name": "Music Album",
+          "detectionKeywords": ["album", "EP", "LP", "record", "studio album"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is the {{ORDINAL}} studio album by {{ARTIST}}, released on {{RELEASE_DATE}} by {{LABEL}}. It includes the singles {{SINGLES}}.",
+            "concise": "{{NAME}} is a studio album by {{ARTIST}}, released in {{RELEASE_YEAR}}.",
+            "detailed": "{{NAME}} is the {{ORDINAL}} studio album by {{ARTIST}}, released on {{RELEASE_DATE}} by {{LABEL}}. Recorded at {{STUDIOS}}, it spans {{GENRES}} and features {{GUEST_ARTISTS}}."
+          },
+          "contextualChips": ["+ artist", "+ label", "+ release date", "+ genres", "+ singles", "+ recording studios"],
+          "sections": [
+            {"title": "Background", "description": "Context and development", "icon": "📚", "contentTemplate": "{{BACKGROUND}} {{WRITING}}", "priority": 1},
+            {"title": "Composition", "description": "Style and themes", "icon": "🎼", "contentTemplate": "{{MUSICAL_STYLE}} {{LYRICAL_THEMES}}", "priority": 2},
+            {"title": "Release and promotion", "description": "Rollout and singles", "icon": "📅", "contentTemplate": "{{RELEASE_ROLLOUT}} {{PROMOTION}}", "priority": 3},
+            {"title": "Reception", "description": "Critical response", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}} {{AGGREGATOR_SCORES}}", "priority": 4},
+            {"title": "Track listing", "description": "Tracks and credits", "icon": "🎵", "contentTemplate": "{{TRACK_LIST}} {{CREDITS}}", "priority": 5}
+          ]
+        },
+        "book": {
+          "name": "Book/Novel",
+          "detectionKeywords": ["novel", "book", "novella", "non-fiction", "poetry collection"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is a {{RELEASE_YEAR}} {{GENRE}} book by {{AUTHOR}}, published by {{PUBLISHER}}.",
+            "concise": "{{NAME}} is a {{GENRE}} book by {{AUTHOR}}, published in {{RELEASE_YEAR}}.",
+            "detailed": "{{NAME}} is a {{RELEASE_YEAR}} {{GENRE}} book by {{AUTHOR}}, published by {{PUBLISHER}}. The work explores {{THEMES}} and is set in {{SETTING}}."
+          },
+          "contextualChips": ["+ author", "+ publisher", "+ release year", "+ genre", "+ themes", "+ setting"],
+          "sections": [
+            {"title": "Plot", "description": "Synopsis", "icon": "📘", "contentTemplate": "{{SYNOPSIS}}", "priority": 1},
+            {"title": "Characters", "description": "Major characters", "icon": "👥", "contentTemplate": "{{CHARACTER_LIST}}", "priority": 2},
+            {"title": "Themes", "description": "Ideas and analysis", "icon": "🧠", "contentTemplate": "{{THEMES}}", "priority": 3},
+            {"title": "Publication", "description": "Editions and publication history", "icon": "📚", "contentTemplate": "{{PUBLICATION_HISTORY}}", "priority": 4},
+            {"title": "Reception", "description": "Critical response", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}}", "priority": 5}
+          ]
+        },
+        "tv_series": {
+          "name": "Television Series",
+          "detectionKeywords": ["television series", "TV series", "miniseries", "show"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is a {{COUNTRY}} {{GENRE}} television series created by {{CREATOR}}. It premiered on {{NETWORK}} on {{PREMIERE_DATE}}.",
+            "concise": "{{NAME}} is a {{GENRE}} series that premiered on {{NETWORK}} in {{RELEASE_YEAR}}.",
+            "detailed": "{{NAME}} is a {{COUNTRY}} {{GENRE}} television series created by {{CREATOR}} for {{NETWORK}}. It premiered on {{PREMIERE_DATE}} and stars {{STARRING}}."
+          },
+          "contextualChips": ["+ creator", "+ network", "+ premiere date", "+ starring", "+ seasons", "+ episodes"],
+          "sections": [
+            {"title": "Premise", "description": "Series premise", "icon": "🧭", "contentTemplate": "{{PREMISE}}", "priority": 1},
+            {"title": "Cast", "description": "Main and recurring cast", "icon": "🎭", "contentTemplate": "{{CAST_LIST}}", "priority": 2},
+            {"title": "Episodes", "description": "Episode list/overview", "icon": "📺", "contentTemplate": "{{EPISODE_OVERVIEW}}", "priority": 3},
+            {"title": "Production", "description": "Development and filming", "icon": "🎬", "contentTemplate": "{{DEVELOPMENT}} {{FILMING}}", "priority": 4},
+            {"title": "Reception", "description": "Critical and ratings", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}} {{RATINGS}}", "priority": 5}
+          ]
+        },
+        "video_game": {
+          "name": "Video Game",
+          "detectionKeywords": ["video game", "game", "RPG", "platformer", "shooter", "adventure"],
+          "introductionTemplates": {
+            "formal": "{{NAME}} is a {{RELEASE_YEAR}} {{GENRE}} video game developed by {{DEVELOPER}} and published by {{PUBLISHER}} for {{PLATFORMS}}.",
+            "concise": "{{NAME}} is a {{GENRE}} video game released in {{RELEASE_YEAR}}.",
+            "detailed": "{{NAME}} is a {{GENRE}} video game developed by {{DEVELOPER}} and published by {{PUBLISHER}} for {{PLATFORMS}}. It features {{GAMEPLAY_FEATURES}} and includes {{MODES}}."
+          },
+          "contextualChips": ["+ developer", "+ publisher", "+ release year", "+ genre", "+ platforms", "+ modes"],
+          "sections": [
+            {"title": "Gameplay", "description": "Mechanics and modes", "icon": "🎮", "contentTemplate": "{{GAMEPLAY}} {{MODES}}", "priority": 1},
+            {"title": "Plot", "description": "Narrative (if applicable)", "icon": "📘", "contentTemplate": "{{SYNOPSIS}}", "priority": 2},
+            {"title": "Development", "description": "Production history", "icon": "🛠️", "contentTemplate": "{{DEVELOPMENT}}", "priority": 3},
+            {"title": "Release", "description": "Launch and updates", "icon": "📅", "contentTemplate": "{{RELEASE}} {{POST_RELEASE}}", "priority": 4},
+            {"title": "Reception", "description": "Critical reception", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}} {{AGGREGATOR_SCORES}}", "priority": 5}
+          ]
+        }
+      },
+      "defaultTemplate": {
+        "formal": "{{NAME}} is a {{GENRE}} {{WORK_TYPE}} by {{CREATOR}}, released in {{RELEASE_YEAR}}.",
+        "concise": "{{NAME}} is a {{WORK_TYPE}} released in {{RELEASE_YEAR}}.",
+        "detailed": "{{NAME}} is a {{GENRE}} {{WORK_TYPE}} by {{CREATOR}}, released in {{RELEASE_YEAR}}. {{SYNOPSIS}} {{PRODUCTION}} {{RELEASE}} {{RECEPTION}}"
+      },
+      "defaultSections": [
+        {"title": "Overview", "description": "Summary or plot", "icon": "📘", "contentTemplate": "{{SYNOPSIS}}", "priority": 1},
+        {"title": "Production", "description": "Development and making", "icon": "🎬", "contentTemplate": "{{DEVELOPMENT}} {{PRODUCTION_DETAILS}} {{FILMING}}", "priority": 2},
+        {"title": "Release", "description": "Publication and distribution", "icon": "📅", "contentTemplate": "{{RELEASE_DETAILS}} {{DISTRIBUTION}} {{BOX_OFFICE}}", "priority": 3},
+        {"title": "Reception", "description": "Critical and audience response", "icon": "⭐", "contentTemplate": "{{CRITICAL_RESPONSE}} {{REVIEWS}}", "priority": 4},
+        {"title": "Accolades", "description": "Awards and nominations", "icon": "🏆", "contentTemplate": "{{AWARDS}} {{NOMINATIONS}}", "priority": 5}
+      ],
+      "wikidataProperties": ["P31", "P577", "P50", "P57", "P272", "P136", "P166"]
+    },
+    "OTHER": {
+      "defaultTemplate": {
+        "formal": "{{NAME}} is {{ARTICLE}} {{TYPE}}. {{DEFINITION}} {{IMPORTANCE}} {{CONTEXT}}",
+        "concise": "{{NAME}} is {{ARTICLE}} {{TYPE}}.",
+        "detailed": "{{NAME}} is {{ARTICLE}} {{TYPE}}. {{DETAILED_DEFINITION}} {{HISTORY}} {{APPLICATIONS}} {{SIGNIFICANCE}}"
+      },
+      "defaultSections": [
+        {"title": "Overview", "description": "Summary and scope", "icon": "📄", "contentTemplate": "{{OVERVIEW}}", "priority": 1},
+        {"title": "History", "description": "Origins and development", "icon": "📚", "contentTemplate": "{{HISTORY}}", "priority": 2},
+        {"title": "Characteristics", "description": "Properties and features", "icon": "🔧", "contentTemplate": "{{CHARACTERISTICS}}", "priority": 3},
+        {"title": "Applications", "description": "Uses and examples", "icon": "🧪", "contentTemplate": "{{APPLICATIONS}} {{USE_CASES}}", "priority": 4},
+        {"title": "Significance", "description": "Impact and relevance", "icon": "🌟", "contentTemplate": "{{SIGNIFICANCE}} {{IMPACT}}", "priority": 5}
+      ]
     }
   },
   "userInteractionValues": {
@@ -450,6 +696,16 @@
       "climate_adaptations": ["temperature tolerance", "drought resistance", "flood adaptations", "seasonal adjustments", "Custom..."],
       "alternative_habitats": ["human-modified landscapes", "protected reserves", "restoration areas", "corridor habitats", "Custom..."],
       "elevation_changes": ["higher altitudes", "lower elevations", "sea level areas", "mountain peaks", "Custom..."]
+    },
+    "CREATIVE": {
+      "genre": ["drama", "comedy", "action", "thriller", "documentary", "novel", "pop", "rock", "hip hop", "RPG", "platformer", "Custom..."],
+      "work_type": ["film", "album", "book", "television series", "video game", "short film", "EP", "novel", "Custom..."],
+      "label": ["Universal Music", "Sony Music", "Warner Records", "Independent", "Custom..."],
+      "publisher": ["Penguin Random House", "HarperCollins", "Simon & Schuster", "Macmillan", "Custom..."],
+      "network": ["Netflix", "HBO", "BBC", "ABC", "NBC", "Custom..."],
+      "platforms": ["PC", "PlayStation", "Xbox", "Nintendo Switch", "iOS", "Android", "Custom..."],
+      "director": ["Steven Spielberg", "Christopher Nolan", "Greta Gerwig", "Bong Joon-ho", "Custom..."],
+      "developer": ["Nintendo", "Ubisoft", "Square Enix", "Rockstar Games", "Custom..."]
     }
   }
 }
