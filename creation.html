@@ -230,7 +230,9 @@
     .badge.warn { color:#ac6600; border-color:#ac6600; }
 
     /* Reference chip emphasis */
-    .ref-chip { border-color:#36c !important; color:#36c !important; background:#eef3ff !important; }
+    .ref-chip { border-color:#36c !important; color:#202122 !important; background:#eef3ff !important; font-weight: 600; gap: 4px; }
+    .ref-chip .icon { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; margin-right:0; color:#202122; }
+    .ref-chip .icon svg { width:14px; height:14px; display:block; }
 
     /* Insert feedback highlight */
     @keyframes insertFlash {
@@ -4906,7 +4908,7 @@
       });
       // Append a Reference chip to encourage sourcing
       var pid = 'introTpl-'+Date.now();
-      html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
+      html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
         lead.outerHTML = html;
@@ -4961,7 +4963,7 @@
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       var pid = 'introTpl-' + Date.now();
-      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
+      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
       suppressChipPositioning = true;
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
@@ -5423,7 +5425,7 @@
         var htmlBody = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
           return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
         });
-        return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
+        return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
       }
       // Fallback: use suggestionsData include list to create chip prompts
       try{
@@ -5443,7 +5445,7 @@
         }
         var prompt = chips.length ? chips.join(' ') : 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
         if (chips.length) {
-          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0">Reference</span></p>';
+          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 002-2V3a 2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
         } else {
           return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
         }
