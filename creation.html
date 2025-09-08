@@ -3078,6 +3078,8 @@
     // Perf/stability feature flag (no UX change). Flip to false to disable.
     window.perfTweaks = (typeof window.perfTweaks === 'boolean') ? window.perfTweaks : true;
     window.__debugPerf = false;
+    // UI state: whether to expand all suggested sections inline in main menu
+    window.__showAllSectionsInMainMenu = false;
 
     // Global guard to avoid race conditions during insertion
     var __insertingContent = false;
@@ -3143,7 +3145,7 @@
     document.addEventListener('mousedown', function(e){
       try {
         if (!window.perfTweaks) return;
-        var t = e.target && e.target.closest ? e.target.closest('[data-insert-intro-template],[data-insert-section],.template-option,[data-insert-intro],[data-insert-chip-starter]') : null;
+        var t = e.target && e.target.closest ? e.target.closest('[data-insert-intro-template],[data-insert-section],.template-option,[data-insert-intro],[data-insert-chip-starter],[data-view-all-sections]') : null;
         if (t) { e.preventDefault(); }
       } catch(_) {}
     }, true);
@@ -3843,20 +3845,21 @@
             sectionBlock += '<ul class="assist-list">';
             (function(){
               var limit = 3;
-              var count = Math.min(tplSections.length, limit);
+              var expandAll = !!window.__showAllSectionsInMainMenu;
+              var count = expandAll ? tplSections.length : Math.min(tplSections.length, limit);
               for (var i = 0; i < count; i++) {
                 var sec = tplSections[i];
-              var name = sec && sec.title ? sec.title : 'Section';
-              var desc = sec && sec.description ? sec.description : '';
-              var exists = sectionExistsByName(name);
-              sectionBlock += '<li class="assist-list-item">'+
-                '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
-                (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
-              '</li>';
+                var name = sec && sec.title ? sec.title : 'Section';
+                var desc = sec && sec.description ? sec.description : '';
+                var exists = sectionExistsByName(name);
+                sectionBlock += '<li class="assist-list-item">'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                  (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                '</li>';
               }
             })();
-            if (tplSections.length > 3) {
+            if (tplSections.length > 3 && !window.__showAllSectionsInMainMenu) {
               var remaining = tplSections.length - 3;
               sectionBlock += '<li class="assist-list-item">'+
                                 '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
@@ -3876,7 +3879,8 @@
              sectionBlock += '<ul class="assist-list">';
             (function(){
               var limit = 3;
-              var count = Math.min(secList.length, limit);
+              var expandAll = !!window.__showAllSectionsInMainMenu;
+              var count = expandAll ? secList.length : Math.min(secList.length, limit);
               for (var i = 0; i < count; i++) {
                 var sec = secList[i];
                 var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
@@ -3889,7 +3893,7 @@
                 '</li>';
               }
             })();
-              if (secList.length > 3) {
+              if (secList.length > 3 && !window.__showAllSectionsInMainMenu) {
                 var remaining = secList.length - 3;
                 sectionBlock += '<li class="assist-list-item">'+
                                   '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
@@ -3965,7 +3969,14 @@
           });
         });
         var viewAllBtn = currentMenu.querySelector('[data-view-all-sections]');
-        if (viewAllBtn) viewAllBtn.addEventListener('click', function(){ buildSectionMenu(); });
+        if (viewAllBtn) viewAllBtn.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation();
+          try { window.__showAllSectionsInMainMenu = true; } catch(_) {}
+          if (window.buildMainMenu) window.buildMainMenu();
+          // Keep the menu open and re-anchor
+          try { var cm = document.getElementById('assistMenu'); if (cm) cm.style.display = 'block'; } catch(_) {}
+          try { if (typeof reanchorAssistChip === 'function') reanchorAssistChip(); } catch(_) {}
+        });
         // Bind source action
         (function bindSourceAction(){
           try {
