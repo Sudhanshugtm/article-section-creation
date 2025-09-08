@@ -134,6 +134,12 @@
       font-size: 1em;
     }
 
+    /* Gentle spacing when chips are adjacent for clearer affordance */
+    .template-placeholder + .template-placeholder { margin-left: 6px !important; }
+    .template-placeholder + .ref-chip { margin-left: 6px !important; }
+    .chip-value + .template-placeholder { margin-left: 6px !important; }
+    .ref-chip + .template-placeholder { margin-left: 6px !important; }
+
     .template-placeholder::before {
       content: '+';
       font-size: 12px;
