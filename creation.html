@@ -551,7 +551,7 @@
       background: #fff;
       border: 1px solid #eaecf0;
       border-radius: 8px;
-      width: 600px;
+      width: 640px;
       max-width: 92vw;
       max-height: 80vh;
       overflow-y: auto;
@@ -2818,7 +2818,8 @@
         var referencesExists = currentContent.includes('<h2') && currentContent.includes('id="References"');
         
         if (!referencesExists) {
-          // Add References section as proper Wikipedia section
+          // Add non-editable References section (wrapped)
+          sectionHTML += '<div class="references-block" contenteditable="false">';
           sectionHTML += '<h2 id="References" style="';
           sectionHTML += 'font-family: Georgia, serif; ';
           sectionHTML += 'font-size: 1.5em; ';
@@ -2828,17 +2829,16 @@
           sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
           sectionHTML += 'padding-bottom: 0.25em;';
           sectionHTML += '">References</h2>';
-          
-          // Add citation content
+          // Citation content
           sectionHTML += '<div style="margin: 0.75em 0; font-size: 0.9em;">';
           if (citation) {
-            sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>'; // Remove [1] prefix
+            sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>';
             sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
           } else {
-            // Fallback content if citation parsing failed
             sectionHTML += '<p style="margin: 0.25em 0;">1. "Context and Development". ' + domain.charAt(0).toUpperCase() + domain.slice(1) + '. Retrieved ' + new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '.</p>';
             sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
           }
+          sectionHTML += '</div>';
           sectionHTML += '</div>';
         }
         
