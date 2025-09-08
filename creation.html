@@ -3843,7 +3843,11 @@
                              '<span><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</span>'+
                            '</div>';
             sectionBlock += '<ul class="assist-list">';
-            tplSections.forEach(function(sec){
+            (function(){
+              var limit = 3;
+              var count = Math.min(tplSections.length, limit);
+              for (var i = 0; i < count; i++) {
+                var sec = tplSections[i];
               var name = sec && sec.title ? sec.title : 'Section';
               var desc = sec && sec.description ? sec.description : '';
               var exists = sectionExistsByName(name);
@@ -3852,8 +3856,21 @@
                 (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
                 (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
               '</li>';
-            });
+              }
+            })();
             sectionBlock += '</ul></div>';
+            if (tplSections.length > 3) {
+              var remaining = tplSections.length - 3;
+              sectionBlock += '<div class="assist-group">'+
+                                '<button class="assist-item" data-view-all-sections>'+ 
+                                  '<div class="template-option-title" style="display:flex; align-items:center; gap:4px;">'+
+                                     '<span class="menu-icon" aria-hidden="true">§</span>'+
+                                     '<span>Show more sections ('+ remaining + ' more)</span>'+ 
+                                  '</div>'+ 
+                                  '<div class="template-option-desc">Open full list of suggested sections</div>'+ 
+                                '</button>'+ 
+                              '</div>';
+            }
             return;
           }
           // Fallback to legacy suggestionsData (simple list)
@@ -3863,18 +3880,35 @@
              sectionBlock += '<div class="assist-group">';
              sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">Suggested sections</div>';
              sectionBlock += '<ul class="assist-list">';
-            secList.forEach(function(sec){
-              var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
-              var desc = (typeof sec === 'string') ? '' : (sec.description || '');
-              var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var i=0;i<hs.length;i++){ var t=(hs[i].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
-              sectionBlock += '<li class="assist-list-item">'+
-                '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
-                (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
-              '</li>';
-            });
-            sectionBlock += '</ul></div>';
-          }
+            (function(){
+              var limit = 3;
+              var count = Math.min(secList.length, limit);
+              for (var i = 0; i < count; i++) {
+                var sec = secList[i];
+                var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
+                var desc = (typeof sec === 'string') ? '' : (sec.description || '');
+                var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var j=0;j<hs.length;j++){ var t=(hs[j].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
+                sectionBlock += '<li class="assist-list-item">'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                  (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                '</li>';
+              }
+            })();
+             sectionBlock += '</ul></div>';
+             if (secList.length > 3) {
+               var remaining = secList.length - 3;
+               sectionBlock += '<div class="assist-group">'+
+                                 '<button class="assist-item" data-view-all-sections>'+ 
+                                   '<div class="template-option-title" style="display:flex; align-items:center; gap:4px;">'+
+                                     '<span class="menu-icon" aria-hidden="true">§</span>'+
+                                     '<span>Show more sections ('+ remaining + ' more)</span>'+ 
+                                   '</div>'+ 
+                                   '<div class="template-option-desc">Open full list of suggested sections</div>'+ 
+                                 '</button>'+ 
+                               '</div>';
+             }
+           }
         })();
 
         // Source action block (after Sections)
