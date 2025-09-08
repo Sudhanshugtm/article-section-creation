@@ -2565,22 +2565,21 @@
     
     // Insert draft into editor
     function insertDraft() {
-      var draftText = document.getElementById('draftContent').textContent;
-      var editor = document.getElementById('editor');
-      
-      if (editor) {
-        var currentContent = editor.innerHTML;
-        var draftHTML = draftText.replace(/\n/g, '<br>');
-        
-        if (currentContent.trim() === '') {
-          editor.innerHTML = '<div style="margin-bottom: 2em;">' + draftHTML + '</div>';
+      try {
+        var draftText = document.getElementById('draftContent').textContent;
+        // Reuse structured insertion path to match section styling
+        if (typeof insertSidebarDraft === 'function') {
+          insertSidebarDraft(draftText);
         } else {
-          editor.innerHTML = currentContent + '<div style="margin-top: 2em;">' + draftHTML + '</div>';
+          // Fallback: simple paragraph insertion if helper is unavailable
+          var editor = document.getElementById('editor');
+          if (editor) {
+            var paras = draftText.split(/\n\s*\n/).map(function(p){ return '<p>'+escapeHtml(p).replace(/\n/g,'<br>')+'</p>'; }).join('');
+            editor.insertAdjacentHTML('beforeend', paras);
+            editor.focus();
+          }
         }
-        
-        editor.focus();
-      }
-      
+      } catch(_) {}
       closeSourceModalDialog();
     }
 
@@ -2774,7 +2773,9 @@
         var currentContent = editor.innerHTML;
         var hasContent = currentContent.trim() !== '';
         
-        var domain = extractDomain(document.getElementById('sidebarSourceUrl').value);
+        // Determine domain from sidebar or modal input gracefully
+        var urlInput = document.getElementById('sidebarSourceUrl') || document.getElementById('sourceUrl');
+        var domain = extractDomain(urlInput && urlInput.value ? urlInput.value : '');
         var sourceType = classifySource(domain);
         var sectionTitle = 'Section title';
         
@@ -2952,10 +2953,15 @@
       var checkBtn = document.getElementById('checkSourceBtn');
       var generateBtn = document.getElementById('generateDraftBtn');
       var insertBtn = document.getElementById('insertDraftBtn');
+      var cancelBtn = document.getElementById('cancelSource');
       
       // Close button
       if (closeBtn) {
         closeBtn.addEventListener('click', closeSourceModalDialog);
+      }
+      // Cancel button
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e){ e.preventDefault(); closeSourceModalDialog(); });
       }
       
       // Backdrop click to close
