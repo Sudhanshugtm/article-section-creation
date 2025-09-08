@@ -3872,11 +3872,24 @@
           }
         })();
 
+        // Source action block (after Sections)
+        var sourceBlock = '';
+        (function addSourceAction(){
+          sourceBlock += '<div class="assist-sep"></div>';
+          sourceBlock += '<div class="assist-group">';
+          sourceBlock += '<button class="assist-item" data-open-source>'+
+                           '<div class="template-option-title">Add from source</div>'+
+                           '<div class="template-option-desc">Cite a reliable source and insert content</div>'+
+                         '</button>';
+          sourceBlock += '</div>';
+        })();
+
         var html = ''+
           '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">Suggestions <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">Hide</button></div>'+
           contextBlock +
           leadSectionBlock +
-          sectionBlock;
+          sectionBlock +
+          sourceBlock;
         currentMenu.innerHTML = html;
         // Bind actions - handle multiple intro template buttons
         var tplBtns = currentMenu.querySelectorAll('[data-insert-intro-template]');
@@ -3919,6 +3932,21 @@
         });
         var viewAllBtn = currentMenu.querySelector('[data-view-all-sections]');
         if (viewAllBtn) viewAllBtn.addEventListener('click', function(){ buildSectionMenu(); });
+        // Bind source action
+        (function bindSourceAction(){
+          try {
+            var srcBtn = currentMenu.querySelector('[data-open-source]');
+            if (!srcBtn) return;
+            srcBtn.addEventListener('mousedown', function(e){ e.preventDefault(); });
+            srcBtn.addEventListener('click', function(e){
+              e.preventDefault();
+              try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
+              try { currentMenu.style.display = 'none'; window.__assistMenuOpen = false; } catch(_) {}
+              try { if (typeof reanchorAssistChip === 'function') reanchorAssistChip(); } catch(_) {}
+            });
+          } catch(_) {}
+        })();
+
         bindMenuHandlers();
         // Active state
         try { chip.classList.add('active'); chip.setAttribute('aria-expanded','true'); } catch(_) {}
