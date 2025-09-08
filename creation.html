@@ -3145,7 +3145,7 @@
     document.addEventListener('mousedown', function(e){
       try {
         if (!window.perfTweaks) return;
-        var t = e.target && e.target.closest ? e.target.closest('[data-insert-intro-template],[data-insert-section],.template-option,[data-insert-intro],[data-insert-chip-starter],[data-view-all-sections]') : null;
+        var t = e.target && e.target.closest ? e.target.closest('[data-insert-intro-template],[data-insert-section],.template-option,[data-insert-intro],[data-insert-chip-starter],[data-view-all-sections],[data-view-less-sections]') : null;
         if (t) { e.preventDefault(); }
       } catch(_) {}
     }, true);
@@ -3844,7 +3844,7 @@
                            '</div>';
             sectionBlock += '<ul class="assist-list">';
             (function(){
-              var limit = 3;
+              var limit = 2;
               var expandAll = !!window.__showAllSectionsInMainMenu;
               var count = expandAll ? tplSections.length : Math.min(tplSections.length, limit);
               for (var i = 0; i < count; i++) {
@@ -3859,12 +3859,19 @@
                 '</li>';
               }
             })();
-            if (tplSections.length > 3 && !window.__showAllSectionsInMainMenu) {
-              var remaining = tplSections.length - 3;
+            if (tplSections.length > 2 && !window.__showAllSectionsInMainMenu) {
+              var remaining = tplSections.length - 2;
               sectionBlock += '<li class="assist-list-item">'+
                                 '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
                                 '<div class="meta">Open full list of suggested sections</div></div>'+ 
                                 '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
+                              '</li>';
+            }
+            if (window.__showAllSectionsInMainMenu && tplSections.length > 2) {
+              sectionBlock += '<li class="assist-list-item">'+
+                                '<div><div style="font-weight:600;">Show less sections</div>'+ 
+                                '<div class="meta">Collapse to top suggestions</div></div>'+ 
+                                '<button class="action-chip" data-view-less-sections>Show less</button>'+ 
                               '</li>';
             }
             sectionBlock += '</ul></div>';
@@ -3878,7 +3885,7 @@
              sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">Suggested sections</div>';
              sectionBlock += '<ul class="assist-list">';
             (function(){
-              var limit = 3;
+              var limit = 2;
               var expandAll = !!window.__showAllSectionsInMainMenu;
               var count = expandAll ? secList.length : Math.min(secList.length, limit);
               for (var i = 0; i < count; i++) {
@@ -3893,12 +3900,19 @@
                 '</li>';
               }
             })();
-              if (secList.length > 3 && !window.__showAllSectionsInMainMenu) {
-                var remaining = secList.length - 3;
+              if (secList.length > 2 && !window.__showAllSectionsInMainMenu) {
+                var remaining = secList.length - 2;
                 sectionBlock += '<li class="assist-list-item">'+
                                   '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
                                   '<div class="meta">Open full list of suggested sections</div></div>'+ 
                                   '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
+                                '</li>';
+              }
+              if (window.__showAllSectionsInMainMenu && secList.length > 2) {
+                sectionBlock += '<li class="assist-list-item">'+
+                                  '<div><div style="font-weight:600;">Show less sections</div>'+ 
+                                  '<div class="meta">Collapse to top suggestions</div></div>'+ 
+                                  '<button class="action-chip" data-view-less-sections>Show less</button>'+ 
                                 '</li>';
               }
               sectionBlock += '</ul></div>';
@@ -3974,6 +3988,14 @@
           try { window.__showAllSectionsInMainMenu = true; } catch(_) {}
           if (window.buildMainMenu) window.buildMainMenu();
           // Keep the menu open and re-anchor
+          try { var cm = document.getElementById('assistMenu'); if (cm) cm.style.display = 'block'; } catch(_) {}
+          try { if (typeof reanchorAssistChip === 'function') reanchorAssistChip(); } catch(_) {}
+        });
+        var viewLessBtn = currentMenu.querySelector('[data-view-less-sections]');
+        if (viewLessBtn) viewLessBtn.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation();
+          try { window.__showAllSectionsInMainMenu = false; } catch(_) {}
+          if (window.buildMainMenu) window.buildMainMenu();
           try { var cm = document.getElementById('assistMenu'); if (cm) cm.style.display = 'block'; } catch(_) {}
           try { if (typeof reanchorAssistChip === 'function') reanchorAssistChip(); } catch(_) {}
         });
