@@ -892,7 +892,7 @@
       padding: 0;
       border-radius: 8px;
     }
-    .assist-item .menu-icon { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; margin-right:8px; color:#202122; }
+    .assist-item .menu-icon { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; margin-right:4px; color:#202122; }
     .assist-item .menu-icon svg { width:16px; height:16px; display:block; }
     .assist-menu-header { font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
     .assist-item { display: block; width: 100%; text-align: left; padding: 12px 14px; background: #fff; border: none; cursor: pointer; }
@@ -3819,10 +3819,10 @@
           '</div>';
         }
 
-        // Always show lead section block (either current context or standalone)
+        // Always show introduction block (either current context or standalone)
         var leadSectionBlock = '<div class="assist-group">'+
-          '<div class="template-option-title" style="margin-bottom:2px;">Lead section</div>'+
-          '<div class="meta">Good leads briefly define the topic and summarize the most important points in a neutral tone, with sources.</div>'+
+          '<div class="template-option-title" style="margin-bottom:2px;">Introduction</div>'+
+          '<div class="meta">Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.</div>'+
           buildExampleBlock(true, 'Lead', cat) +
           '<div class="assist-actions">'+
             (!hasIntroTemplate ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>' : '')+
@@ -3838,15 +3838,17 @@
           if (tplSections && tplSections.length) {
             sectionBlock += '<div class="assist-sep"></div>';
             sectionBlock += '<div class="assist-group">';
-            sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</div>';
+            sectionBlock += '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:4px;">'+
+                             '<span class="menu-icon" aria-hidden="true">§</span>'+
+                             '<span><span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections</span>'+
+                           '</div>';
             sectionBlock += '<ul class="assist-list">';
             tplSections.forEach(function(sec){
               var name = sec && sec.title ? sec.title : 'Section';
               var desc = sec && sec.description ? sec.description : '';
               var exists = sectionExistsByName(name);
-              var icon = (sec && sec.icon) ? ('<span class="menu-icon" aria-hidden="true">'+ escapeHtml(sec.icon) +'</span>') : '';
               sectionBlock += '<li class="assist-list-item">'+
-                '<div><div style="font-weight:600; display:flex; align-items:center; gap:6px;">'+ icon +'<span>'+ escapeHtml(name) +'</span></div>'+
+                '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
                 (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
                 (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
               '</li>';
@@ -3881,7 +3883,7 @@
           sourceBlock += '<div class="assist-sep"></div>';
           sourceBlock += '<div class="assist-group">';
           sourceBlock += '<button class="assist-item" data-open-source>'+
-                           '<div class="template-option-title" style="display:flex; align-items:center; gap:8px;">'+
+                           '<div class="template-option-title" style="display:flex; align-items:center; gap:4px;">'+
                              '<span class="menu-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+
                              '<span>Add from source</span>'+
                            '</div>'+
@@ -3968,13 +3970,15 @@
         var tpl = window.templatesData;
         var catKey = catToKey(cat);
         var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : [];
-        var html = '<div class="assist-menu-header">Suggested sections</div>';
+        var html = '<div class="assist-menu-header" style="display:flex; align-items:center; gap:4px;">'+
+                     '<span class="menu-icon" aria-hidden="true">§</span>'+
+                     '<span>Suggested sections</span>'+
+                   '</div>';
         if (tplSections && tplSections.length) {
           tplSections.forEach(function(sec, idx){
             var name = sec && sec.title ? sec.title : 'Section';
             var desc = sec && sec.description ? sec.description : '';
-            var icon = (sec && sec.icon) ? ('<span class="menu-icon" aria-hidden="true">'+ escapeHtml(sec.icon) +'</span>') : '';
-            html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title" style="display:flex; align-items:center; gap:8px;">'+icon+'<span>'+escapeHtml(name)+'</span></div><div class="template-option-desc">'+ (desc ? escapeHtml(desc) : 'Insert section') +'</div></button>';
+            html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title">'+escapeHtml(name)+'</div><div class="template-option-desc">'+ (desc ? escapeHtml(desc) : 'Insert section') +'</div></button>';
             if (idx < tplSections.length - 1) html += '<div class="assist-sep"></div>';
           });
         } else {
