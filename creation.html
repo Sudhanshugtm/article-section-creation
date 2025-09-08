@@ -3859,8 +3859,9 @@
             if (tplSections.length > 3) {
               var remaining = tplSections.length - 3;
               sectionBlock += '<li class="assist-list-item">'+
-                                '<div></div>'+ 
-                                '<button class="action-chip" data-view-all-sections>Show more sections ('+ remaining +' more)</button>'+ 
+                                '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
+                                '<div class="meta">Open full list of suggested sections</div></div>'+ 
+                                '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
                               '</li>';
             }
             sectionBlock += '</ul></div>';
@@ -3891,8 +3892,9 @@
               if (secList.length > 3) {
                 var remaining = secList.length - 3;
                 sectionBlock += '<li class="assist-list-item">'+
-                                  '<div></div>'+ 
-                                  '<button class="action-chip" data-view-all-sections>Show more sections ('+ remaining +' more)</button>'+ 
+                                  '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
+                                  '<div class="meta">Open full list of suggested sections</div></div>'+ 
+                                  '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
                                 '</li>';
               }
               sectionBlock += '</ul></div>';
@@ -3905,7 +3907,12 @@
           sourceBlock += '<div class="assist-sep"></div>';
           sourceBlock += '<div class="assist-group">';
           sourceBlock += '<button class="assist-item" data-open-source>'+
-                           '<div class="template-option-title">Add from source</div>'+
+                           '<div class="template-option-title" style="display:flex; align-items:center; gap:4px;">'+
+                             '<span aria-hidden="true" style="display:inline-flex; width:16px; height:16px; line-height:0;">\
+                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg>'+
+                             '</span>'+
+                             '<span>Add from source</span>'+
+                           '</div>'+
                            '<div class="template-option-desc">Cite a reliable source and insert content</div>'+
                          '</button>';
           sourceBlock += '</div>';
