@@ -4,6 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Article Creator — Reference Chip Concept</title>
+  <!-- Preload templates for faster availability (safe, no UX change) -->
+  <link rel="preload" as="fetch" href="templates.json" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
   <link rel="stylesheet" href="reading-styles.css">
@@ -3064,6 +3066,51 @@
       }
     })();
 
+    // Perf/stability feature flag (no UX change). Flip to false to disable.
+    window.perfTweaks = (typeof window.perfTweaks === 'boolean') ? window.perfTweaks : true;
+    window.__debugPerf = false;
+
+    // Global guard to avoid race conditions during insertion
+    var __insertingContent = false;
+
+    // Debounced scheduler to (re)position assist chip/menu once per frame
+    var __scheduleId = null;
+    function __schedule(fn) {
+      try {
+        if (!window.perfTweaks) return fn();
+        if (__scheduleId) cancelAnimationFrame(__scheduleId);
+        __scheduleId = requestAnimationFrame(function(){
+          __scheduleId = null;
+          try { fn(); } catch(_) {}
+        });
+      } catch(_) { try { fn(); } catch(__) {} }
+    }
+
+    // Local cache hydration for templates.json (instant availability)
+    (function hydrateTemplatesFromCache(){
+      try {
+        if (!window.perfTweaks) return;
+        var V = 'v1';
+        var key = 'templates.json::' + V;
+        var cached = localStorage.getItem(key);
+        if (cached && !window.templatesData) {
+          try { window.templatesData = JSON.parse(cached); } catch(_) {}
+        }
+        // After network load, refresh cache in background
+        var _oldLoad = (typeof loadTemplates === 'function') ? loadTemplates : null;
+        if (_oldLoad && !_oldLoad.__wrapped) {
+          var wrapped = function(){
+            return _oldLoad().then(function(data){
+              try { if (data) localStorage.setItem(key, JSON.stringify(data)); } catch(_) {}
+              return data;
+            });
+          };
+          wrapped.__wrapped = true;
+          window.loadTemplates = wrapped;
+        }
+      } catch(_) {}
+    })();
+
     // Load advanced intro templates (read-only)
     function loadTemplates() {
       // Cache templates.json after first load for better performance
@@ -3082,6 +3129,15 @@
       initializeSourceModal();
       initializeInsertMenu();
     });
+
+    // Generic mousedown suppression on insert triggers to avoid selection churn
+    document.addEventListener('mousedown', function(e){
+      try {
+        if (!window.perfTweaks) return;
+        var t = e.target && e.target.closest ? e.target.closest('[data-insert-intro-template],[data-insert-section],.template-option,[data-insert-intro],[data-insert-chip-starter]') : null;
+        if (t) { e.preventDefault(); }
+      } catch(_) {}
+    }, true);
 
     // Basic handlers for the Insert dropdown (image/table/special char)
     function initializeInsertMenu() {
@@ -3520,13 +3576,21 @@
       }
 
       function schedulePosition() {
+        try {
+          if (window.perfTweaks && __insertingContent) return; // avoid churn during insert
+        } catch(_) {}
         if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(positionChipAtCursor);
+        if (window.perfTweaks) {
+          __schedule(positionChipAtCursor);
+        } else {
+          rafId = requestAnimationFrame(positionChipAtCursor);
+        }
       }
 
       function positionChipAtCursor() {
         rafId = null;
-        if (suppressChipPositioning || frozen) return;
+        if ((typeof suppressChipPositioning !== 'undefined' && suppressChipPositioning) || frozen) return;
+        try { if (window.perfTweaks && __insertingContent) return; } catch(_) {}
         const editorRect = editor.getBoundingClientRect();
         let left = 0, top = 0;
         if (CHIP_ANCHOR_MODE === 'block') {
@@ -4261,7 +4325,7 @@
         }
         setTimeout(schedulePosition, 0);
       });
-      editor.addEventListener('keyup', function(){ schedulePosition(); });
+      editor.addEventListener('keyup', function(){ if (!(window.perfTweaks && __insertingContent)) schedulePosition(); });
 
       // Enhanced input event handling for better content change detection
       let inputTimeout;
@@ -4303,6 +4367,7 @@
          }
        });
       document.addEventListener('selectionchange', function(){
+        if (window.perfTweaks && __insertingContent) return;
         const sel = window.getSelection();
         if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) {
           // When selection changes inside the editor, prefer the block containing the caret
@@ -4310,9 +4375,9 @@
           schedulePosition();
         }
       });
-      window.addEventListener('resize', schedulePosition);
+      window.addEventListener('resize', function(){ if (!(window.perfTweaks && __insertingContent)) schedulePosition(); });
       // Reposition on any scroll that may shift editor
-      document.addEventListener('scroll', schedulePosition, true);
+      document.addEventListener('scroll', function(){ if (!(window.perfTweaks && __insertingContent)) schedulePosition(); }, true);
       // Chip keyboard handling: open menu/dialog on Enter/Space; Tab navigation among chips
       editor.addEventListener('keydown', function(e){
         var t = e.target;
@@ -4747,6 +4812,8 @@
     }
 
     function insertSimpleIntroduction() {
+      if (window.perfTweaks) { try { ensureSelectionInEditor(document.getElementById('editor')); } catch(_) {} }
+      if (window.perfTweaks) __insertingContent = true;
       var editor = document.getElementById('editor');
       var title = (window.articleTitleText || 'This topic');
       var category = (window.selectedCat || 'other');
@@ -4790,9 +4857,12 @@
           }, el);
         } catch(_) {}
       }
+      if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
     }
 
     function insertIntroText(text) {
+      if (window.perfTweaks) { try { ensureSelectionInEditor(document.getElementById('editor')); } catch(_) {} }
+      if (window.perfTweaks) __insertingContent = true;
       var editor = document.getElementById('editor');
       var pid = 'introText-' + Date.now();
       var html = '<p id="'+pid+'">'+ escapeHtml(text) +'</p>';
@@ -4821,9 +4891,12 @@
           }, el);
         } catch(_) {}
       }
+      if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
     }
 
     function insertChipStyleStarter(title, category) {
+      if (window.perfTweaks) { try { ensureSelectionInEditor(document.getElementById('editor')); } catch(_) {} }
+      if (window.perfTweaks) __insertingContent = true;
       var editor = document.getElementById('editor');
       var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
       // Turn into placeholders like other templates
@@ -4869,10 +4942,13 @@
           }, el);
         } catch(_) {}
       }
+      if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
     }
 
     // Insert an editable introduction template with inline chips and a Reference chip
     function insertIntroTemplate(title, category) {
+      if (window.perfTweaks) { try { ensureSelectionInEditor(document.getElementById('editor')); } catch(_) {} }
+      if (window.perfTweaks) __insertingContent = true;
       var editor = document.getElementById('editor');
       // Deterministic insert (no selection).
       var chip = document.getElementById('assistChip');
@@ -4929,6 +5005,7 @@
           }, el); } catch(_) {}
         } catch(_) {}
         suppressChipPositioning = false;
+        if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
       }, 0);
       // Keep chip visible; menu was already closed by the click handler
     }
@@ -5620,6 +5697,7 @@
 
     function insertTemplate(templateId) {
       const editor = document.getElementById('editor');
+      if (window.perfTweaks) __insertingContent = true;
       const template = getTemplateContent(templateId);
       
       // Ensure selection is inside editor, else move caret to end
@@ -5644,6 +5722,7 @@
             smartChipsContainer.classList.add('show');
           }
         } catch (_) {}
+        if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
       }, 10);
     }
 
