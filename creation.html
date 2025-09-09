@@ -1276,9 +1276,10 @@
 
     // === Minimal runtime i18n (language-first JSON) ===
     (function runtimeI18n(){
-      // Detect language from window or from first path segment (/id/..., /en/...)
-      var seg = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase();
-      var lang = window.currentLang || (seg === 'id' ? 'id' : (seg === 'en' ? 'en' : 'en'));
+      // Detect language robustly for GitHub Pages under /<repo>/<lang>/... or direct /<lang>/...
+      var segs = location.pathname.split('/').filter(Boolean).map(function(s){ return s.toLowerCase(); });
+      var langSeg = segs[1] || segs[0] || 'en';
+      var lang = window.currentLang || ((langSeg === 'id' || segs.indexOf('id') !== -1) ? 'id' : ((langSeg === 'en' || segs.indexOf('en') !== -1) ? 'en' : 'en'));
       window.currentLang = lang;
 
       function getNested(obj, path) {
@@ -1335,8 +1336,11 @@
       }
 
       function loadAndApply(){
-        var p = 'translations.json'; // always relative to repo root to support GitHub Pages under subpaths
-        fetch(p).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
+        // Compute repo root: /<repo>/translations.json on GH Pages, else relative
+        var segs = location.pathname.split('/').filter(Boolean);
+        var base = segs.length > 0 ? ('/' + segs[0]) : '';
+        var url = base ? (base + '/translations.json') : 'translations.json';
+        fetch(url).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
           window.translationsByLang = json;
           applyDom();
         }).catch(function(){ /* silent */ });
