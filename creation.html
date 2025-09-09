@@ -1287,10 +1287,27 @@
       function format(str, params){
         try { if (!params) return str; return String(str).replace(/\{(\w+)\}/g, function(_,k){ return (params[k] != null) ? params[k] : _; }); } catch(_) { return str; }
       }
+      function aliasKey(key){
+        try {
+          var k = String(key||'');
+          // Map legacy flat keys to nested paths used in translations.json
+          // 1) creation.cat.person -> creation.step2.categories.person
+          if (k.indexOf('creation.cat.') === 0) {
+            return k.replace('creation.cat.', 'creation.step2.categories.');
+          }
+          // 2) creation.step2.title.static -> creation.step2.title_static
+          k = k.replace(/\.title\.(static|template)$/,'_$$1');
+          // 3) creation.step2.title.static (redundant safety)
+          k = k.replace(/(creation\.step2\.\w+)\.static$/,'$1_static');
+          k = k.replace(/(creation\.step2\.\w+)\.template$/,'$1_template');
+          return k;
+        } catch(_) { return key; }
+      }
       function t(key, params, fallback){
         try {
           var dict = (window.translationsByLang && window.translationsByLang[window.currentLang]) || null;
           var v = dict ? getNested(dict, key) : undefined;
+          if (v == null) { v = dict ? getNested(dict, aliasKey(key)) : undefined; }
           return v != null ? format(v, params) : (fallback != null ? fallback : key);
         } catch(_) { return fallback != null ? fallback : key; }
       }
