@@ -1978,7 +1978,7 @@
     // Load suggestions data
     async function loadSuggestions() {
       try {
-        const response = await fetch('article-creation-suggestions.json');
+        const response = await fetch((typeof assetUrl==='function'?assetUrl('article-creation-suggestions.json'):'article-creation-suggestions.json'));
         suggestionsData = await response.json();
       } catch (error) {
         console.error('Failed to load suggestions:', error);
@@ -2436,7 +2436,7 @@
     // Load reliable sources data
     async function loadReliableSources() {
       try {
-        const response = await fetch('reliable-sources.json');
+        const response = await fetch((typeof assetUrl==='function'?assetUrl('reliable-sources.json'):'reliable-sources.json'));
         reliableSourcesData = await response.json();
       } catch (error) {
         console.error('Failed to load reliable sources:', error);
@@ -3244,7 +3244,7 @@
       if (window.templatesData !== undefined) {
         return Promise.resolve(window.templatesData);
       }
-      return fetch('templates.json')
+      return fetch((typeof assetUrl==='function'?assetUrl('templates.json'):'templates.json'))
         .then(function(r){ return r.json(); })
         .then(function(data){ window.templatesData = data; return data; })
         .catch(function(err){ window.templatesData = null; console && console.warn && console.warn('Failed to load templates.json', err); return null; });
