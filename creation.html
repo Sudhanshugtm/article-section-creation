@@ -1274,50 +1274,58 @@
       }).catch(console.error);
     })();
 
-    // === Minimal runtime i18n apply for this page ===
+    // === Minimal runtime i18n (language-first JSON) ===
     (function runtimeI18n(){
-      // Determine language: try window.currentLang, then URL first segment, then 'en'
-      var lang = window.currentLang || (location.pathname.split('/').filter(Boolean)[0]) || 'en';
+      // Detect language from window or from first path segment (/id/..., /en/...)
+      var seg = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase();
+      var lang = window.currentLang || (seg === 'id' ? 'id' : (seg === 'en' ? 'en' : 'en'));
       window.currentLang = lang;
 
-      // Helper to apply a translations map to the DOM
-      function applyMap(map) {
-        if (!map) return;
-        // Text content
-        document.querySelectorAll('[data-i18n]').forEach(function(el){
-          var key = el.getAttribute('data-i18n');
-          var v = map[key];
-          if (v && v[lang]) el.textContent = v[lang];
-        });
-        // Attributes like placeholder
-        document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
-          var attr = el.getAttribute('data-i18n-attr');
-          var key = el.getAttribute('data-i18n-placeholder') || el.getAttribute('data-i18n-attr-key') || el.getAttribute('data-i18n-attr');
-          var v = map[key];
-          if (v && v[lang]) el.setAttribute(attr, v[lang]);
-        });
-        // Specific placeholder helper
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
-          var key = el.getAttribute('data-i18n-placeholder');
-          var v = map[key];
-          if (v && v[lang]) el.placeholder = v[lang];
-        });
+      function getNested(obj, path) {
+        try { return path.split('.').reduce(function(acc, k){ return (acc && acc[k] != null) ? acc[k] : undefined; }, obj); } catch(_) { return undefined; }
+      }
+      function format(str, params){
+        try { if (!params) return str; return String(str).replace(/\{(\w+)\}/g, function(_,k){ return (params[k] != null) ? params[k] : _; }); } catch(_) { return str; }
+      }
+      function t(key, params, fallback){
+        try {
+          var dict = (window.translationsByLang && window.translationsByLang[window.currentLang]) || null;
+          var v = dict ? getNested(dict, key) : undefined;
+          return v != null ? format(v, params) : (fallback != null ? fallback : key);
+        } catch(_) { return fallback != null ? fallback : key; }
+      }
+      window.__i18nGet = t;
+
+      function applyDom(){
+        try {
+          document.querySelectorAll('[data-i18n]').forEach(function(el){
+            var key = el.getAttribute('data-i18n');
+            var val = t(key, null, null);
+            if (val != null && typeof val === 'string') el.textContent = val;
+          });
+          document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+            var key = el.getAttribute('data-i18n-placeholder');
+            var val = t(key, null, null);
+            if (val != null && typeof val === 'string') el.setAttribute('placeholder', val);
+          });
+          document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+            var attr = el.getAttribute('data-i18n-attr');
+            var key = el.getAttribute('data-i18n-placeholder') || el.getAttribute('data-i18n-attr-key') || el.getAttribute('data-i18n-attr');
+            var val = t(key, null, null);
+            if (val != null && typeof val === 'string') el.setAttribute(attr, val);
+          });
+        } catch(_) {}
       }
 
-      // If translations are already loaded on window.translations, use them
-      if (window.translations) {
-        applyMap(window.translations);
-        return;
+      function loadAndApply(){
+        var p = (location.pathname.indexOf('/id/') === 0 || location.pathname.indexOf('/en/') === 0) ? '/translations.json' : 'translations.json';
+        fetch(p).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
+          window.translationsByLang = json;
+          applyDom();
+        }).catch(function(){ /* silent */ });
       }
 
-      // Otherwise try to fetch a built translations.json next to this site root
-      var p = '/translations.json';
-      fetch(p).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
-        window.translations = json;
-        applyMap(json);
-      }).catch(function(){
-        // Silent fallback if translations unavailable
-      });
+      if (window.translationsByLang) applyDom(); else loadAndApply();
     })();
 
     // === Referencing helpers (concept demo) ===
@@ -1748,19 +1756,20 @@
       
       // Initialize editor with a visible lead placeholder paragraph that holds the caret
       // Includes inline guidance to use '/' for suggestions
-      ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">Start writing about ' + safeTitle + ' or <strong>Press "/" for suggestions</strong>.</p>';
+      (function(){ var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; }; var msg = __t('editor.leadPlaceholder', { topic: safeTitle }, 'Start writing about {topic} or <strong>Press "/" for suggestions</strong>.'); ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+ msg +'</p>'; })();
       ed.removeAttribute('data-placeholder');
       
       // Insert a single Assistance chip with inline menu (simple concept)
+      var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k, p, f){ return f || k; };
       var assistHtml = ''+
-        '<div id="assistChip" class="assist-chip" role="button" aria-label="Suggestions" aria-expanded="false" tabindex="0" style="z-index:150;" contenteditable="false"><span class="icon">✨</span><span class="label">Suggestions</span></div>'+
+        '<div id="assistChip" class="assist-chip" role="button" aria-label="'+ __t('ui.suggestions','Suggestions') +'" aria-expanded="false" tabindex="0" style="z-index:150;" contenteditable="false"><span class="icon">✨</span><span class="label">'+ __t('ui.suggestions','Suggestions') +'</span></div>'+
         '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); padding:0;" contenteditable="false">'+
-          '<div class="assist-menu-header">Suggestions</div>'+
-          '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
+          '<div class="assist-menu-header">'+ __t('ui.suggestions','Suggestions') +'</div>'+
+          '<button class="assist-item" data-assist="intro"><div class="template-option-title">'+ __t('ui.introduction','Introduction') +'</div><div class="template-option-desc">'+ __t('ui.introductionDesc','Insert a simple opening sentence') +'</div></button>'+ 
           '<div class="assist-sep"></div>'+
-          '<button class="assist-item" data-assist="source"><div class="template-option-title">Add from a source</div><div class="template-option-desc">Open source dialog</div></button>'+ 
+          '<button class="assist-item" data-assist="source"><div class="template-option-title">'+ __t('ui.addFromSource','Add from a source') +'</div><div class="template-option-desc">'+ __t('ui.addFromSourceDesc','Open source dialog') +'</div></button>'+ 
           '<div class="assist-sep"></div>'+
-          '<button class="assist-item" data-assist="section"><div class="template-option-title">Suggested section</div><div class="template-option-desc">Add a common section</div></button>'+ 
+          '<button class="assist-item" data-assist="section"><div class="template-option-title">'+ __t('ui.suggestedSection','Suggested section') +'</div><div class="template-option-desc">'+ __t('ui.suggestedSectionDesc','Add a common section') +'</div></button>'+ 
         '</div>';
       ed.insertAdjacentHTML('beforeend', assistHtml);
       initializeAssistanceUI();
@@ -3509,7 +3518,7 @@
             if (existingPlaceholder) existingPlaceholder.remove();
             
             const title = (window.articleTitleText || 'Untitled');
-            const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "/" for suggestions</strong>.';
+            const placeholderHTML = (function(){ var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; }; return __t('editor.leadPlaceholder', { topic: title.replace(/</g,'&lt;').replace(/>/g,'&gt;') }, 'Start writing about {topic} or <strong>Press "/" for suggestions</strong>.'); })();
             
             // Force create at beginning, even if assist elements exist
             ed.insertAdjacentHTML('afterbegin', '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+placeholderHTML+'</p>');
@@ -3532,7 +3541,7 @@
           // Restore placeholder if no content exists
           let lp = document.getElementById('leadPlaceholder');
           const title = (window.articleTitleText || 'Untitled');
-          const placeholderHTML = 'Start writing about ' + title.replace(/</g,'&lt;').replace(/>/g,'&gt;') + ' or <strong>Press "/" for suggestions</strong>.';
+          const placeholderHTML = (function(){ var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; }; return __t('editor.leadPlaceholder', { topic: title.replace(/</g,'&lt;').replace(/>/g,'&gt;') }, 'Start writing about {topic} or <strong>Press "/" for suggestions</strong>.'); })();
           
           if (lp) {
             // Update existing placeholder content if it's empty or cleared
@@ -5521,7 +5530,8 @@
       try {
         if (window.__sectionHelperEnabled === undefined) window.__sectionHelperEnabled = true; // feature flag
         if (window.__sectionHelperEnabled) {
-          var promptTxt = (function(){ try { return getWritingPromptForSection(name, (window.selectedCat||'other')); } catch(_) { return 'Click here to start writing about '+ name.toLowerCase()+'.'; } })();
+          var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+          var promptTxt = (function(){ try { return getWritingPromptForSection(name, (window.selectedCat||'other')); } catch(_) { return __t('editor.sectionPlaceholder',{ section: name.toLowerCase() }, 'Click here to start writing about {section}.'); } })();
           // Defer ID injection to later code path (we replace <p> with id afterward)
           para = '<p style="margin: 1.1em 0; color:#72777d; font-style:italic;" data-placeholder="'+ escapeHtml(promptTxt) +'">'+
                    '<span class="sh-placeholder">'+ escapeHtml(promptTxt) +'</span>'+
@@ -5710,15 +5720,17 @@
             return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
           });
         }
-        var prompt = chips.length ? chips.join(' ') : 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+        var prompt = chips.length ? chips.join(' ') : __t('editor.sectionPlaceholder',{ section: sectionName.toLowerCase() }, 'Click here to start writing about {section}.');
         if (chips.length) {
           return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 002-2V3a 2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
         } else {
           return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
         }
       } catch(_) {
-        var p = 'Click here to start writing about '+ sectionName.toLowerCase()+'.';
-        return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(p) +'</p>';
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+        var ptxt = __t('editor.sectionPlaceholder',{ section: sectionName.toLowerCase() }, 'Click here to start writing about {section}.');
+        return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(ptxt) +'</p>';
       }
     }
 
@@ -5752,9 +5764,10 @@
 
           function hasTemplate(){ try { return !!getSectionTemplateFromTemplates(sectionName, (window.selectedCat||'other')); } catch(_) { return false; } }
 
+          var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
           container.innerHTML = ''+
-            '<button type="button" data-sh-btn="tpl"'+ (hasTemplate()? '' : ' aria-disabled="true"') +'>Template starter</button>'+
-            '<button type="button" data-sh-btn="src">Add from source</button>';
+            '<button type="button" data-sh-btn="tpl"'+ (hasTemplate()? '' : ' aria-disabled="true"') +'>' + __t('helper.templateStarter', null, 'Template starter') + '</button>'+
+            '<button type="button" data-sh-btn="src">' + __t('helper.addFromSource', null, 'Add from source') + '</button>';
 
           // Insert after the paragraph
           p.insertAdjacentElement('afterend', container);
