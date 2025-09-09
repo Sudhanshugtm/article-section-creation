@@ -1309,8 +1309,9 @@
           var dict = (window.translationsByLang && window.translationsByLang[window.currentLang]) || null;
           var v = dict ? getNested(dict, key) : undefined;
           if (v == null) { v = dict ? getNested(dict, aliasKey(key)) : undefined; }
-          return v != null ? format(v, params) : (fallback != null ? fallback : key);
-        } catch(_) { return fallback != null ? fallback : key; }
+          var out = (v != null) ? v : ((fallback != null) ? fallback : key);
+          return format(out, params);
+        } catch(_) { return format((fallback != null ? fallback : key), params); }
       }
       window.__i18nGet = t;
 
