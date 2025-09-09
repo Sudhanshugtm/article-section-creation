@@ -1335,7 +1335,7 @@
       }
 
       function loadAndApply(){
-        var p = (location.pathname.indexOf('/id/') === 0 || location.pathname.indexOf('/en/') === 0) ? '/translations.json' : 'translations.json';
+        var p = 'translations.json'; // always relative to repo root to support GitHub Pages under subpaths
         fetch(p).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
           window.translationsByLang = json;
           applyDom();
@@ -1697,34 +1697,20 @@
       step1.classList.remove('active'); 
       step2.classList.add('active'); 
       
-      // Update Step 2 title with the entered topic
+      // Update Step 2 title with the entered topic (localized)
       var step2Title = step2.querySelector('h3');
       var userTopic = titleInput.value.trim();
       if (step2Title && userTopic) {
-        // If a data-i18n-template attribute exists, use it for interpolation (template may contain {topic})
-        var tmpl = step2Title.getAttribute('data-i18n-template');
-        if (tmpl) {
-          step2Title.textContent = tmpl.replace('{topic}', userTopic);
-        } else {
-          // Fallback: if a translation key exists, try to fetch translated template from global translations object
-          try {
-            if (window.translations && step2Title.getAttribute('data-i18n')) {
-              var key = step2Title.getAttribute('data-i18n');
-              var lang = window.currentLang || (location.pathname.split('/').filter(Boolean)[0]) || 'en';
-              var entry = window.translations[key];
-              if (entry && entry[lang]) {
-                // If the entry contains a placeholder {topic}, replace it
-                step2Title.textContent = entry[lang].replace('{topic}', userTopic);
-              } else {
-                step2Title.textContent = 'What is "' + userTopic + '"?';
-              }
-            } else {
-              step2Title.textContent = 'What is "' + userTopic + '"?';
-            }
-          } catch (e) {
-            step2Title.textContent = 'What is "' + userTopic + '"?';
-          }
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+        // Prefer explicit template key if provided on element
+        var k = step2Title.getAttribute('data-i18n-template-key') || 'creation.step2.title_template';
+        var txt = __t(k, { topic: userTopic }, null);
+        if (!txt || txt === k) {
+          // Try legacy key path or fallback static title
+          txt = __t('creation.step2.title_template', { topic: userTopic }, null) || __t('creation.step2.title_static', null, 'Assign a topic category');
+          if (txt && txt.indexOf('{topic}') !== -1) txt = txt.replace('{topic}', userTopic);
         }
+        step2Title.textContent = txt || ('What is "' + userTopic + '"?');
       }
       
     };
