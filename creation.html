@@ -5490,13 +5490,22 @@
         for (var i=0;i<headers.length;i++){
           var t = (headers[i].textContent||'').trim().toLowerCase();
           if (t === normName) {
-            console.log('[SECTION-INSERT] 🚫 Duplicate found, skipping:', name);
-            // Ensure chip anchors to the existing section for user feedback
-            if (typeof positionChipBelowElement === 'function') positionChipBelowElement(headers[i]);
-            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(headers[i]);
+            console.log('[SECTION-INSERT] ♻️ Section exists — converting first paragraph to template:', name);
+            // If section exists, interpret reinsertion as request to apply the template
+            var headerEl = headers[i];
+            var p = headerEl.nextElementSibling;
+            // If there's no paragraph right after header, create one
+            if (!p || p.tagName.toLowerCase() !== 'p') {
+              headerEl.insertAdjacentHTML('afterend', '<p></p>');
+              p = headerEl.nextElementSibling;
+            }
+            try { insertSectionTemplateAtParagraph(p, name); } catch(_) {}
+            // Anchor assist UI to that paragraph
+            if (typeof positionChipBelowElement === 'function') positionChipBelowElement(p);
+            if (typeof showSuggestionsChip === 'function') showSuggestionsChip(p);
             // Clear suppression shortly after
             setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 120);
-            return headers[i].closest('.section-block') || headers[i];
+            return headerEl.closest('.section-block') || p || headerEl;
           }
         }
       } catch(_) {}
@@ -5507,6 +5516,18 @@
       var para = buildSectionParagraphWithChips(name);
       var paraTime = performance.now() - paraStart;
       console.log('[SECTION-INSERT] 📝 buildSectionParagraphWithChips time:', Math.round(paraTime) + 'ms');
+      // Concept: Section Helper. When enabled, insert a plain placeholder paragraph first,
+      // and offer an inline helper to optionally insert the template.
+      try {
+        if (window.__sectionHelperEnabled === undefined) window.__sectionHelperEnabled = true; // feature flag
+        if (window.__sectionHelperEnabled) {
+          var promptTxt = (function(){ try { return getWritingPromptForSection(name, (window.selectedCat||'other')); } catch(_) { return 'Click here to start writing about '+ name.toLowerCase()+'.'; } })();
+          // Defer ID injection to later code path (we replace <p> with id afterward)
+          para = '<p style="margin: 1.1em 0; color:#72777d; font-style:italic;" data-placeholder="'+ escapeHtml(promptTxt) +'">'+
+                   '<span class="sh-placeholder">'+ escapeHtml(promptTxt) +'</span>'+
+                 '</p>';
+        }
+      } catch(_) {}
       // Ensure we can reference the new paragraph element after insertion
       window.__sectionInsertSeq += 1;
       var newParaId = 'sectionPara-' + Date.now() + '-' + window.__sectionInsertSeq;
@@ -5604,19 +5625,28 @@
             var insertedPara = document.querySelector('#'+newParaId);
             if (!insertedPara) return;
             var firstPh = insertedPara.querySelector('.template-placeholder');
-            if (firstPh && firstPh.focus) {
+            if (firstPh && firstPh.focus && !window.__sectionHelperEnabled) {
               try { window.__suppressAssistMenuHide = true; } catch(_) {}
               firstPh.focus();
               setTimeout(function(){ try { window.__suppressAssistMenuHide = false; } catch(_) {} }, 50);
             } else {
-              // Fallback: focus the paragraph end
+              // Focus the placeholder paragraph and place caret
               insertedPara.setAttribute('contenteditable', 'true');
               insertedPara.focus();
               var sel = window.getSelection(); sel.removeAllRanges();
-              var rg = document.createRange(); rg.selectNodeContents(insertedPara); rg.collapse(false); sel.addRange(rg);
+              var rg = document.createRange(); rg.selectNodeContents(insertedPara);
+              // For the concept helper, start at the beginning of the placeholder text
+              if (window.__sectionHelperEnabled) { rg.collapse(true); } else { rg.collapse(false); }
+              sel.addRange(rg);
             }
             if (typeof positionChipBelowElement === 'function') positionChipBelowElement(insertedPara);
             if (typeof showSuggestionsChip === 'function') showSuggestionsChip(insertedPara);
+            // Show the inline helper if feature is enabled and the paragraph is empty/placeholder
+            try {
+              if (window.__sectionHelperEnabled && typeof showSectionHelper === 'function') {
+                showSectionHelper(insertedPara, name);
+              }
+            } catch(_) {}
           } catch(_) {}
         });
         
@@ -5691,6 +5721,387 @@
         return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(p) +'</p>';
       }
     }
+
+    // === Section Helper (Concept) ===
+    // Lightweight inline helper that appears after inserting a section.
+    // Offers: Template starter, Add from source, Examples, Dismiss.
+      (function sectionHelperConcept(){
+      // CSS (scoped inline to avoid external file changes)
+      try {
+        if (!document.getElementById('sectionHelperStyles')) {
+          var st = document.createElement('style');
+          st.id = 'sectionHelperStyles';
+          st.textContent = '\n.section-helper{margin:6px 0 0 0; display:flex; gap:6px; flex-wrap:wrap; align-items:center;}\n.section-helper [data-sh-btn]{border:1px solid #c8ccd1; background:#fff; border-radius:14px; padding:4px 10px; font-size:12px; cursor:pointer;}\n.section-helper [data-sh-btn]:hover{background:#f8f9fa;}\n.section-helper [data-sh-btn][aria-disabled="true"]{opacity:.6; cursor:default;}\n.section-helper .sep{margin:0 2px; color:#a2a9b1;}\n';
+          document.head.appendChild(st);
+        }
+      } catch(_) {}
+
+      window.showSectionHelper = function showSectionHelper(p, sectionName){
+        try {
+          if (!p || !p.parentNode) return;
+          // Avoid duplicates
+          if (p.nextElementSibling && p.nextElementSibling.classList && p.nextElementSibling.classList.contains('section-helper')) return;
+          // Only show for empty/placeholder paragraphs
+          var txt = (p.textContent||'').trim();
+          if (txt.length > 0 && !p.hasAttribute('data-placeholder')) return;
+          var container = document.createElement('div');
+          container.className = 'section-helper';
+          container.setAttribute('contenteditable','false');
+          container.setAttribute('role','region');
+          container.setAttribute('aria-label','Section helper');
+
+          function hasTemplate(){ try { return !!getSectionTemplateFromTemplates(sectionName, (window.selectedCat||'other')); } catch(_) { return false; } }
+
+          container.innerHTML = ''+
+            '<button type="button" data-sh-btn="tpl"'+ (hasTemplate()? '' : ' aria-disabled="true"') +'>Template starter</button>'+
+            '<button type="button" data-sh-btn="src">Add from source</button>';
+
+          // Insert after the paragraph
+          p.insertAdjacentElement('afterend', container);
+
+          // Helpers to manage placeholder state
+          function isEmptyText(s){ try { return String(s||'').replace(/[\u200B\u200A\uFEFF]/g,'').trim().length === 0; } catch(_) { return true; } }
+          function setPlaceholder(){
+            try {
+              var txt = (p.getAttribute('data-placeholder')||'');
+              // Add a ZWSP prefix to keep paragraph from collapsing in WebKit/Safari
+              p.innerHTML = '\u200B<span class="sh-placeholder">'+ escapeHtml(txt) +'</span>';
+              p.style.color = '#72777d'; p.style.fontStyle = 'italic';
+            } catch(_) {}
+          }
+          function clearPlaceholder(){
+            try {
+              var ph = p.querySelector('.sh-placeholder');
+              if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+              p.style.color = '';
+              p.style.fontStyle = '';
+              p.removeAttribute('data-placeholder');
+            } catch(_) {}
+          }
+          function placeCaretAtStartInParagraph(el){
+            try {
+              if (!el) return;
+              el.setAttribute('contenteditable','true');
+              // Ensure a text node exists so caret can live inside the paragraph on Safari
+              if (!el.firstChild) {
+                el.appendChild(document.createTextNode(''));
+              }
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange();
+              rg.setStart(el.firstChild, 0);
+              rg.collapse(true);
+              sel.addRange(rg);
+              try { el.focus(); } catch(_) {}
+            } catch(_) {}
+          }
+          function insertTextAtStart(el, text){
+            try {
+              if (!el) return;
+              if (!el.firstChild) el.appendChild(document.createTextNode(''));
+              var tn = document.createTextNode(text || '');
+              el.insertBefore(tn, el.firstChild);
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange(); rg.setStartAfter(tn); rg.collapse(true); sel.addRange(rg);
+            } catch(_) {}
+          }
+
+          // Input monitor: hide helper when user types; restore if text becomes empty again
+          function onInput(){
+            try {
+              var val = (p.textContent||'');
+              var hasContent = !isEmptyText(val);
+              if (hasContent) {
+                if (container && container.parentNode) container.parentNode.removeChild(container);
+              } else {
+                // If cleared, restore placeholder and helper
+                var promptTxt = (function(){ try { return getWritingPromptForSection(sectionName, (window.selectedCat||'other')); } catch(_) { return 'Click here to start writing about '+ sectionName.toLowerCase()+'.'; } })();
+                p.setAttribute('data-placeholder', promptTxt);
+                setPlaceholder();
+                if (!p.nextElementSibling || !p.nextElementSibling.classList || !p.nextElementSibling.classList.contains('section-helper')) {
+                  showSectionHelper(p, sectionName);
+                }
+                // Keep caret anchored in the paragraph
+                setTimeout(function(){ try { placeCaretAtStartInParagraph(p); } catch(_) {} }, 0);
+              }
+            } catch(_) {}
+          }
+          setTimeout(function(){
+            try { p.addEventListener('input', onInput, true); } catch(_) {}
+            // Observe content changes even if selection leaves the paragraph
+            try {
+              var mo = new MutationObserver(function(){ onInput(); });
+              mo.observe(p, { childList:true, characterData:true, subtree:true });
+            } catch(_) {}
+          }, 0);
+
+          // Prefer robust 'beforeinput' to intercept first input, including IME/composition
+          try {
+            p.addEventListener('beforeinput', function(ev){
+              if (ev.inputType && ev.inputType.indexOf('insert') === 0 && p.hasAttribute('data-placeholder')) {
+                ev.preventDefault();
+                try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+                var data = ev.data || '';
+                clearPlaceholder();
+                placeCaretAtStartInParagraph(p);
+                if (data) { insertTextAtStart(p, data); }
+                if (container && container.parentNode) container.parentNode.removeChild(container);
+              }
+            }, true);
+            // Fallback for keyboards that may skip beforeinput
+            p.addEventListener('keydown', function(ev){
+              if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+              if (!p.hasAttribute('data-placeholder')) {
+                if (ev.key === 'Escape') { if (container && container.parentNode) container.parentNode.removeChild(container); }
+                return;
+              }
+              if (ev.key && ev.key.length === 1) {
+                ev.preventDefault();
+                try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+                clearPlaceholder();
+                placeCaretAtStartInParagraph(p);
+                insertTextAtStart(p, ev.key);
+                if (container && container.parentNode) container.parentNode.removeChild(container);
+              } else if (ev.key === 'Escape') {
+                if (container && container.parentNode) container.parentNode.removeChild(container);
+              }
+            }, true);
+            // Clear placeholder on composition start (IME)
+            p.addEventListener('compositionstart', function(){ if (p.hasAttribute('data-placeholder')) { clearPlaceholder(); if (container && container.parentNode) container.parentNode.removeChild(container); } }, true);
+          } catch(_) {}
+
+          // Paste over placeholder
+          try {
+            p.addEventListener('paste', function(ev){
+              if (!p.hasAttribute('data-placeholder')) return;
+              ev.preventDefault();
+              var text = (ev.clipboardData && ev.clipboardData.getData && ev.clipboardData.getData('text/plain')) || '';
+              clearPlaceholder();
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange(); rg.selectNodeContents(p); rg.collapse(true); sel.addRange(rg);
+              try { document.execCommand('insertText', false, text); } catch(_) {
+                var tn = document.createTextNode(text); rg.insertNode(tn); rg.setStartAfter(tn); rg.collapse(true); sel.removeAllRanges(); sel.addRange(rg);
+              }
+              if (container && container.parentNode) container.parentNode.removeChild(container);
+            });
+          } catch(_) {}
+
+          // Hide on Esc while focus is in paragraph (handled above too)
+          try {
+            var onKey = function(ev){ if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); if (container && container.parentNode) container.parentNode.removeChild(container); p.removeEventListener('keydown', onKey); } };
+            p.addEventListener('keydown', onKey);
+          } catch(_) {}
+
+          // Button handlers
+          container.addEventListener('click', function(e){
+            var btn = e.target && e.target.closest && e.target.closest('[data-sh-btn]');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var kind = btn.getAttribute('data-sh-btn');
+            if (btn.getAttribute('aria-disabled') === 'true') return;
+            if (kind === 'tpl') {
+              insertSectionTemplateAtParagraph(p, sectionName);
+              if (container && container.parentNode) container.parentNode.removeChild(container);
+              return;
+            }
+            if (kind === 'src') {
+              try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
+              // Keep helper until user starts typing (auto-hide via input listener)
+              return;
+            }
+          }, true);
+        } catch(_) {}
+      };
+
+      window.insertSectionTemplateAtParagraph = function insertSectionTemplateAtParagraph(p, sectionName){
+        try {
+          if (!p) return;
+          var category = (window.selectedCat || 'other');
+          var tpl = getSectionTemplateFromTemplates(sectionName, category);
+          if (!tpl) return; // nothing to insert
+          var title = (window.articleTitleText || 'This topic');
+          tpl = tpl.replace(/\{\{(NAME|FULL_NAME)\}\}/g, title);
+          tpl = tpl.replace(/\{\{ARTICLE\}\}/g, 'a');
+          var inner = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
+            return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
+          }) + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span>';
+          var prev = p.innerHTML;
+          // Normalize paragraph: remove placeholder styling/flags and any ZWSP remnants
+          try {
+            p.removeAttribute('data-placeholder');
+            p.style.color = '';
+            p.style.fontStyle = '';
+            // Remove placeholder span if present
+            var ph = p.querySelector('.sh-placeholder');
+            if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+            // Strip leading zero-width characters from the first text node
+            if (p.firstChild && p.firstChild.nodeType === Node.TEXT_NODE) {
+              p.firstChild.nodeValue = (p.firstChild.nodeValue || '').replace(/^\u200B+/, '');
+            }
+            // Remove helper block if it is still present
+            try { var next = p.nextElementSibling; if (next && next.classList && next.classList.contains('section-helper')) next.parentNode.removeChild(next); } catch(_) {}
+          } catch(_) {}
+          p.innerHTML = inner;
+          try { tidyLeadPunctuation(p); } catch(_) {}
+          // Place caret after ref chip
+          try { var rc = p.querySelector('.ref-chip'); if (rc) { placeCaretAfterNode(rc); } else { placeCaretAtEnd(p); } } catch(_) {}
+          // Undo toast
+          try {
+            showUndoToast('Inserted section template', function(){
+              try { p.innerHTML = prev; placeCaretAtEnd(p); } catch(_) {}
+              return true; // caret handled
+            }, p);
+          } catch(_) {}
+          // Ensure publish button enables
+          try { enablePublishUI(); } catch(_) {}
+        } catch(_) {}
+      };
+
+      // Global fallback handlers to guarantee placeholder clearing across browsers
+      try {
+        if (!window.__sectionHelperGlobalsBound) {
+          window.__sectionHelperGlobalsBound = true;
+          var root = document.getElementById('editor');
+          function placeCaretAtStartInParagraph(el){
+            try {
+              if (!el) return;
+              el.setAttribute('contenteditable','true');
+              if (!el.firstChild) { el.appendChild(document.createTextNode('')); }
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange(); rg.setStart(el.firstChild, 0); rg.collapse(true);
+              sel.addRange(rg);
+              try { el.focus(); } catch(_) {}
+            } catch(_) {}
+          }
+          function insertTextAtStart(el, text){
+            try {
+              if (!el) return;
+              if (!el.firstChild) el.appendChild(document.createTextNode(''));
+              var tn = document.createTextNode(text || '');
+              el.insertBefore(tn, el.firstChild);
+              var sel = window.getSelection(); sel.removeAllRanges();
+              var rg = document.createRange(); rg.setStartAfter(tn); rg.collapse(true); sel.addRange(rg);
+            } catch(_) {}
+          }
+          function getActivePlaceholderPara(){
+            try {
+              var sel = window.getSelection(); if (!sel || !sel.rangeCount) return null;
+              var node = sel.getRangeAt(0).startContainer;
+              if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+              if (!node) return null;
+              var p = node.closest('p');
+              if (p && p.hasAttribute('data-placeholder')) return p;
+              // If caret is in an H2, consider the next paragraph as candidate
+              if (node.tagName && node.tagName.toLowerCase() === 'h2') {
+                var nx = node.nextElementSibling;
+                if (nx && nx.tagName && nx.tagName.toLowerCase() === 'p' && (nx.hasAttribute('data-placeholder') || (nx.textContent||'').replace(/[\u200B\u200A\uFEFF]/g,'').trim().length===0)) return nx;
+              }
+              return null;
+            } catch(_) { return null; }
+          }
+          function removeHelperNextTo(p){ try { var n = p.nextElementSibling; if (n && n.classList && n.classList.contains('section-helper')) n.parentNode.removeChild(n); } catch(_) {} }
+          function clearPh(p){
+            try {
+              var ph = p.querySelector('.sh-placeholder');
+              if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+              p.style.color = '';
+              p.style.fontStyle = '';
+              p.removeAttribute('data-placeholder');
+            } catch(_) {}
+          }
+          // beforeinput (capture)
+          root.addEventListener('beforeinput', function(ev){
+            var p = getActivePlaceholderPara();
+            if (!p) return;
+            if (ev.inputType && ev.inputType.indexOf('insert') === 0) {
+              ev.preventDefault();
+              try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+              var data = ev.data || '';
+              clearPh(p);
+              placeCaretAtStartInParagraph(p);
+              if (data) { insertTextAtStart(p, data); }
+              removeHelperNextTo(p);
+            } else if (ev.inputType === 'deleteContentBackward') {
+              // If user backspaces from the H2 into the paragraph, keep caret in paragraph
+              ev.preventDefault();
+              try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+              // If paragraph is empty, restore placeholder + helper
+              var text = (p.textContent||'').replace(/[\u200B\u200A\uFEFF]/g,'');
+              if (text.trim().length === 0 && !p.querySelector('.sh-placeholder')) {
+                var sectionName = getSectionNameForParagraph(p);
+                var promptTxt = (function(){ try { return getWritingPromptForSection(sectionName, (window.selectedCat||'other')); } catch(_) { return 'Click here to start writing about '+ sectionName.toLowerCase()+'.'; } })();
+                p.setAttribute('data-placeholder', promptTxt);
+                p.innerHTML = '\u200B<span class="sh-placeholder">'+ escapeHtml(promptTxt) +'</span>';
+                p.style.color = '#72777d'; p.style.fontStyle = 'italic';
+                removeHelperNextTo(p); showSectionHelper(p, sectionName);
+              }
+              placeCaretAtStartInParagraph(p);
+            }
+          }, true);
+          // keydown (capture) fallback
+          root.addEventListener('keydown', function(ev){
+            var p = getActivePlaceholderPara();
+            if (!p) return;
+            if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+            if (ev.key && ev.key.length === 1) {
+              ev.preventDefault();
+              try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+              clearPh(p);
+              placeCaretAtStartInParagraph(p);
+              insertTextAtStart(p, ev.key);
+              removeHelperNextTo(p);
+            }
+          }, true);
+          // paste (capture)
+          root.addEventListener('paste', function(ev){
+            var p = getActivePlaceholderPara();
+            if (!p) return;
+            ev.preventDefault();
+            try { ev.stopPropagation(); if (ev.stopImmediatePropagation) ev.stopImmediatePropagation(); } catch(_) {}
+            var text = (ev.clipboardData && ev.clipboardData.getData && ev.clipboardData.getData('text/plain')) || '';
+            clearPh(p);
+            placeCaretAtStartInParagraph(p);
+            insertTextAtStart(p, text);
+            removeHelperNextTo(p);
+          }, true);
+          // compositionstart (capture)
+          root.addEventListener('compositionstart', function(){
+            var p = getActivePlaceholderPara();
+            if (!p) return;
+            clearPh(p);
+            removeHelperNextTo(p);
+          }, true);
+
+          // input (capture): if a section paragraph becomes empty, restore placeholder and helper
+          root.addEventListener('input', function(){
+            try {
+              var sel = window.getSelection(); if (!sel || !sel.rangeCount) return;
+              var node = sel.getRangeAt(0).startContainer;
+              if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+              if (!node) return;
+              var p = node.closest('p');
+              if (!p || p.id === 'leadPlaceholder') return;
+              // Only care about the immediate paragraph after an H2 or within a section block
+              var blk = p.closest('.section-block');
+              if (!blk && (!p.previousElementSibling || (p.previousElementSibling.tagName||'').toLowerCase() !== 'h2')) return;
+              var hasContent = (p.textContent||'').trim().length > 0;
+              var hasPH = !!p.querySelector('.sh-placeholder');
+              if (!hasContent && !hasPH) {
+                var sectionName = getSectionNameForParagraph(p);
+                var promptTxt = (function(){ try { return getWritingPromptForSection(sectionName, (window.selectedCat||'other')); } catch(_) { return 'Click here to start writing about '+ sectionName.toLowerCase()+'.'; } })();
+                p.setAttribute('data-placeholder', promptTxt);
+                // Insert placeholder span and helper, and anchor caret
+                p.innerHTML = '<span class="sh-placeholder">'+ escapeHtml(promptTxt) +'</span>';
+                p.style.color = '#72777d'; p.style.fontStyle = 'italic';
+                removeHelperNextTo(p); // avoid duplicates
+                showSectionHelper(p, sectionName);
+                placeCaretAtStartInParagraph(p);
+              }
+            } catch(_) {}
+          }, true);
+        }
+      } catch(_) {}
+    })();
 
     function getSectionTemplateFromTemplates(sectionName, category) {
       try {
@@ -6134,6 +6545,16 @@
     }
 
     function showGuideInterface() {
+          function getSectionNameForParagraph(p){
+            try {
+              var blk = p.closest && p.closest('.section-block');
+              if (blk && blk.dataset && blk.dataset.section) return blk.dataset.section;
+              // Fallback: search previous siblings for H2
+              var el = p.previousElementSibling; 
+              while (el) { if (el.tagName && el.tagName.toLowerCase() === 'h2') return (el.textContent||'').trim(); el = el.previousElementSibling; }
+              return 'Section';
+            } catch(_) { return 'Section'; }
+          }
       // Open sidebar or modal with guidance
       insertNewSection();
     }
