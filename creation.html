@@ -5209,7 +5209,8 @@
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       var pid = 'introTpl-' + Date.now();
-      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
+      var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
       suppressChipPositioning = true;
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
@@ -5709,7 +5710,8 @@
         var htmlBody = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
           return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
         });
-        return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
+          var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+          return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
       }
       // Fallback: use suggestionsData include list to create chip prompts
       try{
@@ -5730,7 +5732,8 @@
         var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
         var prompt = chips.length ? chips.join(' ') : __t('editor.sectionPlaceholder',{ section: sectionName.toLowerCase() }, 'Click here to start writing about {section}.');
         if (chips.length) {
-          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 002-2V3a 2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
+          var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
         } else {
           return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
         }
@@ -5945,6 +5948,7 @@
           var inner = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
             return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
           }) + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span>';
+          ;
           var prev = p.innerHTML;
           // Normalize paragraph: remove placeholder styling/flags and any ZWSP remnants
           try {
@@ -6484,7 +6488,8 @@
       });
 
       if (template.needsSource) {
-        html += ' <span class="source-reminder">Add source</span>';
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+        html += ' <span class="source-reminder">'+ __t('ui.addSource','Add source') +'</span>';
       }
       
       return html;
@@ -6492,9 +6497,18 @@
 
     function prettifyPlaceholder(raw){
       try{
-        const label = raw.replace(/_/g,' ').toLowerCase();
-        return label;
-      }catch(_) { return raw; }
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+        var k = String(raw||'');
+        var up = k.toUpperCase();
+        // Primary: chips.UPPERCASE
+        var val = __t('chips.'+up, null, null);
+        if (val && val !== 'chips.'+up) return val;
+        // Secondary: chips.lowercase
+        val = __t('chips.'+k.toLowerCase(), null, null);
+        if (val && val !== 'chips.'+k.toLowerCase()) return val;
+        // Fallback: humanize
+        return k.replace(/_/g,' ').toLowerCase();
+      }catch(_) { return String(raw||''); }
     }
 
     function generateTopicSentence(title, category){

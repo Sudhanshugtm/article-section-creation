@@ -58,7 +58,16 @@
       "section": "Section", 
       "source": "Source",
       "help": "Help",
-      "reference": "Reference"
+      "reference": "Reference",
+      "PRONUNCIATION": "pronunciation",
+      "BIRTH_DATE": "birth date",
+      "BIRTH_PLACE": "birth place",
+      "NATIONALITY": "nationality",
+      "OCCUPATION": "occupation",
+      "KNOWN_FOR": "known for",
+      "CURRENT_STATUS": "current status",
+      "MAJOR_ACHIEVEMENTS": "major achievements",
+      "RECOGNITION": "recognition"
     },
     "guidance": {
       "title": "Writing guidance",
@@ -207,7 +216,16 @@
       "section": "Bagian",
       "source": "Sumber",
       "help": "Bantuan",
-      "reference": "Referensi"
+      "reference": "Referensi",
+      "PRONUNCIATION": "pengucapan",
+      "BIRTH_DATE": "tanggal lahir",
+      "BIRTH_PLACE": "tempat lahir",
+      "NATIONALITY": "kewarganegaraan",
+      "OCCUPATION": "pekerjaan",
+      "KNOWN_FOR": "dikenal karena",
+      "CURRENT_STATUS": "status saat ini",
+      "MAJOR_ACHIEVEMENTS": "pencapaian utama",
+      "RECOGNITION": "penghargaan"
     },
     "guidance": {
       "title": "Panduan menulis",
@@ -261,6 +279,7 @@
       "introductionDesc": "Masukkan kalimat pembuka yang sederhana",
       "addFromSource": "Tambahkan dari sumber",
       "addFromSourceDesc": "Buka dialog sumber",
+      "addSource": "Tambahkan sumber",
       "suggestedSection": "Bagian yang disarankan",
       "suggestedSectionDesc": "Tambahkan bagian umum"
     },
