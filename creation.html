@@ -204,6 +204,11 @@
     .assist-group { padding: 8px 12px; }
     .assist-actions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 4px; }
     .assist-actions .action-chip { padding:6px 10px; border-radius:8px; }
+    /* Disabled chips: visually muted and default cursor */
+    .action-chip[aria-disabled="true"], .action-chip.disabled {
+      cursor: default !important;
+      opacity: 0.6;
+    }
     .assist-list { list-style:none; margin:0; padding:0; }
     .assist-list-item { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:8px 0; }
     .assist-list-item .meta { font-size:12px; color:#555; }
@@ -1748,8 +1753,8 @@
       
       // Insert a single Assistance chip with inline menu (simple concept)
       var assistHtml = ''+
-        '<div id="assistChip" class="assist-chip" role="button" aria-label="Suggestions" aria-expanded="false" tabindex="0" style="z-index:150;"><span class="icon">✨</span><span class="label">Suggestions</span></div>'+
-        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); padding:0;">'+
+        '<div id="assistChip" class="assist-chip" role="button" aria-label="Suggestions" aria-expanded="false" tabindex="0" style="z-index:150;" contenteditable="false"><span class="icon">✨</span><span class="label">Suggestions</span></div>'+
+        '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); padding:0;" contenteditable="false">'+
           '<div class="assist-menu-header">Suggestions</div>'+
           '<button class="assist-item" data-assist="intro"><div class="template-option-title">Introduction</div><div class="template-option-desc">Insert a simple opening sentence</div></button>'+ 
           '<div class="assist-sep"></div>'+
@@ -3921,7 +3926,9 @@
           '<div class="meta">Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.</div>'+
           buildExampleBlock(true, 'Lead', cat) +
           '<div class="assist-actions">'+
-            (!hasIntroTemplate ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>' : '')+
+            (!hasIntroTemplate
+              ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>'
+              : '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>')+
           '</div>'+
         '</div>';
 
@@ -3950,7 +3957,7 @@
                 sectionBlock += '<li class="assist-list-item">'+
                   '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
                   (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                  (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
                 '</li>';
               }
             })();
@@ -3991,7 +3998,7 @@
                 sectionBlock += '<li class="assist-list-item">'+
                   '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
                   (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                  (exists ? '<span class="action-chip" style="cursor:default; opacity:0.6;">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
                 '</li>';
               }
             })();
@@ -4154,6 +4161,13 @@
         // Get fresh menu reference to avoid stale closures
         var currentMenu = document.getElementById('assistMenu');
         if (!currentMenu) return;
+        // Swallow clicks on disabled chips so they don't close the menu
+        try {
+          currentMenu.addEventListener('click', function(e){
+            var disabled = e.target && e.target.closest && e.target.closest('.action-chip[aria-disabled="true"], .action-chip.disabled');
+            if (disabled) { e.preventDefault(); e.stopPropagation(); }
+          }, true);
+        } catch(_) {}
         
         var items = currentMenu.querySelectorAll('[data-assist]');
         items.forEach(function(btn){
