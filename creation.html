@@ -117,7 +117,7 @@
     .template-placeholder {
       display: inline-flex;
       align-items: baseline;
-      gap: 6px;
+      gap: 3px;
       padding: 2px 8px !important;
       margin: 0 !important;
       border: 1px dashed #a2a9b1;
@@ -236,7 +236,7 @@
     .badge.warn { color:#ac6600; border-color:#ac6600; }
 
     /* Reference chip emphasis */
-    .ref-chip { border-color:#36c !important; color:#202122 !important; background:#eef3ff !important; font-weight: 600; gap: 4px; }
+    .ref-chip { border-color:#36c !important; color:#202122 !important; background:#eef3ff !important; font-weight: 600; gap: 4px; margin-right: 6px; }
     .ref-chip .icon { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; margin-right:0; color:#202122; }
     .ref-chip .icon svg { width:14px; height:14px; display:block; }
 
@@ -942,11 +942,26 @@
       box-shadow: none;
     }
 
+    /* One-time intro help block (concept) */
+    .intro-help {
+      background: #f8f9fa;
+      border: 1px solid #eaecf0;
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin: 8px 0 0 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #202122;
+    }
+    .intro-help .title { font-weight: 600; margin: 0 0 2px 0; }
+    .intro-help .subtitle { margin: 0; color: #54595d; font-size: 13px; }
+
     /* Override: ensure VE toolbar does not scroll; clip overflow for stability */
     .ve-bar {
       overflow: hidden !important;
       overflow-x: hidden !important;
     }
+
   </style>
 </head>
 <body>
@@ -1075,7 +1090,7 @@
         </div>
         <div class="group tight">
           <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
-          <button class="btn" id="openSourceBtn" title="Add from a source"><span class="cdx-icon" data-icon="cdxIconLinkExternal"></span><span class="cdx-button__label">Source</span></button>
+          
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
@@ -1303,6 +1318,32 @@
     // === Referencing helpers (concept demo) ===
     let referenceCount = 0;
     let lastSourceReminderClicked = null;
+    // One-time intro help flag
+    window.__introHelpShown = (typeof window.__introHelpShown === 'boolean') ? window.__introHelpShown : false;
+
+    function showIntroHelp(afterEl) {
+      try {
+        if (window.__introHelpShown) return;
+        if (!afterEl || !afterEl.parentNode) return;
+        // Create help block
+        var help = document.createElement('div');
+        help.id = 'introHelp';
+        help.className = 'intro-help';
+        help.setAttribute('role','note');
+        help.setAttribute('contenteditable','false');
+        help.innerHTML = '<div class="title">Fill the details</div>'+
+                         '<p class="subtitle">Share a reference to fill automatically the details or add them manually</p>';
+        afterEl.insertAdjacentElement('afterend', help);
+        window.__introHelpShown = true;
+      } catch(_) {}
+    }
+
+    function hideIntroHelp() {
+      try {
+        var help = document.getElementById('introHelp');
+        if (help && help.parentNode) help.parentNode.removeChild(help);
+      } catch(_) {}
+    }
 
     function ensureSelectionInEditor(editor) {
       const sel = window.getSelection();
@@ -1329,6 +1370,20 @@
         const range = document.createRange();
         range.selectNodeContents(el);
         range.collapse(true); // start of contents
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch(_) {}
+    }
+
+    // Utility: place caret immediately after a specific node
+    function placeCaretAfterNode(node) {
+      try {
+        var editor = document.getElementById('editor');
+        if (editor) editor.focus();
+        const range = document.createRange();
+        range.setStartAfter(node);
+        range.collapse(true);
         const sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(range);
@@ -1387,6 +1442,27 @@
     let __lastUndoAction = null;
     function flashElement(el) {
       try { if (!el) return; el.classList.add('flash-insert'); setTimeout(() => el && el.classList && el.classList.remove('flash-insert'), 1500); } catch(_) {}
+    }
+
+    // Activate publish/submit UI explicitly (used for non-typing insertions)
+    function enablePublishUI() {
+      try {
+        var publishBtn = document.getElementById('publish');
+        if (publishBtn) {
+          publishBtn.disabled = false;
+          publishBtn.classList.add('primary');
+          publishBtn.textContent = 'Publish changes';
+        }
+        var submitBtn = document.getElementById('submit');
+        if (submitBtn) {
+          submitBtn.classList.add('primary');
+          submitBtn.style.background = '#36c';
+          submitBtn.style.color = '#fff';
+          submitBtn.style.borderColor = '#36c';
+          var icon = submitBtn.querySelector('.cdx-icon svg');
+          if (icon) icon.style.color = '#fff';
+        }
+      } catch(_) {}
     }
     function ensureUndoToastEl() {
       let t = document.getElementById('undoToast');
@@ -1542,6 +1618,9 @@
       ensureReferencesSection();
       appendReferenceEntry(referenceCount, url, title || '');
 
+      // Hide one-time intro help after a reference is added
+      try { hideIntroHelp(); } catch(_) {}
+
       // Reposition chips after insert
       try { if (typeof showSmartChipsAtCursor === 'function') showSmartChipsAtCursor(); } catch(_) {}
       const sc = document.getElementById('smartChips'); if (sc) sc.classList.add('show');
@@ -1617,6 +1696,7 @@
           }
         }
       }
+      
     };
     backTo1 && (backTo1.onclick=function(){ step2.classList.remove('active'); step1.classList.add('active'); });
     categoryList && categoryList.addEventListener('click', function(e){
@@ -1650,7 +1730,7 @@
       
       // Activate VE interface
       document.body.classList.add('ve-in-step3');
-      
+
       var ed = document.getElementById('editor');
       var t = titleInput.value.trim();
       var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1686,7 +1766,7 @@
           reanchorAssistChip();
         }
       }, 200);
-      
+    
       // Focus editor and place caret at the beginning of the lead placeholder paragraph
       ed.focus();
       (function(){
@@ -1871,6 +1951,8 @@
     function isMobile() {
       return window.innerWidth <= 768;
     }
+
+    
 
     // Load suggestions data
     async function loadSuggestions() {
@@ -2579,6 +2661,8 @@
             editor.focus();
           }
         }
+        try { enablePublishUI(); } catch(_) {}
+        try { hideIntroHelp(); } catch(_) {}
       } catch(_) {}
       closeSourceModalDialog();
     }
@@ -2842,19 +2926,24 @@
           sectionHTML += '</div>';
         }
         
-        if (hasContent) {
-          editor.innerHTML = currentContent + sectionHTML;
-        } else {
-          editor.innerHTML = sectionHTML;
-        }
-        
-        // Clean up any extra BR tags or empty elements
-        cleanupExtraBreaks();
-        
-        // Add event listener to hide source notice when user starts editing
-        addSourceNoticeHideListener();
-        
-        editor.focus();
+      if (hasContent) {
+        editor.innerHTML = currentContent + sectionHTML;
+      } else {
+        editor.innerHTML = sectionHTML;
+      }
+
+      // Clean up any extra BR tags or empty elements
+      cleanupExtraBreaks();
+
+      // Add event listener to hide source notice when user starts editing
+      addSourceNoticeHideListener();
+
+      // Ensure publish becomes available even without typing
+      try { enablePublishUI(); } catch(_) {}
+      // Hide the one-time intro help once another section is added
+      try { hideIntroHelp(); } catch(_) {}
+
+      editor.focus();
       }
       
       // Reset source area
@@ -4625,8 +4714,13 @@
             if (customBtn) customBtn.click(); else {
               // fallback: inline-edit
               chipEl.setAttribute('contenteditable', 'true');
-              if (/^add\s/i.test(chipEl.textContent||'')) chipEl.textContent = '';
+              chipEl.textContent = '';
               chipEl.focus();
+              // Hide help when user starts typing into the chip directly
+              try {
+                var once = function(){ try { hideIntroHelp(); } catch(_) {} try { chipEl.removeEventListener('input', once); } catch(_) {} };
+                chipEl.addEventListener('input', once);
+              } catch(_) {}
             }
             menu.style.display = 'none';
             return;
@@ -4644,6 +4738,7 @@
             var original = chipEl.cloneNode(true);
             var parent = chipEl.parentNode;
             parent.replaceChild(filled, chipEl);
+            try { hideIntroHelp(); } catch(_) {}
             // Feedback + undo
             try {
               var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
@@ -4703,6 +4798,7 @@
                 var original = chipEl.cloneNode(true);
                 var parent = chipEl.parentNode;
                 parent.replaceChild(filled, chipEl);
+                try { hideIntroHelp(); } catch(_) {}
                 // Feedback + undo
                 try {
                   var block = parent.closest ? parent.closest('p, li, h1, h2, h3, h4, blockquote') : parent;
@@ -4954,11 +5050,19 @@
           try { if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el); } catch(_) {}
         }
         try { window.lastIntroId = pid; } catch(_) {}
+        // Place caret after the Reference chip (end of paragraph)
+        try {
+          var elNode = document.getElementById(pid);
+          var refChip2 = elNode && elNode.querySelector('.ref-chip');
+          if (refChip2) { placeCaretAfterNode(refChip2); }
+          else if (elNode) { placeCaretAtEnd(elNode); }
+        } catch(_) {}
         // Feedback + undo
         try {
           showUndoToast('Inserted introduction', function(){ 
             var x=document.getElementById(pid); 
             if (x && x.parentNode) x.parentNode.removeChild(x); 
+            try { hideIntroHelp(); } catch(_) {}
             // Restore placeholder if editor becomes empty
             setTimeout(function() { 
               if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
@@ -5010,7 +5114,7 @@
       var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
       // Turn into placeholders like other templates
       var html = base.replace(/\[([^\]]+)\]/g, function(_, key){
-        var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
+        var label = (function prettify(k){ try { return k.replace(/_/g,' ').toLowerCase(); } catch(_) { return k; } })(key);
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       // Append a Reference chip to encourage sourcing
@@ -5038,18 +5142,23 @@
           try { if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el); } catch(_) {}
           try { if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el); } catch(_) {}
         }
+        // One-time help below the inserted intro template (chip-style)
+        try { showIntroHelp(el); } catch(_) {}
         try { window.lastIntroId = pid; } catch(_) {}
         // Feedback + undo
         try {
           showUndoToast('Inserted template starter', function(){ 
             var x=document.getElementById(pid); 
             if (x && x.parentNode) x.parentNode.removeChild(x); 
+            try { hideIntroHelp(); } catch(_) {}
             // Restore placeholder if editor becomes empty
             setTimeout(function() { 
               if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
             }, 0);
           }, el);
         } catch(_) {}
+        // Ensure publish becomes available even without typing
+        try { enablePublishUI(); } catch(_) {}
       }
       if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
     }
@@ -5066,7 +5175,7 @@
       var hadLeadPlaceholder = !!document.getElementById('leadPlaceholder');
       var base = getIntroTemplateBase(title, category);
       var htmlBody = base.replace(/\[([^\]]+)\]/g, function(_, key){
-        var label = ('add ' + key.replace(/_/g,' ').toLowerCase());
+        var label = (function prettify(k){ try { return k.replace(/_/g,' ').toLowerCase(); } catch(_) { return k; } })(key);
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       var pid = 'introTpl-' + Date.now();
@@ -5094,24 +5203,27 @@
             if (typeof positionChipBelowElement === 'function') positionChipBelowElement(el);
             if (typeof showSuggestionsChip === 'function') showSuggestionsChip(el);
           }
-          // Focus first placeholder for immediate typing context
-          var firstPh = el && el.querySelector('.template-placeholder');
-          if (firstPh) {
-            try { if (firstPh && firstPh.focus) firstPh.focus(); } catch(_) {}
-          } else {
-            // place caret at end of new paragraph
-            try { placeCaretAtEnd(el); } catch(_) {}
-          }
+          // One-time help below the inserted intro template
+          try { showIntroHelp(el); } catch(_) {}
+          // Place caret after the Reference chip (end of paragraph)
+          try {
+            var refChip = el && el.querySelector('.ref-chip');
+            if (refChip) { placeCaretAfterNode(refChip); }
+            else { placeCaretAtEnd(el); }
+          } catch(_) {}
           try { window.lastIntroId = pid; } catch(_) {}
           // Feedback + undo
           try { showUndoToast('Inserted intro template', function(){ 
             var x=document.getElementById(pid); 
             if (x && x.parentNode) x.parentNode.removeChild(x); 
+            try { hideIntroHelp(); } catch(_) {}
             // Restore placeholder if editor becomes empty
             setTimeout(function() { 
               if (window.restorePlaceholderIfEmpty) window.restorePlaceholderIfEmpty(); 
             }, 0);
           }, el); } catch(_) {}
+          // Ensure publish becomes available even without typing
+          try { enablePublishUI(); } catch(_) {}
         } catch(_) {}
         suppressChipPositioning = false;
         if (window.perfTweaks) __schedule(function(){ __insertingContent = false; });
@@ -5511,6 +5623,10 @@
           }, 10); // Quick timeout to ensure DOM is ready
         } catch(_) {}
       } catch(_) {}
+      // Hide one-time intro help when any section is successfully inserted
+      try { hideIntroHelp(); } catch(_) {}
+      // Ensure publish becomes available even without typing
+      try { enablePublishUI(); } catch(_) {}
       editor.focus();
       // Keep chip visible after insertion
       // Clear suppression a bit later in case any async focus happens
@@ -5932,7 +6048,7 @@
     function prettifyPlaceholder(raw){
       try{
         const label = raw.replace(/_/g,' ').toLowerCase();
-        return 'add '+label;
+        return label;
       }catch(_) { return raw; }
     }
 
