@@ -1337,14 +1337,30 @@
       }
 
       function loadAndApply(){
-        // Compute repo root: /<repo>/translations.json on GH Pages, else relative
+        // Try multiple paths to handle GH Pages and nested folders robustly
         var segs = location.pathname.split('/').filter(Boolean);
-        var base = segs.length > 0 ? ('/' + segs[0]) : '';
-        var url = base ? (base + '/translations.json') : 'translations.json';
-        fetch(url).then(function(res){ if (!res.ok) throw new Error('no translations'); return res.json(); }).then(function(json){
-          window.translationsByLang = json;
-          applyDom();
-        }).catch(function(){ /* silent */ });
+        var repo = segs.length > 0 ? ('/' + segs[0]) : '';
+        var cands = [];
+        // 1) Same directory
+        cands.push('translations.json');
+        // 2) Up one and two levels
+        cands.push('../translations.json');
+        cands.push('../../translations.json');
+        cands.push('../../../translations.json');
+        // 3) Repo root on GH Pages
+        if (repo) cands.push(repo + '/translations.json');
+
+        (function tryNext(){
+          if (!cands.length) return;
+          var url = cands.shift();
+          fetch(url + '?v=' + Date.now()).then(function(res){
+            if (!res.ok) { throw new Error('bad status'); }
+            return res.json();
+          }).then(function(json){
+            window.translationsByLang = json;
+            applyDom();
+          }).catch(function(){ tryNext(); });
+        })();
       }
 
       if (window.translationsByLang) applyDom(); else loadAndApply();
