@@ -4057,6 +4057,17 @@
           var tpl = window.templatesData;
           var catKey = catToKey(cat);
           var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : null;
+          // Helper function to convert section names to camelCase translation keys
+          function toTranslationKey(str) {
+            return str.toLowerCase()
+              .replace(/[^a-z0-9\s]/g, '') // Remove special chars
+              .split(/\s+/) // Split on whitespace
+              .map(function(word, i) { 
+                return i === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1); 
+              })
+              .join('');
+          }
+
           if (tplSections && tplSections.length) {
             sectionBlock += '<div class="assist-sep"></div>';
             sectionBlock += '<div class="assist-group">';
@@ -4067,15 +4078,18 @@
             (function(){
               var limit = 2;
               var expandAll = !!window.__showAllSectionsInMainMenu;
+
               var count = expandAll ? tplSections.length : Math.min(tplSections.length, limit);
               for (var i = 0; i < count; i++) {
                 var sec = tplSections[i];
                 var name = sec && sec.title ? sec.title : 'Section';
                 var desc = sec && sec.description ? sec.description : '';
                 var exists = sectionExistsByName(name);
+                var nameKey = toTranslationKey(name);
+                var descKey = toTranslationKey(name) + 'Desc';
                 sectionBlock += '<li class="assist-list-item">'+
-                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + name.toLowerCase(), name)) +'</div>'+
-                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + name.toLowerCase(), desc)) +'</div>' : '') + '</div>'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + nameKey, name)) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + descKey, desc)) +'</div>' : '') + '</div>'+
                   (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
@@ -4114,9 +4128,11 @@
                 var name = (typeof sec === 'string') ? sec : (sec.name || 'Section');
                 var desc = (typeof sec === 'string') ? '' : (sec.description || '');
                 var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var j=0;j<hs.length;j++){ var t=(hs[j].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
+                var nameKey = toTranslationKey(name);
+                var descKey = toTranslationKey(name) + 'Desc';
                 sectionBlock += '<li class="assist-list-item">'+
-                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + name.toLowerCase(), name)) +'</div>'+
-                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + name.toLowerCase(), desc)) +'</div>' : '') + '</div>'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + nameKey, name)) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + descKey, desc)) +'</div>' : '') + '</div>'+
                   (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
