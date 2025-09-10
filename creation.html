@@ -4074,8 +4074,8 @@
                 var desc = sec && sec.description ? sec.description : '';
                 var exists = sectionExistsByName(name);
                 sectionBlock += '<li class="assist-list-item">'+
-                  '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
-                  (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + name.toLowerCase(), name)) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + name.toLowerCase(), desc)) +'</div>' : '') + '</div>'+
                   (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
@@ -4115,8 +4115,8 @@
                 var desc = (typeof sec === 'string') ? '' : (sec.description || '');
                 var exists = (function(){ try{ var editor = document.getElementById('editor'); var n = String(name||'').trim().toLowerCase(); var hs = editor.querySelectorAll('h2'); for (var j=0;j<hs.length;j++){ var t=(hs[j].textContent||'').trim().toLowerCase(); if (t===n) return true; } return false; }catch(_){ return false; } })();
                 sectionBlock += '<li class="assist-list-item">'+
-                  '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
-                  (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
+                  '<div><div style="font-weight:600;">'+ escapeHtml(__t('sections.' + name.toLowerCase(), name)) +'</div>'+
+                  (desc ? '<div class="meta">'+ escapeHtml(__t('sectionDescriptions.' + name.toLowerCase(), desc)) +'</div>' : '') + '</div>'+
                   (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
