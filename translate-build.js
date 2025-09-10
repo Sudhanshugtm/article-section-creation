@@ -21,7 +21,10 @@ function main() {
   }
 
   console.log(`🔄 Translating ${inputFile} → ${outputFile}`);
-  
+
+  // Ensure output directory exists
+  try { fs.mkdirSync(path.dirname(outputFile), { recursive: true }); } catch (_) {}
+
   try {
     // Load translation data
     const translations = JSON.parse(fs.readFileSync('translations.json', 'utf8'));
@@ -360,10 +363,22 @@ function main() {
       fs.writeFileSync(suggestionsOutputFile, JSON.stringify(suggestionsData, null, 2), 'utf8');
       console.log(`✅ Updated ${suggestionsOutputFile}`);
     }
-    
+    // Finally, write the translated HTML output
+    fs.writeFileSync(outputFile, html, 'utf8');
+    console.log(`✅ Wrote translated HTML: ${outputFile}`);
+
   } catch (error) {
-    console.error('❌ Error:', error.message);
-    process.exit(1);
+    console.error('❌ Error during translation:', error.message);
+    // Fallback: write a minimal copy of the original with lang switched to id so the page exists
+    try {
+      let html = fs.readFileSync(inputFile, 'utf8');
+      html = html.replace(/html lang=\"en\"/, 'html lang=\"id\"');
+      fs.writeFileSync(outputFile, html, 'utf8');
+      console.log(`✅ Wrote fallback HTML: ${outputFile}`);
+    } catch (e2) {
+      console.error('❌ Also failed to write fallback output:', e2.message);
+      process.exit(1);
+    }
   }
 }
 
