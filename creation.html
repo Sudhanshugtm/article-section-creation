@@ -2033,11 +2033,11 @@
       // Introduction Accordion
       content += '<div class="accordion-item">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Introduction</h4>';
+      content += '<h4 style="margin: 0;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.introduction','Introduction'); })() +'</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
-      content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
+      content += '<p class="guide-note">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.introductionDesc','Insert a simple opening sentence'); })() +'</p>';
       
       // Show introduction examples if available
       if (categoryData.introduction && categoryData.introduction.examples) {
@@ -2055,13 +2055,17 @@
       // Suggested Sections Accordion
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Suggested sections</h4>';
+      content += '<h4 style="margin: 0;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.sections','Suggested sections'); })() +'</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
       content += '<p class="guide-note">' + categoryData.note + '</p>';
       
       // Show all sections (only 3, no References)
+      function __sectionKeyFromName(name){ try { var s=String(name||'').replace(/[_-]+/g,' ').replace(/[^A-Za-z0-9 ]+/g,' ').trim().split(/\s+/); if(!s.length) return ''; for (var i=0;i<s.length;i++){ s[i]= i===0? s[i].toLowerCase() : (s[i].charAt(0).toUpperCase()+s[i].slice(1).toLowerCase()); } return s.join(''); } catch(_){ return String(name||''); } }
+      function __translateSectionName(name){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; var key=__sectionKeyFromName(name); return __t('sections.'+key, null, name); }
+      function __translateSectionDesc(name, def){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; var key=__sectionKeyFromName(name); return __t('sectionDescriptions.'+key+'Desc', null, def||''); }
+
       categoryData.sections.forEach(function(section, index) {
         const sectionName = typeof section === 'string' ? section : section.name;
         const sectionDesc = typeof section === 'string' ? '' : section.description;
@@ -2070,15 +2074,15 @@
         const className = isAdded ? 'section-button added' : 'section-button';
         
         content += '<button class="' + className + '" data-section="' + sectionName + '">';
-        content += '<span class="section-name">' + sectionName + '</span>';
+        content += '<span class="section-name">' + __translateSectionName(sectionName) + '</span>';
         if (sectionDesc) {
-          content += '<span class="section-description">' + sectionDesc + '</span>';
+          content += '<span class="section-description">' + __translateSectionDesc(sectionName, sectionDesc) + '</span>';
         }
         
         // Add "What to Include" guidance if include items exist
         if (sectionInclude.length > 0) {
           content += '<div class="include-guidance" style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 3px; border: 1px solid #eaecf0;">';
-          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">What to include:</div>';
+          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('guidance.whatToInclude','What to include'); })() +'</div>';
           content += '<ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #54595d; line-height: 1.4;">';
           sectionInclude.forEach(function(item) {
             content += '<li>' + item + '</li>';
@@ -3907,34 +3911,85 @@
         function getWikipediaSectionExample(sectionName, category){
           var ex = {
             'person': {
-              'Early life': 'Marie Curie was born Maria Skłodowska on 7 November 1867 in Warsaw, Poland. Her parents were both teachers, and she was the youngest of five children. Despite financial difficulties after her father lost his savings, she excelled in her studies and graduated from gymnasium at age 15.',
-              'Career': 'Einstein began his career at the Swiss Patent Office in 1902, where he evaluated patent applications. During this period, he completed his most creative work, publishing four groundbreaking papers in 1905 that would transform physics, including his theory of special relativity.',
-              'Background': 'Stephen Hawking came from an academic family. His father was a medical researcher and his mother was one of the first female students at Oxford. The family placed a high value on education, which influenced his later academic pursuits.',
-              'Overview': 'Albert Einstein was a theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work influenced the philosophy of science and he received the 1921 Nobel Prize in Physics.'
+              'Early life': {
+                'en': 'Marie Curie was born Maria Skłodowska on 7 November 1867 in Warsaw, Poland. Her parents were both teachers, and she was the youngest of five children. Despite financial difficulties after her father lost his savings, she excelled in her studies and graduated from gymnasium at age 15.',
+                'id': 'Marie Curie lahir dengan nama Maria Skłodowska pada 7 November 1867 di Warsawa, Polandia. Orang tuanya adalah guru, dan ia adalah anak bungsu dari lima bersaudara. Meski keluarganya mengalami kesulitan keuangan, ia unggul dalam studi dan lulus dari gimnasium pada usia 15 tahun.'
+              },
+              'Career': {
+                'en': 'Einstein began his career at the Swiss Patent Office in 1902, where he evaluated patent applications. During this period, he completed his most creative work, publishing four groundbreaking papers in 1905 that would transform physics, including his theory of special relativity.',
+                'id': 'Einstein memulai kariernya di Kantor Paten Swiss pada 1902, tempat ia menilai aplikasi paten. Pada periode ini ia menghasilkan karya paling kreatifnya, menerbitkan empat makalah terobosan pada 1905 yang mengubah fisika, termasuk teori relativitas khusus.'
+              },
+              'Background': {
+                'en': 'Stephen Hawking came from an academic family. His father was a medical researcher and his mother was one of the first female students at Oxford. The family placed a high value on education, which influenced his later academic pursuits.',
+                'id': 'Stephen Hawking berasal dari keluarga akademis. Ayahnya adalah peneliti medis dan ibunya salah satu mahasiswi pertama di Oxford. Keluarga ini sangat menghargai pendidikan, yang memengaruhi perjalanan akademisnya kelak.'
+              },
+              'Overview': {
+                'en': 'Albert Einstein was a theoretical physicist who developed the theory of relativity, one of the two pillars of modern physics. His work influenced the philosophy of science and he received the 1921 Nobel Prize in Physics.',
+                'id': 'Albert Einstein adalah fisikawan teoretis yang mengembangkan teori relativitas, salah satu dari dua pilar fisika modern. Karyanya memengaruhi filsafat sains dan ia menerima Hadiah Nobel Fisika pada 1921.'
+              }
             },
             'place': {
-              'Geography': 'Paris is situated on the Seine River in north-central France, at the center of the Île-de-France region. The city covers an area of 105.4 square kilometers and has an elevation ranging from 28 to 131 meters above sea level.',
-              'History': 'London was founded by the Romans around 47 AD as Londinium. After the Roman withdrawal in the 5th century, the city was largely abandoned until it was resettled by the Anglo-Saxons. It grew rapidly during the medieval period and became England\'s largest city.',
-              'Background': 'The area now known as New York City was originally inhabited by Algonquian tribes. European exploration began in the 16th century, with the Dutch establishing New Amsterdam in 1624, later renamed New York.',
-              'Overview': 'Tokyo is the capital and most populous city of Japan. Located at the head of Tokyo Bay, it is the political, economic, and cultural center of Japan, with a metropolitan area population exceeding 37 million.'
+              'Geography': {
+                'en': 'Paris is situated on the Seine River in north-central France, at the center of the Île-de-France region. The city covers an area of 105.4 square kilometers and has an elevation ranging from 28 to 131 meters above sea level.',
+                'id': 'Paris terletak di Sungai Seine di bagian utara-tengah Prancis, di pusat wilayah Île-de-France. Kota ini memiliki luas 105,4 kilometer persegi dengan ketinggian antara 28 hingga 131 meter di atas permukaan laut.'
+              },
+              'History': {
+                'en': 'London was founded by the Romans around 47 AD as Londinium. After the Roman withdrawal in the 5th century, the city was largely abandoned until it was resettled by the Anglo-Saxons. It grew rapidly during the medieval period and became England\'s largest city.',
+                'id': 'London didirikan oleh Romawi sekitar tahun 47 M dengan nama Londinium. Setelah penarikan Romawi pada abad ke-5, kota ini sempat ditinggalkan hingga dihuni kembali oleh bangsa Anglo-Saxon. London berkembang pesat pada Abad Pertengahan dan menjadi kota terbesar di Inggris.'
+              },
+              'Background': {
+                'en': 'The area now known as New York City was originally inhabited by Algonquian tribes. European exploration began in the 16th century, with the Dutch establishing New Amsterdam in 1624, later renamed New York.',
+                'id': 'Wilayah yang kini dikenal sebagai Kota New York awalnya dihuni oleh suku Algonquian. Penjelajahan Eropa dimulai pada abad ke-16, dengan Belanda mendirikan Nieuw Amsterdam pada 1624, yang kemudian berganti nama menjadi New York.'
+              },
+              'Overview': {
+                'en': 'Tokyo is the capital and most populous city of Japan. Located at the head of Tokyo Bay, it is the political, economic, and cultural center of Japan, with a metropolitan area population exceeding 37 million.',
+                'id': 'Tokyo adalah ibu kota dan kota terpadat di Jepang. Terletak di Teluk Tokyo, kota ini merupakan pusat politik, ekonomi, dan budaya Jepang, dengan populasi wilayah metropolitan lebih dari 37 juta jiwa.'
+              }
             },
             'species': {
-              'Description': 'The giant panda has a distinctive black-and-white coat, with black fur around its eyes, ears, legs, and shoulders. Adults typically measure 1.2 to 1.9 meters in length and weigh between 80 and 125 kilograms.',
-              'Habitat': 'Giant pandas live in temperate broadleaf and mixed forests in southwest China, particularly in Sichuan Province, at elevations between 1,200 and 3,400 meters where bamboo grows abundantly.',
-              'Background': 'The blue whale was first scientifically described in 1694 by Robert Sibbald. Advances in whaling technology in the 19th century led to widespread hunting until international protection efforts.',
-              'Overview': 'The African elephant is the largest living terrestrial animal, distinguished by its large ears and concave back, and plays a crucial role in maintaining the biodiversity of its ecosystems.'
+              'Description': {
+                'en': 'The giant panda has a distinctive black-and-white coat, with black fur around its eyes, ears, legs, and shoulders. Adults typically measure 1.2 to 1.9 meters in length and weigh between 80 and 125 kilograms.',
+                'id': 'Panda raksasa memiliki bulu hitam-putih khas, dengan bulu hitam di sekitar mata, telinga, kaki, dan bahu. Individu dewasa biasanya berukuran 1,2 hingga 1,9 meter dengan berat antara 80 hingga 125 kilogram.'
+              },
+              'Habitat': {
+                'en': 'Giant pandas live in temperate broadleaf and mixed forests in southwest China, particularly in Sichuan Province, at elevations between 1,200 and 3,400 meters where bamboo grows abundantly.',
+                'id': 'Panda raksasa hidup di hutan berdaun lebar dan campuran beriklim sedang di Tiongkok barat daya, terutama di Provinsi Sichuan, pada ketinggian 1.200–3.400 meter di mana bambu tumbuh melimpah.'
+              },
+              'Background': {
+                'en': 'The blue whale was first scientifically described in 1694 by Robert Sibbald. Advances in whaling technology in the 19th century led to widespread hunting until international protection efforts.',
+                'id': 'Paus biru pertama kali dideskripsikan secara ilmiah pada tahun 1694 oleh Robert Sibbald. Kemajuan teknologi perburuan paus pada abad ke-19 menyebabkan penangkapan besar-besaran hingga upaya perlindungan internasional dilakukan.'
+              },
+              'Overview': {
+                'en': 'The African elephant is the largest living terrestrial animal, distinguished by its large ears and concave back, and plays a crucial role in maintaining the biodiversity of its ecosystems.',
+                'id': 'Gajah Afrika adalah hewan darat terbesar yang masih hidup, ditandai dengan telinga besar dan punggung cekung, serta berperan penting dalam menjaga keanekaragaman hayati ekosistemnya.'
+              }
             },
             'organization': {
-              'History': 'The Red Cross was founded in 1863 by Henry Dunant and Gustave Moynier in Geneva, Switzerland, as a response to the suffering witnessed at the Battle of Solferino, leading to the first Geneva Convention.',
-              'Activities': 'UNICEF works in over 190 countries providing humanitarian aid to children, including emergency relief, promoting child rights, improving healthcare and education, and protecting children from violence and exploitation.',
-              'Background': 'NASA was established in 1958 in response to the Soviet launch of Sputnik, replacing NACA and beginning civilian space exploration efforts.',
-              'Overview': 'The World Health Organization is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.'
+              'History': {
+                'en': 'The Red Cross was founded in 1863 by Henry Dunant and Gustave Moynier in Geneva, Switzerland, as a response to the suffering witnessed at the Battle of Solferino, leading to the first Geneva Convention.',
+                'id': 'Palang Merah didirikan pada 1863 oleh Henry Dunant dan Gustave Moynier di Jenewa, Swiss, sebagai respons terhadap penderitaan yang disaksikan di Pertempuran Solferino, yang kemudian mengarah pada Konvensi Jenewa pertama.'
+              },
+              'Activities': {
+                'en': 'UNICEF works in over 190 countries providing humanitarian aid to children, including emergency relief, promoting child rights, improving healthcare and education, and protecting children from violence and exploitation.',
+                'id': 'UNICEF bekerja di lebih dari 190 negara menyediakan bantuan kemanusiaan bagi anak-anak, termasuk bantuan darurat, memajukan hak anak, meningkatkan layanan kesehatan dan pendidikan, serta melindungi anak dari kekerasan dan eksploitasi.'
+              },
+              'Background': {
+                'en': 'NASA was established in 1958 in response to the Soviet launch of Sputnik, replacing NACA and beginning civilian space exploration efforts.',
+                'id': 'NASA didirikan pada 1958 sebagai respons terhadap peluncuran Sputnik oleh Soviet, menggantikan NACA dan memulai upaya eksplorasi luar angkasa sipil.'
+              },
+              'Overview': {
+                'en': 'The World Health Organization is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.',
+                'id': 'Organisasi Kesehatan Dunia (WHO) adalah badan khusus Perserikatan Bangsa-Bangsa yang bertanggung jawab atas kesehatan masyarakat internasional. Didirikan pada 1948, WHO mengoordinasikan respons kesehatan global dan menetapkan standar kesehatan.'
+              }
             }
           };
           var cat = (category||'').toLowerCase();
           var sec = String(sectionName||'').trim();
           var m = ex[cat] && ex[cat][sec];
-          return m || null;
+          if (!m) return null;
+          if (typeof m === 'string') return m;
+          var lang = (window.currentLang || 'en');
+          return m[lang] || m['en'] || null;
         }
 
         function buildExampleBlock(isLead, currentSection, cat){
@@ -4187,12 +4242,14 @@
         var tpl = window.templatesData;
         var catKey = catToKey(cat);
         var tplSections = (tpl && tpl.categories && tpl.categories[catKey] && Array.isArray(tpl.categories[catKey].defaultSections)) ? tpl.categories[catKey].defaultSections : [];
-        var html = '<div class="assist-menu-header">Suggested sections</div>';
+        var html = '<div class="assist-menu-header">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.sections','Suggested sections'); })() +'</div>';
         if (tplSections && tplSections.length) {
           tplSections.forEach(function(sec, idx){
             var name = sec && sec.title ? sec.title : 'Section';
             var desc = sec && sec.description ? sec.description : '';
-            html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title">'+escapeHtml(name)+'</div><div class="template-option-desc">'+ (desc ? escapeHtml(desc) : 'Insert section') +'</div></button>';
+            var __nameDisp = (function(){ try{ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; var key=(function(n){ try { var s=String(n||'').replace(/[_-]+/g,' ').replace(/[^A-Za-z0-9 ]+/g,' ').trim().split(/\s+/); if(!s.length) return ''; for (var i=0;i<s.length;i++){ s[i]= i===0? s[i].toLowerCase() : (s[i].charAt(0).toUpperCase()+s[i].slice(1).toLowerCase()); } return s.join(''); } catch(_){ return String(n||''); } })(name); return __t('sections.'+key, null, name); } catch(_){ return name; } })();
+            var __descDisp = (function(){ try{ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; var key=(function(n){ try { var s=String(n||'').replace(/[_-]+/g,' ').replace(/[^A-Za-z0-9 ]+/g,' ').trim().split(/\s+/); if(!s.length) return ''; for (var i=0;i<s.length;i++){ s[i]= i===0? s[i].toLowerCase() : (s[i].charAt(0).toUpperCase()+s[i].slice(1).toLowerCase()); } return s.join(''); } catch(_){ return String(n||''); } })(name); return __t('sectionDescriptions.'+key+'Desc', null, desc); } catch(_){ return desc; } })();
+            html += '<button class="assist-item" data-insert-section="'+escapeHtml(name)+'"><div class="template-option-title">'+escapeHtml(__nameDisp)+'</div><div class="template-option-desc">'+ escapeHtml(__descDisp) +'</div></button>';
             if (idx < tplSections.length - 1) html += '<div class="assist-sep"></div>';
           });
         } else {
@@ -5182,9 +5239,9 @@
       if (window.perfTweaks) __insertingContent = true;
       var editor = document.getElementById('editor');
       var base = title + ' is ' + '[DEFINITION]' + '. It is significant because ' + '[IMPORTANCE]' + '.';
-      // Turn into placeholders like other templates
+      // Turn into placeholders like other templates (localized labels)
       var html = base.replace(/\[([^\]]+)\]/g, function(_, key){
-        var label = (function prettify(k){ try { return k.replace(/_/g,' ').toLowerCase(); } catch(_) { return k; } })(key);
+        try { var label = prettifyPlaceholder(key); } catch(_) { var label = String(key||'').replace(/_/g,' ').toLowerCase(); }
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       // Append a Reference chip to encourage sourcing
@@ -5245,7 +5302,7 @@
       var hadLeadPlaceholder = !!document.getElementById('leadPlaceholder');
       var base = getIntroTemplateBase(title, category);
       var htmlBody = base.replace(/\[([^\]]+)\]/g, function(_, key){
-        var label = (function prettify(k){ try { return k.replace(/_/g,' ').toLowerCase(); } catch(_) { return k; } })(key);
+        try { var label = prettifyPlaceholder(key); } catch(_) { var label = String(key||'').replace(/_/g,' ').toLowerCase(); }
         return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+label+'</span>';
       });
       var pid = 'introTpl-' + Date.now();
@@ -5568,7 +5625,8 @@
       } catch(_) {}
       console.log('[SECTION-INSERT] 🏗️ Building HTML for new section:', name);
       var id = name.replace(/\s+/g,'_');
-      var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(name)+'</h2>';
+      var __dispName2 = (function(){ try{ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; var key=(function(name){ try { var s=String(name||'').replace(/[_-]+/g,' ').replace(/[^A-Za-z0-9 ]+/g,' ').trim().split(/\s+/); if(!s.length) return ''; for (var i=0;i<s.length;i++){ s[i]= i===0? s[i].toLowerCase() : (s[i].charAt(0).toUpperCase()+s[i].slice(1).toLowerCase()); } return s.join(''); } catch(_){ return String(name||''); } })(name); return __t('sections.'+key, null, name); } catch(_){ return name; } })();
+      var heading = '<h2 id="'+id+'" style="font-family: Georgia, serif; font-size:1.5em; font-weight:normal; margin:2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">'+escapeHtml(__dispName2)+'</h2>';
       var paraStart = performance.now();
       var para = buildSectionParagraphWithChips(name);
       var paraTime = performance.now() - paraStart;
@@ -6540,6 +6598,10 @@
         var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
         var k = String(raw||'');
         var up = k.toUpperCase();
+        // Try structured placeholders mapping first (e.g., placeholders.birthDate)
+        var camel = (function toCamel(str){ try { var s=String(str||'').replace(/[_-]+/g,' ').replace(/[^A-Za-z0-9 ]+/g,' ').trim().split(/\s+/); if(!s.length) return ''; for (var i=0;i<s.length;i++){ s[i]= i===0? s[i].toLowerCase() : (s[i].charAt(0).toUpperCase()+s[i].slice(1).toLowerCase()); } return s.join(''); } catch(_){ return String(str||''); } })(k);
+        var v2 = __t('placeholders.'+camel, null, null);
+        if (v2 && v2 !== 'placeholders.'+camel) return v2;
         // Primary: chips.UPPERCASE
         var val = __t('chips.'+up, null, null);
         if (val && val !== 'chips.'+up) return val;
