@@ -1364,6 +1364,24 @@
       }
 
       if (window.translationsByLang) applyDom(); else loadAndApply();
+      
+      // Ensure assist menu rebuilds after translations load
+      function rebuildAssistMenuAfterTranslations() {
+        if (window.__i18nGet && typeof window.buildMainMenu === 'function') {
+          try {
+            window.buildMainMenu();
+            console.log('Assist menu rebuilt with translations');
+          } catch(e) {
+            console.warn('Failed to rebuild assist menu:', e);
+          }
+        } else {
+          // Retry after a short delay
+          setTimeout(rebuildAssistMenuAfterTranslations, 500);
+        }
+      }
+      
+      // Trigger rebuild once translations are available
+      setTimeout(rebuildAssistMenuAfterTranslations, 1000);
     })();
 
     // === Referencing helpers (concept demo) ===
@@ -4155,6 +4173,9 @@
         // Active state
         try { chip.classList.add('active'); chip.setAttribute('aria-expanded','true'); } catch(_) {}
       }
+      
+      // Make buildMainMenu globally accessible for i18n rebuilds
+      window.buildMainMenu = buildMainMenu;
       
       function buildSectionMenu() {
         // Always get fresh menu reference to avoid stale closures
