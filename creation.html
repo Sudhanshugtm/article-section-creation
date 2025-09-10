@@ -2042,11 +2042,11 @@
       // Introduction Accordion
       content += '<div class="accordion-item">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.introduction','Introduction'); })() +'</h4>';
+      content += '<h4 style="margin: 0;">Introduction</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
-      content += '<p class="guide-note">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.introductionDesc','Insert a simple opening sentence'); })() +'</p>';
+      content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
       
       // Show introduction examples if available
       if (categoryData.introduction && categoryData.introduction.examples) {
@@ -2064,7 +2064,7 @@
       // Suggested Sections Accordion
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('ui.sections','Suggested sections'); })() +'</h4>';
+      content += '<h4 style="margin: 0;">Suggested sections</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
@@ -2091,7 +2091,7 @@
         // Add "What to Include" guidance if include items exist
         if (sectionInclude.length > 0) {
           content += '<div class="include-guidance" style="margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 3px; border: 1px solid #eaecf0;">';
-          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">'+ (function(){ var __t=(typeof window.__i18nGet==='function')?window.__i18nGet:function(k,p,f){return f||k;}; return __t('guidance.whatToInclude','What to include'); })() +'</div>';
+          content += '<div style="font-size: 11px; font-weight: 500; color: #54595d; margin-bottom: 4px;">What to include:</div>';
           content += '<ul style="margin: 0; padding-left: 16px; font-size: 11px; color: #54595d; line-height: 1.4;">';
           sectionInclude.forEach(function(item) {
             content += '<li>' + item + '</li>';
