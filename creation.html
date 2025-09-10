@@ -1343,13 +1343,15 @@
         var segs = location.pathname.split('/').filter(Boolean);
         var repo = segs.length > 0 ? ('/' + segs[0]) : '';
         var cands = [];
-        // 1) Repo root on GH Pages (most likely to work)
+        // 1) Current directory first (where GitHub Actions copies it)
+        cands.push('./translations.json');
+        // 2) Repo root on GH Pages 
         if (repo) cands.push(repo + '/translations.json');
-        // 2) Same directory  
-        cands.push('translations.json');
         // 3) Up one and two levels
         cands.push('../translations.json');
         cands.push('../../translations.json');
+        // 4) Same directory (fallback)
+        cands.push('translations.json');
 
         (function tryNext(){
           if (!cands.length) {
