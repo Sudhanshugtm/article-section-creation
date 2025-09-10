@@ -3835,7 +3835,8 @@
         
         // Show loading state if templates not yet loaded
         if (window.templatesData === undefined) {
-          currentMenu.innerHTML = '<div class="assist-menu-header">Loading suggestions...</div><div style="padding: 16px; color: #72777d; font-size: 13px;">Loading section suggestions...</div>';
+          var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+          currentMenu.innerHTML = '<div class="assist-menu-header">'+ __t('ui.loadingSuggestions','Loading suggestions...') +'</div><div style="padding: 16px; color: #72777d; font-size: 13px;">'+ __t('ui.loadingSectionSuggestions','Loading section suggestions...') +'</div>';
           currentMenu.style.display = 'block';
           // Retry after templates load
           setTimeout(function() {
@@ -3846,6 +3847,7 @@
         
         var title = (window.articleTitleText || 'This topic');
         var cat = (window.selectedCat || 'other');
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
         // Context-aware header: Lead vs current section
         function catToKey(c){ switch(c){ case 'person': return 'PERSON'; case 'place': return 'LOCATION'; case 'species': return 'SPECIES'; case 'organization': return 'ORGANIZATION'; case 'academic': return 'ACADEMIC'; case 'event': return 'EVENT'; case 'creative': return 'CREATIVE'; case 'other': return 'OTHER'; default: return null; } }
         function toId(n){ return String(n||'').trim().replace(/\s+/g,'_'); }
@@ -3921,7 +3923,7 @@
           var text = isLead ? getLeadExampleFromSuggestions(cat) : getWikipediaSectionExample(currentSection, cat);
           if (!text) return '';
           return '<div class="assist-group">'+
-                   '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge">Wikipedia example</span></div>'+
+                   '<div class="template-option-title" style="margin-bottom:6px; display:flex; align-items:center; gap:8px;"><span class="suggest-badge">'+ __t('ui.wikipediaExample','Wikipedia example') +'</span></div>'+
                    '<div class="intro-text" style="background:#f8f9fa; border-left:3px solid #36c; padding:10px; line-height:1.5;">'+ escapeHtml(text) +'</div>'+
                  '</div>';
         }
@@ -3955,13 +3957,13 @@
 
         // Always show introduction block (either current context or standalone)
         var leadSectionBlock = '<div class="assist-group">'+
-          '<div class="template-option-title" style="margin-bottom:2px;">Introduction</div>'+
-          '<div class="meta">Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.</div>'+
+          '<div class="template-option-title" style="margin-bottom:2px;">'+ __t('ui.introduction','Introduction') +'</div>'+
+          '<div class="meta">'+ __t('ui.goodIntroductions','Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.') +'</div>'+
           buildExampleBlock(true, 'Lead', cat) +
           '<div class="assist-actions">'+
             (!hasIntroTemplate
-              ? '<button class="action-chip" data-insert-intro-template>Try an intro template</button>'
-              : '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>')+
+              ? '<button class="action-chip" data-insert-intro-template>'+ __t('ui.tryIntroTemplate','Try an intro template') +'</button>'
+              : '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>')+
           '</div>'+
         '</div>';
 
@@ -3975,7 +3977,7 @@
             sectionBlock += '<div class="assist-sep"></div>';
             sectionBlock += '<div class="assist-group">';
             sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">'+
-                             '<span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">Suggested</span> Sections'+
+                             '<span class="suggest-badge" style="background:#eaf7ef; border-color:#cdeed8;">'+ __t('ui.suggested','Suggested') +'</span> '+ __t('ui.sections','Sections') +
                            '</div>';
             sectionBlock += '<ul class="assist-list">';
             (function(){
@@ -3990,23 +3992,23 @@
                 sectionBlock += '<li class="assist-list-item">'+
                   '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
                   (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
             })();
             if (tplSections.length > 2 && !window.__showAllSectionsInMainMenu) {
               var remaining = tplSections.length - 2;
               sectionBlock += '<li class="assist-list-item">'+
-                                '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
-                                '<div class="meta">Open full list of suggested sections</div></div>'+ 
-                                '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
+                                '<div><div style="font-weight:600;">'+ __t('ui.showMoreSections','Show more sections') +' ('+ remaining +' more)</div>'+ 
+                                '<div class="meta">'+ __t('ui.openFullList','Open full list of suggested sections') +'</div></div>'+ 
+                                '<button class="action-chip" data-view-all-sections>'+ __t('ui.showMore','Show more') +'</button>'+ 
                               '</li>';
             }
             if (window.__showAllSectionsInMainMenu && tplSections.length > 2) {
               sectionBlock += '<li class="assist-list-item">'+
-                                '<div><div style="font-weight:600;">Show less sections</div>'+ 
-                                '<div class="meta">Collapse to top suggestions</div></div>'+ 
-                                '<button class="action-chip" data-view-less-sections>Show less</button>'+ 
+                                '<div><div style="font-weight:600;">'+ __t('ui.showLessSections','Show less sections') +'</div>'+ 
+                                '<div class="meta">'+ __t('ui.collapseToTop','Collapse to top suggestions') +'</div></div>'+ 
+                                '<button class="action-chip" data-view-less-sections>'+ __t('ui.showLess','Show less') +'</button>'+ 
                               '</li>';
             }
             sectionBlock += '</ul></div>';
@@ -4017,7 +4019,7 @@
            if (secList && secList.length) {
              sectionBlock += '<div class="assist-sep"></div>';
              sectionBlock += '<div class="assist-group">';
-             sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">Suggested sections</div>';
+             sectionBlock += '<div class="template-option-title" style="margin-bottom:6px;">'+ __t('ui.suggestedSections','Suggested Sections') +'</div>';
              sectionBlock += '<ul class="assist-list">';
             (function(){
               var limit = 2;
@@ -4031,23 +4033,23 @@
                 sectionBlock += '<li class="assist-list-item">'+
                   '<div><div style="font-weight:600;">'+ escapeHtml(name) +'</div>'+
                   (desc ? '<div class="meta">'+ escapeHtml(desc) +'</div>' : '') + '</div>'+
-                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">Added</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">Insert</button>')+
+                  (exists ? '<span class="action-chip disabled" aria-disabled="true" tabindex="-1">'+ __t('ui.added','Added') +'</span>' : '<button class="action-chip" data-insert-section="'+ escapeHtml(name) +'">'+ __t('ui.insert','Insert') +'</button>')+
                 '</li>';
               }
             })();
               if (secList.length > 2 && !window.__showAllSectionsInMainMenu) {
                 var remaining = secList.length - 2;
                 sectionBlock += '<li class="assist-list-item">'+
-                                  '<div><div style="font-weight:600;">Show more sections ('+ remaining +' more)</div>'+ 
-                                  '<div class="meta">Open full list of suggested sections</div></div>'+ 
-                                  '<button class="action-chip" data-view-all-sections>Show more</button>'+ 
+                                  '<div><div style="font-weight:600;">'+ __t('ui.showMoreSections','Show more sections') +' ('+ remaining +' more)</div>'+ 
+                                  '<div class="meta">'+ __t('ui.openFullList','Open full list of suggested sections') +'</div></div>'+ 
+                                  '<button class="action-chip" data-view-all-sections>'+ __t('ui.showMore','Show more') +'</button>'+ 
                                 '</li>';
               }
               if (window.__showAllSectionsInMainMenu && secList.length > 2) {
                 sectionBlock += '<li class="assist-list-item">'+
-                                  '<div><div style="font-weight:600;">Show less sections</div>'+ 
-                                  '<div class="meta">Collapse to top suggestions</div></div>'+ 
-                                  '<button class="action-chip" data-view-less-sections>Show less</button>'+ 
+                                  '<div><div style="font-weight:600;">'+ __t('ui.showLessSections','Show less sections') +'</div>'+ 
+                                  '<div class="meta">'+ __t('ui.collapseToTop','Collapse to top suggestions') +'</div></div>'+ 
+                                  '<button class="action-chip" data-view-less-sections>'+ __t('ui.showLess','Show less') +'</button>'+ 
                                 '</li>';
               }
               sectionBlock += '</ul></div>';
@@ -4064,15 +4066,15 @@
                              '<span aria-hidden="true" style="display:inline-flex; width:16px; height:16px; line-height:0;">\
                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg>'+
                              '</span>'+
-                             '<span>Add from source</span>'+
+                             '<span>'+ __t('ui.addFromSource','Add from source') +'</span>'+
                            '</div>'+
-                           '<div class="template-option-desc">Cite a reliable source and insert content</div>'+
+                           '<div class="template-option-desc">'+ __t('ui.citeReliableSource','Cite a reliable source and insert content') +'</div>'+
                          '</button>';
           sourceBlock += '</div>';
         })();
 
         var html = ''+
-          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">Suggestions <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">Hide</button></div>'+
+          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">'+ __t('ui.suggestions','Suggestions') +' <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">'+ __t('ui.hide','Hide') +'</button></div>'+
           contextBlock +
           leadSectionBlock +
           sectionBlock +
