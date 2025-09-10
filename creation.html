@@ -1280,6 +1280,8 @@
       var segs = location.pathname.split('/').filter(Boolean).map(function(s){ return s.toLowerCase(); });
       var langSeg = segs[1] || segs[0] || 'en';
       var lang = window.currentLang || ((langSeg === 'id' || segs.indexOf('id') !== -1) ? 'id' : ((langSeg === 'en' || segs.indexOf('en') !== -1) ? 'en' : 'en'));
+      // Force Indonesian when URL clearly contains /id/
+      if (segs.indexOf('id') !== -1) lang = 'id';
       window.currentLang = lang;
 
       function getNested(obj, path) {
@@ -1349,6 +1351,11 @@
         cands.push('../../../translations.json');
         // 3) Repo root on GH Pages
         if (repo) cands.push(repo + '/translations.json');
+        // 4) Explicit Indonesian path fallbacks under repo (defensive)
+        if (repo) {
+          cands.push(repo + '/id/creation/translations.json');
+          cands.push(repo + '/id/translations.json');
+        }
 
         (function tryNext(){
           if (!cands.length) return;
