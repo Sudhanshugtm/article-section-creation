@@ -59,6 +59,7 @@
       "source": "Source",
       "help": "Help",
       "reference": "Reference",
+      "addCitation": "Add citation",
       "PRONUNCIATION": "pronunciation",
       "BIRTH_DATE": "birth date",
       "BIRTH_PLACE": "birth place",
@@ -115,6 +116,28 @@
       "redo": "Redo"
     }
     ,
+    "sourceModal": {
+      "title": "Add content from a reliable source",
+      "urlLabel": "Source URL",
+      "verifyHeader": "Source verification",
+      "previewHeader": "Draft content preview",
+      "actions": {
+        "cancel": "Cancel",
+        "check": "Check source",
+        "generate": "Create draft from source",
+        "insert": "Insert as draft"
+      },
+      "steps": {
+        "domainVerified": "Domain verified: {domain}",
+        "reliabilityChecked": "Source reliability checked"
+      },
+      "sidebar": {
+        "steps": {
+          "checkingDomain": "Checking domain...",
+          "verifyingReliability": "Verifying source reliability..."
+        }
+      }
+    },
     "ui": {
       "suggestions": "Suggestions",
       "introduction": "Introduction",
@@ -443,6 +466,7 @@
       "source": "Sumber",
       "help": "Bantuan",
       "reference": "Referensi",
+      "addCitation": "Tambahkan kutipan",
       "PRONUNCIATION": "pengucapan",
       "BIRTH_DATE": "tanggal lahir",
       "BIRTH_PLACE": "tempat lahir",
@@ -499,6 +523,28 @@
       "redo": "Ulangi"
     }
     ,
+    "sourceModal": {
+      "title": "Tambahkan konten dari sumber tepercaya",
+      "urlLabel": "URL sumber",
+      "verifyHeader": "Verifikasi sumber",
+      "previewHeader": "Pratinjau draf konten",
+      "actions": {
+        "cancel": "Batal",
+        "check": "Periksa sumber",
+        "generate": "Buat draf dari sumber",
+        "insert": "Sisipkan sebagai draf"
+      },
+      "steps": {
+        "domainVerified": "Domain terverifikasi: {domain}",
+        "reliabilityChecked": "Keandalan sumber diperiksa"
+      },
+      "sidebar": {
+        "steps": {
+          "checkingDomain": "Memeriksa domain...",
+          "verifyingReliability": "Memverifikasi keandalan sumber..."
+        }
+      }
+    },
       "sourcesStep": {
         "title": "Apakah Anda memiliki setidaknya dua sumber yang independen dan tepercaya untuk \"{Title}\"?",
         "subtext": "Sumber yang kuat membantu artikel bertahan dari peninjauan dan penghapusan.",
