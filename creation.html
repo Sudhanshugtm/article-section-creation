@@ -1592,16 +1592,19 @@
         // Try multiple paths to handle GH Pages and nested folders robustly
         var segs = location.pathname.split('/').filter(Boolean);
         var repo = segs.length > 0 ? ('/' + segs[0]) : '';
+        var here = location.pathname.replace(/[^/]+$/,''); // absolute same-folder
         var cands = [];
-        // 1) Current directory first (where GitHub Actions copies it)
+        // 0) Absolute same directory (primary)
+        cands.push(here + 'translations.json');
+        // 1) Current directory (relative)
         cands.push('./translations.json');
-        // 2) Repo root on GH Pages 
+        // 2) Same directory simple
+        cands.push('translations.json');
+        // 3) Repo root on GH Pages 
         if (repo) cands.push(repo + '/translations.json');
-        // 3) Up one and two levels
+        // 4) Up one and two levels
         cands.push('../translations.json');
         cands.push('../../translations.json');
-        // 4) Same directory (fallback)
-        cands.push('translations.json');
 
         (function tryNext(){
           if (!cands.length) {
