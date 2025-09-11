@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Article Creator — Reference Chip Concept</title>
+  <title>Pembuat Artikel — Konsep Chip Referensi</title>
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
   <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
   <link rel="stylesheet" href="reading-styles.css">
@@ -828,7 +828,7 @@
     <div class="ve-bar">
       <!-- Mobile toolbar -->
       <div class="mobile-toolbar">
-        <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+        <button class="btn" id="close" title="Tutup"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
         <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
         <div class="dropdown" id="dd-style-mobile">
           <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
@@ -842,8 +842,8 @@
           </div>
         </div>
         <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
-        <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
-        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
+        <button class="btn" id="btn-link-mobile" title="Tambah pranala"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+        <button class="btn" id="guideMeMobile" title="Dapatkan saran"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
         <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
 
@@ -889,7 +889,7 @@
           <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
         </div>
         <div class="group">
-          <button class="btn" id="btn-link" title="Add link">
+          <button class="btn" id="btn-link" title="Tambah pranala">
             <span class="cdx-icon" data-icon="cdxIconLink"></span>
             <span class="cdx-button__label">Link</span>
           </button>
@@ -905,24 +905,24 @@
           </div>
           <div class="dropdown" id="dd-insert">
             <span class="cdx-icon" data-icon="cdxIconAdd"></span>
-            <span class="cdx-button__label">Insert</span>
+            <span class="cdx-button__label">Sisipkan</span>
             <span class="caret"></span>
             <div class="menu" id="menu-insert">
               <button data-insert="image">Media…</button>
-              <button data-insert="template">Template… (mock)</button>
-              <button data-insert="math">Math… (mock)</button>
-              <button data-insert="table">Table… (mock)</button>
-              <button data-insert="char">Special character…</button>
+              <button data-insert="template">Templat… (mock)</button>
+              <button data-insert="math">Matematika… (mock)</button>
+              <button data-insert="table">Tabel… (mock)</button>
+              <button data-insert="char">Karakter khusus…</button>
             </div>
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
+          <button class="btn" id="addSectionBtn" title="Dapatkan saran"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Saran/span></button>
           <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
           <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
         <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
-          <button class="btn publish-btn" id="publish" disabled>Publish</button>
+          <button class="btn publish-btn" id="publish" disabled>Terbitkan/button>
         </div>
       </div>
     </div>
@@ -933,28 +933,28 @@
       <div class="creator-wrap">
         <div class="ac-steps">
           <section class="ac-step active" id="step1">
-            <h3>What article would you like to create?</h3>
-            <input id="title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
+            <h3>Langkah 1: Masukkan judul artikel</h3>
+            <input id="title" class="title-input" placeholder="contoh: Jane Doe / Perangkat Lunak Contoh" aria-label="Proposed title">
             <div class="ac-actions">
-              <button class="btn primary" id="toStep2" disabled>Continue</button>
+              <button class="btn primary" id="toStep2" disabled>Lanjutkan</button>
             </div>
           </section>
           <section class="ac-step" id="step2">
-            <h3>Assign a topic category</h3>
+            <h3>Pilih kategori topik</h3>
             <div class="category-list" id="categoryList">
-              <div class="category-item" data-cat="person">Person / Biography</div>
-              <div class="category-item" data-cat="place">Geographic Location</div>
-              <div class="category-item" data-cat="species">Species / Biology</div>
-              <div class="category-item" data-cat="organization">Organization</div>
-              <div class="category-item" data-cat="academic">Academic / Concept</div>
-              <div class="category-item" data-cat="creative">Creative Work</div>
-              <div class="category-item" data-cat="event">Event</div>
-              <div class="category-item" data-cat="other">Other</div>
+              <div class="category-item" data-cat="person">Orang / Biografi</div>
+              <div class="category-item" data-cat="place">Lokasi Geografis</div>
+              <div class="category-item" data-cat="species">Spesies / Biologi</div>
+              <div class="category-item" data-cat="organization">Organisasi</div>
+              <div class="category-item" data-cat="academic">Akademik / Konsep</div>
+              <div class="category-item" data-cat="creative">Karya Kreatif</div>
+              <div class="category-item" data-cat="event">Peristiwa</div>
+              <div class="category-item" data-cat="other">Lainnya</div>
             </div>
-            <div class="hint">This helps us suggest the right structure and policies.</div>
+            <div class="hint">Ini membantu kami menyarankan struktur dan kebijakan yang tepat.</div>
             <div class="ac-actions">
-              <button class="btn" id="backTo1">Back</button>
-              <button class="btn primary" id="toStep3" disabled>Start editing</button>
+              <button class="btn" id="backTo1">Kembali</button>
+              <button class="btn primary" id="toStep3" disabled>Mulai mengedit</button>
             </div>
           </section>
           <section class="ac-step" id="step3">
@@ -969,8 +969,8 @@
   <!-- Guide Me Sidebar -->
   <div class="guide-sidebar" id="guideSidebar">
     <div class="guide-header">
-      <h3>Writing guidance</h3>
-      <button class="close-btn" id="closeSidebar" title="Close">×</button>
+      <h3>Panduan menulis</h3>
+      <button class="close-btn" id="closeSidebar" title="Tutup">×</button>
     </div>
     <div class="guide-content" id="guideContent">
       <!-- Content will be dynamically loaded here -->
@@ -981,8 +981,8 @@
   <div class="guide-modal-backdrop" id="guideModalBackdrop">
     <div class="guide-modal-drawer" id="guideModalDrawer">
       <div class="guide-modal-header">
-        <h3>Writing guidance</h3>
-        <button class="close-btn" id="closeModalDrawer" title="Close">×</button>
+        <h3>Panduan menulis</h3>
+        <button class="close-btn" id="closeModalDrawer" title="Tutup">×</button>
       </div>
       <div class="guide-modal-content" id="guideModalContent">
         <!-- Content will be dynamically loaded here -->
@@ -995,33 +995,33 @@
     <div class="status"><span>Changes are preview‑only in this demo.</span><span class="badge">Visual Editor</span></div>
   </footer>
 
-  <!-- Source verification modal -->
+  <!-- Verifikasi sumber modal -->
   <div class="source-modal-backdrop" id="sourceModalBackdrop" aria-hidden="true">
     <div class="source-modal" role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle">
       <div class="source-modal-header">
-        <h3 id="sourceModalTitle">Add content from a reliable source</h3>
-        <button class="close-btn" id="closeSourceModal" title="Close">×</button>
+        <h3 id="sourceModalTitle">Tambahkan konten dari sumber terpercaya</h3>
+        <button class="close-btn" id="closeSourceModal" title="Tutup">×</button>
       </div>
       <div class="source-modal-content">
         <div class="source-input-section">
-          <label for="sourceUrl">Source URL</label>
+          <label for="sourceUrl">URL sumber</label>
           <input type="url" id="sourceUrl" placeholder="https://example.com/article" />
         </div>
         
         <div class="source-verification" id="sourceVerification" style="display: none;">
-          <h4>Source verification</h4>
+          <h4>Verifikasi sumber</h4>
           <div class="verification-steps" id="verificationSteps">
             <div class="verification-step" id="step1">
               <span class="step-icon">⏳</span>
-              <span class="step-text">Checking domain...</span>
+              <span class="step-text">Memeriksa domain...</span>
             </div>
             <div class="verification-step" id="step2">
               <span class="step-icon">⏳</span>
-              <span class="step-text">Verifying reliability...</span>
+              <span class="step-text">Memverifikasi keandalan...</span>
             </div>
             <div class="verification-step" id="step3">
               <span class="step-icon">⏳</span>
-              <span class="step-text">Checking HTTPS security...</span>
+              <span class="step-text">Memeriksa keamanan HTTPS...</span>
             </div>
           </div>
           <div class="source-result" id="sourceResult" style="display: none;">
@@ -1031,27 +1031,27 @@
         </div>
         
         <div class="draft-preview" id="draftPreview" style="display: none;">
-          <h4>Draft content preview</h4>
+          <h4>Pratinjau konten draf</h4>
           <div class="draft-content" id="draftContent"></div>
         </div>
       </div>
       <div class="source-modal-actions">
-        <button class="btn" id="cancelSource">Cancel</button>
-        <button class="btn" id="checkSourceBtn">Check source</button>
-        <button class="btn primary" id="generateDraftBtn" style="display: none;">Create draft from source</button>
-        <button class="btn primary" id="insertDraftBtn" style="display: none;">Insert as draft</button>
+        <button class="btn" id="cancelSource">Batal</button>
+        <button class="btn" id="checkSourceBtn">Periksa sumber</button>
+        <button class="btn primary" id="generateDraftBtn" style="display: none;">Buat draf dari sumber</button>
+        <button class="btn primary" id="insertDraftBtn" style="display: none;">Sisipkan as draft</button>
       </div>
     </div>
   </div>
 
   <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
     <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
-      <div class="ref-row"><strong id="refTitle">Add reference</strong> <span id="refHint" class="badge">unclassified</span></div>
-      <div class="ref-row"><label for="refUrl">Source URL</label><input id="refUrl" type="url" placeholder="https://example.com/article"></div>
-      <div class="ref-row"><label for="refTitleInput">Title (optional)</label><input id="refTitleInput" type="text" placeholder="Article title"></div>
+      <div class="ref-row"><strong id="refTitle">Tambahkan referensi</strong> <span id="refHint" class="badge">tidak terklasifikasi</span></div>
+      <div class="ref-row"><label for="refUrl">URL sumber</label><input id="refUrl" type="url" placeholder="https://example.com/article"></div>
+      <div class="ref-row"><label for="refTitleInput">Judul (opsional)</label><input id="refTitleInput" type="text" placeholder="Judul artikel"></div>
       <div class="ref-actions">
-        <button class="btn" id="refCancel">Cancel</button>
-        <button class="btn primary" id="refInsert">Insert cite</button>
+        <button class="btn" id="refCancel">Batal</button>
+        <button class="btn primary" id="refSisipkan">Sisipkan cite</button>
       </div>
     </div>
   </div>
@@ -1116,7 +1116,7 @@
       var step2Title = step2.querySelector('h3');
       var userTopic = titleInput.value.trim();
       if (step2Title && userTopic) {
-        step2Title.textContent = 'What is "' + userTopic + '"?';
+        step2Title.textContent = 'Apa itu \"' + userTopic + '\"?';
       }
     };
     backTo1 && (backTo1.onclick=function(){ step2.classList.remove('active'); step1.classList.add('active'); });
@@ -1266,7 +1266,7 @@
           if (atStart) {
             h2.parentNode.insertBefore(p, h2);
           } else {
-            // Insert after H2
+            // Sisipkan after H2
             if (h2.nextSibling) {
               h2.parentNode.insertBefore(p, h2.nextSibling);
             } else {
@@ -1368,7 +1368,7 @@
               selection.removeAllRanges();
               selection.addRange(newRange);
               
-              // Insert a zero-width space to break formatting
+              // Sisipkan a zero-width space to break formatting
               document.execCommand('insertText', false, '\u200B');
             }
           } else if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'SUP') {
@@ -1379,7 +1379,7 @@
             selection.removeAllRanges();
             selection.addRange(newRange);
             
-            // Insert a zero-width space to break formatting
+            // Sisipkan a zero-width space to break formatting
             document.execCommand('insertText', false, '\u200B');
           }
         }
@@ -1414,13 +1414,13 @@
     var openBtn=null;
     var backdrop=document.getElementById('refBackdrop');
     var cancelBtn=document.getElementById('refCancel');
-    var insertBtn=document.getElementById('refInsert');
+    var insertBtn=document.getElementById('refSisipkan');
     var urlInput=document.getElementById('refUrl');
     var hint=document.getElementById('refHint');
     var editor=document.getElementById('editor');
     var verify=document.getElementById('verify');
     var refBadges=document.getElementById('refBadges');
-    function classify(url){ try{ var h=new URL(url).hostname; if(/\.(gov|gov\.[a-z]{2})$/i.test(h)) return {label:'gov',cls:'good'}; if(/\.(edu|ac\.[a-z]{2})$/i.test(h)) return {label:'edu',cls:'good'}; if(/(reuters|apnews|bbc|nytimes|guardian|bloomberg|washingtonpost|ft\.com)/i.test(h)) return {label:'news',cls:'good'}; if(/(prnewswire|businesswire|globenewswire|newswire|press)/i.test(h)) return {label:'press release',cls:'warn'}; return {label:'unclassified',cls:''}; }catch(e){ return {label:'unclassified',cls:''}; } }
+    function classify(url){ try{ var h=new URL(url).hostname; if(/\.(gov|gov\.[a-z]{2})$/i.test(h)) return {label:'gov',cls:'good'}; if(/\.(edu|ac\.[a-z]{2})$/i.test(h)) return {label:'edu',cls:'good'}; if(/(reuters|apnews|bbc|nytimes|guardian|bloomberg|washingtonpost|ft\.com)/i.test(h)) return {label:'news',cls:'good'}; if(/(prnewswire|businesswire|globenewswire|newswire|press)/i.test(h)) return {label:'press release',cls:'warn'}; return {label:'tidak terklasifikasi',cls:''}; }catch(e){ return {label:'tidak terklasifikasi',cls:''}; } }
     function openDialog(){ backdrop.style.display='block'; urlInput.focus(); }
     function closeDialog(){ backdrop.style.display='none'; }
     function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
@@ -1447,7 +1447,7 @@
     // Load suggestions data
     async function loadSuggestions() {
       try {
-        const response = await fetch('article-creation-suggestions.json');
+        const response = await fetch('id-article-creator-suggestions.json');
         suggestionsData = await response.json();
       } catch (error) {
         console.error('Failed to load suggestions:', error);
@@ -1471,11 +1471,11 @@
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(0deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
-      content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
+      content += '<p class="guide-note">Tulis pembukaan yang jelas yang merangkum topik, menjelaskan mengapa penting, dan mencakup poin-poin utama yang akan ditemukan pembaca dalam artikel.</p>';
       
       // Show introduction examples if available
       if (categoryData.introduction && categoryData.introduction.examples) {
-        content += '<p class="guide-note" style="margin-top: 12px; font-weight: 500;">Examples from Wikipedia:</p>';
+        content += '<p class="guide-note" style="margin-top: 12px; font-weight: 500;">Contoh dari Wikipedia:</p>';
         categoryData.introduction.examples.forEach(function(example) {
           content += '<div class="intro-example" style="background: #f8f9fa; border-left: 3px solid #0645ad; padding: 10px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
           content += '<div class="example-title" style="font-weight: bold; color: #0645ad; margin-bottom: 4px;">' + example.title + '</div>';
@@ -1485,7 +1485,7 @@
       }
       
       // Show introduction template based on category
-      content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">Template structure:</p>';
+      content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">Struktur templat:</p>';
       var template = getIntroductionTemplate(selectedCat);
       content += '<div class="intro-template" style="background: #f0f8ff; border-left: 3px solid #36c; padding: 12px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
       content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Typically, introduction sections have this structure:</div>';
@@ -1498,7 +1498,7 @@
       // Suggested Sections Accordion
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Suggested sections</h4>';
+      content += '<h4 style="margin: 0;">Bagian yang disarankan</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
@@ -1536,7 +1536,7 @@
         }
         
         content += '</div>';
-        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Insert') + '</span>';
+        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Sisipkan') + '</span>';
         content += '</button>';
       });
       content += '</div>';
@@ -1545,46 +1545,46 @@
       // Article Eligibility Check Accordion
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Article eligibility check</h4>';
+      content += '<h4 style="margin: 0;">Kelayakan artikel check</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
-      content += '<p class="guide-note">Quick check: Does your topic have what Wikipedia needs?</p>';
+      content += '<p class="guide-note">Pemeriksaan cepat: Apakah topik Anda memiliki apa yang dibutuhkan Wikipedia?</p>';
       
       content += '<div class="eligibility-questions">';
       content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
-      content += '<div style="font-weight: 500; margin-bottom: 8px;">Has your topic been covered in newspapers or magazines?</div>';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Apakah topik Anda telah diliput di koran atau majalah?</div>';
       content += '<div class="eligibility-options">';
-      content += '<button class="eligibility-btn" data-question="coverage" data-answer="yes">Yes</button>';
-      content += '<button class="eligibility-btn" data-question="coverage" data-answer="maybe">Maybe</button>';
-      content += '<button class="eligibility-btn" data-question="coverage" data-answer="no">No</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="yes">Ya</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="maybe">Mungkin</button>';
+      content += '<button class="eligibility-btn" data-question="coverage" data-answer="no">Tidak</button>';
       content += '</div>';
       content += '</div>';
       
       content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
-      content += '<div style="font-weight: 500; margin-bottom: 8px;">Are these sources from well-known news sites or publications?</div>';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Apakah sumber-sumber ini dari situs berita atau publikasi terkenal?</div>';
       content += '<div class="eligibility-options">';
-      content += '<button class="eligibility-btn" data-question="reliable" data-answer="yes">Yes</button>';
-      content += '<button class="eligibility-btn" data-question="reliable" data-answer="maybe">Maybe</button>';
-      content += '<button class="eligibility-btn" data-question="reliable" data-answer="no">No</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="yes">Ya</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="maybe">Mungkin</button>';
+      content += '<button class="eligibility-btn" data-question="reliable" data-answer="no">Tidak</button>';
       content += '</div>';
       content += '</div>';
       
       content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
-      content += '<div style="font-weight: 500; margin-bottom: 8px;">Were these written by independent journalists (not press releases)?</div>';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Apakah ini ditulis oleh jurnalis independen (bukan siaran pers)?</div>';
       content += '<div class="eligibility-options">';
-      content += '<button class="eligibility-btn" data-question="independent" data-answer="yes">Yes</button>';
-      content += '<button class="eligibility-btn" data-question="independent" data-answer="maybe">Maybe</button>';
-      content += '<button class="eligibility-btn" data-question="independent" data-answer="no">No</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="yes">Ya</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="maybe">Mungkin</button>';
+      content += '<button class="eligibility-btn" data-question="independent" data-answer="no">Tidak</button>';
       content += '</div>';
       content += '</div>';
       
       content += '<div class="eligibility-item" style="margin-bottom: 16px;">';
-      content += '<div style="font-weight: 500; margin-bottom: 8px;">Do you have at least 2 different sources?</div>';
+      content += '<div style="font-weight: 500; margin-bottom: 8px;">Apakah Anda memiliki setidaknya 2 sumber yang berbeda?</div>';
       content += '<div class="eligibility-options">';
-      content += '<button class="eligibility-btn" data-question="multiple" data-answer="yes">Yes</button>';
-      content += '<button class="eligibility-btn" data-question="multiple" data-answer="maybe">Maybe</button>';
-      content += '<button class="eligibility-btn" data-question="multiple" data-answer="no">No</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="yes">Ya</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="maybe">Mungkin</button>';
+      content += '<button class="eligibility-btn" data-question="multiple" data-answer="no">Tidak</button>';
       content += '</div>';
       content += '</div>';
       content += '</div>';
@@ -1601,7 +1601,7 @@
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
-      content += '<p class="guide-note">Helper for citing reliable sources</p>';
+      content += '<p class="guide-note">Bantuan untuk mengutip sumber terpercaya</p>';
       content += '<div id="sourceVerificationArea">';
       
       // Sister Projects Section - Dynamic based on article title
@@ -1611,13 +1611,13 @@
       
       // Separator
       content += '<div style="border-top: 1px solid #eaecf0; margin: 16px 0; padding-top: 16px;">';
-      content += '<p class="guide-note" style="margin-bottom: 12px;"><strong>Manual source entry:</strong></p>';
+      content += '<p class="guide-note" style="margin-bottom: 12px;"><strong>Entri sumber manual:</strong></p>';
       content += '</div>';
       
       // Existing manual source entry
       content += '<div class="source-input-group">';
       content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
-      content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
+      content += '<button class="source-check-btn" id="sidebarCheckBtn">Periksa sumber</button>';
       content += '</div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
@@ -1637,10 +1637,10 @@
         '<h4>✨ Getting started</h4>' +
         '<ul>' +
         '<li>Start with a clear opening sentence that defines your topic</li>' +
-        '<li>Include key facts in the first paragraph</li>' +
-        '<li>Use reliable sources throughout</li>' +
+        '<li>Sertakan fakta kunci di paragraf pertama</li>' +
+        '<li>Gunakan sumber terpercaya di seluruh artikel</li>' +
         '</ul>' +
-        '<p class="guide-note">Select a category in Step 2 to see specific section suggestions for your article type.</p>' +
+        '<p class="guide-note">Pilih kategori di Langkah 2 untuk melihat saran bagian spesifik untuk jenis artikel Anda.</p>' +
         '</div>';
     }
 
@@ -1650,7 +1650,7 @@
       const articleTitle = titleInput ? titleInput.value.trim() : '';
       
       if (!articleTitle) {
-        return '<p class="guide-note" style="font-style: italic; color: #666;">Sister project data will appear when you enter an article title above.</p>';
+        return '<p class="guide-note" style="font-style: italic; color: #666;">Data proyek saudara akan muncul ketika Anda memasukkan judul artikel di atas.</p>';
       }
       
       const projectData = getSisterProjectData(articleTitle);
@@ -1659,8 +1659,8 @@
       // Quick Facts Section
       if (projectData.facts && projectData.facts.length > 0) {
         content += '<div style="margin-bottom: 16px;">';
-        content += '<p class="guide-note" style="margin-bottom: 8px;">🎯 <strong>Quick facts for "' + articleTitle + '"</strong></p>';
-        content += '<p style="font-size: 15px; color: #666; margin-bottom: 12px;">We found key facts from reliable sources:</p>';
+        content += '<p class="guide-note" style="margin-bottom: 8px;">🎯 <strong>Fakta cepat untuk "' + articleTitle + '"</strong></p>';
+        content += '<p style="font-size: 15px; color: #666; margin-bottom: 12px;">Kami menemukan fakta kunci dari sumber terpercaya:</p>';
         
         // Show facts as reference information
         content += '<div style="background: #f8f9fa; padding: 12px; border-radius: 4px; border-left: 3px solid #0645ad;">';
@@ -1693,7 +1693,7 @@
       // Images Section
       if (projectData.images && projectData.images.length > 0) {
         content += '<div style="margin-bottom: 16px;">';
-        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Images available from Wikimedia Commons</strong></p>';
+        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Gambar tersedia dari Wikimedia Commons</strong></p>';
         content += '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
         
         for (let i = 0; i < Math.min(3, projectData.images.length); i++) {
@@ -1714,7 +1714,7 @@
       // Additional context section - only if helpful
       if (projectData.additionalContext) {
         content += '<div style="margin-bottom: 16px;">';
-        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Writing tip</strong></p>';
+        content += '<p class="guide-note" style="margin-bottom: 8px;"><strong>Tips menulis</strong></p>';
         content += '<p style="font-size: 15px; color: #666; background: #fffbf0; padding: 8px; border-radius: 4px; border-left: 3px solid #f0ad4e;">';
         content += projectData.additionalContext;
         content += '</p>';
@@ -1809,7 +1809,7 @@
         };
       }
       
-      // Organizations/Companies pattern
+      // Organisasis/Companies pattern
       if (lowerTitle.includes('company') || lowerTitle.includes('corporation') || lowerTitle.includes('organization') || lowerTitle.includes('foundation') || lowerTitle.includes('institute')) {
         return {
           facts: [
@@ -1968,7 +1968,7 @@
     }
 
     function getRandomType() {
-      const types = ['Organization', 'Institution', 'Company', 'Non-profit', 'Government Agency', 'Research Center'];
+      const types = ['Organisasi', 'Institution', 'Company', 'Non-profit', 'Government Agency', 'Research Center'];
       return types[Math.floor(Math.random() * types.length)];
     }
 
@@ -2005,23 +2005,23 @@
     function insertFactWithCitation(factText, source) {
       const editor = document.getElementById('editor');
       if (editor) {
-        // Insert the fact with a citation
+        // Sisipkan the fact with a citation
         const citation = '<ref>Source: ' + source + '</ref>';
-        const textToInsert = factText + citation + ' ';
+        const textToSisipkan = factText + citation + ' ';
         
         // Simple insertion at cursor position or end
         const selection = window.getSelection();
         if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
           const range = selection.getRangeAt(0);
           range.deleteContents();
-          range.insertNode(document.createTextNode(textToInsert));
+          range.insertNode(document.createTextNode(textToSisipkan));
         } else {
-          editor.innerHTML += textToInsert;
+          editor.innerHTML += textToSisipkan;
         }
         
         // Visual feedback
         event.target.style.background = '#d4edda';
-        event.target.innerHTML = '✓ Inserted';
+        event.target.innerHTML = '✓ Sisipkaned';
         setTimeout(() => {
           event.target.style.background = '#f8f9fa';
           event.target.innerHTML = factText;
@@ -2169,10 +2169,10 @@
           'Overview': 'The [Species Name] is a [type of organism] known for [key characteristics]. It plays an important role in [ecological role] and is [conservation status].'
         },
         'organization': {
-          'History': '[Organization Name] was founded in [Year] by [Founder(s)] with the mission to [original mission]. It began as [initial form] and has grown to [current scope].',
-          'Activities': '[Organization Name] primarily focuses on [main activities]. Their key programs include [list programs]. They serve [target population] through [methods].',
-          'Background': '[Organization Name] was established in response to [need or problem]. The founders recognized that [rationale] and created the organization to [solution approach].',
-          'Overview': '[Organization Name] is a [type of organization] that [main function]. It operates in [scope/geography] and is known for [key achievements or focus areas].'
+          'History': '[Organisasi Name] was founded in [Year] by [Founder(s)] with the mission to [original mission]. It began as [initial form] and has grown to [current scope].',
+          'Activities': '[Organisasi Name] primarily focuses on [main activities]. Their key programs include [list programs]. They serve [target population] through [methods].',
+          'Background': '[Organisasi Name] was established in response to [need or problem]. The founders recognized that [rationale] and created the organization to [solution approach].',
+          'Overview': '[Organisasi Name] is a [type of organization] that [main function]. It operates in [scope/geography] and is known for [key achievements or focus areas].'
         },
         'other': {
           'Background': '[Topic] has its origins in [historical context]. It developed from [early forms] and became [current form] through [process or evolution].',
@@ -2190,7 +2190,7 @@
         'person': '[Person\'s Name] was born on [Date] and is known for [notable achievements]. They are [brief description of what makes them notable].',
         'place': '[Place Name] is [type of location] located in [geographic area]. It has a population of [number] and is known for [key features or significance].',
         'species': 'The [common name] ([Scientific name]) is a [type of organism] that [key characteristics]. It is [distinctive features or behaviors].',
-        'organization': '[Organization Name] is a [type of organization] founded in [year] by [founder]. It [main purpose or mission].',
+        'organization': '[Organisasi Name] is a [type of organization] founded in [year] by [founder]. It [main purpose or mission].',
         'academic': '[Term/Concept] is [definition] that [main characteristics or applications]. It was [development or discovery context].',
         'creative': '[Title] is a [type of work] [created/written/directed] by [creator] in [year]. It [brief description of content or significance].',
         'event': '[Event Name] was [type of event] that occurred on [date] in [location]. It [significance or impact].',
@@ -2225,7 +2225,7 @@
           'History': 'The Red Cross was founded in 1863 by Henry Dunant and Gustave Moynier in Geneva, Switzerland. It began as a response to the suffering Dunant witnessed at the Battle of Solferino, leading to the first Geneva Convention.',
           'Activities': 'UNICEF works in over 190 countries providing humanitarian aid to children. Its activities include emergency relief, promoting child rights, improving healthcare and education, and protecting children from violence and exploitation.',
           'Background': 'NASA was established in 1958 in response to the Soviet Union\'s launch of Sputnik. It replaced the National Advisory Committee for Aeronautics and began civilian space exploration efforts.',
-          'Overview': 'The World Health Organization is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.'
+          'Overview': 'The World Health Organisasi is a specialized agency of the United Nations responsible for international public health. Established in 1948, it coordinates global health responses and sets health standards.'
         }
       };
       
@@ -2553,7 +2553,7 @@
       });
     }
 
-    // Source verification functionality
+    // Verifikasi sumber functionality
     var reliableSourcesData = null;
     var sourceModalBackdrop = document.getElementById('sourceModalBackdrop');
     var sourceUrl = document.getElementById('sourceUrl');
@@ -2566,7 +2566,7 @@
     // Load reliable sources data
     async function loadReliableSources() {
       try {
-        const response = await fetch('reliable-sources.json');
+        const response = await fetch('id-article-creator-reliable-sources.json');
         reliableSourcesData = await response.json();
       } catch (error) {
         console.error('Failed to load reliable sources:', error);
@@ -2628,9 +2628,9 @@
             
             // Update text based on step
             if (currentStep === 0) {
-              text.textContent = 'Domain verified: ' + extractDomain(url);
+              text.textContent = 'Domain terverifikasi: ' + extractDomain(url);
             } else if (currentStep === 1) {
-              text.textContent = 'Source reliability checked';
+              text.textContent = 'Keandalan sumber telah diperiksa';
             }
             
             currentStep++;
@@ -2682,7 +2682,7 @@
     // Classify source based on domain
     function classifySource(domain) {
       if (!reliableSourcesData) {
-        return {reliable: true, label: 'External source', reliability: 'Source checking available'};
+        return {reliable: true, label: 'Sumber eksternal', reliability: 'Pemeriksaan sumber tersedia'};
       }
       
       var sources = reliableSourcesData.approved_sources;
@@ -2723,7 +2723,7 @@
       // Default to external source
       return {
         reliable: true,
-        label: 'External source',
+        label: 'Sumber eksternal',
         reliability: 'Source information extracted'
       };
     }
@@ -2756,9 +2756,9 @@
         .replace('[TODAY]', today)
         .replace('[URL]', url);
       
-      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+      var fullDraft = '== DRAFT: Perlu pengeditan ==\n\n' + 
                      draftContent + '\n\n' +
-                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     '⚠️ Ini adalah draft stub. Harap kembangkan dengan analisis Anda sendiri dan sumber tambahan sebelum dipublikasikan.\n\n' +
                      citation;
       
       document.getElementById('draftContent').textContent = fullDraft;
@@ -2796,7 +2796,7 @@
       return 'default';
     }
     
-    // Insert draft into editor
+    // Sisipkan draft into editor
     function insertDraft() {
       var draftText = document.getElementById('draftContent').textContent;
       var editor = document.getElementById('editor');
@@ -2838,7 +2838,7 @@
       
       // Disable button and show loading
       checkBtn.disabled = true;
-      checkBtn.textContent = 'Checking...';
+      checkBtn.textContent = 'Memeriksa...';
       
       // Show verification steps
       performSidebarVerificationSteps(sourceUrl.value.trim());
@@ -2848,8 +2848,8 @@
     function performSidebarVerificationSteps(url) {
       var stepsDiv = document.getElementById('sidebarVerificationSteps');
       var steps = [
-        'Checking domain...',
-        'Verifying source reliability...'
+        'Memeriksa domain...',
+        'Memverifikasi keandalan sumber...'
       ];
       
       var stepsHTML = '';
@@ -2882,9 +2882,9 @@
             
             // Update text based on step
             if (currentStep === 0) {
-              text.textContent = 'Domain verified: ' + extractDomain(url);
+              text.textContent = 'Domain terverifikasi: ' + extractDomain(url);
             } else if (currentStep === 1) {
-              text.textContent = 'Source reliability checked';
+              text.textContent = 'Keandalan sumber telah diperiksa';
             }
             
             currentStep++;
@@ -2924,7 +2924,7 @@
       
       // Re-enable check button
       checkBtn.disabled = false;
-      checkBtn.textContent = 'Check source';
+      checkBtn.textContent = 'Periksa sumber';
       
       // Automatically generate and show draft content (skip the Generate Draft button)
       generateSidebarDraft(url);
@@ -2957,24 +2957,24 @@
         .replace('[TODAY]', today)
         .replace('[URL]', url);
       
-      var fullDraft = '== DRAFT: Needs editing ==\n\n' + 
+      var fullDraft = '== DRAFT: Perlu pengeditan ==\n\n' + 
                      draftContent + '\n\n' +
-                     '⚠️ This is a draft stub. Please expand with your own analysis and additional sources before publishing.\n\n' +
+                     '⚠️ Ini adalah draft stub. Harap kembangkan dengan analisis Anda sendiri dan sumber tambahan sebelum dipublikasikan.\n\n' +
                      citation;
       
       var previewDiv = document.getElementById('sidebarDraftPreview');
       var previewHTML = '';
       previewHTML += '<div class="sidebar-draft-content">' + fullDraft + '</div>';
       previewHTML += '<div class="sidebar-action-buttons">';
-      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarInsertBtn">Insert into article</button>';
-      previewHTML += '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>';
+      previewHTML += '<button class="sidebar-action-btn primary" id="sidebarSisipkanBtn">Sisipkan into article</button>';
+      previewHTML += '<button class="sidebar-action-btn" id="sidebarCancelBtn">Batal</button>';
       previewHTML += '</div>';
       
       previewDiv.innerHTML = previewHTML;
       previewDiv.style.display = 'block';
       
       // Bind action buttons
-      var insertBtn = document.getElementById('sidebarInsertBtn');
+      var insertBtn = document.getElementById('sidebarSisipkanBtn');
       var cancelBtn = document.getElementById('sidebarCancelBtn');
       
       if (insertBtn) {
@@ -2990,7 +2990,7 @@
       }
     }
 
-    // Insert draft from sidebar into editor
+    // Sisipkan draft from sidebar into editor
     function insertSidebarDraft(draftText) {
       var editor = document.getElementById('editor');
       
@@ -3208,7 +3208,7 @@
         generateBtn.addEventListener('click', generateDraft);
       }
       
-      // Insert draft button
+      // Sisipkan draft button
       if (insertBtn) {
         insertBtn.addEventListener('click', insertDraft);
       }

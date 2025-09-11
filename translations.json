@@ -329,6 +329,7 @@
         "hint": "This helps us suggest the right structure and policies.",
         "back": "Back",
         "start": "Start editing",
+        "continue": "Continue",
         "categories": {
           "person": "Person / Biography",
           "place": "Geographic Location",
@@ -338,6 +339,46 @@
           "creative": "Creative Work",
           "event": "Event",
           "other": "Other"
+        }
+      }
+      ,
+      "sourcesStep": {
+        "title": "Do you have at least two independent, reliable sources for \"{Title}\"?",
+        "subtext": "Strong sources help articles survive review and deletion.",
+        "urlPlaceholder": "https://example.com/article",
+        "badge": {
+          "reliable": "✓ Reliable domain",
+          "questionable": "⚠️ Possibly promotional",
+          "unknown": "ℹ️ Unknown source"
+        },
+        "readiness": {
+          "label": "Readiness:",
+          "notReady": "Not ready",
+          "gettingThere": "Getting there",
+          "ready": "Ready",
+          "countSuffix": "verified sources",
+          "sourcesLabel": "sources",
+          "independentLabel": "independent"
+        },
+        "toggle": {
+          "independent": "Independent of the subject?",
+          "significant": "Significant coverage?",
+          "yes": "Yes",
+          "notSure": "Not sure"
+        },
+        "addAnother": "Add another",
+        "hint": {
+          "good": "Looks good. You can draft now and later publish to mainspace.",
+          "draft": "We’ll start in Draft; add 2 independent sources to publish."
+        },
+        "status": {
+          "checking": "Checking...",
+          "verified": "Likely reliable"
+        },
+        "actions": {
+          "back": "Back",
+          "skip": "Skip for now",
+          "continue": "Continue"
         }
       }
     }
@@ -457,6 +498,46 @@
       "undo": "Batalkan",
       "redo": "Ulangi"
     }
+    ,
+      "sourcesStep": {
+        "title": "Apakah Anda memiliki setidaknya dua sumber yang independen dan tepercaya untuk \"{Title}\"?",
+        "subtext": "Sumber yang kuat membantu artikel bertahan dari peninjauan dan penghapusan.",
+        "urlPlaceholder": "https://contoh.com/artikel",
+        "badge": {
+          "reliable": "✓ Domain tepercaya",
+          "questionable": "⚠️ Mungkin promosi",
+          "unknown": "ℹ️ Sumber tidak dikenal"
+        },
+        "readiness": {
+          "label": "Kesiapan:",
+          "notReady": "Belum siap",
+          "gettingThere": "Hampir siap",
+          "ready": "Siap",
+          "countSuffix": "sumber terverifikasi",
+          "sourcesLabel": "sumber",
+          "independentLabel": "independen"
+        },
+        "toggle": {
+          "independent": "Independen dari subjek?",
+          "significant": "Liputan signifikan?",
+          "yes": "Ya",
+          "notSure": "Tidak yakin"
+        },
+        "addAnother": "Tambahkan lagi",
+        "hint": {
+          "good": "Bagus. Anda dapat membuat draf sekarang dan menerbitkannya ke ruang utama nanti.",
+          "draft": "Kita akan mulai di Draf; tambahkan 2 sumber independen untuk menerbitkan."
+        },
+        "status": {
+          "checking": "Memeriksa...",
+          "verified": "Kemungkinan tepercaya"
+        },
+        "actions": {
+          "back": "Kembali",
+          "skip": "Lewati dulu",
+          "continue": "Lanjutkan"
+        }
+      }
     ,
     "ui": {
       "suggestions": "Saran",
@@ -673,6 +754,7 @@
         "hint": "Ini membantu kami menyarankan struktur dan kebijakan yang tepat.",
         "back": "Kembali",
         "start": "Mulai mengedit",
+        "continue": "Lanjutkan",
         "categories": {
           "person": "Orang / Biografi",
           "place": "Lokasi geografis",

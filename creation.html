@@ -230,8 +230,60 @@
     }
     .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
     .verify-note.show { display: block; }
-    .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
-    .ref-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border: 1px solid #eaecf0; border-radius: 8px; width: 520px; max-width: 92vw; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; opacity: 0; transition: opacity .18s ease; }
+    .ref-dialog-backdrop.show { display: block; opacity: 1; }
+    .ref-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-46%) scale(.98);
+      background: #fff;
+      border: 1px solid #eaecf0;
+      border-radius: 8px;
+      width: 640px;
+      max-width: 96vw;
+      /* No internal scroll on desktop; let content size naturally */
+      overflow: hidden; /* prevent child overspill horizontally */
+      padding: 0; /* move padding to inner .ref-modal for better scroll */
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      opacity: 0;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    /* Ensure border-box sizing inside dialog to avoid overflow from padding/borders */
+    .ref-dialog, .ref-dialog * { box-sizing: border-box; }
+    .ref-dialog-backdrop.show .ref-dialog { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+    /* Roomy content without internal scroll (desktop) */
+    .ref-modal { padding: 24px; }
+    /* Roomier spacing and controls */
+    .ref-header { margin-bottom: 20px; }
+    .ref-desc { margin-bottom: 16px; line-height: 1.5; }
+    .ref-section { margin-bottom: 20px; }
+    .ref-section-title { margin-bottom: 10px; }
+    .ref-form-group { margin-bottom: 18px; }
+    .ref-input { padding: 10px 14px; font-size: 15px; border-radius: 8px; width: 100%; max-width: 100%; min-width: 0; }
+    .ref-status-display { gap: 8px; }
+    .ref-divider { margin-top: 16px; padding-top: 16px; }
+    #refSavedList { display: flex; flex-direction: column; gap: 10px; }
+    #refSavedList .source-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; cursor: pointer; }
+    #refSavedList .source-item:hover { border-color: #d1d5db; }
+    #refSavedList .source-item input[type="checkbox"] { margin-top: 2px; }
+    #refSavedList .source-item .source-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    #refSavedList .source-item .source-url { font-weight: 500; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #refSavedList .source-item .source-meta { font-size: 12px; color: #14866d; }
+    .ref-preview { margin-top: 18px; }
+    /* Mobile: use fullscreen sheet style */
+    @media (max-width: 600px) {
+      .ref-dialog {
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100vw; max-width: none;
+        height: 100vh; max-height: none;
+        border-radius: 0; border: 0;
+        transform: none; /* initial state handled by backdrop.show relation */
+      }
+      .ref-dialog-backdrop.show .ref-dialog { transform: none; }
+      .ref-modal { height: 100%; display: flex; flex-direction: column; overflow: auto; padding: 20px; }
+      .ref-footer { margin-top: auto; }
+    }
     .ref-row { margin-bottom: 12px; }
     .ref-row label { display: block; font-size: 13px; margin-bottom: 6px; color: #202122; }
     .ref-row input { width: 100%; height: 34px; border: 1px solid #c8ccd1; border-radius: 4px; padding: 6px 10px; font: inherit; }
@@ -251,6 +303,14 @@
       100% { background-color: transparent; }
     }
     .flash-insert { animation: insertFlash 1.2s ease-out; }
+
+    /* References section formatting */
+    .references { margin: 1.25em 0; }
+    .references h2 { font-family: Georgia, serif; font-size: 1.5em; font-weight: 400; margin: 2em 0 0.35em 0; padding-bottom: 0.25em; border-bottom: 1px solid #eaecf0; }
+    .references ol { margin-left: 0; padding-left: 1.5rem; }
+    .references li { padding-left: .5rem; text-indent: -.5rem; margin: 0.25em 0; line-height: 1.5; }
+    .references em { font-style: italic; }
+    .references a { color: #0645ad; word-break: break-word; overflow-wrap: anywhere; }
 
     /* Undo toast */
     .undo-toast {
@@ -335,7 +395,9 @@
     
     /* Center Step 2 in viewport */
     #step2.ac-step,
-    #creation-step2.ac-step {
+    #creation-step2.ac-step,
+    /* Center optional Sources step similarly */
+    #creation-stepSources.ac-step {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -351,13 +413,92 @@
     /* Responsive positioning for Step 2 */
     @media (max-width: 768px) {
       #step2.ac-step,
-      #creation-step2.ac-step {
+      #creation-step2.ac-step,
+      #creation-stepSources.ac-step {
         width: 95%;
         padding: 20px;
         top: 45%;
         transform: translate(-50%, -45%);
       }
     }
+
+    /* Narrower, calmer card for Sources step */
+    #creation-stepSources.ac-step { max-width: 600px; }
+    /* Larger, more prominent title for Sources step */
+    #creation-stepSources h3 { font-size: 1.4rem; line-height: 1.35; margin-bottom: 8px; }
+    /* Make the introductory subtext a true paragraph for readability */
+    #creation-stepSources > .hint:first-of-type {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #202122;
+      margin: 4px 0 6px 0;
+    }
+    /* Sources list layout */
+    #creation-sourcesList { display: flex; flex-direction: column; gap: 16px; }
+    .source-chip-row { display: flex; align-items: center; gap: 8px; position: relative; }
+    /* Modernized input style for Sources step */
+    #creation-stepSources .source-url-input {
+      flex: 1;
+      width: auto;
+      height: 32px;
+      padding: 6px 12px; /* balanced padding */
+      border: 1px solid #a2a9b1;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+    }
+    #creation-stepSources .source-url-input:focus {
+      border-color: #36c;
+      outline: none;
+      box-shadow: inset 0 0 0 1px #36c;
+    }
+    /* inline badge removed in sources step rows */
+    /* Icon-only remove control */
+    #creation-stepSources .remove-source {
+      background: none;
+      border: none;
+      color: #72777d;
+      font-size: 20px;
+      width: auto;
+      height: auto;
+      line-height: 1;
+      padding: 4px;
+      cursor: pointer;
+    }
+    #creation-stepSources .remove-source:hover { color: #202122; }
+    .readiness { margin-top: 8px; color: #555; font-size: 14px; text-align: center; }
+    .is-hidden { display: none; }
+    .link { background:none; border:0; color:#36c; text-decoration:underline; padding:0; cursor:pointer; }
+    /* Modern pill button for Add another */
+    #creation-stepSources .add-source-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1px solid #c8ccd1;
+      border-radius: 6px;
+      background: #f8f9fa;
+      color: #202122;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #creation-stepSources .add-source-btn:hover { background:#eef3ff; border-color:#b6c8f0; }
+    /* Readiness line styling */
+    #creation-stepSources .readiness-line { display:flex; align-items:center; gap:8px; padding-top:0; }
+    #creation-stepSources .readiness-label { font-size:13px; color:#555; }
+    #creation-stepSources .readiness-status { font-size:13px; font-weight:600; color:#666; }
+    #creation-stepSources .readiness-count { font-size:13px; color:#72777d; }
+    #creation-stepSources .readiness-status.state-ready { color:#14866d; }
+    #creation-stepSources .readiness-status.state-mid { color:#ac6600; }
+    #creation-stepSources .readiness-status.state-low { color:#666; }
+    /* Source status (validating / verified) */
+    #creation-stepSources .source-status { display:none; margin-top:0; font-size:12px; }
+    #creation-stepSources .source-group { display:flex; flex-direction:column; gap:4px; }
+    #creation-stepSources .status-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:6px; }
+    #creation-stepSources .status-validating { background:#f3f4f6; color:#555; }
+    #creation-stepSources .status-verified { background:#d5fdf4; color:#14866d; font-weight:600; }
+    #creation-stepSources .spinner { width:12px; height:12px; border:2px solid #d0d5dd; border-top-color:#36c; border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     
     .ac-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
     .ac-actions .btn { height: 34px; padding: 0 12px; border: 1px solid #c8ccd1; border-radius: 4px; background: #fff; cursor: pointer; }
@@ -967,6 +1108,42 @@
       overflow-x: hidden !important;
     }
 
+    /* Modern modal styling for ref dialog */
+    .ref-modal { padding: 24px; max-width: 672px; width: 100%; }
+    .ref-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .ref-header-left { display:flex; align-items:center; gap:12px; }
+    .ref-title { font-size:20px; font-weight:600; color:#111827; margin:0; }
+    .ref-status-badge { padding:4px 8px; background:#f3f4f6; color:#6b7280; font-size:12px; border-radius:9999px; }
+    .ref-close { background:none; border:none; padding:8px; cursor:pointer; border-radius:4px; color:#6b7280; }
+    .ref-close:hover { background:#f3f4f6; }
+    .ref-desc { color:#6b7280; margin-bottom:24px; }
+    .ref-section { margin-bottom:24px; }
+    .ref-section-title { font-size:14px; font-weight:500; color:#111827; margin:0 0 12px 0; }
+    .ref-source-list { display:flex; flex-direction:column; gap:12px; }
+    .ref-source-list .source-item { display:flex; align-items:center; gap:16px; padding:12px; border:1px solid #e5e7eb; border-radius:8px; cursor:pointer; transition:.2s border-color; }
+    .ref-source-list .source-item:hover { border-color:#d1d5db; }
+    .ref-source-list .source-item.selected { border-color:#3b82f6; background:#eff6ff; }
+    .ref-source-list .checkbox { width:20px; height:20px; border:2px solid #d1d5db; border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ref-source-list .checkbox.checked { border-color:#3b82f6; background:#3b82f6; color:#fff; }
+    .ref-source-list .source-info { flex:1; }
+    .ref-source-list .source-url { font-weight:500; color:#111827; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+    .ref-source-list .source-title { font-size:14px; color:#6b7280; }
+    .ref-source-list .status-indicator { display:flex; align-items:center; gap:4px; padding:4px 8px; background:#dcfce7; color:#166534; border-radius:6px; font-size:12px; font-weight:500; }
+    .ref-divider { border-top:1px solid #e5e7eb; padding-top:16px; margin-top:12px; }
+    .ref-form-group { margin-bottom:16px; }
+    .ref-form-label { display:block; font-size:14px; font-weight:500; color:#374151; margin-bottom:6px; }
+    .ref-input { width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; }
+    .ref-input:focus { outline:none; border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+    .ref-url-container { position:relative; }
+    .ref-status-display { position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:6px; font-size:12px; color:#6b7280; }
+    .ref-url-container .ref-input { padding-right: 72px; }
+    .ref-url-spinner { width:12px; height:12px; border:2px solid #e5e7eb; border-top-color:#3b82f6; border-radius:50%; animation:spin 1s linear infinite; }
+    .ref-preview { margin-top:16px; padding:12px; background:#f9fafb; border-radius:8px; }
+    .ref-preview-title { font-size:14px; font-weight:500; color:#374151; margin-bottom:6px; }
+    .ref-preview-content { font-size:13px; color:#6b7280; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .ref-footer { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid #e5e7eb; flex-wrap: wrap; }
+    .ref-footer .btn { max-width: 100%; }
+
   </style>
 </head>
 <body>
@@ -1132,7 +1309,43 @@
             <div class="hint" data-i18n="creation.step2.hint">This helps us suggest the right structure and policies.</div>
             <div class="ac-actions">
               <button class="btn" id="creation-backTo1" data-i18n="creation.step2.back">Back</button>
-              <button class="btn primary" id="creation-toStep3" disabled data-i18n="creation.step2.start">Start editing</button>
+              <button class="btn primary" id="creation-toStep3" disabled data-i18n="creation.step2.continue">Continue</button>
+            </div>
+          </section>
+          <!-- Optional Sources Step (Q3) -->
+          <section class="ac-step" id="creation-stepSources">
+            <h3 data-i18n="creation.sourcesStep.title">Do you have at least two independent, reliable sources for “{Title}”?</h3>
+            <p class="hint" data-i18n="creation.sourcesStep.subtext">Strong sources help articles survive review and deletion.</p>
+            <div id="creation-readiness-line" class="readiness-line is-hidden" aria-live="polite">
+              <span class="readiness-label" data-i18n="creation.sourcesStep.readiness.label">Readiness:</span>
+              <span id="creation-readiness-status" class="readiness-status" data-i18n="creation.sourcesStep.readiness.notReady">Not ready</span>
+              <span id="creation-readiness-count" class="readiness-count">(0/2 <span data-i18n="creation.sourcesStep.readiness.countSuffix">verified sources</span>)</span>
+            </div>
+            <div id="creation-sourcesList">
+              <div class="source-group">
+                <div class="source-chip-row" data-index="0">
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                </div>
+                <div class="source-status" aria-live="polite"></div>
+              </div>
+              <div class="source-group">
+                <div class="source-chip-row" data-index="1">
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                </div>
+                <div class="source-status" aria-live="polite"></div>
+              </div>
+            </div>
+            <p id="creation-sources-readiness" class="readiness is-hidden" aria-live="polite" data-i18n="creation.sourcesStep.readiness.notReady">Readiness: Not ready</p>
+            <p id="creation-sources-hint" class="hint"></p>
+            <div style="margin:10px 0 2px 0;">
+              <button class="add-source-btn" id="creation-addSourceChip" data-i18n="creation.sourcesStep.addAnother">Add another</button>
+            </div>
+            <div class="ac-actions">
+              <button class="btn" id="creation-sourcesBack" data-i18n="creation.sourcesStep.actions.back">Back</button>
+              <button class="btn" id="creation-sourcesSkip" data-i18n="creation.sourcesStep.actions.skip">Skip for now</button>
+              <button class="btn primary" id="creation-sourcesContinue" data-i18n="creation.sourcesStep.actions.continue">Continue</button>
             </div>
           </section>
           <section class="ac-step" id="creation-step3">
@@ -1179,17 +1392,21 @@
   <div class="source-modal-backdrop" id="sourceModalBackdrop" aria-hidden="true">
     <div class="source-modal" role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle">
       <div class="source-modal-header">
-        <h3 id="sourceModalTitle">Add content from a reliable source</h3>
+        <h3 id="sourceModalTitle" data-i18n="sourceModal.title">Add content from a reliable source</h3>
         <button class="close-btn" id="closeSourceModal" title="Close">×</button>
       </div>
       <div class="source-modal-content">
         <div class="source-input-section">
-          <label for="sourceUrl">Source URL</label>
+          <label for="sourceUrl" data-i18n="sourceModal.urlLabel">Source URL</label>
           <input type="url" id="sourceUrl" placeholder="https://example.com/article" />
+        </div>
+        <div class="ref-section" id="sourceSavedSection" style="display:none;">
+          <h4 class="ref-section-title">Use sources you added earlier</h4>
+          <div id="sourceSavedList" class="ref-source-list"></div>
         </div>
         
         <div class="source-verification" id="sourceVerification" style="display: none;">
-          <h4>Source verification</h4>
+          <h4 data-i18n="sourceModal.verifyHeader">Source verification</h4>
           <div class="verification-steps" id="verificationSteps">
             <div class="verification-step" id="step1">
               <span class="step-icon">⏳</span>
@@ -1211,27 +1428,56 @@
         </div>
         
         <div class="draft-preview" id="draftPreview" style="display: none;">
-          <h4>Draft content preview</h4>
+          <h4 data-i18n="sourceModal.previewHeader">Draft content preview</h4>
           <div class="draft-content" id="draftContent"></div>
         </div>
       </div>
       <div class="source-modal-actions">
-        <button class="btn" id="cancelSource">Cancel</button>
-        <button class="btn" id="checkSourceBtn">Check source</button>
-        <button class="btn primary" id="generateDraftBtn" style="display: none;">Create draft from source</button>
-        <button class="btn primary" id="insertDraftBtn" style="display: none;">Insert as draft</button>
+        <button class="btn" id="cancelSource" data-i18n="sourceModal.actions.cancel">Cancel</button>
+        <button class="btn" id="checkSourceBtn" data-i18n="sourceModal.actions.check">Check source</button>
+        <button class="btn primary" id="generateDraftBtn" style="display: none;" data-i18n="sourceModal.actions.generate">Create draft from source</button>
+        <button class="btn primary" id="insertDraftBtn" style="display: none;" data-i18n="sourceModal.actions.insert">Insert as draft</button>
       </div>
     </div>
   </div>
 
   <div class="ref-dialog-backdrop" id="refBackdrop" aria-hidden="true">
-    <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle">
-      <div class="ref-row"><strong id="refTitle">Add reference</strong> <span id="refHint" class="badge">unclassified</span></div>
-      <div class="ref-row"><label for="refUrl">Source URL</label><input id="refUrl" type="url" placeholder="https://example.com/article"></div>
-      <div class="ref-row"><label for="refTitleInput">Title (optional)</label><input id="refTitleInput" type="text" placeholder="Article title"></div>
-      <div class="ref-actions">
-        <button class="btn" id="refCancel">Cancel</button>
-        <button class="btn primary" id="refInsert">Insert cite</button>
+    <div class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="refTitle" aria-describedby="refSubtext">
+      <div class="ref-modal">
+        <div class="ref-header">
+          <div class="ref-header-left">
+            <h2 class="ref-title" id="refTitle">Add reference</h2>
+            <span id="refHint" class="ref-status-badge">unclassified</span>
+          </div>
+          <button class="ref-close" id="refCloseBtn" title="Close" aria-label="Close">✕</button>
+        </div>
+        <p class="ref-desc" id="refSubtext">Use a source you added earlier or paste a new one.</p>
+        <div class="ref-section" id="refSavedSection" style="display:none;">
+          <h3 class="ref-section-title">Use sources you added earlier</h3>
+          <div id="refSavedList" class="ref-source-list"></div>
+        </div>
+        <div class="ref-divider" id="refOr" style="display:none;"><h3 class="ref-section-title">Or paste a new source</h3></div>
+        <div class="ref-form">
+          <div class="ref-form-group">
+            <label class="ref-form-label" for="refUrl">Source URL</label>
+            <div class="ref-url-container">
+              <input id="refUrl" type="url" class="ref-input" placeholder="https://example.com/article">
+              <div id="refUrlStatus" class="ref-status-display" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="ref-form-group">
+            <label class="ref-form-label" for="refTitleInput">Title (optional)</label>
+            <input id="refTitleInput" type="text" class="ref-input" placeholder="Article title">
+          </div>
+        </div>
+        <div class="ref-preview" id="refPreview" style="display:none;">
+          <div class="ref-preview-title">Citation preview:</div>
+          <div class="ref-preview-content" id="refPreviewContent"></div>
+        </div>
+        <div class="ref-footer">
+          <button class="btn" id="refCancel">Cancel</button>
+          <button class="btn primary" id="refInsert" disabled>Insert cite</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1416,6 +1662,7 @@
         afterEl.insertAdjacentElement('afterend', help);
         window.__introHelpShown = true;
       } catch(_) {}
+      return sup;
     }
 
     function hideIntroHelp() {
@@ -1485,12 +1732,13 @@
 
     function ensureReferencesSection() {
       const editor = document.getElementById('editor');
-      const hasRefs = editor.innerHTML.includes('<h2') && editor.innerHTML.includes('id="References"');
+      const hasRefs = editor.querySelector('#References');
       if (!hasRefs) {
         const block = document.createElement('div');
+        block.className = 'references';
         block.innerHTML = (
-          '<h2 id="References" style="font-family: Georgia, serif; font-size: 1.5em; font-weight: normal; margin: 2em 0 0.25em 0; padding:0; border-bottom:1px solid #eaecf0; padding-bottom:0.25em;">References</h2>' +
-          '<div id="referencesList" style="margin:0.75em 0; font-size:0.9em;"></div>'
+          '<h2 id="References">References</h2>' +
+          '<ol id="referencesList"></ol>'
         );
         editor.appendChild(block);
       } else {
@@ -1498,25 +1746,86 @@
         const refsList = document.getElementById('referencesList');
         if (!refsList) {
           const refsHeader = editor.querySelector('#References');
-          const div = document.createElement('div');
-          div.id = 'referencesList';
-          div.style.margin = '0.75em 0';
-          div.style.fontSize = '0.9em';
-          refsHeader && refsHeader.insertAdjacentElement('afterend', div);
+          const ol = document.createElement('ol');
+          ol.id = 'referencesList';
+          refsHeader && refsHeader.insertAdjacentElement('afterend', ol);
         }
+      }
+    }
+
+    function brandFromHost(h){
+      try {
+        if (!h) return '';
+        const map = { 'bbc.com':'BBC News', 'bhaskar.com':'Dainik Bhaskar' };
+        h = String(h).replace(/^www\./,'');
+        return map[h] || h;
+      } catch(_) { return h || ''; }
+    }
+
+    function formatRef(url, title) {
+      try {
+        const u = new URL(url);
+        const host = u.host.replace(/^www\./,'');
+        const site = brandFromHost(host);
+        const t = (title && title.trim()) ? title.trim() : ('Article about ' + (window.articleTitle || window.articleTitleText || ''));
+        const loc = (window.currentLang && window.currentLang !== 'en') ? undefined : undefined; // default locale
+        const today = new Date().toLocaleDateString(loc, { year:'numeric', month:'long', day:'numeric' });
+        const safeUrl = u.href;
+        // Return HTML with italics for site and linked URL
+        return `<em>${site}</em>. “${t}”. Retrieved ${today}. <a href="${safeUrl}" target="_blank" rel="noopener">${safeUrl}</a>`;
+      } catch(_) {
+        const today = new Date().toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+        const t = (title && title.trim()) ? title.trim() : (window.articleTitle || window.articleTitleText || '');
+        const safeUrl = String(url || '');
+        return `${t ? '“'+t+'”. ' : ''}Retrieved ${today}. <a href="${safeUrl}" target="_blank" rel="noopener">${safeUrl}</a>`;
       }
     }
 
     function appendReferenceEntry(number, url, title) {
       const list = document.getElementById('referencesList');
-      const p = document.createElement('p');
-      p.style.margin = '0.25em 0';
-      const domain = (() => { try { return new URL(url).hostname; } catch(_) { return ''; } })();
-      const today = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
-      const citation = title ? `${title}. ${domain ? domain + '.' : ''} Retrieved ${today}. ${url}` : `${domain ? domain + '.' : ''} Retrieved ${today}. ${url}`;
-      p.textContent = `${number}. ${citation}`;
-      (list || document.getElementById('References')?.insertAdjacentElement('afterend', (function(){const d=document.createElement('div');d.id='referencesList';return d;})()))?.appendChild(p);
+      if (!list) return;
+      const li = document.createElement('li');
+      li.innerHTML = formatRef(url, title);
+      list.appendChild(li);
     }
+
+    // Re-number all in-text citations in reading order, and rebuild the list
+    function renumberReferences() {
+      try {
+        const editor = document.getElementById('editor');
+        if (!editor) return;
+        const sups = Array.from(editor.querySelectorAll('sup.wiki-reference'));
+        // If none, remove references section if empty
+        if (sups.length === 0) {
+          const refsHeader = editor.querySelector('#References');
+          const list = editor.querySelector('#referencesList');
+          if (list) list.innerHTML = '';
+          if (refsHeader && list && list.children.length === 0) {
+            try { list.remove(); refsHeader.remove(); } catch(_) {}
+          }
+          return;
+        }
+        // Update in-text numbering
+        sups.forEach((sup, idx) => { sup.textContent = `[${idx+1}]`; sup.dataset.number = String(idx+1); });
+        // Ensure list exists then rebuild based on the same order
+        ensureReferencesSection();
+        const list = document.getElementById('referencesList');
+        if (!list) return;
+        list.innerHTML = '';
+        sups.forEach((sup, idx) => {
+          const url = sup.dataset.url || sup.getAttribute('title') || '';
+          const title = sup.dataset.title || '';
+          appendReferenceEntry(idx+1, url, title);
+        });
+      } catch(_) {}
+    }
+
+    // Keep numbering consistent when content moves around
+    var __refRecalcTimer = null;
+    function __scheduleRenumber() { try { if (__refRecalcTimer) clearTimeout(__refRecalcTimer); __refRecalcTimer = setTimeout(renumberReferences, 120); } catch(_){} }
+    // Use event delegation so it works even before the editor is created
+    document.addEventListener('input', function(e){ try { if (e.target && e.target.closest && e.target.closest('#editor')) __scheduleRenumber(); } catch(_){} });
+    document.addEventListener('keyup', function(e){ try { if ((e.key === 'Enter' || e.key === 'Backspace' || e.key === 'Delete') && e.target && e.target.closest && e.target.closest('#editor')) __scheduleRenumber(); } catch(_){} });
 
     // === Lightweight undo + feedback ===
     let __lastUndoAction = null;
@@ -1685,6 +1994,8 @@
       sup.title = url;
       sup.style.color = '#0645ad';
       sup.textContent = `[${referenceCount}]`;
+      // Store metadata for later renumber/rebuild
+      try { sup.dataset.url = url || ''; sup.dataset.title = title || ''; } catch(_) {}
 
       // Replace last clicked source reminder if present
       if (lastSourceReminderClicked && lastSourceReminderClicked.parentNode) {
@@ -1694,9 +2005,9 @@
         insertNodeAtCaret(sup, editor);
       }
 
-      // Ensure and append to References
+      // Ensure section exists and rebuild list with correct ordering/numbering
       ensureReferencesSection();
-      appendReferenceEntry(referenceCount, url, title || '');
+      renumberReferences();
 
       // Hide one-time intro help after a reference is added
       try { hideIntroHelp(); } catch(_) {}
@@ -1710,7 +2021,7 @@
         const highlightTarget = sup.closest('p') || sup;
         showUndoToast('Inserted citation', function(){
           try { if (sup && sup.parentNode) sup.parentNode.removeChild(sup); } catch(_){ }
-          try { const list = document.getElementById('referencesList'); if (list && list.lastElementChild) list.removeChild(list.lastElementChild); } catch(_){ }
+          try { renumberReferences(); } catch(_) {}
           // If no references left, optionally hide the References heading container spacing
           try {
             const list = document.getElementById('referencesList');
@@ -1729,11 +2040,113 @@
           } catch(_) {}
         }, highlightTarget);
       } catch(_) {}
+      return sup;
     }
+
+    /* === Helper shim: one-liner hookup for prototype scripts ===
+       Exposes window.__onInsertCite(selectedUrls) and source memory to interop with
+       external helpers without changing the current creation.html behavior.
+    */
+    (function(){
+      try {
+        window.creationSources = window.creationSources || [];
+        window.__creationSources = window.creationSources;
+        window.__rememberSources = function(urls){
+          (urls||[]).forEach(function(u){
+            try { if (!u) return; if (!window.creationSources.some(function(s){ return s.url===u; })) { window.creationSources.push({ url: u }); } } catch(_){}
+          });
+        };
+        // Accept either no-arg external filler or our richer payload
+        function __callChipFillers(payload){
+          try {
+            if (typeof window.fillChipsFromSources === 'function') {
+              if (window.fillChipsFromSources.length === 0) {
+                // helper expects no args
+                window.fillChipsFromSources();
+              } else {
+                window.fillChipsFromSources(payload);
+              }
+              return true;
+            }
+          } catch(_){}
+          return false;
+        }
+
+        // Basic internal filler for template-placeholder chips (fallback)
+        function __internalFillChips(payload){
+          try {
+            var editor = document.getElementById('editor');
+            if (!editor) return;
+            var allChips = Array.from(editor.querySelectorAll('.template-placeholder'));
+            if (!allChips.length) return;
+            var title = (payload && payload.title) || (window.articleTitle || window.articleTitleText || '');
+            var yrMatch = (title.match(/\b(1|2)\d{3}\b/)||[])[0] || '';
+            var maybePlace = (function(){ var t=(title||'').trim().split(/\s+/); for (var i=t.length-1;i>=0;i--){ if (/^[A-Z][A-Za-z\-']+$/.test(t[i])) return t[i]; } return ''; })();
+            // Choose the latest ref as the one we just inserted (highest number)
+            var refSorted = (payload && payload.insertedRefs ? payload.insertedRefs.slice() : []).sort(function(a,b){ return a.number - b.number; });
+            var lastRef = refSorted.length ? refSorted[refSorted.length-1] : null;
+            var refNum = lastRef ? lastRef.number : null;
+            var refUrl = lastRef ? lastRef.url : '';
+            var refTitle = (lastRef && lastRef.title) ? lastRef.title : (title ? ('Article about '+ title) : 'Article');
+            var refHost = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return ''; } })(refUrl);
+            var refBrand = (typeof window.brandFromHost === 'function') ? window.brandFromHost(refHost) : refHost;
+
+            // Prefer chips in the same paragraph as the last inserted ref
+            var anchorPara = null;
+            if (refNum != null) {
+              var supNode = Array.from(editor.querySelectorAll('sup.wiki-reference')).find(function(s){ return parseInt((s.textContent.match(/\d+/)||['0'])[0],10) === refNum; });
+              anchorPara = supNode && supNode.closest('p');
+            }
+            var chips = anchorPara ? Array.from(anchorPara.querySelectorAll('.template-placeholder')) : allChips;
+            if (!chips.length) chips = allChips;
+
+            // Matchers against key or visible label
+            function match(ph, re){ var key=(ph.getAttribute('data-placeholder')||''); var label=(ph.textContent||''); return re.test(key) || re.test(label); }
+            function putValue(ph, value){ if (!value) return false; var valEl=document.createElement('span'); valEl.className='chip-value'; valEl.textContent=value; ph.replaceWith(valEl); if (refNum){ var sup=document.createElement('sup'); sup.textContent='['+refNum+']'; valEl.insertAdjacentElement('afterend', sup);} return true; }
+
+            var filled = 0;
+            for (var i=0;i<chips.length && filled<6;i++){
+              var ph = chips[i];
+              if (match(ph, /(title|headline|name)/i)) { if (putValue(ph, refTitle)) { filled++; continue; } }
+              if (match(ph, /(website|publisher|source|outlet|journal)/i)) { if (putValue(ph, refBrand || refHost)) { filled++; continue; } }
+              if (match(ph, /(url|link)/i)) { if (putValue(ph, refUrl)) { filled++; continue; } }
+              if (match(ph, /(date|year|access|retriev)/i)) { if (putValue(ph, (new Date()).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}))) { filled++; continue; } }
+              if (match(ph, /(place|location|city|country|region)/i)) { if (putValue(ph, maybePlace || 'Istanbul, Turkey')) { filled++; continue; } }
+              if (match(ph, /(nationality)/i)) { if (putValue(ph, 'Turkish')) { filled++; continue; } }
+              if (match(ph, /(occupation|role|position)/i)) { if (putValue(ph, 'writer')) { filled++; continue; } }
+            }
+          } catch(_){}
+        }
+
+        window.__onInsertCite = function(selectedUrls){
+          try {
+            window.__rememberSources(selectedUrls||[]);
+            if (typeof renumberReferences === 'function') renumberReferences();
+            var editor = document.getElementById('editor');
+            var sups = Array.from(editor.querySelectorAll('sup.wiki-reference'));
+            var insertedRefs = sups.map(function(s){
+              var num = parseInt((s.textContent.match(/\d+/)||['0'])[0],10);
+              return { number: num, url: s.dataset.url || s.getAttribute('title') || '', title: s.dataset.title || '' };
+            });
+            var payload = {
+              title: window.articleTitle || window.articleTitleText || '',
+              category: window.articleCategory || window.selectedCat || '',
+              insertedRefs: insertedRefs
+            };
+            if (!__callChipFillers(payload)) { __internalFillChips(payload); }
+          } catch(_){}
+        };
+      } catch(_){}
+    })();
     // Steps
     var titleInput=document.getElementById('creation-title');
     var toStep2=document.getElementById('creation-toStep2');
     var toStep3=document.getElementById('creation-toStep3');
+    var sourcesStep=document.getElementById('creation-stepSources');
+    var sourcesBack=document.getElementById('creation-sourcesBack');
+    var sourcesSkip=document.getElementById('creation-sourcesSkip');
+    var sourcesContinue=document.getElementById('creation-sourcesContinue');
+    var addSourceChipBtn=document.getElementById('creation-addSourceChip');
     var backTo1=document.getElementById('creation-backTo1');
     var step1=document.getElementById('creation-step1');
     var step2=document.getElementById('creation-step2');
@@ -1771,6 +2184,7 @@
       item.classList.add('selected'); selectedCat=item.getAttribute('data-cat'); 
       // Expose selected category globally for template suggestions
       window.selectedCat = selectedCat;
+      window.articleCategory = selectedCat;
       
       // Get the button fresh each time to avoid conflicts with smart chips code
       var toStep3Button = document.getElementById('creation-toStep3');
@@ -1790,7 +2204,8 @@
         });
       }
     });
-    toStep3 && (toStep3.onclick=function(){
+    // Preserve original Step 3 (editor) entry logic in a callable function
+    var __goToEditor = function(){
       step2.classList.remove('active');
       step3.classList.add('active');
       
@@ -1802,6 +2217,7 @@
       var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       // Expose plain title for autofill in templates
       window.articleTitleText = t || 'Untitled';
+      window.articleTitle = window.articleTitleText;
       
       // Update VE header title
       var veTitle = document.getElementById('veTitle');
@@ -1984,12 +2400,221 @@
       if (!isMobile()) {
         setTimeout(function(){ showGuide(); }, 50);
       }
+    };
+
+    // Step 2 Continue now leads to optional Sources step
+    toStep3 && (toStep3.onclick=function(){
+      step2.classList.remove('active');
+      if (sourcesStep) {
+        // Update the title placeholder with current article title for i18n replacement
+        try {
+          var h = sourcesStep.querySelector('h3');
+          if (h) {
+            var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+            var userTopic = (titleInput && titleInput.value ? titleInput.value.trim() : '');
+            var txt = __t('creation.sourcesStep.title', { Title: userTopic }, 'Do you have at least two independent, reliable sources for "{Title}"?');
+            if (txt && txt.indexOf('{Title}') !== -1) txt = txt.replace('{Title}', userTopic);
+            h.textContent = txt;
+          }
+        } catch(_){}
+        sourcesStep.classList.add('active');
+        setupSourcesStep();
+      } else {
+        __goToEditor();
+      }
     });
+
+    function setupSourcesStep(){
+      try {
+        var list = document.getElementById('creation-sourcesList');
+        if (!list) return;
+        // Wire URL inputs for live classification and preview updates
+        Array.from(list.querySelectorAll('.source-chip-row')).forEach(function(row){
+          var input = row.querySelector('input.source-url-input');
+          var removeBtn = row.querySelector('.remove-source');
+          var status = row.nextElementSibling;
+          if (!status || !status.classList || !status.classList.contains('source-status')) {
+            status = document.createElement('div');
+            status.className = 'source-status';
+            row.insertAdjacentElement('afterend', status);
+          }
+          if (input) {
+            input.addEventListener('input', function(){
+              var raw = input.value.trim();
+              var canon = canonicalizeUrl(raw);
+              if (!canon) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
+              var domain = extractDomain(canon);
+              if (!domain) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
+              // Show validating status (debounced)
+              showRowStatus(status, 'validating');
+              if (row.__timer) { clearTimeout(row.__timer); }
+              row.__timer = setTimeout(function(){
+                var res = classifySource(domain);
+                showRowStatus(status, res && res.reliable ? 'verified' : 'none');
+                updateNotabilityPreview();
+              }, 350);
+            });
+          }
+          if (removeBtn) {
+            removeBtn.addEventListener('click', function(){ row.remove(); updateNotabilityPreview(); });
+          }
+        });
+        // Add another field
+        if (addSourceChipBtn) {
+          addSourceChipBtn.onclick = function(){
+            var idx = list.querySelectorAll('.source-chip-row').length;
+            var grp = document.createElement('div');
+            grp.className = 'source-group';
+            var div = document.createElement('div');
+            div.className = 'source-chip-row';
+            div.setAttribute('data-index', String(idx));
+            div.innerHTML = '\n              <input type="url" class="source-url-input" placeholder="'+(((typeof window.__i18nGet==='function')?window.__i18nGet('creation.sourcesStep.urlPlaceholder',null,'https://example.com/article'):'https://example.com/article'))+'" aria-label="Source URL" />\n              <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>';
+            var status = document.createElement('div');
+            status.className = 'source-status';
+            status.setAttribute('aria-live','polite');
+            grp.appendChild(div);
+            grp.appendChild(status);
+            list.appendChild(grp);
+            // Bind new row
+            var input = div.querySelector('input.source-url-input');
+            var removeBtn = div.querySelector('.remove-source');
+            if (input) input.addEventListener('input', function(){
+              var raw = input.value.trim();
+              var canon = canonicalizeUrl(raw);
+              if (!canon) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
+              var domain = extractDomain(canon);
+              if (!domain) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
+              showRowStatus(status, 'validating');
+              if (div.__timer) { clearTimeout(div.__timer); }
+              div.__timer = setTimeout(function(){
+                var res = classifySource(domain);
+                showRowStatus(status, res && res.reliable ? 'verified' : 'none');
+                updateNotabilityPreview();
+              }, 350);
+            });
+            if (removeBtn) removeBtn.addEventListener('click', function(){ var g = div.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else div.remove(); updateNotabilityPreview(); });
+          };
+        }
+        updateNotabilityPreview();
+      } catch(_){}
+      // Navigation from sources step
+      if (sourcesBack) sourcesBack.onclick = function(){
+        if (sourcesStep) sourcesStep.classList.remove('active');
+        step2.classList.add('active');
+      };
+      function proceedToEditor(){
+        if (sourcesStep) sourcesStep.classList.remove('active');
+        __goToEditor();
+      }
+      if (sourcesSkip) sourcesSkip.onclick = proceedToEditor;
+      if (sourcesContinue) sourcesContinue.onclick = function(){
+        try {
+          // Persist sources from Q3 into window.creationSources
+          var arr = [];
+          var rows = document.querySelectorAll('#creation-sourcesList .source-chip-row');
+          rows.forEach(function(r){
+            var i = r.querySelector('input');
+            var raw = i ? (i.value||'').trim() : '';
+            if (!raw) return;
+            var url = canonicalizeUrl(raw) || raw;
+            var domain = extractDomain(url);
+            var res = classifySource(domain||'');
+            arr.push({ url: url, title: '', reliabilityHint: (res && res.reliable) ? (__i18nGet?__i18nGet('creation.sourcesStep.status.verified',null,'Likely reliable'):'Likely reliable') : '' });
+          });
+          if (arr.length) window.creationSources = arr;
+        } catch(_) {}
+        proceedToEditor();
+      };
+    }
+
+    function canonicalizeUrl(u){
+      try { if (!u) return ''; return new URL(u).href; } catch(_){
+        try {
+          if (u && u.indexOf(' ') === -1 && /\./.test(u) && !/^\w[\w.+-]*:/.test(u)) {
+            return new URL('https://' + u).href;
+          }
+        } catch(__){}
+        return '';
+      }
+    }
+    function getHost(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return ''; } }
+    function updateRowBadge(badge, res){
+      if (!badge) return;
+      if (!res) { badge.style.display='none'; badge.textContent=''; badge.className='sidebar-source-badge'; return; }
+      badge.style.display='inline-block';
+      var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+      if (res.reliable) { badge.className='sidebar-source-badge reliable'; badge.textContent = __t('creation.sourcesStep.badge.reliable', null, '✓ Reliable domain'); }
+      else { badge.className='sidebar-source-badge questionable'; badge.textContent = __t('creation.sourcesStep.badge.questionable', null, '⚠️ Possibly promotional'); }
+    }
+    function showRowStatus(container, state){
+      if (!container) return;
+      var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+      if (state === 'validating') {
+        container.style.display = 'block';
+        container.innerHTML = '<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>'+ __t('creation.sourcesStep.status.checking', null, 'Checking...') +'</span></span>';
+      } else if (state === 'verified') {
+        container.style.display = 'block';
+        container.innerHTML = '<span class="status-chip status-verified"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.629 13.233 4.4 10.004l1.414-1.414 1.815 1.815L14.186 3.85l1.414 1.414z"/></svg><span>'+ __t('creation.sourcesStep.status.verified', null, 'Verified source') +'</span></span>';
+      } else {
+        container.style.display = 'none';
+        container.textContent = '';
+      }
+    }
+    function updateNotabilityPreview(){
+      try {
+        var list = document.getElementById('creation-sourcesList');
+        var pill = document.getElementById('creation-sources-readiness');
+        var line = document.getElementById('creation-readiness-line');
+        var statusEl = document.getElementById('creation-readiness-status');
+        var countEl = document.getElementById('creation-readiness-count');
+        var hint = document.getElementById('creation-sources-hint');
+        if (!list || !line || !statusEl || !countEl || !hint) return;
+        var rows = Array.from(list.querySelectorAll('.source-chip-row'));
+        // Gather URLs (no auto-clearing to avoid disrupting typing)
+        var urls = [];
+        rows.forEach(function(r){
+          var i = r.querySelector('input');
+          var raw = i ? (i.value||'').trim() : '';
+          var canon = canonicalizeUrl(raw);
+          if (canon) urls.push(canon);
+        });
+        var hosts = Array.from(new Set(urls.map(getHost).filter(Boolean)));
+        var sources = urls.length;
+        var independent = hosts.length;
+        // Update readiness pill
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
+        // Always keep old pill hidden (use the new line instead)
+        if (pill) pill.classList.add('is-hidden');
+        if (sources === 0) {
+          line.classList.add('is-hidden');
+          hint.textContent = '';
+          return;
+        }
+        line.classList.remove('is-hidden');
+        var stateKey = (sources >= 2 && independent >= 2) ? 'ready' : (sources > 0 ? 'gettingThere' : 'notReady');
+        var statusText = __t('creation.sourcesStep.readiness.'+stateKey, null, (stateKey==='ready'?'Ready':(stateKey==='gettingThere'?'Getting there':'Not ready')));
+        statusEl.textContent = statusText;
+        statusEl.classList.remove('state-ready','state-mid','state-low');
+        statusEl.classList.add(stateKey==='ready'?'state-ready':(stateKey==='gettingThere'?'state-mid':'state-low'));
+        var srcLabel = __t('creation.sourcesStep.readiness.sourcesLabel', null, 'sources');
+        var indepLabel = __t('creation.sourcesStep.readiness.independentLabel', null, 'independent');
+        if (stateKey === 'notReady') {
+          countEl.textContent = '(0 ' + srcLabel + ')';
+        } else {
+          countEl.textContent = '(' + sources + ' ' + srcLabel + ' · ' + independent + ' ' + indepLabel + ')';
+        }
+        // Microcopy hint under CTA
+        hint.textContent = (stateKey==='ready')
+          ? __t('creation.sourcesStep.hint.good', null, 'Looks good. You can draft now and later publish to mainspace.')
+          : __t('creation.sourcesStep.hint.draft', null, 'We’ll start in Draft; add 2 independent sources to publish.');
+      } catch(_){}
+    }
 
     // Reference dialog
     var openBtn=null;
     var backdrop=document.getElementById('refBackdrop');
     var cancelBtn=document.getElementById('refCancel');
+    var closeBtn=document.getElementById('refCloseBtn');
     var insertBtn=document.getElementById('refInsert');
     var urlInput=document.getElementById('refUrl');
     var hint=document.getElementById('refHint');
@@ -1997,14 +2622,167 @@
     var verify=document.getElementById('verify');
     var refBadges=document.getElementById('refBadges');
     function classify(url){ try{ var h=new URL(url).hostname; if(/\.(gov|gov\.[a-z]{2})$/i.test(h)) return {label:'gov',cls:'good'}; if(/\.(edu|ac\.[a-z]{2})$/i.test(h)) return {label:'edu',cls:'good'}; if(/(reuters|apnews|bbc|nytimes|guardian|bloomberg|washingtonpost|ft\.com)/i.test(h)) return {label:'news',cls:'good'}; if(/(prnewswire|businesswire|globenewswire|newswire|press)/i.test(h)) return {label:'press release',cls:'warn'}; return {label:'unclassified',cls:''}; }catch(e){ return {label:'unclassified',cls:''}; } }
-    function openDialog(){ backdrop.style.display='block'; urlInput.focus(); }
-    function closeDialog(){ backdrop.style.display='none'; }
-    function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
+    var __refLastFocused = null;
+    var __refFocusHandler = null;
+    var __refEscHandler = null;
+    function __getFocusable(el){
+      try { return Array.from(el.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])')).filter(function(n){ return n.offsetParent !== null; }); } catch(_) { return []; }
+    }
+    function openDialog(){
+      __refLastFocused = document.activeElement;
+      backdrop.classList.add('show');
+      backdrop.setAttribute('aria-hidden','false');
+      try { buildRefSavedList(); updateRefPrimaryState(); } catch(_){}
+      // Trap focus within dialog
+      var dialogEl = backdrop.querySelector('.ref-dialog');
+      var f = __getFocusable(dialogEl);
+      var first = f[0], last = f[f.length - 1];
+      __refFocusHandler = function(e){
+        if (e.key !== 'Tab') return;
+        if (f.length === 0) { e.preventDefault(); return; }
+        if (e.shiftKey) {
+          if (document.activeElement === first || !dialogEl.contains(document.activeElement)) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      };
+      __refEscHandler = function(e){ if (e.key === 'Escape') { closeDialog(); } };
+      document.addEventListener('keydown', __refFocusHandler);
+      document.addEventListener('keydown', __refEscHandler);
+      // Initial focus
+      setTimeout(function(){ (urlInput && urlInput.focus && urlInput.focus()) || (first && first.focus && first.focus()); }, 0);
+    }
+    function getSavedSources(){ try { return Array.isArray(window.creationSources) ? window.creationSources : []; } catch(_) { return []; } }
+    function buildRefSavedList(){
+      var section = document.getElementById('refSavedSection');
+      var list = document.getElementById('refSavedList');
+      var sep = document.getElementById('refOr');
+      if (!section || !list || !sep) return;
+      list.innerHTML = '';
+      var saved = getSavedSources();
+      if (saved.length === 0) { section.style.display='none'; sep.style.display='none'; return; }
+      section.style.display='block'; sep.style.display='block';
+      saved.forEach(function(s){
+        var host = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return u; } })(s.url||'');
+        var label = (s.title && s.title.trim()) ? s.title.trim() : host;
+        var hint = (s.reliabilityHint || '').trim();
+        var row = document.createElement('label');
+        row.className = 'source-item';
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'ref-saved-cb';
+        cb.setAttribute('data-url', (s.url||'').replace(/"/g,'&quot;'));
+        cb.setAttribute('data-title', (s.title||'').replace(/"/g,'&quot;'));
+        var info = document.createElement('div');
+        info.className = 'source-info';
+        var urlEl = document.createElement('div');
+        urlEl.className = 'source-url';
+        urlEl.textContent = label;
+        var meta = document.createElement('div');
+        meta.className = 'source-meta';
+        meta.textContent = hint;
+        info.appendChild(urlEl);
+        if (hint) info.appendChild(meta);
+        row.appendChild(cb);
+        row.appendChild(info);
+        list.appendChild(row);
+      });
+      list.addEventListener('change', updateRefPrimaryState, { once: true });
+    }
+    function updateRefPrimaryState(){
+      try {
+        var cbs = document.querySelectorAll('#refSavedList .ref-saved-cb');
+        var anyChecked = Array.from(cbs).some(function(cb){ return cb.checked; });
+        var urlVal = (document.getElementById('refUrl')?.value||'').trim();
+        var btn = document.getElementById('refInsert');
+        var n = Array.from(cbs).filter(function(cb){ return cb.checked; }).length;
+        if (btn) {
+          btn.disabled = !(anyChecked || urlVal.length > 0);
+          btn.textContent = anyChecked ? ('Insert cite ('+ n +')') : 'Insert cite';
+        }
+      } catch(_){}
+    }
+    document.getElementById('refUrl').addEventListener('input', updateRefPrimaryState);
+    document.getElementById('refSavedList')?.addEventListener('change', updateRefPrimaryState);
+    function closeDialog(){
+      backdrop.classList.remove('show');
+      backdrop.setAttribute('aria-hidden','true');
+      if (__refFocusHandler) { document.removeEventListener('keydown', __refFocusHandler); __refFocusHandler = null; }
+      if (__refEscHandler) { document.removeEventListener('keydown', __refEscHandler); __refEscHandler = null; }
+      try { if (__refLastFocused && __refLastFocused.focus) { __refLastFocused.focus(); } } catch(_){}
+    }
+    function bindRef(){ openBtn=document.getElementById("openRef"); if(openBtn){ openBtn.onclick=openDialog; }} bindRef(); cancelBtn.onclick=closeDialog; if (closeBtn) closeBtn.onclick=closeDialog; backdrop.addEventListener('click',function(e){ if(e.target===backdrop) closeDialog(); });
     // Delegate: clicking on "Add source" reminder or reference chip opens reference dialog and prepares replacement
     editor.addEventListener('click', function(e){ var target=e.target; var sr = target && (target.closest && (target.closest('.source-reminder') || target.closest('.ref-chip'))); if(sr){ lastSourceReminderClicked = sr; // place caret after it
         var r=document.createRange(); var s=window.getSelection(); r.setStartAfter(sr); r.collapse(true); s.removeAllRanges(); s.addRange(r); openDialog(); }});
-    urlInput.addEventListener('input',function(){ var c=classify(urlInput.value.trim()); hint.textContent=c.label; hint.className='badge '+(c.cls||''); });
-    insertBtn.onclick=function(){ var url=urlInput.value.trim(); if(!url) return; var titleInput=document.getElementById('refTitleInput'); var title=titleInput && titleInput.value ? titleInput.value.trim() : ''; if(document.activeElement!==editor) editor.focus(); insertReferenceLink(url, title); var c=classify(url); if(refBadges){ refBadges.innerHTML='<span class="badge '+(c.cls||'')+'">'+c.label+'</span>'; } closeDialog(); };
+    // Modern URL status: show spinner then likely reliable/unknown
+    var refUrlStatus = document.getElementById('refUrlStatus');
+    var __refUrlTimer = null;
+    urlInput.addEventListener('input',function(){
+      var raw = urlInput.value.trim();
+      if (!raw) { if (refUrlStatus){ refUrlStatus.innerHTML=''; } updateRefPrimaryState(); return; }
+      if (refUrlStatus) refUrlStatus.innerHTML = '<span class="ref-url-spinner" aria-hidden="true"></span><span>'+((window.__i18nGet&&__i18nGet('creation.sourcesStep.status.checking',null,'Checking...'))||'Checking...')+'</span>';
+      if (__refUrlTimer) clearTimeout(__refUrlTimer);
+      __refUrlTimer = setTimeout(function(){
+        try {
+          var url = (function(v){ try { return new URL(v).href; } catch(_){ try { return new URL('https://'+v).href; } catch(__){ return ''; } } })(raw);
+          if (!url) { if (refUrlStatus){ refUrlStatus.innerHTML=''; } return; }
+          var res = classifySource(extractDomain(url));
+          if (refUrlStatus) {
+            if (res && res.reliable) {
+              refUrlStatus.innerHTML = '<svg width="12" height="12" viewBox="0 0 20 20" fill="#166534" aria-hidden="true"><path d="M7.629 13.233 4.4 10.004l1.414-1.414 1.815 1.815L14.186 3.85l1.414 1.414z"/></svg><span>'+((window.__i18nGet&&__i18nGet('creation.sourcesStep.status.verified',null,'Likely reliable'))||'Likely reliable')+'</span>';
+            } else {
+              refUrlStatus.innerHTML = '';
+            }
+          }
+        } catch(_) { if (refUrlStatus){ refUrlStatus.innerHTML=''; } }
+        updateRefPrimaryState();
+      }, 350);
+    });
+    insertBtn.onclick=function(){
+      if(document.activeElement!==editor) editor.focus();
+      var selected = Array.from(document.querySelectorAll('#refSavedList .ref-saved-cb:checked'));
+      var urlField = document.getElementById('refUrl');
+      var titleField = document.getElementById('refTitleInput');
+      var count = 0;
+      var insertedSupNodes = [];
+      var prevSup = window.__suppressCiteToast; window.__suppressCiteToast = true;
+      try {
+        // Build a single task list so we can insert all citations adjacently
+        var tasks = [];
+        if (selected.length > 0) {
+          selected.forEach(function(cb){ var u=cb.getAttribute('data-url'); var t=cb.getAttribute('data-title')||''; if (u) tasks.push({url:u, title:t}); });
+        }
+        var url=urlField.value.trim();
+        var title=(titleField && titleField.value? titleField.value.trim(): '');
+        if (url) { tasks.push({url:url, title:title}); }
+
+        for (var i=0; i<tasks.length; i++) {
+          try { if (insertedSupNodes.length > 0) { placeCaretAfterNode(insertedSupNodes[insertedSupNodes.length-1]); } } catch(_) {}
+          var s = insertReferenceLink(tasks[i].url, tasks[i].title);
+          if (s) insertedSupNodes.push(s);
+          count++;
+        }
+        try {
+          var arr = getSavedSources().slice();
+          if (url) {
+            var domain = extractDomain(url);
+            var res = classifySource(domain);
+            arr.push({ url: url, title: title, reliabilityHint: (res && res.reliable) ? (__i18nGet?__i18nGet('creation.sourcesStep.status.verified',null,'Likely reliable'):'Likely reliable') : '' });
+          }
+          window.creationSources = arr;
+        } catch(_){}
+      } finally { window.__suppressCiteToast = prevSup; }
+      if (count > 0) { showUndoToast('Inserted '+ count +' citation'+(count>1?'s':''), function(){}, editor); }
+      // One-liner hook for external helper
+      try {
+        var selectedUrls = [];
+        selected.forEach(function(cb){ var u = cb.getAttribute('data-url'); if (u) selectedUrls.push(u); });
+        if (url) selectedUrls.push(url);
+        if (window.__onInsertCite) window.__onInsertCite(selectedUrls);
+      } catch(_) {}
+      closeDialog();
+    };
 
     // Guide Me functionality - Desktop Sidebar & Mobile Modal
     // Sidebar elements removed
@@ -2522,11 +3300,16 @@
       var url = sourceUrl.value.trim();
       if (!url) return;
       
-      // Show verification section
+      // If user picked from saved sources, skip verification and go straight to draft
+      if (window.__sourceSelectedFromSaved) {
+        try { window.__suppressSourceNotice = true; } catch(_) {}
+        generateDraft();
+        return;
+      }
+      
+      // Otherwise run the verification steps
       document.getElementById('sourceVerification').style.display = 'block';
       checkSourceBtn.style.display = 'none';
-      
-      // Simulate verification steps
       performVerificationSteps(url);
     }
     
@@ -2547,10 +3330,12 @@
             stepElement.classList.add('completed');
             
             // Update text based on step
+            var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
             if (currentStep === 0) {
-              text.textContent = 'Domain verified: ' + extractDomain(url);
+              var dom = extractDomain(url);
+              text.textContent = __t('sourceModal.steps.domainVerified', { domain: dom }, 'Domain verified: {domain}').replace('{domain}', dom);
             } else if (currentStep === 1) {
-              text.textContent = 'Source reliability checked';
+              text.textContent = __t('sourceModal.steps.reliabilityChecked', null, 'Source reliability checked');
             }
             
             currentStep++;
@@ -2564,6 +3349,33 @@
       }
       
       processStep();
+    }
+
+    // Build saved sources list for the Source modal
+    function buildSourceSavedList(){
+      try {
+        var section = document.getElementById('sourceSavedSection');
+        var list = document.getElementById('sourceSavedList');
+        if (!section || !list) return;
+        list.innerHTML = '';
+        var saved = (function(){ try { return Array.isArray(window.creationSources) ? window.creationSources : (Array.isArray(window.__creationSources) ? window.__creationSources : []); } catch(_) { return []; } })();
+        if (!saved || saved.length === 0) { section.style.display = 'none'; return; }
+        section.style.display = 'block';
+        saved.forEach(function(s){
+          var url = s.url || '';
+          var host = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return u; } })(url);
+          var label = (s.title && s.title.trim()) ? s.title.trim() : host;
+          var hint = (s.reliabilityHint || '').trim();
+          var row = document.createElement('div');
+          row.className = 'source-item';
+          row.setAttribute('data-url', url.replace(/"/g,'&quot;'));
+          row.innerHTML = '<div class="source-info">'
+            + '<div class="source-url">'+ label +'</div>'
+            + (hint ? '<div class="source-meta">'+ hint +'</div>' : '')
+            + '</div>';
+          list.appendChild(row);
+        });
+      } catch(_) {}
     }
     
     // Show source verification result
@@ -2580,10 +3392,12 @@
         badgeDiv.className = 'source-badge reliable';
         badgeDiv.textContent = '✓ ' + sourceType.label;
         noteDiv.textContent = sourceType.reliability;
+        try { window.__suppressSourceNotice = true; } catch(_) {}
       } else {
         badgeDiv.className = 'source-badge questionable';
         badgeDiv.textContent = '⚠️ ' + sourceType.label;
         noteDiv.textContent = sourceType.warning;
+        try { window.__suppressSourceNotice = false; } catch(_) {}
       }
       
       resultDiv.style.display = 'block';
@@ -2759,7 +3573,7 @@
       
       // Disable button and show loading
       checkBtn.disabled = true;
-      checkBtn.textContent = 'Checking...';
+      try { var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; }; checkBtn.textContent = __t('creation.sourcesStep.status.checking', null, 'Checking...'); } catch(_) { checkBtn.textContent = 'Checking...'; }
       
       // Show verification steps
       performSidebarVerificationSteps(sourceUrl.value.trim());
@@ -2768,9 +3582,10 @@
     // Perform verification steps in sidebar
     function performSidebarVerificationSteps(url) {
       var stepsDiv = document.getElementById('sidebarVerificationSteps');
+      var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
       var steps = [
-        'Checking domain...',
-        'Verifying source reliability...'
+        __t('sourceModal.sidebar.steps.checkingDomain', null, 'Checking domain...'),
+        __t('sourceModal.sidebar.steps.verifyingReliability', null, 'Verifying source reliability...')
       ];
       
       var stepsHTML = '';
@@ -2803,9 +3618,10 @@
             
             // Update text based on step
             if (currentStep === 0) {
-              text.textContent = 'Domain verified: ' + extractDomain(url);
+              var dom = extractDomain(url);
+              text.textContent = __t('sourceModal.steps.domainVerified', { domain: dom }, 'Domain verified: {domain}').replace('{domain}', dom);
             } else if (currentStep === 1) {
-              text.textContent = 'Source reliability checked';
+              text.textContent = __t('sourceModal.steps.reliabilityChecked', null, 'Source reliability checked');
             }
             
             currentStep++;
@@ -2841,7 +3657,7 @@
       }
       
       resultHTML += '<div class="sidebar-action-buttons">';
-      resultHTML += '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Generate draft</button>';
+      resultHTML += '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">'+ __t('sourceModal.actions.generate', null, 'Create draft from source') +'</button>';
       resultHTML += '</div>';
       
       resultDiv.innerHTML = resultHTML;
@@ -2849,7 +3665,10 @@
       
       // Re-enable check button
       checkBtn.disabled = false;
-      checkBtn.textContent = 'Check source';
+      try {
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
+        checkBtn.textContent = __t('sourceModal.actions.check', null, 'Check source');
+      } catch(_) { checkBtn.textContent = 'Check source'; }
       
       // Bind generate button
       var generateBtn = document.getElementById('sidebarGenerateBtn');
@@ -2935,10 +3754,10 @@
         var sectionTitle = 'Section title';
         
         // Create realistic Wikipedia content with references
-        var content = 'This is where the content from the verified source would appear in the article. ';
-        content += 'The information extracted from ' + domain + ' provides additional context and details that support the main article topic.<sup style="color: #0645ad;">[1]</sup> ';
+        var content = 'This is where the content from the source would appear in the article. ';
+        content += 'The information extracted from ' + domain + ' provides additional context and details that support the main article topic. ';
         content += 'Key facts and data points from the source can be integrated here to enhance the encyclopedic coverage. ';
-        content += 'This demonstrates how external sources contribute to comprehensive article development.<sup style="color: #0645ad;">[2]</sup>';
+        content += 'This demonstrates how external sources contribute to comprehensive article development.';
         
         // Get citation from original draft
         var lines = draftText.split('\n');
@@ -2964,50 +3783,37 @@
         sectionHTML += '">' + sectionTitle + '</h2>';
         
         // Add content paragraph with proper styling
-        sectionHTML += '<p>' + content + '</p>';
+        var pid = 'p_' + Date.now();
+        sectionHTML += '<p id="'+pid+'">' + content + '</p>';
         
         // Add minimal draft notice (non-editable)
-        sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
-        
-        // Check if References section already exists
-        var referencesExists = currentContent.includes('<h2') && currentContent.includes('id="References"');
-        
-        if (!referencesExists) {
-          // Add non-editable References section (wrapped)
-          sectionHTML += '<div class="references-block" contenteditable="false">';
-          sectionHTML += '<h2 id="References" style="';
-          sectionHTML += 'font-family: Georgia, serif; ';
-          sectionHTML += 'font-size: 1.5em; ';
-          sectionHTML += 'font-weight: normal; ';
-          sectionHTML += 'margin: 2em 0 0.25em 0; ';
-          sectionHTML += 'padding: 0; ';
-          sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
-          sectionHTML += 'padding-bottom: 0.25em;';
-          sectionHTML += '">References</h2>';
-          // Citation content
-          sectionHTML += '<div style="margin: 0.75em 0; font-size: 0.9em;">';
-          if (citation) {
-            sectionHTML += '<p style="margin: 0.25em 0;">1. ' + citation.substring(4) + '</p>';
-            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
-          } else {
-            sectionHTML += '<p style="margin: 0.25em 0;">1. "Context and Development". ' + domain.charAt(0).toUpperCase() + domain.slice(1) + '. Retrieved ' + new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '.</p>';
-            sectionHTML += '<p style="margin: 0.25em 0;">2. Additional sources to be added...</p>';
-          }
-          sectionHTML += '</div>';
-          sectionHTML += '</div>';
+        if (!window.__suppressSourceNotice) {
+          sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
         }
         
-      if (hasContent) {
-        editor.innerHTML = currentContent + sectionHTML;
-      } else {
-        editor.innerHTML = sectionHTML;
-      }
+        // Check if References section already exists
+        // Do not build a custom references block. Use the unified references section instead.
+        
+      if (hasContent) { editor.innerHTML = currentContent + sectionHTML; } else { editor.innerHTML = sectionHTML; }
+
+      // Insert a proper citation at the end of the new paragraph and rebuild references
+      try {
+        var p = document.getElementById(pid);
+        if (p) {
+          placeCaretAtEnd(p);
+          var url = (document.getElementById('sidebarSourceUrl') || document.getElementById('sourceUrl'));
+          var u = url && url.value ? url.value.trim() : '';
+          if (u && typeof insertReferenceLink === 'function') {
+            insertReferenceLink(u, '');
+          }
+        }
+      } catch(_) {}
 
       // Clean up any extra BR tags or empty elements
       cleanupExtraBreaks();
 
-      // Add event listener to hide source notice when user starts editing
-      addSourceNoticeHideListener();
+      // Add event listener to hide source notice when user starts editing (only if present)
+      if (!window.__suppressSourceNotice) addSourceNoticeHideListener();
 
       // Ensure publish becomes available even without typing
       try { enablePublishUI(); } catch(_) {}
@@ -3089,6 +3895,12 @@
       if (stepsDiv) stepsDiv.style.display = 'none';
       if (resultDiv) resultDiv.style.display = 'none';
       if (previewDiv) previewDiv.style.display = 'none';
+
+      // Reset saved-selection flags
+      try { window.__sourceSelectedFromSaved = false; window.__suppressSourceNotice = false; } catch(_) {}
+
+      // Build saved sources list (if any)
+      try { if (typeof buildSourceSavedList === 'function') buildSourceSavedList(); } catch(_) {}
       
       backdrop.classList.add('open');
       backdrop.setAttribute('aria-hidden', 'false');
@@ -3154,6 +3966,28 @@
       if (insertBtn) {
         insertBtn.addEventListener('click', insertDraft);
       }
+
+      // Saved sources interaction (populate URL from prior sources)
+      try {
+        var list = document.getElementById('sourceSavedList');
+        if (list) {
+          list.addEventListener('click', function(e){
+            var row = e.target && e.target.closest ? e.target.closest('.source-item') : null;
+            if (!row) return;
+            var u = row.getAttribute('data-url') || '';
+            if (u && sourceUrl) {
+              sourceUrl.value = u;
+              // Visual selection
+              Array.from(list.querySelectorAll('.source-item.selected')).forEach(function(n){ n.classList.remove('selected'); });
+              row.classList.add('selected');
+              // Focus Check button to maintain existing interaction flow
+              if (checkBtn) { try { checkBtn.focus(); } catch(_) {} }
+              // Mark that user chose a saved/known source
+              try { window.__sourceSelectedFromSaved = true; } catch(_) {}
+            }
+          });
+        }
+      } catch(_){}
     }
 
     // Bring back Suggestions via toolbar buttons
@@ -5273,7 +6107,7 @@
       });
       // Append a Reference chip to encourage sourcing
       var pid = 'introTpl-'+Date.now();
-      html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span></p>';
+      html = '<p id="'+pid+'">' + html + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 002-2V3a 2 2 0 00-2-2z"></path></svg></span>Add citation</span></p>';
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
         lead.outerHTML = html;
@@ -5334,7 +6168,7 @@
       });
       var pid = 'introTpl-' + Date.now();
       var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
-      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
+      var html = '<p id="'+pid+'">' + htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.addCitation', null, 'Add citation') +'</span></p>';
       suppressChipPositioning = true;
       var lead = document.getElementById('leadPlaceholder');
       if (lead && lead.parentNode === editor) {
@@ -5836,7 +6670,7 @@
           return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
         });
           var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
-          return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
+          return '<p>'+ htmlBody + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.addCitation', null, 'Add citation') +'</span></p>';
       }
       // Fallback: use suggestionsData include list to create chip prompts
       try{
@@ -5858,7 +6692,7 @@
         var prompt = chips.length ? chips.join(' ') : __t('editor.sectionPlaceholder',{ section: sectionName.toLowerCase() }, 'Click here to start writing about {section}.');
         if (chips.length) {
           var __tR = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f||k; };
-          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.reference','Reference') +'</span></p>';
+          return '<p>'+ prompt + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a 2 2 0 00-2 2v14a 2 2 0 002 2h10a 2 2 0 00-2-2z"></path></svg></span>'+ __tR('chips.addCitation', null, 'Add citation') +'</span></p>';
         } else {
           return '<p style="margin:0.75em 0; color:#72777d; font-style:italic;">'+ escapeHtml(prompt) +'</p>';
         }
@@ -6072,7 +6906,7 @@
           tpl = tpl.replace(/\{\{ARTICLE\}\}/g, 'a');
           var inner = tpl.replace(/\{\{([^}]+)\}\}/g, function(_, key){
             return '<span class="template-placeholder" data-placeholder="'+key+'" contenteditable="false" role="button" tabindex="0">'+prettifyPlaceholder(key)+'</span>';
-          }) + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Reference</span>';
+          }) + ' <span class="ref-chip action-chip" contenteditable="false" role="button" tabindex="0"><span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m15 10-2.78-2.78L9.44 10V1H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2z"></path></svg></span>Add citation</span>';
           ;
           var prev = p.innerHTML;
           // Normalize paragraph: remove placeholder styling/flags and any ZWSP remnants
