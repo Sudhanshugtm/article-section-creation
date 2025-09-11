@@ -2151,10 +2151,10 @@
     function getSectionTemplate(sectionName, category) {
       var templates = {
         'person': {
-          'Early life': '[Person\'s Name] was born on [Date] in [Location]. Their parents were [Parents\' details]. They attended [Education details] where they [notable achievements or experiences].',
-          'Career': '[Person\'s Name] began their career in [Year] as [Initial position]. They later became known for [Major achievements]. Their notable works include [List key works or contributions].',
-          'Background': '[Person\'s Name] comes from [Background context]. Their early experiences with [relevant field] began when [context]. This led to their later work in [area of expertise].',
-          'Overview': '[Person\'s Name] is primarily known for [main achievements]. They have [quantifiable accomplishments] and are recognized for [specific contributions to their field].'
+          'Early life': '[Person\\'s Name] was born on [Date] in [Location]. Their parents were [Parents\\' details]. They attended [Education details] where they [notable achievements or experiences].',
+          'Career': '[Person\\'s Name] began their career in [Year] as [Initial position]. They later became known for [Major achievements]. Their notable works include [List key works or contributions].',
+          'Background': '[Person\\'s Name] comes from [Background context]. Their early experiences with [relevant field] began when [context]. This led to their later work in [area of expertise].',
+          'Overview': '[Person\\'s Name] is primarily known for [main achievements]. They have [quantifiable accomplishments] and are recognized for [specific contributions to their field].'
         },
         'place': {
           'Geography': '[Place Name] is located at [coordinates/description] in [broader geographic area]. The terrain is characterized by [physical features]. The climate is [climate description] with [seasonal patterns].',
@@ -2187,7 +2187,7 @@
     // Get introduction template based on category
     function getIntroductionTemplate(category) {
       var templates = {
-        'person': '[Person\'s Name] was born on [Date] and is known for [notable achievements]. They are [brief description of what makes them notable].',
+        'person': '[Person\\'s Name] was born on [Date] and is known for [notable achievements]. They are [brief description of what makes them notable].',
         'place': '[Place Name] is [type of location] located in [geographic area]. It has a population of [number] and is known for [key features or significance].',
         'species': 'The [common name] ([Scientific name]) is a [type of organism] that [key characteristics]. It is [distinctive features or behaviors].',
         'organization': '[Organization Name] is a [type of organization] founded in [year] by [founder]. It [main purpose or mission].',
@@ -2514,7 +2514,7 @@
           resultDiv.style.background = '#fef6e7';
           resultDiv.style.color = '#ac6600';
           resultDiv.style.border = '1px solid #fc3';
-          resultDiv.innerHTML = '⚠️ <strong>Good start!</strong> Consider strengthening the areas you\'re unsure about, or try draft space first.';
+          resultDiv.innerHTML = '⚠️ <strong>Good start!</strong> Consider strengthening the areas you\\'re unsure about, or try draft space first.';
         } else {
           resultDiv.style.background = '#fee7e6';
           resultDiv.style.color = '#d33';
