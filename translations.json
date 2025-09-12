@@ -815,35 +815,3 @@
     }
   }
 }
-    "sourcesStep": {
-      "title": "Do you have at least two independent, reliable sources for \"{Title}\"?",
-      "subtext": "Strong sources help articles survive review and deletion.",
-      "urlPlaceholder": "https://example.com/article",
-      "badge": {
-        "reliable": "✓ Reliable domain",
-        "questionable": "⚠️ Possibly promotional",
-        "unknown": "ℹ️ Unknown source"
-      },
-      "readiness": {
-        "label": "Readiness:",
-        "notReady": "Not ready",
-        "gettingThere": "Getting there",
-        "ready": "Ready",
-        "countSuffix": "verified sources",
-        "sourcesLabel": "sources",
-        "independentLabel": "independent"
-      },
-      "actions": {
-        "back": "Back",
-        "skip": "Skip for now",
-        "continue": "Continue"
-      },
-      "status": {
-        "checking": "Checking...",
-        "verified": "Verified source"
-      },
-      "hint": {
-        "good": "Looks good. You can draft now and later publish to mainspace.",
-        "draft": "We’ll start in Draft; add 2 independent sources to publish."
-      }
-    },
