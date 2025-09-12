@@ -184,7 +184,7 @@ body {
 }
 
 .infobox-header {
-  background: #ccccff;
+  background: #eaecf0;
   padding: 8px 12px;
   border-bottom: 1px solid #a2a9b1;
   text-align: center;
@@ -386,6 +386,20 @@ body {
 
 .external-link:hover {
   text-decoration: underline;
+}
+
+/* Default article content links */
+.article-content a {
+  color: #0645ad;
+  text-decoration: none;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+.article-content a:visited {
+  color: #0b0080;
 }
 
 /* ===== VE Interface (hidden by default) ===== */
