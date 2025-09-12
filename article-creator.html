@@ -3268,11 +3268,18 @@
           resultHTML += '<div class="sidebar-source-badge questionable">⚠️ ' + sourceType.label + '</div>';
           resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.warning||'') + '</p>';
         }
+        resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
+          + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
+          + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+          + '</div>';
         resultDiv.innerHTML = resultHTML;
         resultDiv.style.display = 'block';
         try { window.__suppressSourceNotice = true; } catch(_) {}
-        // Immediately generate draft
-        generateSidebarDraft(url);
+        // Bind actions
+        var gbtn = document.getElementById('sidebarGenerateBtn');
+        var cbtn = document.getElementById('sidebarCancelBtn');
+        if (gbtn) gbtn.addEventListener('click', function(){ generateSidebarDraft(url); });
+        if (cbtn) cbtn.addEventListener('click', function(){ resetSidebarSource(); });
         // Reset selection flags
         try { window.__sourceSelectedFromSaved = false; window.__sourceSelectedFromSavedReliable = false; } catch(_) {}
         return;
@@ -3359,6 +3366,11 @@
         resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.warning + '</p>';
       }
       
+      // Add explicit next actions
+      resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
+        + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
+        + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+        + '</div>';
       resultDiv.innerHTML = resultHTML;
       resultDiv.style.display = 'block';
       
@@ -3368,21 +3380,38 @@
       checkBtn.disabled = false;
       checkBtn.textContent = 'Check source';
       
-      // Automatically generate and show draft content (skip the Generate Draft button)
-      generateSidebarDraft(url);
+      // Bind actions
+      var gbtn = document.getElementById('sidebarGenerateBtn');
+      var cbtn = document.getElementById('sidebarCancelBtn');
+      if (gbtn) gbtn.addEventListener('click', function(){ generateSidebarDraft(url); });
+      if (cbtn) cbtn.addEventListener('click', function(){ resetSidebarSource(); });
     }
 
     // Persist and display saved sources in sidebar
+    function getTopicKey() {
+      try {
+        var t = '';
+        var veTitle = document.getElementById('veTitle');
+        if (veTitle && veTitle.textContent.trim()) t = veTitle.textContent.trim();
+        if (!t) {
+          var ti = document.getElementById('title');
+          if (ti && ti.value.trim()) t = ti.value.trim();
+        }
+        t = t || 'untitled';
+        return 'articleCreatorSavedSources:' + t.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9_-]/g,'');
+      } catch(_) { return 'articleCreatorSavedSources:untitled'; }
+    }
     function getSavedSourcesArray() {
       try {
-        var raw = localStorage.getItem('articleCreatorSavedSources');
+        var key = getTopicKey();
+        var raw = sessionStorage.getItem(key);
         var arr = raw ? JSON.parse(raw) : [];
         if (!Array.isArray(arr)) return [];
         return arr;
       } catch(_) { return []; }
     }
     function saveSavedSourcesArray(arr) {
-      try { localStorage.setItem('articleCreatorSavedSources', JSON.stringify(arr.slice(0, 20))); } catch(_) {}
+      try { sessionStorage.setItem(getTopicKey(), JSON.stringify(arr.slice(0, 20))); } catch(_) {}
     }
     function normalizeUrl(u){ try { return new URL(u).href; } catch(_){ try { return new URL('https://'+u).href; } catch(__){ return (u||'').trim(); } } }
     function addToSaved(arr, url, hint, origin) {
@@ -3417,6 +3446,10 @@
       if (!arr || arr.length === 0) { section.style.display = 'none'; return; }
       section.style.display = 'block';
       var html = '';
+      html += '<div style="display:flex; align-items:center; justify-content:space-between; margin: 0 0 6px 0;">';
+      html += '  <span style="font-size: 12px; color:#72777d;">Saved for this article</span>';
+      html += '  <button id="sidebarClearSaved" class="sidebar-action-btn" style="font-size:12px;">Clear</button>';
+      html += '</div>';
       arr.slice(0, 10).forEach(function(s, idx){
         var url = s.url || '';
         var host = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return u; } })(url);
@@ -3424,12 +3457,15 @@
         var hint = (s.reliabilityHint||'').trim();
         var reliable = /Likely\s+reliable|Verified\s*source/i.test(hint);
         var origin = (s.origin||'').toString();
-        html += '<div class="source-item" data-url="'+ (url.replace(/"/g,'&quot;')) +'" data-reliable="'+(reliable?'true':'false')+'" data-origin="'+origin+'" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border:1px solid #eaecf0; border-radius:6px; margin-bottom:6px; cursor:pointer;">';
+        html += '<div class="source-item" data-url="'+ (url.replace(/"/g,'&quot;')) +'" data-reliable="'+(reliable?'true':'false')+'" data-origin="'+origin+'" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border:1px solid #eaecf0; border-radius:6px; margin-bottom:6px;">';
         html += '  <div style="min-width:0;">';
         html += '    <div style="font-size:13px; font-weight:500; color:#202122; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ label +'</div>';
         html += '    <div style="font-size:12px; color:#72777d; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ host + (hint? ' · '+ hint : '') +'</div>';
         html += '  </div>';
-        html += '  <button class="sidebar-action-btn" data-action="use" style="white-space:nowrap;">Use</button>';
+        html += '  <div style="display:flex; gap:6px;">';
+        html += '    <button class="sidebar-action-btn" data-action="use" style="white-space:nowrap;">Use</button>';
+        html += '    <button class="sidebar-action-btn" data-action="remove" title="Remove" aria-label="Remove">×</button>';
+        html += '  </div>';
         html += '</div>';
       });
       list.innerHTML = html;
@@ -3446,14 +3482,15 @@
         });
       });
       Array.from(list.querySelectorAll('button[data-action="use"]')).forEach(function(btn){
-        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; }
-          try {
-            window.__sourceSelectedFromSaved = true;
-            window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable') === 'true') && (row.getAttribute('data-origin') === 'q3');
-          } catch(_) {}
-          var check=document.getElementById('sidebarCheckBtn'); if (check){ check.click(); }
+        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; input.focus(); }
+          try { window.__sourceSelectedFromSaved = true; window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable')==='true') && (row.getAttribute('data-origin')==='q3'); } catch(_) {}
         });
       });
+      Array.from(list.querySelectorAll('button[data-action="remove"]').forEach(function(btn){
+        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url = row.getAttribute('data-url')||''; var arr = mergeCreationSources(getSavedSourcesArray()); arr = arr.filter(function(s){ return s && s.url !== url; }); saveSavedSourcesArray(arr); buildSidebarSavedList(); });
+      });
+      var clearBtn = document.getElementById('sidebarClearSaved');
+      if (clearBtn) clearBtn.addEventListener('click', function(){ saveSavedSourcesArray([]); buildSidebarSavedList(); });
     }
 
     // Generate draft in sidebar
