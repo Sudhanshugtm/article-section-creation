@@ -3486,7 +3486,7 @@
           try { window.__sourceSelectedFromSaved = true; window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable')==='true') && (row.getAttribute('data-origin')==='q3'); } catch(_) {}
         });
       });
-      Array.from(list.querySelectorAll('button[data-action="remove"]').forEach(function(btn){
+      Array.from(list.querySelectorAll('button[data-action="remove"]')).forEach(function(btn){
         btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url = row.getAttribute('data-url')||''; var arr = mergeCreationSources(getSavedSourcesArray()); arr = arr.filter(function(s){ return s && s.url !== url; }); saveSavedSourcesArray(arr); buildSidebarSavedList(); });
       });
       var clearBtn = document.getElementById('sidebarClearSaved');
