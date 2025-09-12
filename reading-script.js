@@ -4,6 +4,51 @@
 let quill = null;
 let isEditMode = false;
 
+// Extract MediaWiki-style content from HTML for Indonesian articles
+function extractContentFromHTML(articleBody) {
+  let content = '';
+  
+  // Process each element in the article body
+  const elements = articleBody.children;
+  
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    
+    if (element.tagName === 'P') {
+      // Regular paragraphs
+      content += element.textContent + '\n\n';
+    } else if (element.tagName === 'SECTION' && element.classList.contains('article-section')) {
+      // Section with title
+      const title = element.querySelector('.article-section__title');
+      const sectionContent = element.querySelector('.article-section__content');
+      
+      if (title) {
+        content += '== ' + title.textContent + ' ==\n';
+      }
+      
+      if (sectionContent) {
+        // Process paragraphs within the section
+        const paragraphs = sectionContent.querySelectorAll('p');
+        paragraphs.forEach(p => {
+          content += p.textContent + '\n\n';
+        });
+        
+        // Process lists within the section
+        const lists = sectionContent.querySelectorAll('ul');
+        lists.forEach(list => {
+          const items = list.querySelectorAll('li');
+          items.forEach(li => {
+            content += '* ' + li.textContent + '\n';
+          });
+          content += '\n';
+        });
+      }
+    }
+  }
+  
+  return content.trim();
+}
+
 // Default article data - will be overridden by specific article pages
 const defaultArticle = {
   id: 'katie-bouman',
@@ -440,8 +485,26 @@ function initializeQuillEditor() {
 function loadContentIntoEditor() {
   if (!quill) return;
   
-  // Use global articleData if available, otherwise fall back to defaultArticle
-  const currentArticle = (typeof articleData !== 'undefined') ? articleData : defaultArticle;
+  let currentArticle;
+  
+  // Check if we have global articleData (English articles)
+  if (typeof articleData !== 'undefined') {
+    currentArticle = articleData;
+  } else {
+    // For Indonesian articles, extract content from the page HTML
+    const articleBody = document.getElementById('articleBody');
+    if (articleBody) {
+      // Create a fake article object with content from the HTML
+      currentArticle = {
+        id: document.querySelector('meta[name="article-id"]')?.content || 'unknown',
+        title: document.querySelector('h1.firstHeading')?.textContent || 'Unknown',
+        content: extractContentFromHTML(articleBody)
+      };
+    } else {
+      // Ultimate fallback to default article
+      currentArticle = defaultArticle;
+    }
+  }
   
   // Convert the article content to a simplified Quill format
   const content = convertArticleToQuillFormat(currentArticle);
