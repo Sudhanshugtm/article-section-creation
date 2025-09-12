@@ -1569,6 +1569,45 @@
         content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Insert') + '</span>';
         content += '</button>';
       });
+      // Sister projects (compact) under suggested sections
+      (function(){
+        try {
+          var tEl = document.getElementById('title');
+          var at = (tEl && tEl.value ? tEl.value.trim() : '');
+          if (!at) { return; }
+          var sp = (typeof getSisterProjectData === 'function') ? getSisterProjectData(at) : null;
+          var items = [];
+          if (sp && Array.isArray(sp.facts)) {
+            for (var i=0; i<sp.facts.length && items.length<2; i++) {
+              var f = sp.facts[i];
+              items.push({ type: 'fact', text: f.text, source: f.source });
+            }
+          }
+          if (sp && Array.isArray(sp.images) && items.length < 3 && sp.images.length > 0) {
+            var img = sp.images[0];
+            items.push({ type: 'image', title: img.title });
+          }
+          if (items.length) {
+            content += '<div style="border-top: 1px solid #eaecf0; margin: 12px 0; padding-top: 12px;"></div>';
+            content += '<p class="guide-note" style="margin: 0 0 8px 0; font-weight: 500;">From Wikipedia and sister projects</p>';
+            items.forEach(function(it){
+              if (it.type === 'fact') {
+                content += '<div style="background:#f8f9fa; border:1px solid #eaecf0; border-radius:4px; padding:8px;">'+
+                           '<div style="font-size:12px; color:#54595d; margin-bottom:2px;">Fact</div>'+
+                           '<div style="font-size:13px; color:#222;">'+ it.text +'</div>'+
+                           '<div style="font-size:12px; color:#666; margin-top:4px;">Source: '+ it.source +'</div>'+
+                           '</div>';
+              } else if (it.type === 'image') {
+                content += '<div style="background:#fff; border:1px solid #eaecf0; border-radius:4px; padding:8px;">'+
+                           '<div style="font-size:12px; color:#54595d; margin-bottom:2px;">Image suggestion</div>'+
+                           '<div style="font-size:13px; color:#222;">'+ it.title +'</div>'+
+                           '</div>';
+              }
+            });
+          }
+        } catch(_) {}
+      })();
+
       content += '</div>';
       content += '</div>';
       
