@@ -233,9 +233,44 @@
       .catch(() => { /* noop: preserve inline fallback */ });
   }
 
+  function initInteractivity() {
+    // Smart widget trigger functionality
+    const smartWidget = document.getElementById('smartWidget');
+    const smartWidgetTrigger = document.getElementById('smartWidgetTrigger');
+    const expandSidebar = document.getElementById('expandSidebar');
+    const expandSidebarClose = document.getElementById('expandSidebarClose');
+
+    if (smartWidgetTrigger && expandSidebar) {
+      // Show smart widget after page load
+      setTimeout(() => {
+        if (smartWidget) smartWidget.style.display = 'block';
+      }, 2000);
+
+      // Smart widget click opens sidebar
+      smartWidgetTrigger.addEventListener('click', () => {
+        expandSidebar.style.display = 'block';
+        if (smartWidget) smartWidget.style.display = 'none';
+      });
+    }
+
+    if (expandSidebarClose && expandSidebar) {
+      // Close button hides sidebar and shows smart widget again
+      expandSidebarClose.addEventListener('click', () => {
+        expandSidebar.style.display = 'none';
+        setTimeout(() => {
+          if (smartWidget) smartWidget.style.display = 'block';
+        }, 500);
+      });
+    }
+  }
+
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     init();
+    initInteractivity();
   } else {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      initInteractivity();
+    });
   }
 })();

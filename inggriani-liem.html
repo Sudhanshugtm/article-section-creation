@@ -57,34 +57,6 @@
     <p class="tagline">Dari Wikipedia, ensiklopedia bebas</p>
     <article class="article-content" id="articleBody">
         
-        <div class="infobox">
-          <div class="infobox-header">
-            <h2>Inggriani Liem</h2>
-          </div>
-          <div class="infobox-content">
-            <div class="infobox-field">
-              <span class="infobox-label">Lahir</span>
-              <span class="infobox-value">11 Januari 1953</span>
-            </div>
-            <div class="infobox-field">
-              <span class="infobox-label">Meninggal</span>
-              <span class="infobox-value">28 Agustus 2025</span>
-            </div>
-            <div class="infobox-field">
-              <span class="infobox-label">Kebangsaan</span>
-              <span class="infobox-value">Indonesia</span>
-            </div>
-            <div class="infobox-field">
-              <span class="infobox-label">Pekerjaan</span>
-              <span class="infobox-value">Ilmuwan komputer, Dosen</span>
-            </div>
-            <div class="infobox-field">
-              <span class="infobox-label">Dikenal karena</span>
-              <span class="infobox-value">Pendidikan informatika</span>
-            </div>
-          </div>
-        </div>
-        
         <p><strong>Inggriani Liem</strong> (11 Januari 1953 - 28 Agustus 2025) merupakan ilmuwan komputer dan tokoh pendidikan bidang informatika asal Indonesia. Ia adalah purnabakti dosen Informatika Institut Teknologi Bandung (ITB) yang dikenal atas kontribusinya dalam pengembangan kurikulum dan metodologi pengajaran informatika di Indonesia.</p>
 
         <section class="article-section">
@@ -128,21 +100,29 @@
     
   </main>
 
-  <!-- Expand Sidebar (concept 2) -->
-  <aside class="expand-sidebar" id="expandSidebar">
+  <!-- Smart Widget (for section expansion) -->
+  <div class="smart-widget" id="smartWidget" style="display: none;">
+    <button class="smart-widget__trigger" id="smartWidgetTrigger">
+      <span class="smart-widget__icon">💡</span>
+      <span class="smart-widget__text">Apa yang perlu diperbaiki?</span>
+    </button>
+  </div>
+
+  <!-- Expand Sidebar (sidebar concept) -->
+  <div class="expand-sidebar" id="expandSidebar" style="display: none;">
     <div class="expand-sidebar__header">
       <h3 class="expand-sidebar__title">Perluas artikel ini</h3>
-      <button class="expand-sidebar__close" id="closeSidebar" aria-label="Tutup sidebar">×</button>
+      <button class="expand-sidebar__close" id="expandSidebarClose" title="Tutup">×</button>
     </div>
     <div class="expand-sidebar__content">
-      <div class="expand-sidebar__intro">
-        <p>Artikel ini dapat dikembangkan dengan menambahkan bagian berikut:</p>
-      </div>
-      <ul class="expand-suggestions" id="expandSuggestionsList">
-        <!-- Suggestions will be loaded dynamically -->
-      </ul>
+      <section class="expand-section">
+        <h4 class="expand-section__title">Saran Perbaikan</h4>
+        <ul class="expand-suggestions" id="expandSuggestionsList">
+          <!-- Suggestions will be loaded dynamically -->
+        </ul>
+      </section>
     </div>
-  </aside>
+  </div>
 
   <!-- Scripts -->
   <!-- Quill.js for rich text editing -->
