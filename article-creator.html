@@ -957,16 +957,16 @@
               <button class="btn primary" id="toStep3" disabled data-i18n="steps.step2.continue">Start editing</button>
             </div>
           </section>
-          <!-- Optional Sources Step (Q3) -->
-          <section class="ac-step" id="ac-stepSources">
-            <h3>Do you have at least two independent, reliable sources for “<span id="ac-topicTitle">your topic</span>”?</h3>
+          <!-- Optional Sources Step (Q3) — copied layout from creation.html -->
+          <section class="ac-step" id="creation-stepSources">
+            <h3>Do you have at least two independent, reliable sources for “<span id="creation-topicTitle">your topic</span>”?</h3>
             <p class="hint">Strong sources help articles survive review and deletion.</p>
-            <div id="ac-readiness-line" class="readiness-line is-hidden" aria-live="polite">
+            <div id="creation-readiness-line" class="readiness-line is-hidden" aria-live="polite">
               <span class="readiness-label">Readiness:</span>
-              <span id="ac-readiness-status" class="readiness-status">Not ready</span>
-              <span id="ac-readiness-count" class="readiness-count">(0/2 verified sources)</span>
+              <span id="creation-readiness-status" class="readiness-status">Not ready</span>
+              <span id="creation-readiness-count" class="readiness-count">(0/2 verified sources)</span>
             </div>
-            <div id="ac-sourcesList">
+            <div id="creation-sourcesList">
               <div class="source-group">
                 <div class="source-chip-row" data-index="0">
                   <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />
@@ -983,12 +983,12 @@
               </div>
             </div>
             <div style="margin:10px 0 2px 0;">
-              <button class="add-source-btn" id="ac-addSourceChip">Add another</button>
+              <button class="add-source-btn" id="creation-addSourceChip">Add another</button>
             </div>
             <div class="ac-actions">
-              <button class="btn" id="ac-sourcesBack">Back</button>
-              <button class="btn" id="ac-sourcesSkip">Skip for now</button>
-              <button class="btn primary" id="ac-sourcesContinue">Continue</button>
+              <button class="btn" id="creation-sourcesBack">Back</button>
+              <button class="btn" id="creation-sourcesSkip">Skip for now</button>
+              <button class="btn primary" id="creation-sourcesContinue">Continue</button>
             </div>
           </section>
           <section class="ac-step" id="step3">
@@ -1193,10 +1193,10 @@
       setTimeout(updateGuideContent, 100);
     });
 
-    // === Q3 Sources Step ===
+    // === Q3 Sources Step (ported from creation.html) ===
     function setupSourcesStep(){
       try {
-        var list = document.getElementById('ac-sourcesList');
+        var list = document.getElementById('creation-sourcesList');
         if (!list) return;
         // Bind rows
         Array.from(list.querySelectorAll('.source-chip-row')).forEach(function(row){
@@ -1210,23 +1210,23 @@
             input.addEventListener('input', function(){
               var raw = input.value.trim();
               var canon = canonicalizeUrl(raw);
-              if (!canon) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
+              if (!canon) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
               var domain = extractDomain(canon);
-              if (!domain) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
-              showRowStatus(status, 'checking');
+              if (!domain) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
+              showRowStatus(status, 'validating');
               if (row.__timer) clearTimeout(row.__timer);
               row.__timer = setTimeout(function(){
                 var res = classifySource(domain);
                 if (res && res.reliable) {
                   status.style.display='block'; status.innerHTML = '<span class="status-chip status-verified">Verified source</span>';
                 } else { status.style.display='none'; status.textContent=''; }
-                updateSourcesReadiness();
+                updateNotabilityPreview();
               }, 300);
             });
           }
-          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=row.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else row.remove(); updateSourcesReadiness(); });
+          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=row.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else row.remove(); updateNotabilityPreview(); });
         });
-        var addBtn = document.getElementById('ac-addSourceChip');
+        var addBtn = document.getElementById('creation-addSourceChip');
         if (addBtn) addBtn.onclick = function(){
           var idx = list.querySelectorAll('.source-chip-row').length;
           var grp = document.createElement('div'); grp.className = 'source-group';
@@ -1238,38 +1238,38 @@
           var input = div.querySelector('input.source-url-input'); var removeBtn = div.querySelector('.remove-source');
           if (input) input.addEventListener('input', function(){
             var raw = input.value.trim(); var canon = canonicalizeUrl(raw);
-            if (!canon) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
+            if (!canon) { status.style.display='none'; status.textContent=''; updateNotabilityPreview(); return; }
             var domain = extractDomain(canon);
-            showRowStatus(status, 'checking');
+            showRowStatus(status, 'validating');
             if (div.__timer) clearTimeout(div.__timer);
-            div.__timer = setTimeout(function(){ var res = classifySource(domain); if (res && res.reliable) { status.style.display='block'; status.innerHTML='<span class="status-chip status-verified">Verified source</span>'; } else { status.style.display='none'; status.textContent=''; } updateSourcesReadiness(); }, 300);
+            div.__timer = setTimeout(function(){ var res = classifySource(domain); if (res && res.reliable) { status.style.display='block'; status.innerHTML='<span class="status-chip status-verified">Verified source</span>'; } else { status.style.display='none'; status.textContent=''; } updateNotabilityPreview(); }, 300);
           });
-          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=div.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else div.remove(); updateSourcesReadiness(); });
+          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=div.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else div.remove(); updateNotabilityPreview(); });
         };
         // nav
-        var back = document.getElementById('ac-sourcesBack'); var skip = document.getElementById('ac-sourcesSkip'); var cont = document.getElementById('ac-sourcesContinue');
-        if (back) back.onclick = function(){ document.getElementById('ac-stepSources').classList.remove('active'); step2.classList.add('active'); };
+        var back = document.getElementById('creation-sourcesBack'); var skip = document.getElementById('creation-sourcesSkip'); var cont = document.getElementById('creation-sourcesContinue');
+        if (back) back.onclick = function(){ document.getElementById('creation-stepSources').classList.remove('active'); step2.classList.add('active'); };
         if (skip) skip.onclick = goToEditor;
         if (cont) cont.onclick = function(){
           try {
             var arr = [];
-            var rows = document.querySelectorAll('#ac-sourcesList .source-chip-row');
+            var rows = document.querySelectorAll('#creation-sourcesList .source-chip-row');
             rows.forEach(function(r){ var i = r.querySelector('input'); var raw = i ? (i.value||'').trim() : ''; if (!raw) return; var url = canonicalizeUrl(raw) || raw; var domain = extractDomain(url); var res = classifySource(domain||''); arr.push({ url: url, title: '', reliabilityHint: (res && res.reliable) ? 'Verified source' : '' }); });
             if (arr.length) window.creationSources = arr;
           } catch(_) {}
           goToEditor();
         };
-        updateSourcesReadiness();
+        updateNotabilityPreview();
       } catch(_){}
     }
 
     function canonicalizeUrl(u){
       try { if (!u) return ''; return new URL(u).href; } catch(_){ try { if (u && u.indexOf(' ')===-1 && /\./.test(u) && !/^\w[\w.+-]*:/.test(u)) return new URL('https://'+u).href; } catch(__){} return ''; }
     }
-    function showRowStatus(container, state){ if (!container) return; if (state==='checking'){ container.style.display='block'; container.innerHTML='<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>Checking...</span></span>'; } }
-    function updateSourcesReadiness(){
+    function showRowStatus(container, state){ if (!container) return; if (state==='validating'){ container.style.display='block'; container.innerHTML='<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>Checking...</span></span>'; } }
+    function updateNotabilityPreview(){
       try {
-        var list = document.getElementById('ac-sourcesList'); var line = document.getElementById('ac-readiness-line'); var statusEl = document.getElementById('ac-readiness-status'); var countEl = document.getElementById('ac-readiness-count');
+        var list = document.getElementById('creation-sourcesList'); var line = document.getElementById('creation-readiness-line'); var statusEl = document.getElementById('creation-readiness-status'); var countEl = document.getElementById('creation-readiness-count');
         if (!list || !line || !statusEl || !countEl) return;
         var rows = Array.from(list.querySelectorAll('.source-chip-row'));
         var urls = [];
@@ -1285,11 +1285,11 @@
       } catch(_){}
     }
     toStep3 && (toStep3.onclick=function(){
-      var sourcesStep = document.getElementById('ac-stepSources');
+      var sourcesStep = document.getElementById('creation-stepSources');
       if (sourcesStep) {
         step2.classList.remove('active');
         sourcesStep.classList.add('active');
-        var tt = document.getElementById('ac-topicTitle');
+        var tt = document.getElementById('creation-topicTitle');
         if (tt) tt.textContent = (titleInput.value || '').trim() || 'your topic';
         setupSourcesStep();
         return;
