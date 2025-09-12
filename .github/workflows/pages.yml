@@ -68,6 +68,8 @@ jobs:
             node translate-build.js article-creator.html site/id/creation/article-creator.html || echo "Failed to generate article-creator.html" 
             # Copy supporting files
             cp translations.json site/id/creation/ || echo "Failed to copy translations.json"
+            cp translations.json site/translations.json || echo "Failed to copy translations.json to root"
+            cp translations.json site/id/translations.json || echo "Failed to copy translations.json to id folder"
             cp article-creation-suggestions.json site/id/creation/ || echo "Failed to copy suggestions"
             cp templates.json site/id/creation/ || echo "Failed to copy templates"
             cp reliable-sources.json site/id/creation/ || echo "Failed to copy sources"
