@@ -3464,33 +3464,42 @@
         html += '  </div>';
         html += '  <div style="display:flex; gap:6px;">';
         html += '    <button class="sidebar-action-btn" data-action="use" style="white-space:nowrap;">Use</button>';
-        html += '    <button class="sidebar-action-btn" data-action="remove" title="Remove" aria-label="Remove">×</button>';
         html += '  </div>';
         html += '</div>';
       });
       list.innerHTML = html;
       // Bind click handlers
-      Array.from(list.querySelectorAll('.source-item')).forEach(function(row){
-        row.addEventListener('click', function(e){
-          var url = row.getAttribute('data-url') || '';
-          var input = document.getElementById('sidebarSourceUrl');
-          if (input) { input.value = url; input.focus(); }
-          try {
-            window.__sourceSelectedFromSaved = true;
-            window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable') === 'true') && (row.getAttribute('data-origin') === 'q3');
-          } catch(_) {}
-        });
-      });
+      // No row-click behavior; only Use triggers an action
       Array.from(list.querySelectorAll('button[data-action="use"]')).forEach(function(btn){
-        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; input.focus(); }
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var row = btn.closest('.source-item'); if (!row) return;
+          var url = row.getAttribute('data-url')||'';
+          var input = document.getElementById('sidebarSourceUrl');
+          if (input){ input.value=url; input.focus(); }
           try { window.__sourceSelectedFromSaved = true; window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable')==='true') && (row.getAttribute('data-origin')==='q3'); } catch(_) {}
+          // If Q3-likely reliable, show result with explicit action (no re-verification)
+          if (window.__sourceSelectedFromSavedReliable) {
+            var resultDiv = document.getElementById('sidebarSourceResult');
+            var domain = extractDomain(url);
+            var sourceType = classifySource(domain) || { reliable: true, label: 'Likely reliable', reliability: 'Likely reliable' };
+            var resultHTML = '';
+            resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + (sourceType.label || 'Likely reliable') + '</div>';
+            resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.reliability || 'Likely reliable') + ' • verified in Step 3</p>';
+            resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
+              + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
+              + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+              + '</div>';
+            resultDiv.innerHTML = resultHTML;
+            resultDiv.style.display = 'block';
+            var gbtn = document.getElementById('sidebarGenerateBtn');
+            var cbtn = document.getElementById('sidebarCancelBtn');
+            if (gbtn) gbtn.addEventListener('click', function(){ generateSidebarDraft(url); });
+            if (cbtn) cbtn.addEventListener('click', function(){ resetSidebarSource(); });
+          }
         });
       });
-      Array.from(list.querySelectorAll('button[data-action="remove"]')).forEach(function(btn){
-        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url = row.getAttribute('data-url')||''; var arr = mergeCreationSources(getSavedSourcesArray()); arr = arr.filter(function(s){ return s && s.url !== url; }); saveSavedSourcesArray(arr); buildSidebarSavedList(); });
-      });
-      var clearBtn = document.getElementById('sidebarClearSaved');
-      if (clearBtn) clearBtn.addEventListener('click', function(){ saveSavedSourcesArray([]); buildSidebarSavedList(); });
+      // No clear/remove controls to keep UI simple
     }
 
     // Generate draft in sidebar
