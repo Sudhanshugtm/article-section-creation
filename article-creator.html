@@ -1260,6 +1260,40 @@
       setTimeout(updateGuideContent, 100);
     });
 
+    // Step 2 Continue: go to Q3 or editor
+    toStep3 && (toStep3.onclick=function(){
+      var sourcesStep = document.getElementById('creation-stepSources');
+      if (sourcesStep) {
+        step2.classList.remove('active');
+        sourcesStep.classList.add('active');
+        try {
+          var h = sourcesStep.querySelector('h3');
+          var userTopic = (titleInput.value || '').trim();
+          if (h && userTopic) {
+            h.textContent = 'Do you have at least two independent, reliable sources for "' + userTopic + '"?';
+          }
+        } catch(_) {}
+        setupSourcesStep();
+        return;
+      }
+      goToEditor();
+    });
+
+    function goToEditor(){
+      try { var ss = document.getElementById('creation-stepSources'); if (ss) ss.classList.remove('active'); } catch(_) {}
+      step3.classList.add('active');
+      step2.classList.remove('active');
+      document.body.classList.add('ve-in-step3');
+      var ed = document.getElementById('editor');
+      var t = titleInput.value.trim();
+      var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      var veTitle = document.getElementById('veTitle'); if (veTitle) veTitle.textContent = safeTitle;
+      ed.innerHTML = '';
+      ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      ed.focus();
+      try { if (typeof applyEligibilityAutoFromSources === 'function') applyEligibilityAutoFromSources(); } catch(_) {}
+    }
+
     // === Q3 Sources Step (ported from creation.html) ===
     function setupSourcesStep(){
       try {
