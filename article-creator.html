@@ -1061,7 +1061,12 @@
     (function runtimeI18n(){
       try {
         var segs = location.pathname.split('/').filter(Boolean).map(function(s){ return s.toLowerCase(); });
-        var lang = (segs.indexOf('id') !== -1) ? 'id' : 'en';
+        var qp = new URLSearchParams(location.search);
+        var langQ = (qp.get('lang')||'').toLowerCase();
+        // Repo-aware detection: /<repo>/<lang>/...
+        var repoSeg = segs[0] || '';
+        var pathLang = (segs[1] === 'id' || segs[1] === 'en') ? segs[1] : ((segs[0] === 'id' || segs[0] === 'en') ? segs[0] : '');
+        var lang = (langQ === 'id' || langQ === 'en') ? langQ : (pathLang || 'en');
         window.currentLang = lang;
         function getNested(obj, path){ try { return path.split('.').reduce(function(a,k){ return (a && a[k]!=null)?a[k]:undefined; }, obj); } catch(_) { return undefined; } }
         function applyDom(){

@@ -3,201 +3,28 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Pembuat Artikel — Konsep Chip Referensi</title>
-  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
-  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
-  <link rel="stylesheet" href="reading-styles.css">
-  <style>
-    .creator-wrap { max-width: 1100px; margin: 0 auto; padding: 16px 20px; }
-    .editor-shell { border: 1px solid var(--border-color-subtle, #eaecf0); border-radius: 4px; background: #fff; padding: 16px; }
-    .title-input { width: 100%; font-size: 18px; padding: 8px 0; border: none; border-bottom: 2px solid #a2a9b1; }
-    .title-input:focus { outline: none; border-bottom-color: #36c; }
-    .chip-row { display: flex; gap: 8px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
-    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid #a2a9b1; border-radius: 12px; font-size: 12px; cursor: pointer; background: #f8f9fa; }
-    .chip.reference { border-color: #36c; color: #36c; background: #eef3ff; }
-    .editor { min-height: 260px; outline: none; }
-    .editor[contenteditable="true"]:empty:before { content: attr(data-placeholder); color: #72777d; }
-    /* Fix for H2 border issues in contenteditable */
-    .editor h2 { 
-      font-family: Georgia, serif;
-      font-size: 1.5em;
-      font-weight: normal;
-      margin: 2em 0 0.25em 0;
-      padding: 0 0 0.25em 0;
-      border-bottom: 1px solid #eaecf0;
-      position: relative;
-    }
-    .editor h2:first-child { margin-top: 1em; }
-    /* Wiki section heading styles */
-    .wiki-section-heading {
-      font-family: Georgia, serif !important;
-      font-size: 1.5em !important;
-      font-weight: normal !important;
-      margin: 2em 0 0.25em 0 !important;
-      padding: 0 0 0.25em 0 !important;
-      border-bottom: 1px solid #eaecf0 !important;
-      position: relative !important;
-      display: block !important;
-    }
-    .wiki-section-heading:first-child { margin-top: 1em !important; }
-    /* Prevent duplicate borders and clean up contenteditable issues */
-    .editor div:empty { border: none !important; display: none !important; }
-    .editor div { border: none !important; border-bottom: none !important; }
-    .editor p { border: none !important; border-bottom: none !important; }
-    .editor br { display: block; margin: 0; padding: 0; border: none !important; }
-    .editor hr { display: none !important; } /* Hide any stray HR elements */
-    /* Only H2 elements should have borders */
-    .editor h2.wiki-section-heading { 
-      border-bottom: 1px solid #eaecf0 !important; 
-    }
-    /* Any other element trying to have a border-bottom should not */
-    .editor *:not(h2) { 
-      border-bottom: none !important; 
-    }
-    .verify-note { display: none; margin-top: 8px; font-size: 12px; color: #856404; background: #fff3cd; border: 1px solid #ffeaa7; padding: 6px 8px; border-radius: 4px; }
-    .verify-note.show { display: block; }
-    .ref-dialog-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 3000; }
-    .ref-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #fff; border: 1px solid #eaecf0; border-radius: 8px; width: 520px; max-width: 92vw; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
-    .ref-row { margin-bottom: 12px; }
-    .ref-row label { display: block; font-size: 13px; margin-bottom: 6px; color: #202122; }
-    .ref-row input { width: 100%; height: 34px; border: 1px solid #c8ccd1; border-radius: 4px; padding: 6px 10px; font: inherit; }
-    .ref-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-    .badge { display:inline-block; font-size:10px; padding:2px 6px; border-radius:10px; border:1px solid #c8ccd1; color:#72777d; }
-    .badge.good { color:#14866d; border-color:#14866d; }
-    .badge.warn { color:#ac6600; border-color:#ac6600; }
-  
-    .chip.guidance { border-color: #c8ccd1; background: #fff; }
-    .ac-steps { max-width: 1100px; margin: 0 auto; }
-    .ac-step { display: none; border: 1px solid var(--border-color-subtle, #eaecf0); background: #fff; border-radius: 6px; padding: 16px; }
-    .ac-step.active { display: block; }
-    .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
-    
-    /* Center Step 1 in viewport */
-    #step1.ac-step {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      max-width: 600px;
-      width: 90%;
-      z-index: 100;
-    }
-    
-    /* Responsive positioning for mobile with keyboard */
-    @media (max-height: 600px) {
-      #step1.ac-step {
-        position: fixed;
-        top: 30%;
-        transform: translate(-50%, -30%);
+  <title>Redirecting…</title>
+  <meta name="robots" content="noindex" />
+</head>
+<body>
+  <noscript>
+    <p>Redirecting to the prototype… <a id="fallback" href="#">Click here if not redirected</a>.</p>
+  </noscript>
+  <script>
+    (function(){
+      try {
+        var parts = location.pathname.split('/').filter(Boolean);
+        var repo = parts[0] || '';
+        var dest = '/' + repo + '/article-creator.html?lang=id';
+        var fb = document.getElementById('fallback'); if (fb) fb.setAttribute('href', dest);
+        location.replace(dest);
+      } catch(e) {
+        location.href = '/article-creator.html?lang=id';
       }
-    }
-    
-    @media (max-width: 768px) {
-      #step1.ac-step {
-        width: 95%;
-        padding: 20px;
-      }
-      
-      /* Adjust for mobile keyboard */
-      @media (max-height: 500px) {
-        #step1.ac-step {
-          top: 20%;
-          transform: translate(-50%, -20%);
-        }
-      }
-    }
-    
-    /* Center Step 2 in viewport */
-    #step2.ac-step {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      max-width: 700px;
-      width: 90%;
-      z-index: 100;
-    }
-    
-    /* Responsive positioning for Step 2 */
-    @media (max-width: 768px) {
-      #step2.ac-step {
-        width: 95%;
-        padding: 20px;
-        top: 45%;
-        transform: translate(-50%, -45%);
-      }
-    }
-    
-    .ac-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-    .ac-actions .btn { height: 34px; padding: 0 12px; border: 1px solid #c8ccd1; border-radius: 4px; background: #fff; cursor: pointer; }
-    .ac-actions .btn.primary { background: #36c; color: #fff; border-color: #36c; }
-    .category-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin: 8px 0 4px; }
-    .category-item { border: 1px solid #c8ccd1; border-radius: 4px; padding: 10px; cursor: pointer; background: #fff; }
-    .category-item:hover { background: #f8f9fa; }
-    .category-item.selected { border-color: #36c; box-shadow: 0 0 0 2px #eaf3ff; }
-    .hint { font-size: 12px; color: #72777d; margin-top: 6px; }
-    /* Hide the VE chrome by default - show when Step 3 is active */
-    .ve-in-step3 #veHeader,
-    .ve-in-step3 #veToolbar {
-      display: block !important;
-    }
-    
-    /* Mobile-only: Hide header and show footer instead */
-    @media (max-width: 768px) {
-      .ve-in-step3 #veHeader {
-        display: none !important;
-      }
-      
-      .ve-in-step3 #veFooter {
-        display: block !important;
-      }
-      
-      /* Footer styling - mobile only */
-      .ve-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-top: 1px solid var(--border-color-subtle, #eaecf0);
-        padding: 8px 16px;
-        font-size: 12px;
-        color: var(--color-subtle, #54595d);
-        z-index: 10;
-      }
-      
-      .ve-footer .status {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-    }
-    
-    /* Clean layout for Step 3 */
-    .ve-in-step3 .creator-wrap {
-      max-width: none;
-      padding: 0;
-    }
-    
-    .ve-in-step3 #step3 {
-      border: none;
-      background: transparent;
-      padding: 0;
-    }
-    
-    .ve-in-step3 #editor {
-      border: none;
-      background: transparent;
-      min-height: 400px;
-      padding: 16px 0;
+    })();
+  </script>
+</body>
+</html>
     }
     
     /* Primary button styling for publish/submit buttons */
