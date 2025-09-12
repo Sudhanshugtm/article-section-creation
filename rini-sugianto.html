@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rini Sugianto — Wikipedia</title>
+  <meta name="article-id" content="rini-sugianto"/>
+
+  <!-- Codex tokens + CSS (design system) -->
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+
+  <!-- Reading mode styles -->
+  <link rel="stylesheet" href="reading-styles.css">
+  
+  <!-- Expand sidebar styles (sidebar concept) -->
+  <link rel="stylesheet" href="expand-sidebar.css">
+  
+  <!-- Wikidata widget styles -->
+  <link rel="stylesheet" href="wikidata-widget.css">
+  
+  <!-- Wizard overlay styles -->
+  <link rel="stylesheet" href="wizard-overlay.css">
+  
+</head>
+<body>
+
+  <header class="container page-header" role="banner">
+    <h1 class="firstHeading">Rini Sugianto</h1>
+    <div class="page-tabs-wrapper">
+      <nav class="ns-tabs" aria-label="Tab namespace">
+        <button class="ns-tab active">Artikel</button>
+        <button class="ns-tab">Pembicaraan</button>
+      </nav>
+      <nav class="page-actions" aria-label="Tindakan halaman">
+        <button class="action-tab active">
+          <span class="action-tab-text">Baca</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
+        </button>
+        <button class="action-tab" id="editTab">
+          <span class="action-tab-text">Sunting</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
+        </button>
+        <button class="action-tab">
+          <span class="action-tab-text">Lihat riwayat</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span>
+        </button>
+        <button class="action-tab star">
+          <span class="action-tab-text">⭐</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="content">
+    
+    <!-- Reading mode content -->
+    <div id="reading-content">
+      
+      <div class="article-content" id="mw-content-text">
+        
+        <div class="infobox">
+          <div class="infobox-header">
+            <h2>Rini Sugianto</h2>
+          </div>
+          <div class="infobox-content">
+            <div class="infobox-field">
+              <span class="infobox-label">Kebangsaan</span>
+              <span class="infobox-value">Indonesia</span>
+            </div>
+            <div class="infobox-field">
+              <span class="infobox-label">Asal</span>
+              <span class="infobox-value">Lampung</span>
+            </div>
+            <div class="infobox-field">
+              <span class="infobox-label">Pekerjaan</span>
+              <span class="infobox-value">Animator</span>
+            </div>
+            <div class="infobox-field">
+              <span class="infobox-label">Dikenal karena</span>
+              <span class="infobox-value">Animasi internasional</span>
+            </div>
+          </div>
+        </div>
+        
+        <p><strong>Rini Sugianto</strong> adalah seorang animator internasional asal Lampung, Indonesia. Ia dikenal sebagai salah satu animator Indonesia yang berhasil berkarya di kancah internasional dan berkontribusi dalam pengembangan industri animasi Indonesia.</p>
+
+        <p>Sugianto telah bekerja dengan berbagai studio animasi internasional dan terlibat dalam produksi berbagai proyek animasi yang diakui secara global. Pengalamannya di industri animasi internasional menjadikannya sebagai figur inspiratif bagi animator muda Indonesia.</p>
+
+        <h2>Latar belakang</h2>
+        <p>Berasal dari Lampung, Sugianto memulai perjalanan karirnya di bidang animasi dengan tekad untuk mengembangkan bakat dan kemampuannya di tingkat internasional. Dedikasinya terhadap seni animasi telah membawanya berkolaborasi dengan berbagai studio dan proyek animasi bergengsi.</p>
+
+        <h2>Referensi</h2>
+        <div class="reflist">
+          <ol>
+            <li><a href="https://id.wikipedia.org/wiki/Rini_Sugianto" class="external text">Rini Sugianto — Wikipedia Bahasa Indonesia</a></li>
+            <li><a href="https://kumparan.com/" class="external text">Kumparan</a></li>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Editing mode content (hidden by default) -->
+    <div id="editing-content" style="display: none;">
+      <div id="quillEditor" style="height: 400px;"></div>
+      <div class="editor-controls">
+        <button class="editor-button primary">Terbitkan perubahan</button>
+        <button class="editor-button" id="cancelEdit">Batalkan</button>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- Expand Sidebar (concept 2) -->
+  <aside class="expand-sidebar" id="expandSidebar">
+    <div class="expand-sidebar__header">
+      <h3 class="expand-sidebar__title">Perluas artikel ini</h3>
+      <button class="expand-sidebar__close" id="closeSidebar" aria-label="Tutup sidebar">×</button>
+    </div>
+    <div class="expand-sidebar__content">
+      <div class="expand-sidebar__intro">
+        <p>Artikel ini dapat dikembangkan dengan menambahkan bagian berikut:</p>
+      </div>
+      <ul class="expand-suggestions" id="expandSuggestionsList">
+        <!-- Suggestions will be loaded dynamically -->
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <!-- Quill.js for rich text editing -->
+  <script src="https://unpkg.com/quill@2.0.0/dist/quill.js" 
+          onerror="console.warn('Quill failed to load from CDN, using fallback'); loadQuillFallback()"></script>
+  <link href="https://unpkg.com/quill@2.0.0/dist/quill.snow.css" rel="stylesheet"
+        onerror="console.warn('Quill CSS failed to load from CDN')">
+
+  <!-- Main reading script -->
+  <script src="reading-script.js"></script>
+  
+  <!-- Expand suggestions script -->
+  <script>
+    // Override suggestions file for Indonesian
+    window.SUGGESTIONS_FILE = 'suggestions-id.json';
+  </script>
+  <script src="expand-suggestions.js"></script>
+  
+  <!-- Wizard overlay script -->
+  <script src="wizard-script.js"></script>
+
+</body>
+</html>

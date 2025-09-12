@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Daftar tokoh teknologi informasi Indonesia — Wikipedia</title>
+  <meta name="article-id" content="daftar-tokoh-teknologi-informasi-indonesia"/>
+
+  <!-- Codex tokens + CSS (design system) -->
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex-design-tokens@2.3.0/theme-wikimedia-ui.css">
+
+  <!-- Reading mode styles -->
+  <link rel="stylesheet" href="reading-styles.css">
+  
+  <!-- Expand sidebar styles (sidebar concept) -->
+  <link rel="stylesheet" href="expand-sidebar.css">
+  
+  <!-- Wikidata widget styles -->
+  <link rel="stylesheet" href="wikidata-widget.css">
+  
+  <!-- Wizard overlay styles -->
+  <link rel="stylesheet" href="wizard-overlay.css">
+  
+</head>
+<body>
+
+  <header class="container page-header" role="banner">
+    <h1 class="firstHeading">Daftar tokoh teknologi informasi Indonesia</h1>
+    <div class="page-tabs-wrapper">
+      <nav class="ns-tabs" aria-label="Tab namespace">
+        <button class="ns-tab active">Artikel</button>
+        <button class="ns-tab">Pembicaraan</button>
+      </nav>
+      <nav class="page-actions" aria-label="Tindakan halaman">
+        <button class="action-tab active">
+          <span class="action-tab-text">Baca</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
+        </button>
+        <button class="action-tab" id="editTab">
+          <span class="action-tab-text">Sunting</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
+        </button>
+        <button class="action-tab">
+          <span class="action-tab-text">Lihat riwayat</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span>
+        </button>
+        <button class="action-tab star">
+          <span class="action-tab-text">⭐</span>
+          <span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="content">
+    
+    <!-- Reading mode content -->
+    <div id="reading-content">
+      
+      <div class="article-content" id="mw-content-text">
+        
+        <p>Berikut ini sebagian dari <strong>tokoh-tokoh teknologi informasi Indonesia</strong>:</p>
+
+        <ul>
+          <li>Abdul Kadir</li>
+          <li>Adamas Belva Syah Devara (Pendiri Ruangguru)</li>
+          <li>Achmad Zaky (Pendiri Bukalapak)</li>
+          <li>Farid Subkhan</li>
+          <li>Ferry Unardi (Pendiri Traveloka)</li>
+          <li>Gibran Huzaifah (Pendiri eFishery)</li>
+          <li>Leontinus Alpha Edison (Tokopedia)</li>
+          <li>Nadiem Makarim (Pendiri Gojek)</li>
+          <li>Onno W. Purbo</li>
+          <li>William Tanuwijaya (Pendiri Tokopedia)</li>
+        </ul>
+
+        <h2>Lihat juga</h2>
+        <ul>
+          <li>Teknologi informasi Indonesia</li>
+          <li>Daftar perusahaan teknologi Indonesia</li>
+          <li>Startup Indonesia</li>
+        </ul>
+
+        <h2>Referensi</h2>
+        <div class="reflist">
+          <ol>
+            <li><a href="https://id.wikipedia.org/wiki/Daftar_tokoh_teknologi_informasi_Indonesia" class="external text">Daftar tokoh teknologi informasi Indonesia — Wikipedia Bahasa Indonesia</a></li>
+            <li><a href="https://dailysocial.id/" class="external text">Daily Social</a></li>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Editing mode content (hidden by default) -->
+    <div id="editing-content" style="display: none;">
+      <div id="quillEditor" style="height: 400px;"></div>
+      <div class="editor-controls">
+        <button class="editor-button primary">Terbitkan perubahan</button>
+        <button class="editor-button" id="cancelEdit">Batalkan</button>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- Expand Sidebar (concept 2) -->
+  <aside class="expand-sidebar" id="expandSidebar">
+    <div class="expand-sidebar__header">
+      <h3 class="expand-sidebar__title">Perluas artikel ini</h3>
+      <button class="expand-sidebar__close" id="closeSidebar" aria-label="Tutup sidebar">×</button>
+    </div>
+    <div class="expand-sidebar__content">
+      <div class="expand-sidebar__intro">
+        <p>Artikel ini dapat dikembangkan dengan menambahkan bagian berikut:</p>
+      </div>
+      <ul class="expand-suggestions" id="expandSuggestionsList">
+        <!-- Suggestions will be loaded dynamically -->
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <!-- Quill.js for rich text editing -->
+  <script src="https://unpkg.com/quill@2.0.0/dist/quill.js" 
+          onerror="console.warn('Quill failed to load from CDN, using fallback'); loadQuillFallback()"></script>
+  <link href="https://unpkg.com/quill@2.0.0/dist/quill.snow.css" rel="stylesheet"
+        onerror="console.warn('Quill CSS failed to load from CDN')">
+
+  <!-- Main reading script -->
+  <script src="reading-script.js"></script>
+  
+  <!-- Expand suggestions script -->
+  <script>
+    // Override suggestions file for Indonesian
+    window.SUGGESTIONS_FILE = 'suggestions-id.json';
+  </script>
+  <script src="expand-suggestions.js"></script>
+  
+  <!-- Wizard overlay script -->
+  <script src="wizard-script.js"></script>
+
+</body>
+</html>
