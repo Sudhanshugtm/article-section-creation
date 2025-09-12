@@ -188,9 +188,10 @@
     const listEl = document.querySelector('.expand-sidebar .expand-suggestions');
     if (!listEl) return; // keep fallback
 
-    // Fetch suggestions.json relative to the page (works on GitHub Pages aggregation)
+    // Fetch suggestions file (can be overridden via window.SUGGESTIONS_FILE)
     // Add a cache-busting query to avoid CDN/browser caching
-    const url = 'suggestions.json?ts=' + Date.now();
+    const suggestionsFile = window.SUGGESTIONS_FILE || 'suggestions.json';
+    const url = suggestionsFile + '?ts=' + Date.now();
     fetch(url, { cache: 'no-store' })
       .then(resp => resp.ok ? resp.json() : Promise.reject(new Error('HTTP ' + resp.status)))
       .then(data => {
