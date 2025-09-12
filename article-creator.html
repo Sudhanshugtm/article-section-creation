@@ -957,6 +957,40 @@
               <button class="btn primary" id="toStep3" disabled data-i18n="steps.step2.continue">Start editing</button>
             </div>
           </section>
+          <!-- Optional Sources Step (Q3) -->
+          <section class="ac-step" id="ac-stepSources">
+            <h3>Do you have at least two independent, reliable sources for “<span id="ac-topicTitle">your topic</span>”?</h3>
+            <p class="hint">Strong sources help articles survive review and deletion.</p>
+            <div id="ac-readiness-line" class="readiness-line is-hidden" aria-live="polite">
+              <span class="readiness-label">Readiness:</span>
+              <span id="ac-readiness-status" class="readiness-status">Not ready</span>
+              <span id="ac-readiness-count" class="readiness-count">(0/2 verified sources)</span>
+            </div>
+            <div id="ac-sourcesList">
+              <div class="source-group">
+                <div class="source-chip-row" data-index="0">
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                </div>
+                <div class="source-status" aria-live="polite"></div>
+              </div>
+              <div class="source-group">
+                <div class="source-chip-row" data-index="1">
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                </div>
+                <div class="source-status" aria-live="polite"></div>
+              </div>
+            </div>
+            <div style="margin:10px 0 2px 0;">
+              <button class="add-source-btn" id="ac-addSourceChip">Add another</button>
+            </div>
+            <div class="ac-actions">
+              <button class="btn" id="ac-sourcesBack">Back</button>
+              <button class="btn" id="ac-sourcesSkip">Skip for now</button>
+              <button class="btn primary" id="ac-sourcesContinue">Continue</button>
+            </div>
+          </section>
           <section class="ac-step" id="step3">
             <div id="editor" class="editor" contenteditable="true" data-placeholder="Type the lead..."></div>
           </section>
@@ -1158,28 +1192,121 @@
       // Update guide content when category changes
       setTimeout(updateGuideContent, 100);
     });
+
+    // === Q3 Sources Step ===
+    function setupSourcesStep(){
+      try {
+        var list = document.getElementById('ac-sourcesList');
+        if (!list) return;
+        // Bind rows
+        Array.from(list.querySelectorAll('.source-chip-row')).forEach(function(row){
+          var input = row.querySelector('input.source-url-input');
+          var removeBtn = row.querySelector('.remove-source');
+          var status = row.nextElementSibling;
+          if (!status || !status.classList || !status.classList.contains('source-status')) {
+            status = document.createElement('div'); status.className = 'source-status'; row.insertAdjacentElement('afterend', status);
+          }
+          if (input) {
+            input.addEventListener('input', function(){
+              var raw = input.value.trim();
+              var canon = canonicalizeUrl(raw);
+              if (!canon) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
+              var domain = extractDomain(canon);
+              if (!domain) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
+              showRowStatus(status, 'checking');
+              if (row.__timer) clearTimeout(row.__timer);
+              row.__timer = setTimeout(function(){
+                var res = classifySource(domain);
+                if (res && res.reliable) {
+                  status.style.display='block'; status.innerHTML = '<span class="status-chip status-verified">Verified source</span>';
+                } else { status.style.display='none'; status.textContent=''; }
+                updateSourcesReadiness();
+              }, 300);
+            });
+          }
+          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=row.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else row.remove(); updateSourcesReadiness(); });
+        });
+        var addBtn = document.getElementById('ac-addSourceChip');
+        if (addBtn) addBtn.onclick = function(){
+          var idx = list.querySelectorAll('.source-chip-row').length;
+          var grp = document.createElement('div'); grp.className = 'source-group';
+          var div = document.createElement('div'); div.className='source-chip-row'; div.setAttribute('data-index', String(idx));
+          div.innerHTML = '\n            <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />\n            <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>';
+          var status = document.createElement('div'); status.className='source-status'; status.setAttribute('aria-live','polite');
+          grp.appendChild(div); grp.appendChild(status); list.appendChild(grp);
+          // bind
+          var input = div.querySelector('input.source-url-input'); var removeBtn = div.querySelector('.remove-source');
+          if (input) input.addEventListener('input', function(){
+            var raw = input.value.trim(); var canon = canonicalizeUrl(raw);
+            if (!canon) { status.style.display='none'; status.textContent=''; updateSourcesReadiness(); return; }
+            var domain = extractDomain(canon);
+            showRowStatus(status, 'checking');
+            if (div.__timer) clearTimeout(div.__timer);
+            div.__timer = setTimeout(function(){ var res = classifySource(domain); if (res && res.reliable) { status.style.display='block'; status.innerHTML='<span class="status-chip status-verified">Verified source</span>'; } else { status.style.display='none'; status.textContent=''; } updateSourcesReadiness(); }, 300);
+          });
+          if (removeBtn) removeBtn.addEventListener('click', function(){ var g=div.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else div.remove(); updateSourcesReadiness(); });
+        };
+        // nav
+        var back = document.getElementById('ac-sourcesBack'); var skip = document.getElementById('ac-sourcesSkip'); var cont = document.getElementById('ac-sourcesContinue');
+        if (back) back.onclick = function(){ document.getElementById('ac-stepSources').classList.remove('active'); step2.classList.add('active'); };
+        if (skip) skip.onclick = goToEditor;
+        if (cont) cont.onclick = function(){
+          try {
+            var arr = [];
+            var rows = document.querySelectorAll('#ac-sourcesList .source-chip-row');
+            rows.forEach(function(r){ var i = r.querySelector('input'); var raw = i ? (i.value||'').trim() : ''; if (!raw) return; var url = canonicalizeUrl(raw) || raw; var domain = extractDomain(url); var res = classifySource(domain||''); arr.push({ url: url, title: '', reliabilityHint: (res && res.reliable) ? 'Verified source' : '' }); });
+            if (arr.length) window.creationSources = arr;
+          } catch(_) {}
+          goToEditor();
+        };
+        updateSourcesReadiness();
+      } catch(_){}
+    }
+
+    function canonicalizeUrl(u){
+      try { if (!u) return ''; return new URL(u).href; } catch(_){ try { if (u && u.indexOf(' ')===-1 && /\./.test(u) && !/^\w[\w.+-]*:/.test(u)) return new URL('https://'+u).href; } catch(__){} return ''; }
+    }
+    function showRowStatus(container, state){ if (!container) return; if (state==='checking'){ container.style.display='block'; container.innerHTML='<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>Checking...</span></span>'; } }
+    function updateSourcesReadiness(){
+      try {
+        var list = document.getElementById('ac-sourcesList'); var line = document.getElementById('ac-readiness-line'); var statusEl = document.getElementById('ac-readiness-status'); var countEl = document.getElementById('ac-readiness-count');
+        if (!list || !line || !statusEl || !countEl) return;
+        var rows = Array.from(list.querySelectorAll('.source-chip-row'));
+        var urls = [];
+        rows.forEach(function(r){ var i=r.querySelector('input'); var raw = i ? (i.value||'').trim() : ''; var canon = canonicalizeUrl(raw); if (canon) urls.push(canon); });
+        function uniq(a){ return Array.from(new Set(a)); }
+        var hosts = uniq(urls.map(function(u){ return extractDomain(u); }).filter(Boolean));
+        var sources = urls.length; var independent = hosts.length;
+        if (sources === 0) { line.classList.add('is-hidden'); statusEl.textContent='Not ready'; countEl.textContent='(0 sources)'; return; }
+        line.classList.remove('is-hidden');
+        var ready = (sources>=2 && independent>=2);
+        statusEl.textContent = ready ? 'Ready' : (sources>0 ? 'Getting there' : 'Not ready');
+        countEl.textContent = '('+sources+' sources · '+independent+' independent)';
+      } catch(_){}
+    }
     toStep3 && (toStep3.onclick=function(){
+      var sourcesStep = document.getElementById('ac-stepSources');
+      if (sourcesStep) {
+        step2.classList.remove('active');
+        sourcesStep.classList.add('active');
+        var tt = document.getElementById('ac-topicTitle');
+        if (tt) tt.textContent = (titleInput.value || '').trim() || 'your topic';
+        setupSourcesStep();
+        return;
+      }
+      // Fallback straight to editor
       step2.classList.remove('active');
       step3.classList.add('active');
-      
-      // Activate VE interface
       document.body.classList.add('ve-in-step3');
-      
       var ed = document.getElementById('editor');
       var t = titleInput.value.trim();
       var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      
-      // Update VE header title
       var veTitle = document.getElementById('veTitle');
       if (veTitle) veTitle.textContent = safeTitle;
-      
-      // Initialize editor with just placeholder and cursor
       ed.innerHTML = '';
       ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
-      
-      // Focus editor to show blinking cursor
       ed.focus();
-      
+      try { if (typeof applyEligibilityAutoFromSources === 'function') applyEligibilityAutoFromSources(); } catch(_) {}
       // Set up MutationObserver to watch for and remove phantom elements (but not valid sections)
       var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
@@ -2575,6 +2702,9 @@
       if (buttons.length === 0 || !resultDiv) return;
       
       const answers = {};
+
+      // Auto-compute from captured sources (if any)
+      try { applyEligibilityAutoFromSources(); } catch(_) {}
       
       buttons.forEach(function(button) {
         button.addEventListener('click', function() {
@@ -2620,6 +2750,70 @@
           resultDiv.innerHTML = '<strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
         }
       }
+    }
+
+    // Compute eligibility defaults from captured sources (if present)
+    function computeEligibilityFromSources() {
+      try {
+        var src = (Array.isArray(window.creationSources) ? window.creationSources : []);
+        if (!src.length) return null; // treat as skipped
+        // Normalize and classify
+        function uniq(arr){ return Array.from(new Set(arr)); }
+        var urls = src.map(function(s){ return (s && s.url) ? s.url : ''; }).filter(Boolean);
+        if (!urls.length) return null;
+        var domains = urls.map(function(u){ try { return extractDomain(u); } catch(_) { return ''; } }).filter(Boolean);
+        var uniqueDomains = uniq(domains);
+        var cls = domains.map(function(d){ try { var r = classifySource(d); return (r && r.reliable===true) ? 'reliable' : ((r && r.reliable===false)? 'questionable':'unknown'); } catch(_) { return 'unknown'; } });
+        var reliableCount = cls.filter(function(x){ return x==='reliable'; }).length;
+        var questionableCount = cls.filter(function(x){ return x==='questionable'; }).length;
+        // Map to answers
+        var answers = {};
+        answers.coverage = urls.length > 0 ? 'yes' : 'no';
+        if (reliableCount > 0 && questionableCount === 0) { answers.reliable = 'yes'; }
+        else if (reliableCount > 0 && questionableCount > 0) { answers.reliable = 'maybe'; }
+        else { answers.reliable = 'no'; }
+        answers.independent = uniqueDomains.length >= 2 ? 'yes' : (urls.length>0 ? 'maybe' : 'no');
+        answers.multiple = urls.length >= 2 ? 'yes' : (urls.length===1 ? 'maybe' : 'no');
+        return answers;
+      } catch(_) { return null; }
+    }
+
+    function applyEligibilityAutoFromSources(){
+      try {
+        var auto = computeEligibilityFromSources();
+        if (!auto) return;
+        Object.keys(auto).forEach(function(q){
+          var val = auto[q];
+          var qBtns = document.querySelectorAll('[data-question="'+ q +'"]');
+          qBtns.forEach(function(btn){ btn.classList.remove('selected'); });
+          var sel = document.querySelector('[data-question="'+ q +'"][data-answer="'+ val +'"]');
+          if (sel) sel.classList.add('selected');
+        });
+        var resultDiv = document.getElementById('eligibilityResult');
+        if (resultDiv) {
+          var answers = auto;
+          // Update result
+          (function(){
+            const yesCount = Object.values(answers).filter(a => a === 'yes').length;
+            const noCount = Object.values(answers).filter(a => a === 'no').length;
+            resultDiv.style.display = 'block';
+            if (yesCount === 4) {
+              resultDiv.style.background = '#d5fdf4'; resultDiv.style.color = '#00af89'; resultDiv.style.border = '1px solid #00af89';
+              resultDiv.innerHTML = '✅ <strong>Excellent!</strong> Your topic looks ready for Wikipedia. You have strong eligibility.';
+            } else if (yesCount >= 2 && noCount <= 1) {
+              resultDiv.style.background = '#fef6e7'; resultDiv.style.color = '#ac6600'; resultDiv.style.border = '1px solid #fc3';
+              resultDiv.innerHTML = '⚠️ <strong>Good start!</strong> Consider strengthening the areas you\'re unsure about, or try draft space first.';
+            } else {
+              resultDiv.style.background = '#fee7e6'; resultDiv.style.color = '#d33'; resultDiv.style.border = '1px solid #d33';
+              resultDiv.innerHTML = '<strong>More research needed.</strong> Your topic might benefit from finding more sources before creating the article. Consider draft space to build it up.';
+            }
+          })();
+          var noteId = 'eligibilityAutoNote';
+          if (!document.getElementById(noteId)) {
+            resultDiv.insertAdjacentHTML('beforebegin', '<p id="'+noteId+'" class="guide-note" style="margin: 8px 0 8px 0;">Auto-assessed from your sources (you can adjust)</p>');
+          }
+        }
+      } catch(_) {}
     }
 
     // Desktop Suggestions button
