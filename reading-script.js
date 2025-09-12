@@ -304,14 +304,23 @@ function enterEditMode() {
   isEditMode = true;
   
   // Hide reading content
-  document.getElementById('readingContent').style.display = 'none';
+  const readingContent = document.getElementById('readingContent');
+  if (readingContent) readingContent.style.display = 'none';
   
-  // Show VE interface
-  document.getElementById('veInterface').style.display = 'block';
+  // Show VE interface (if it exists) or simple editing interface as fallback
+  const veInterface = document.getElementById('veInterface');
+  if (veInterface) {
+    veInterface.style.display = 'block';
+  } else {
+    // Fallback for articles without full VE interface (like Indonesian articles)
+    const editingContent = document.getElementById('editing-content');
+    if (editingContent) editingContent.style.display = 'block';
+  }
   
   // Update tab states in main interface
   document.querySelectorAll('#readingContent .action-tab:not(.star)').forEach(b => b.classList.remove('active'));
-  document.getElementById('editTab').classList.add('active');
+  const editTab = document.getElementById('editTab');
+  if (editTab) editTab.classList.add('active');
   
   // Update tab states in VE interface
   document.querySelectorAll('.ve-interface .action-tab:not(.star)').forEach(b => b.classList.remove('active'));
@@ -356,13 +365,22 @@ function exitEditMode() {
   isEditMode = false;
   
   // Show reading content
-  document.getElementById('readingContent').style.display = 'block';
+  const readingContent = document.getElementById('readingContent');
+  if (readingContent) readingContent.style.display = 'block';
   
-  // Hide VE interface
-  document.getElementById('veInterface').style.display = 'none';
+  // Hide VE interface (if it exists) and simple editing interface
+  const veInterface = document.getElementById('veInterface');
+  if (veInterface) {
+    veInterface.style.display = 'none';
+  } else {
+    // Hide simple editing interface for articles without full VE
+    const editingContent = document.getElementById('editing-content');
+    if (editingContent) editingContent.style.display = 'none';
+  }
   
-  // Hide smart widget
-  document.getElementById('smartWidget').style.display = 'none';
+  // Hide smart widget (if it exists)
+  const smartWidget = document.getElementById('smartWidget');
+  if (smartWidget) smartWidget.style.display = 'none';
 
   // Hide expand sidebar if present
   const expandSidebar = document.getElementById('expandSidebar');
