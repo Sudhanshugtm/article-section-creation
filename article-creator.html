@@ -3606,8 +3606,7 @@
         // Add content paragraph with proper styling
         sectionHTML += '<p style="margin: 0.75em 0; line-height: 1.6;">' + content + '</p>';
         
-        // Add minimal draft notice (non-editable)
-        sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
+        // Removed source notice to keep inserted sections clean
         
         // Check if References section already exists
         var referencesExists = currentContent.includes('<h2') && currentContent.includes('id="References"');
@@ -3639,8 +3638,7 @@
         // Clean up any extra BR tags or empty elements
         cleanupExtraBreaks();
         
-        // Add event listener to hide source notice when user starts editing
-        addSourceNoticeHideListener();
+        // No source notice; nothing additional to attach here
         
         editor.focus();
       }
@@ -3649,41 +3647,7 @@
       resetSidebarSource();
     }
 
-    // Add event listener to hide source notice when user starts editing content
-    function addSourceNoticeHideListener() {
-      var editor = document.getElementById('editor');
-      if (!editor) return;
-      
-      // Simple approach: hide source notices after any meaningful editing
-      var inputCount = 0;
-      var hideNoticesOnEdit = function(event) {
-        inputCount++;
-        
-        // Hide notices after 3 input events (typing 3 characters)
-        if (inputCount >= 3) {
-          var sourceNotices = editor.querySelectorAll('.source-notice');
-          sourceNotices.forEach(function(notice) {
-            if (notice && notice.parentNode) {
-              notice.style.transition = 'opacity 0.3s ease';
-              notice.style.opacity = '0';
-              setTimeout(function() {
-                if (notice.parentNode) {
-                  notice.parentNode.removeChild(notice);
-                }
-              }, 300);
-            }
-          });
-          
-          // Remove the listener after hiding
-          editor.removeEventListener('input', hideNoticesOnEdit);
-        }
-      };
-      
-      // Add the global listener with a small delay to ensure DOM is ready
-      setTimeout(function() {
-        editor.addEventListener('input', hideNoticesOnEdit);
-      }, 100);
-    }
+    // (source notice behavior removed)
 
     // Reset sidebar source verification
     function resetSidebarSource() {
