@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadArticleContent() {
   const articleBody = document.getElementById('articleBody');
+  
+  // Skip loading if content already exists (e.g., for Indonesian articles with pre-populated content)
+  if (articleBody && articleBody.children.length > 0) {
+    return;
+  }
+  
   // Use global articleData if available, otherwise fall back to defaultArticle
   const currentArticle = (typeof articleData !== 'undefined') ? articleData : defaultArticle;
   const htmlContent = convertMediaWikiToHTML(currentArticle.content);
