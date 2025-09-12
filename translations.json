@@ -43,7 +43,7 @@
             "description": "Book, film, music, or artwork"
           }
         },
-        "continue": "Start writing"
+        "continue": "Continue"
       },
       "step3": {
         "title": "Step 3: Write your article",
@@ -450,7 +450,7 @@
             "description": "Buku, film, musik, atau karya seni"
           }
         },
-        "continue": "Mulai menulis"
+        "continue": "Lanjutkan"
       },
       "step3": {
         "title": "Langkah 3: Tulis artikel Anda",
