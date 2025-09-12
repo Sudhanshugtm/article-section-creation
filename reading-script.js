@@ -342,8 +342,6 @@ function enterEditMode() {
     submitBtn.classList.remove('enabled');
   }
   
-  // Show smart widget for suggestions
-  document.getElementById('smartWidget').style.display = 'block';
 
   // Open the expand sidebar by default in edit mode
   const sidebar = document.getElementById('expandSidebar');
@@ -398,7 +396,11 @@ function exitEditMode() {
 }
 
 function initializeQuillEditor() {
-  quill = new Quill('#editor', {
+  // Try different editor containers (VE uses #editor, simple editing uses #quillEditor)
+  const editorContainer = document.getElementById('editor') || document.getElementById('quillEditor');
+  if (!editorContainer) return; // No editor container found
+  
+  quill = new Quill(editorContainer, {
     modules: { 
       toolbar: false, 
       history: { 

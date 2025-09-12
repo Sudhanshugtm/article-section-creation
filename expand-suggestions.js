@@ -234,32 +234,14 @@
   }
 
   function initInteractivity() {
-    // Smart widget trigger functionality
-    const smartWidget = document.getElementById('smartWidget');
-    const smartWidgetTrigger = document.getElementById('smartWidgetTrigger');
+    // Sidebar close functionality
     const expandSidebar = document.getElementById('expandSidebar');
     const expandSidebarClose = document.getElementById('expandSidebarClose');
 
-    if (smartWidgetTrigger && expandSidebar) {
-      // Show smart widget after page load
-      setTimeout(() => {
-        if (smartWidget) smartWidget.style.display = 'block';
-      }, 2000);
-
-      // Smart widget click opens sidebar
-      smartWidgetTrigger.addEventListener('click', () => {
-        expandSidebar.style.display = 'block';
-        if (smartWidget) smartWidget.style.display = 'none';
-      });
-    }
-
     if (expandSidebarClose && expandSidebar) {
-      // Close button hides sidebar and shows smart widget again
+      // Close button hides sidebar
       expandSidebarClose.addEventListener('click', () => {
         expandSidebar.style.display = 'none';
-        setTimeout(() => {
-          if (smartWidget) smartWidget.style.display = 'block';
-        }, 500);
       });
     }
   }
