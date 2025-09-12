@@ -933,14 +933,14 @@
       <div class="creator-wrap">
         <div class="ac-steps">
           <section class="ac-step active" id="step1">
-            <h3>What article would you like to create?</h3>
-            <input id="title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title">
+            <h3 data-i18n="steps.step1.title">What article would you like to create?</h3>
+            <input id="title" class="title-input" placeholder="e.g., Jane Doe / Example Software" data-i18n-placeholder="steps.step1.placeholder" aria-label="Proposed title">
             <div class="ac-actions">
-              <button class="btn primary" id="toStep2" disabled>Continue</button>
+              <button class="btn primary" id="toStep2" disabled data-i18n="steps.step1.continue">Continue</button>
             </div>
           </section>
           <section class="ac-step" id="step2">
-            <h3>Assign a topic category</h3>
+            <h3 data-i18n="steps.step2.title">Assign a topic category</h3>
             <div class="category-list" id="categoryList">
               <div class="category-item" data-cat="person">Person / Biography</div>
               <div class="category-item" data-cat="place">Geographic Location</div>
@@ -951,10 +951,10 @@
               <div class="category-item" data-cat="event">Event</div>
               <div class="category-item" data-cat="other">Other</div>
             </div>
-            <div class="hint">This helps us suggest the right structure and policies.</div>
+            <div class="hint" data-i18n="steps.step2.helper">This helps us suggest the right structure and policies.</div>
             <div class="ac-actions">
               <button class="btn" id="backTo1">Back</button>
-              <button class="btn primary" id="toStep3" disabled>Start editing</button>
+              <button class="btn primary" id="toStep3" disabled data-i18n="steps.step2.continue">Start editing</button>
             </div>
           </section>
           <section class="ac-step" id="step3">
@@ -1057,6 +1057,31 @@
   </div>
 
   <script>
+    // === Minimal runtime i18n (applies data-i18n and placeholders) ===
+    (function runtimeI18n(){
+      try {
+        var segs = location.pathname.split('/').filter(Boolean).map(function(s){ return s.toLowerCase(); });
+        var lang = (segs.indexOf('id') !== -1) ? 'id' : 'en';
+        window.currentLang = lang;
+        function getNested(obj, path){ try { return path.split('.').reduce(function(a,k){ return (a && a[k]!=null)?a[k]:undefined; }, obj); } catch(_) { return undefined; } }
+        function applyDom(){
+          try {
+            document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var v=getNested(window.translationsByLang[window.currentLang]||{}, k); if (typeof v==='string') el.textContent=v; });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){ var k=el.getAttribute('data-i18n-placeholder'); var v=getNested(window.translationsByLang[window.currentLang]||{}, k); if (typeof v==='string') el.setAttribute('placeholder', v); });
+          } catch(_){}
+        }
+        var cands = ['./translations.json','../translations.json','../../translations.json','/translations.json'];
+        (function next(){
+          if (!cands.length) { return; }
+          var u = cands.shift();
+          fetch(u+'?v='+(Date.now()))
+            .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+            .then(function(j){ window.translationsByLang=j; applyDom(); })
+            .catch(function(){ next(); });
+        })();
+      } catch(_){}
+    })();
+
     // === Codex Icons via MW API ===
     async function loadCodexIcons(iconNames) {
       const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
