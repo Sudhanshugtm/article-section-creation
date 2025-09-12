@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Redirecting…</title>
   <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=./article-creator.html?lang=id" />
 </head>
 <body>
   <noscript>
@@ -17,9 +18,10 @@
         var repo = parts[0] || '';
         var dest = '/' + repo + '/article-creator.html?lang=id';
         var fb = document.getElementById('fallback'); if (fb) fb.setAttribute('href', dest);
+        console.log('[redirect:id-root] ->', dest);
         location.replace(dest);
       } catch(e) {
-        location.href = '/article-creator.html?lang=id';
+        location.href = './article-creator.html?lang=id';
       }
     })();
   </script>
