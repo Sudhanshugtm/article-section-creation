@@ -416,7 +416,7 @@
     },
     "steps": {
       "step1": {
-        "title": "Langkah 1: Masukkan judul artikel",
+        "title": "Artikel apa yang ingin Anda buat?",
         "placeholder": "Apa judul artikelnya?",
         "helper": "Masukkan judul artikel yang ingin Anda buat",
         "continue": "Lanjutkan"
