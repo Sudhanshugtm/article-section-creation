@@ -1624,29 +1624,19 @@
       content += '</div>';
       content += '</div>';
       
-      // Add from Source Accordion
+      // Add from Source Accordion (simplified)
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Add from source</h4>';
+      content += '<h4 style="margin: 0;">Add from a source</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
-      content += '<p class="guide-note">Helper for citing reliable sources</p>';
+      content += '<p class="guide-note">Paste a reliable source URL (news, .edu, .gov). We’ll check it and help draft a paragraph you can edit.</p>';
       content += '<div id="sourceVerificationArea">';
-      
-      // Sister Projects Section - Dynamic based on article title
-      content += '<div id="sisterProjectsArea" style="margin-bottom: 20px;">';
-      content += getSisterProjectContent();
-      content += '</div>';
-      
-      // Separator
-      content += '<div style="border-top: 1px solid #eaecf0; margin: 16px 0; padding-top: 16px;">';
-      content += '<p class="guide-note" style="margin-bottom: 12px;"><strong>Manual source entry:</strong></p>';
-      content += '</div>';
       
       // Existing manual source entry
       content += '<div class="source-input-group">';
-      content += '<input type="url" id="sidebarSourceUrl" placeholder="Enter source URL (e.g., bbc.com/article)" class="source-url-input">';
+      content += '<input type="url" id="sidebarSourceUrl" placeholder="e.g., bbc.com/article" class="source-url-input" aria-label="Source URL">';
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
       content += '</div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
