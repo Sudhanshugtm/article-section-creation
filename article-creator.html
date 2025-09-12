@@ -71,6 +71,41 @@
     .ac-step { display: none; border: 1px solid var(--border-color-subtle, #eaecf0); background: #fff; border-radius: 6px; padding: 16px; }
     .ac-step.active { display: block; }
     .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
+
+    /* Q3 (Sources) — styles copied from creation.html for consistency */
+    #creation-stepSources.ac-step { max-width: 600px; }
+    #creation-stepSources .source-url-input {
+      flex: 1; width: auto; height: 32px;
+      padding: 6px 12px; border: 1px solid #a2a9b1; border-radius: 8px;
+      background: #fff; font-size: 14px;
+    }
+    #creation-stepSources .source-url-input:focus {
+      border-color: #36c; outline: none; box-shadow: inset 0 0 0 1px #36c;
+    }
+    #creation-stepSources .remove-source {
+      background: none; border: none; color: #72777d; font-size: 20px;
+      width: auto; height: auto; line-height: 1; padding: 4px; cursor: pointer;
+    }
+    #creation-stepSources .remove-source:hover { color: #202122; }
+    #creation-stepSources .readiness-line { display:flex; align-items:center; gap:8px; padding-top:0; }
+    #creation-stepSources .readiness-label { font-size:13px; color:#555; }
+    #creation-stepSources .readiness-status { font-size:13px; font-weight:600; color:#666; }
+    #creation-stepSources .readiness-count { font-size:13px; color:#72777d; }
+    #creation-stepSources .readiness-status.state-ready { color:#14866d; }
+    #creation-stepSources .readiness-status.state-mid { color:#ac6600; }
+    #creation-stepSources .readiness-status.state-low { color:#666; }
+    #creation-stepSources .source-status { display:none; margin-top:0; font-size:12px; }
+    #creation-stepSources .source-group { display:flex; flex-direction:column; gap:4px; }
+    #creation-stepSources .status-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:6px; }
+    #creation-stepSources .status-validating { background:#f3f4f6; color:#555; }
+    #creation-stepSources .status-verified { background:#d5fdf4; color:#14866d; font-weight:600; }
+    #creation-stepSources .spinner { width:12px; height:12px; border:2px solid #d0d5dd; border-top-color:#36c; border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #creation-stepSources .add-source-btn {
+      display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
+      border:1px solid #c8ccd1; border-radius:6px; background:#f8f9fa; color:#202122; font-size:13px; cursor:pointer;
+    }
+    #creation-stepSources .add-source-btn:hover { background:#eef3ff; border-color:#b6c8f0; }
     
     /* Center Step 1 in viewport */
     #step1.ac-step {
