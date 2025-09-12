@@ -1954,6 +1954,12 @@
       content += '<input type="url" id="sidebarSourceUrl" placeholder="e.g., bbc.com/article" class="source-url-input" aria-label="Source URL">';
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
       content += '</div>';
+      
+      // Saved sources from earlier (session/localStorage/Q3)
+      content += '<div id="sidebarSavedSection" style="display:none; margin: 8px 0 12px 0;">';
+      content += '  <p class="guide-note" style="margin: 0 0 6px 0; font-weight: 500;">Use sources you added earlier</p>';
+      content += '  <div id="sidebarSavedList"></div>';
+      content += '</div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
@@ -2387,6 +2393,7 @@
       
       // Bind source button
       bindSourceButton();
+      buildSidebarSavedList();
       
       // Bind eligibility checker
       bindEligibilityChecker();
@@ -3237,6 +3244,7 @@
       if (!sourceUrl || !sourceUrl.value.trim()) {
         return;
       }
+      try { saveSidebarSource(sourceUrl.value.trim()); buildSidebarSavedList(); } catch(_) {}
       
       // Disable button and show loading
       checkBtn.disabled = true;
@@ -3324,12 +3332,86 @@
       resultDiv.innerHTML = resultHTML;
       resultDiv.style.display = 'block';
       
+      try { saveSidebarSource(url, (sourceType.reliable ? (sourceType.reliability||'') : (sourceType.warning||''))); buildSidebarSavedList(); } catch(_) {}
+
       // Re-enable check button
       checkBtn.disabled = false;
       checkBtn.textContent = 'Check source';
       
       // Automatically generate and show draft content (skip the Generate Draft button)
       generateSidebarDraft(url);
+    }
+
+    // Persist and display saved sources in sidebar
+    function getSavedSourcesArray() {
+      try {
+        var raw = localStorage.getItem('articleCreatorSavedSources');
+        var arr = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(arr)) return [];
+        return arr;
+      } catch(_) { return []; }
+    }
+    function saveSavedSourcesArray(arr) {
+      try { localStorage.setItem('articleCreatorSavedSources', JSON.stringify(arr.slice(0, 20))); } catch(_) {}
+    }
+    function normalizeUrl(u){ try { return new URL(u).href; } catch(_){ try { return new URL('https://'+u).href; } catch(__){ return (u||'').trim(); } } }
+    function addToSaved(arr, url, hint) {
+      var canon = normalizeUrl(url);
+      if (!canon) return arr;
+      var exist = arr.find(function(s){ return (s && s.url) === canon; });
+      if (exist) {
+        if (hint && !exist.reliabilityHint) exist.reliabilityHint = hint;
+        return arr;
+      }
+      arr.unshift({ url: canon, title: '', reliabilityHint: hint||'' });
+      return arr;
+    }
+    function mergeCreationSources(arr) {
+      try {
+        var seed = Array.isArray(window.creationSources) ? window.creationSources : (Array.isArray(window.__creationSources) ? window.__creationSources : []);
+        seed.forEach(function(s){ if (s && s.url) { addToSaved(arr, s.url, s.reliabilityHint||''); } });
+      } catch(_) {}
+      return arr;
+    }
+    function saveSidebarSource(url, hint) {
+      var arr = getSavedSourcesArray();
+      addToSaved(arr, url, hint);
+      saveSavedSourcesArray(arr);
+    }
+    function buildSidebarSavedList() {
+      var section = document.getElementById('sidebarSavedSection');
+      var list = document.getElementById('sidebarSavedList');
+      if (!section || !list) return;
+      var arr = mergeCreationSources(getSavedSourcesArray());
+      if (!arr || arr.length === 0) { section.style.display = 'none'; return; }
+      section.style.display = 'block';
+      var html = '';
+      arr.slice(0, 10).forEach(function(s, idx){
+        var url = s.url || '';
+        var host = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return u; } })(url);
+        var label = s.title && s.title.trim() ? s.title.trim() : host;
+        var hint = (s.reliabilityHint||'').trim();
+        html += '<div class="source-item" data-url="'+ (url.replace(/"/g,'&quot;')) +'" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border:1px solid #eaecf0; border-radius:6px; margin-bottom:6px; cursor:pointer;">';
+        html += '  <div style="min-width:0;">';
+        html += '    <div style="font-size:13px; font-weight:500; color:#202122; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ label +'</div>';
+        html += '    <div style="font-size:12px; color:#72777d; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ host + (hint? ' · '+ hint : '') +'</div>';
+        html += '  </div>';
+        html += '  <button class="sidebar-action-btn" data-action="use" style="white-space:nowrap;">Use</button>';
+        html += '</div>';
+      });
+      list.innerHTML = html;
+      // Bind click handlers
+      Array.from(list.querySelectorAll('.source-item')).forEach(function(row){
+        row.addEventListener('click', function(e){
+          var url = row.getAttribute('data-url') || '';
+          var input = document.getElementById('sidebarSourceUrl');
+          if (input) { input.value = url; input.focus(); }
+          try { window.__sourceSelectedFromSaved = true; } catch(_) {}
+        });
+      });
+      Array.from(list.querySelectorAll('button[data-action="use"]')).forEach(function(btn){
+        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; } try { window.__sourceSelectedFromSaved = true; } catch(_) {} var check=document.getElementById('sidebarCheckBtn'); if (check){ check.click(); } });
+      });
     }
 
     // Generate draft in sidebar
