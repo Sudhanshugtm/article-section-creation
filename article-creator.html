@@ -1019,38 +1019,40 @@
               <button class="btn primary" id="toStep3" disabled data-i18n="steps.step2.continue">Start editing</button>
             </div>
           </section>
-          <!-- Optional Sources Step (Q3) — copied layout from creation.html -->
+          <!-- Optional Sources Step (Q3) — exact markup parity with creation.html -->
           <section class="ac-step" id="creation-stepSources">
-            <h3>Do you have at least two independent, reliable sources for “<span id="creation-topicTitle">your topic</span>”?</h3>
-            <p class="hint">Strong sources help articles survive review and deletion.</p>
+            <h3 data-i18n="creation.sourcesStep.title">Do you have at least two independent, reliable sources for "d"?</h3>
+            <p class="hint" data-i18n="creation.sourcesStep.subtext">Strong sources help articles survive review and deletion.</p>
             <div id="creation-readiness-line" class="readiness-line is-hidden" aria-live="polite">
-              <span class="readiness-label">Readiness:</span>
-              <span id="creation-readiness-status" class="readiness-status">Not ready</span>
-              <span id="creation-readiness-count" class="readiness-count">(0/2 verified sources)</span>
+              <span class="readiness-label" data-i18n="creation.sourcesStep.readiness.label">Readiness:</span>
+              <span id="creation-readiness-status" class="readiness-status" data-i18n="creation.sourcesStep.readiness.notReady">Not ready</span>
+              <span id="creation-readiness-count" class="readiness-count">(0/2 <span data-i18n="creation.sourcesStep.readiness.countSuffix">verified sources</span>)</span>
             </div>
             <div id="creation-sourcesList">
               <div class="source-group">
                 <div class="source-chip-row" data-index="0">
-                  <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL">
                   <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
                 </div>
                 <div class="source-status" aria-live="polite"></div>
               </div>
               <div class="source-group">
                 <div class="source-chip-row" data-index="1">
-                  <input type="url" class="source-url-input" placeholder="https://example.com/article" aria-label="Source URL" />
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL">
                   <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
                 </div>
                 <div class="source-status" aria-live="polite"></div>
               </div>
             </div>
+            <p id="creation-sources-readiness" class="readiness is-hidden" aria-live="polite" data-i18n="creation.sourcesStep.readiness.notReady">Not ready</p>
+            <p id="creation-sources-hint" class="hint"></p>
             <div style="margin:10px 0 2px 0;">
-              <button class="add-source-btn" id="creation-addSourceChip">Add another</button>
+              <button class="add-source-btn" id="creation-addSourceChip" data-i18n="creation.sourcesStep.addAnother">Add another</button>
             </div>
             <div class="ac-actions">
-              <button class="btn" id="creation-sourcesBack">Back</button>
-              <button class="btn" id="creation-sourcesSkip">Skip for now</button>
-              <button class="btn primary" id="creation-sourcesContinue">Continue</button>
+              <button class="btn" id="creation-sourcesBack" data-i18n="creation.sourcesStep.actions.back">Back</button>
+              <button class="btn" id="creation-sourcesSkip" data-i18n="creation.sourcesStep.actions.skip">Skip for now</button>
+              <button class="btn primary" id="creation-sourcesContinue" data-i18n="creation.sourcesStep.actions.continue">Continue</button>
             </div>
           </section>
           <section class="ac-step" id="step3">
@@ -1354,8 +1356,14 @@
       if (sourcesStep) {
         step2.classList.remove('active');
         sourcesStep.classList.add('active');
-        var tt = document.getElementById('creation-topicTitle');
-        if (tt) tt.textContent = (titleInput.value || '').trim() || 'your topic';
+        // Update Q3 title with the entered topic (fallback without param i18n)
+        try {
+          var h = sourcesStep.querySelector('h3');
+          var userTopic = (titleInput.value || '').trim();
+          if (h && userTopic) {
+            h.textContent = 'Do you have at least two independent, reliable sources for "' + userTopic + '"?';
+          }
+        } catch(_) {}
         setupSourcesStep();
         return;
       }
