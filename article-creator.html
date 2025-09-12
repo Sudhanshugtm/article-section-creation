@@ -1612,6 +1612,20 @@
               }
             }
           }
+          // Fallback: if nothing matched filters, show up to 2 facts + 1 image (so the block isn't empty)
+          if ((!items || items.length === 0) && sp) {
+            try {
+              if (Array.isArray(sp.facts)) {
+                for (var k=0; k<sp.facts.length && items.length<2; k++) {
+                  var f2 = sp.facts[k];
+                  items.push({ type: 'fact', text: f2.text, source: f2.source });
+                }
+              }
+              if (Array.isArray(sp.images) && items.length < 3 && sp.images.length > 0) {
+                items.push({ type: 'image', title: sp.images[0].title });
+              }
+            } catch(_) {}
+          }
           if (items.length) {
             content += '<div style="border-top: 1px solid #eaecf0; margin: 12px 0; padding-top: 12px;"></div>';
             content += '<p class="guide-note" style="margin: 0 0 8px 0; font-weight: 500;">From Wikipedia and sister projects</p>';
