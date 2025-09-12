@@ -1,26 +1,24 @@
 name: Deploy GitHub Pages (aggregate concepts)
 
-  on:
+on:
     push:
       branches:
         - main
         - concept-editor
         - concept-selection
         - concept-creation
-   # schedule:
-   #  - cron: "*/5 * * * *"
     workflow_dispatch:
 
-  permissions:
+permissions:
     contents: read
     pages: write
     id-token: write
 
-  concurrency:
+concurrency:
     group: pages
     cancel-in-progress: true
 
-  jobs:
+jobs:
     build:
       runs-on: ubuntu-latest
       steps:
@@ -81,8 +79,7 @@ name: Deploy GitHub Pages (aggregate concepts)
             if [ -f translate-build.js ] && [ -f translations.json ]; then
               echo "🌍 Generating Indonesian prototypes..."
               node translate-build.js creation.html site/id/creation/creation.html || echo "Failed to generate creation.html"
-              node translate-build.js article-creator.html site/id/creation/article-creator.html || echo "Failed to generate 
-  article-creator.html" 
+              node translate-build.js article-creator.html site/id/creation/article-creator.html || echo "Failed to generate article-creator.html" 
               # Copy supporting files
               cp translations.json site/id/creation/ || echo "Failed to copy translations.json"
               cp translations.json site/translations.json || echo "Failed to copy translations.json to root"
@@ -131,22 +128,17 @@ name: Deploy GitHub Pages (aggregate concepts)
 
                 /* Language switcher */
                 .topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-                .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 
-  999px; background: #fff; }
-                .lang-btn { display:inline-block; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; 
-  text-decoration: none; }
+                .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 999px; background: #fff; }
+                .lang-btn { display:inline-block; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; text-decoration: none; }
                 .lang-btn.active { background: #f8f9fa; font-weight: 600; box-shadow: inset 0 0 0 1px #c8ccd1; }
                 .lang-btn:focus { outline: 2px solid #36c; outline-offset: 2px; }
 
                 /* WIP banners */
-                .wip-banner { position: fixed; padding: 8px 40px; background: #ff6b6b; color: #fff; font-weight: 700; font-size: 14px; 
-  text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; transform: rotate(-45deg); 
-  transform-origin: center; }
+                .wip-banner { position: fixed; padding: 8px 40px; background: #ff6b6b; color: #fff; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; transform: rotate(-45deg); transform-origin: center; }
                 .wip-left { top: 30px; left: -40px; }
                 .wip-right { top: 30px; right: -40px; transform: rotate(45deg); }
                 @media (max-width: 480px){ .wip-left,.wip-right{display:none} }
-                .wip-mobile-banner { display:none; position:fixed; top:0; left:0; right:0; background:#ff6b6b; color:#fff; text-align:center;
-  padding:8px; font-weight:700; font-size:13px; text-transform:uppercase; z-index:1000; }
+                .wip-mobile-banner { display:none; position:fixed; top:0; left:0; right:0; background:#ff6b6b; color:#fff; text-align:center;padding:8px; font-weight:700; font-size:13px; text-transform:uppercase; z-index:1000; }
                 @media (max-width: 480px){ .wip-mobile-banner{display:block} body{padding-top:70px} }
               </style>
             </head>
@@ -221,22 +213,17 @@ name: Deploy GitHub Pages (aggregate concepts)
 
                 /* Language switcher */
                 .topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-                .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 
-  999px; background: #fff; }
-                .lang-btn { display:inline-block; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; 
-  text-decoration: none; }
+                .lang-switch { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid #eaecf0; border-radius: 999px; background: #fff; }
+                .lang-btn { display:inline-block; padding: 6px 10px; border-radius: 999px; font-size: 12px; line-height: 1; color: #202122; text-decoration: none; }
                 .lang-btn.active { background: #f8f9fa; font-weight: 600; box-shadow: inset 0 0 0 1px #c8ccd1; }
                 .lang-btn:focus { outline: 2px solid #36c; outline-offset: 2px; }
 
                 /* WIP banners */
-                .wip-banner { position: fixed; padding: 8px 40px; background: #ff6b6b; color: #fff; font-weight: 700; font-size: 14px; 
-  text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; transform: rotate(-45deg); 
-  transform-origin: center; }
+                .wip-banner { position: fixed; padding: 8px 40px; background: #ff6b6b; color: #fff; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1000; transform: rotate(-45deg); transform-origin: center; }
                 .wip-left { top: 30px; left: -40px; }
                 .wip-right { top: 30px; right: -40px; transform: rotate(45deg); }
                 @media (max-width: 480px){ .wip-left,.wip-right{display:none} }
-                .wip-mobile-banner { display:none; position:fixed; top:0; left:0; right:0; background:#ff6b6b; color:#fff; text-align:center;
-  padding:8px; font-weight:700; font-size:13px; text-transform:uppercase; z-index:1000; }
+                .wip-mobile-banner { display:none; position:fixed; top:0; left:0; right:0; background:#ff6b6b; color:#fff; text-align:center;padding:8px; font-weight:700; font-size:13px; text-transform:uppercase; z-index:1000; }
                 @media (max-width: 480px){ .wip-mobile-banner{display:block} body{padding-top:70px} }
               </style>
             </head>
