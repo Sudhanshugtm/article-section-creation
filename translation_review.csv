@@ -1,0 +1,310 @@
+Key,English,Indonesian,Reviewer_Notes,Status
+chips.BIRTH_DATE,birth date,tanggal lahir,,Needs Review
+chips.BIRTH_PLACE,birth place,tempat lahir,,Needs Review
+chips.CURRENT_STATUS,current status,status saat ini,,Needs Review
+chips.KNOWN_FOR,known for,dikenal karena,,Needs Review
+chips.MAJOR_ACHIEVEMENTS,major achievements,pencapaian utama,,Needs Review
+chips.NATIONALITY,nationality,kewarganegaraan,,Needs Review
+chips.OCCUPATION,occupation,pekerjaan,,Needs Review
+chips.PRONUNCIATION,pronunciation,pengucapan,,Needs Review
+chips.RECOGNITION,recognition,penghargaan,,Needs Review
+chips.addCitation,Add citation,Tambahkan kutipan,,Needs Review
+chips.help,Help,Bantuan,,Needs Review
+chips.reference,Reference,Referensi,,Needs Review
+chips.section,Section,Bagian,,Needs Review
+chips.source,Source,Sumber,,Needs Review
+chips.template,Template,Templat,,Needs Review
+creation.sourcesStep.actions.back,Back,,,Needs Review
+creation.sourcesStep.actions.continue,Continue,,,Needs Review
+creation.sourcesStep.actions.skip,Skip for now,,,Needs Review
+creation.sourcesStep.addAnother,Add another,,,Needs Review
+creation.sourcesStep.badge.questionable,⚠️ Possibly promotional,,,Needs Review
+creation.sourcesStep.badge.reliable,✓ Reliable domain,,,Needs Review
+creation.sourcesStep.badge.unknown,ℹ️ Unknown source,,,Needs Review
+creation.sourcesStep.hint.draft,We’ll start in Draft; add 2 independent sources to publish.,,,Needs Review
+creation.sourcesStep.hint.good,Looks good. You can draft now and later publish to mainspace.,,,Needs Review
+creation.sourcesStep.readiness.countSuffix,verified sources,,,Needs Review
+creation.sourcesStep.readiness.gettingThere,Getting there,,,Needs Review
+creation.sourcesStep.readiness.independentLabel,independent,,,Needs Review
+creation.sourcesStep.readiness.label,Readiness:,,,Needs Review
+creation.sourcesStep.readiness.notReady,Not ready,,,Needs Review
+creation.sourcesStep.readiness.ready,Ready,,,Needs Review
+creation.sourcesStep.readiness.sourcesLabel,sources,,,Needs Review
+creation.sourcesStep.status.checking,Checking...,,,Needs Review
+creation.sourcesStep.status.verified,Likely reliable,,,Needs Review
+creation.sourcesStep.subtext,Strong sources help articles survive review and deletion.,,,Needs Review
+creation.sourcesStep.title,"Do you have at least two independent, reliable sources for ""{Title}""?",,,Needs Review
+creation.sourcesStep.toggle.independent,Independent of the subject?,,,Needs Review
+creation.sourcesStep.toggle.notSure,Not sure,,,Needs Review
+creation.sourcesStep.toggle.significant,Significant coverage?,,,Needs Review
+creation.sourcesStep.toggle.yes,Yes,,,Needs Review
+creation.sourcesStep.urlPlaceholder,https://example.com/article,,,Needs Review
+creation.step1.continue,Continue,Lanjutkan,,Needs Review
+creation.step1.placeholder,"e.g., Jane Doe / Example Software","mis., Jane Doe / Contoh Perangkat Lunak",,Needs Review
+creation.step1.title,What article would you like to create?,Artikel apa yang ingin Anda buat?,,Needs Review
+creation.step2.back,Back,Kembali,,Needs Review
+creation.step2.categories.academic,Academic / Concept,Akademik / Konsep,,Needs Review
+creation.step2.categories.creative,Creative Work,Karya Kreatif,,Needs Review
+creation.step2.categories.event,Event,Peristiwa,,Needs Review
+creation.step2.categories.organization,Organization,Organisasi,,Needs Review
+creation.step2.categories.other,Other,Lainnya,,Needs Review
+creation.step2.categories.person,Person / Biography,Orang / Biografi,,Needs Review
+creation.step2.categories.place,Geographic Location,Lokasi geografis,,Needs Review
+creation.step2.categories.species,Species / Biology,Spesies / Biologi,,Needs Review
+creation.step2.continue,Continue,Lanjutkan,,Needs Review
+creation.step2.hint,This helps us suggest the right structure and policies.,Ini membantu kami menyarankan struktur dan kebijakan yang tepat.,,Needs Review
+creation.step2.start,Start editing,Mulai mengedit,,Needs Review
+creation.step2.title_static,Assign a topic category,Tetapkan kategori topik,,Needs Review
+creation.step2.title_template,"What is ""{topic}""?","Apa itu ""{topic}""?",,Needs Review
+editor.leadPlaceholder,"Start writing about {topic} or <strong>Press ""/"" for suggestions</strong>.","Mulailah menulis tentang {topic} atau <strong>Tekan ""/"" untuk melihat saran</strong>.",,Needs Review
+editor.sectionPlaceholder,Click here to start writing about {section}.,Klik di sini untuk mulai menulis tentang {section}.,,Needs Review
+eligibility.maybe,Maybe,Mungkin,,Needs Review
+eligibility.no,No,Tidak,,Needs Review
+eligibility.questions.coverage,Has the subject been covered in reliable sources?,Apakah subjek telah diliput dalam sumber terpercaya?,,Needs Review
+eligibility.questions.depth,Do the sources cover the subject in depth?,Apakah sumber-sumber tersebut membahas subjek secara mendalam?,,Needs Review
+eligibility.questions.independent,Are the sources independent of the subject?,Apakah sumber-sumber tersebut independen dari subjek?,,Needs Review
+eligibility.questions.multiple,Are there multiple sources about the subject?,Apakah ada beberapa sumber tentang subjek tersebut?,,Needs Review
+eligibility.title,Is this article eligible?,Apakah artikel ini layak?,,Needs Review
+eligibility.yes,Yes,Ya,,Needs Review
+guidance.close,Close,Tutup,,Needs Review
+guidance.eligibility,Article eligibility,Kelayakan artikel,,Needs Review
+guidance.sections,Suggested sections,Bagian yang disarankan,,Needs Review
+guidance.tips,Writing tips,Tips menulis,,Needs Review
+guidance.title,Writing guidance,Panduan menulis,,Needs Review
+guidance.whatToInclude,What to include,Apa yang harus disertakan,,Needs Review
+header.createAccount,Create account,Buat akun,,Needs Review
+header.login,Log in,Masuk log,,Needs Review
+header.search,Search Wikipedia,Cari Wikipedia,,Needs Review
+header.wikipedia,Wikipedia,Wikipedia,,Needs Review
+helper.addFromSource,Add from source,Tambahkan dari sumber,,Needs Review
+helper.templateStarter,Template starter,Gunakan templat,,Needs Review
+pageTitle,Article Creator — Reference Chip Concept,Pembuat Artikel — Konsep Chip Referensi,,Needs Review
+placeholders.almaMater,alma mater,almamater,,Needs Review
+placeholders.area,area,luas,,Needs Review
+placeholders.areaServed,area served,wilayah layanan,,Needs Review
+placeholders.awards,awards,penghargaan,,Needs Review
+placeholders.birthDate,birth date,tanggal lahir,,Needs Review
+placeholders.birthName,birth name,nama lahir,,Needs Review
+placeholders.birthPlace,birth place,tempat lahir,,Needs Review
+placeholders.careerHighlights,career highlights,sorotan karier,,Needs Review
+placeholders.children,children,anak,,Needs Review
+placeholders.currentStatus,current status,status saat ini,,Needs Review
+placeholders.deathDate,death date,tanggal meninggal,,Needs Review
+placeholders.deathPlace,death place,tempat meninggal,,Needs Review
+placeholders.discovered,discovered,ditemukan,,Needs Review
+placeholders.discoveredBy,discovered by,ditemukan oleh,,Needs Review
+placeholders.dissolution,dissolution,pembubaran,,Needs Review
+placeholders.education,education,pendidikan,,Needs Review
+placeholders.elevation,elevation,ketinggian,,Needs Review
+placeholders.established,established,didirikan,,Needs Review
+placeholders.familyBackground,family background,latar belakang keluarga,,Needs Review
+placeholders.formation,formation,pembentukan,,Needs Review
+placeholders.founder,founder,pendiri,,Needs Review
+placeholders.foundingDate,founding date,tanggal pendirian,,Needs Review
+placeholders.genre,genre,genre,,Needs Review
+placeholders.headquarters,headquarters,markas besar,,Needs Review
+placeholders.knownFor,known for,dikenal karena,,Needs Review
+placeholders.language,language,bahasa,,Needs Review
+placeholders.length,length,panjang,,Needs Review
+placeholders.location,location,lokasi,,Needs Review
+placeholders.majorAchievements,major achievements,pencapaian utama,,Needs Review
+placeholders.motto,motto,motto,,Needs Review
+placeholders.mottoTranslation,motto translation,terjemahan motto,,Needs Review
+placeholders.movement,movement,gerakan,,Needs Review
+placeholders.nationality,nationality,kebangsaan,,Needs Review
+placeholders.nativeName,native name,nama asli,,Needs Review
+placeholders.notableWorks,notable works,karya terkenal,,Needs Review
+placeholders.occupation,occupation,pekerjaan,,Needs Review
+placeholders.parents,parents,orang tua,,Needs Review
+placeholders.population,population,populasi,,Needs Review
+placeholders.products,products,produk,,Needs Review
+placeholders.pronunciation,pronunciation,pengucapan,,Needs Review
+placeholders.recognition,recognition,pengakuan,,Needs Review
+placeholders.services,services,layanan,,Needs Review
+placeholders.spouse,spouse,pasangan,,Needs Review
+placeholders.subsidiaries,subsidiaries,anak perusahaan,,Needs Review
+placeholders.type,type,jenis,,Needs Review
+placeholders.website,website,situs web,,Needs Review
+placeholders.yearsActive,years active,tahun aktif,,Needs Review
+sectionDescriptions.accoladesDesc,Awards and nominations,Penghargaan dan nominasi,,Needs Review
+sectionDescriptions.achievementsDesc,Major achievements and contributions,Pencapaian dan kontribusi utama,,Needs Review
+sectionDescriptions.applicationsDesc,Use in practice,Penggunaan dalam praktik,,Needs Review
+sectionDescriptions.artisticDevelopmentDesc,Evolution of artistic style and approach,Evolusi gaya dan pendekatan artistik,,Needs Review
+sectionDescriptions.awardsDesc,"Prizes, honors, and recognitions","Penghargaan, kehormatan, dan pengakuan",,Needs Review
+sectionDescriptions.backgroundDesc,Context and history of the subject,Konteks dan sejarah subjek,,Needs Review
+sectionDescriptions.careerAndResearchDesc,Professional work and research contributions,Pekerjaan profesional dan kontribusi penelitian,,Needs Review
+sectionDescriptions.careerDesc,Professional work and achievements,Pekerjaan profesional dan pencapaian,,Needs Review
+sectionDescriptions.careerHighlightsDesc,"Notable milestones, roles, or projects","Tonggak, peran, atau proyek yang menonjol",,Needs Review
+sectionDescriptions.characteristicsDesc,Properties and features,Properti dan fitur,,Needs Review
+sectionDescriptions.criticismAndDebatesDesc,Points of contention,Poin perdebatan,,Needs Review
+sectionDescriptions.cultureDesc,Cultural aspects and traditions,Aspek budaya dan tradisi,,Needs Review
+sectionDescriptions.definitionDesc,Core definition and scope,Definisi inti dan ruang lingkup,,Needs Review
+sectionDescriptions.demographicsDesc,Population and composition,Populasi dan komposisi,,Needs Review
+sectionDescriptions.descriptionDesc,Physical appearance and characteristics,Penampilan fisik dan karakteristik,,Needs Review
+sectionDescriptions.discographyDesc,Albums and recordings,Album dan rekaman,,Needs Review
+sectionDescriptions.earlyLifeAndEducationDesc,"Childhood, family background, and schooling","Masa kecil, latar belakang keluarga, dan sekolah",,Needs Review
+sectionDescriptions.earlyLifeDesc,"Childhood, family background, and educational journey","Masa kecil, latar belakang keluarga, dan perjalanan pendidikan",,Needs Review
+sectionDescriptions.economyDesc,Industries and economic indicators,Industri dan indikator ekonomi,,Needs Review
+sectionDescriptions.educationDesc,"Academic background, schools, and degrees","Latar belakang akademik, sekolah, dan gelar",,Needs Review
+sectionDescriptions.featuresDesc,Characteristics and notable features,Karakteristik dan ciri menonjol,,Needs Review
+sectionDescriptions.filmographyDesc,Films and appearances,Film dan penampilan,,Needs Review
+sectionDescriptions.geographyDesc,"Location, terrain, and climate","Lokasi, bentang alam, dan iklim",,Needs Review
+sectionDescriptions.governmentDesc,Administration and governance,Administrasi dan pemerintahan,,Needs Review
+sectionDescriptions.historyDesc,"Founding, development, and key events","Pendirian, perkembangan, dan peristiwa penting",,Needs Review
+sectionDescriptions.impactAndAftermathDesc,Consequences and legacy,Konsekuensi dan warisan,,Needs Review
+sectionDescriptions.influencesDesc,Influences and inspirations,Pengaruh dan inspirasi,,Needs Review
+sectionDescriptions.keyConceptsDesc,Related ideas and frameworks,Ide dan kerangka kerja terkait,,Needs Review
+sectionDescriptions.laterLifeDesc,Later years and activities,Tahun-tahun kemudian dan aktivitas,,Needs Review
+sectionDescriptions.leadershipAndStructureDesc,Management and subsidiaries,Manajemen dan anak perusahaan,,Needs Review
+sectionDescriptions.legacyAndInfluenceDesc,Impact and lasting influence,Dampak dan pengaruh yang berkelanjutan,,Needs Review
+sectionDescriptions.legacyDesc,Impact and legacy,Dampak dan warisan,,Needs Review
+sectionDescriptions.majorDiscoveriesDesc,Key discoveries and breakthroughs,Penemuan dan terobosan kunci,,Needs Review
+sectionDescriptions.majorWorksDesc,Most important and notable works,Karya paling penting dan terkenal,,Needs Review
+sectionDescriptions.mediaAndReceptionDesc,Coverage and public reaction,Liputan dan reaksi publik,,Needs Review
+sectionDescriptions.operationsDesc,Business model and markets,Model bisnis dan pasar,,Needs Review
+sectionDescriptions.overviewDesc,Summary of the most important points,Ringkasan poin-poin terpenting,,Needs Review
+sectionDescriptions.participantsDesc,Key people and organizations,Orang dan organisasi kunci,,Needs Review
+sectionDescriptions.personalLifeDesc,"Personal relationships, family, and private life","Hubungan pribadi, keluarga, dan kehidupan privat",,Needs Review
+sectionDescriptions.policiesAndReformsDesc,Key policies and reform initiatives,Kebijakan kunci dan inisiatif reformasi,,Needs Review
+sectionDescriptions.politicalCareerDesc,Political positions and activities,Posisi dan aktivitas politik,,Needs Review
+sectionDescriptions.productionDesc,Development and making,Pengembangan dan pembuatan,,Needs Review
+sectionDescriptions.productsAndServicesDesc,Offerings and innovations,Penawaran dan inovasi,,Needs Review
+sectionDescriptions.publicationsDesc,"Books, articles, and other publications","Buku, artikel, dan publikasi lainnya",,Needs Review
+sectionDescriptions.receptionDesc,Critical and public reception,Penerimaan kritis dan publik,,Needs Review
+sectionDescriptions.recognitionAndAwardsDesc,"Awards, honors, and recognitions received","Penghargaan, kehormatan, dan pengakuan yang diterima",,Needs Review
+sectionDescriptions.recognitionAndControversiesDesc,Awards and notable issues,Penghargaan dan isu penting,,Needs Review
+sectionDescriptions.releaseDesc,Publication and distribution,Publikasi dan distribusi,,Needs Review
+sectionDescriptions.significanceDesc,Impact and relevance,Dampak dan relevansi,,Needs Review
+sectionDescriptions.taxonomyDesc,Classification and naming,Klasifikasi dan penamaan,,Needs Review
+sectionDescriptions.timelineDesc,Chronology of events,Kronologi peristiwa,,Needs Review
+sectionDescriptions.worksDesc,Creative or notable works,Karya kreatif atau terkenal,,Needs Review
+sections.accolades,Accolades,Pujian,,Needs Review
+sections.achievements,Achievements,Pencapaian,,Needs Review
+sections.applications,Applications,Aplikasi,,Needs Review
+sections.artisticDevelopment,Artistic development,Perkembangan artistik,,Needs Review
+sections.awards,Awards,Penghargaan,,Needs Review
+sections.background,Background,Latar belakang,,Needs Review
+sections.career,Career,Karir,,Needs Review
+sections.careerAndResearch,Career and research,Karir dan penelitian,,Needs Review
+sections.careerHighlights,Career highlights,Sorotan karier,,Needs Review
+sections.characteristics,Characteristics,Karakteristik,,Needs Review
+sections.criticismAndDebates,Criticism and debates,Kritik dan perdebatan,,Needs Review
+sections.culture,Culture,Budaya,,Needs Review
+sections.definition,Definition,Definisi,,Needs Review
+sections.demographics,Demographics,Demografi,,Needs Review
+sections.description,Description,Deskripsi,,Needs Review
+sections.discography,Discography,Diskografi,,Needs Review
+sections.earlyLife,Early life,Kehidupan awal,,Needs Review
+sections.earlyLifeAndEducation,Early life and education,Kehidupan awal dan pendidikan,,Needs Review
+sections.economy,Economy,Ekonomi,,Needs Review
+sections.education,Education,Pendidikan,,Needs Review
+sections.features,Features,Ciri-ciri,,Needs Review
+sections.filmography,Filmography,Filmografi,,Needs Review
+sections.geography,Geography,Geografi,,Needs Review
+sections.government,Government,Pemerintahan,,Needs Review
+sections.history,History,Sejarah,,Needs Review
+sections.impactAndAftermath,Impact and aftermath,Dampak dan akibat,,Needs Review
+sections.influences,Influences,Pengaruh,,Needs Review
+sections.keyConcepts,Key concepts,Konsep kunci,,Needs Review
+sections.laterLife,Later life,Kehidupan kemudian,,Needs Review
+sections.leadershipAndStructure,Leadership and structure,Kepemimpinan dan struktur,,Needs Review
+sections.legacy,Legacy,Warisan,,Needs Review
+sections.legacyAndInfluence,Legacy and influence,Warisan dan pengaruh,,Needs Review
+sections.majorDiscoveries,Major discoveries,Penemuan besar,,Needs Review
+sections.majorWorks,Major works,Karya utama,,Needs Review
+sections.mediaAndReception,Media and reception,Media dan penerimaan,,Needs Review
+sections.operations,Operations,Operasi,,Needs Review
+sections.overview,Overview,Gambaran umum,,Needs Review
+sections.participants,Participants,Peserta,,Needs Review
+sections.personalLife,Personal life,Kehidupan pribadi,,Needs Review
+sections.policiesAndReforms,Policies and reforms,Kebijakan dan reformasi,,Needs Review
+sections.politicalCareer,Political career,Karir politik,,Needs Review
+sections.production,Production,Produksi,,Needs Review
+sections.productsAndServices,Products and services,Produk dan layanan,,Needs Review
+sections.publications,Publications,Publikasi,,Needs Review
+sections.reception,Reception,Penerimaan,,Needs Review
+sections.recognitionAndAwards,Recognition and awards,Pengakuan dan penghargaan,,Needs Review
+sections.recognitionAndControversies,Recognition and controversies,Pengakuan dan kontroversi,,Needs Review
+sections.release,Release,Rilis,,Needs Review
+sections.significance,Significance,Signifikansi,,Needs Review
+sections.taxonomy,Taxonomy,Taksonomi,,Needs Review
+sections.timeline,Timeline,Garis waktu,,Needs Review
+sections.works,Works,Karya,,Needs Review
+sourceModal.actions.cancel,Cancel,Batal,,Needs Review
+sourceModal.actions.check,Check source,Periksa sumber,,Needs Review
+sourceModal.actions.generate,Create draft from source,Buat draf dari sumber,,Needs Review
+sourceModal.actions.insert,Insert as draft,Sisipkan sebagai draf,,Needs Review
+sourceModal.previewHeader,Draft content preview,Pratinjau draf konten,,Needs Review
+sourceModal.sidebar.steps.checkingDomain,Checking domain...,Memeriksa domain...,,Needs Review
+sourceModal.sidebar.steps.verifyingReliability,Verifying source reliability...,Memverifikasi keandalan sumber...,,Needs Review
+sourceModal.steps.domainVerified,Domain verified: {domain},Domain terverifikasi: {domain},,Needs Review
+sourceModal.steps.reliabilityChecked,Source reliability checked,Keandalan sumber diperiksa,,Needs Review
+sourceModal.title,Add content from a reliable source,Tambahkan konten dari sumber tepercaya,,Needs Review
+sourceModal.urlLabel,Source URL,URL sumber,,Needs Review
+sourceModal.verifyHeader,Source verification,Verifikasi sumber,,Needs Review
+steps.step1.continue,Continue,Lanjutkan,,Needs Review
+steps.step1.helper,Enter the title of the article you want to create,Masukkan judul artikel yang ingin Anda buat,,Needs Review
+steps.step1.placeholder,What is the article title?,Apa judul artikelnya?,,Needs Review
+steps.step1.title,Step 1: Enter article title,Langkah 1: Masukkan judul artikel,,Needs Review
+steps.step2.categories.biography.description,Person or group of people,Orang atau kelompok orang,,Needs Review
+steps.step2.categories.biography.name,Biography,Biografi,,Needs Review
+steps.step2.categories.concept.description,"Theory, philosophy, or abstract idea","Teori, filosofi, atau ide abstrak",,Needs Review
+steps.step2.categories.concept.name,Concept,Konsep,,Needs Review
+steps.step2.categories.event.description,Historical or current event,Peristiwa sejarah atau terkini,,Needs Review
+steps.step2.categories.event.name,Event,Peristiwa,,Needs Review
+steps.step2.categories.location.description,"Place, building, or geographic area","Tempat, bangunan, atau area geografis",,Needs Review
+steps.step2.categories.location.name,Location,Lokasi,,Needs Review
+steps.step2.categories.species.description,"Animal, plant, or other organism","Hewan, tumbuhan, atau organisme lainnya",,Needs Review
+steps.step2.categories.species.name,Species,Spesies,,Needs Review
+steps.step2.categories.work.description,"Book, film, music, or artwork","Buku, film, musik, atau karya seni",,Needs Review
+steps.step2.categories.work.name,Creative Work,Karya Kreatif,,Needs Review
+steps.step2.continue,Start writing,Mulai menulis,,Needs Review
+steps.step2.helper,Select the category that best describes your article,Pilih kategori yang paling sesuai dengan artikel Anda,,Needs Review
+steps.step2.title,Step 2: Choose a category,Langkah 2: Pilih kategori,,Needs Review
+steps.step3.cancel,Cancel,Batal,,Needs Review
+steps.step3.placeholder,Start writing your article here...,Mulai menulis artikel Anda di sini...,,Needs Review
+steps.step3.preview,Preview,Pratinjau,,Needs Review
+steps.step3.publish,Publish,Terbitkan,,Needs Review
+steps.step3.title,Step 3: Write your article,Langkah 3: Tulis artikel Anda,,Needs Review
+templates.biography.career,Career section,Bagian karier,,Needs Review
+templates.biography.earlyLife,Early life section,Bagian kehidupan awal,,Needs Review
+templates.biography.infobox,Person infobox,Kotak info orang,,Needs Review
+templates.biography.intro,Biography introduction,Pengantar biografi,,Needs Review
+templates.location.geography,Geography section,Bagian geografi,,Needs Review
+templates.location.history,History section,Bagian sejarah,,Needs Review
+templates.location.infobox,Location infobox,Kotak info lokasi,,Needs Review
+templates.location.intro,Location introduction,Pengantar lokasi,,Needs Review
+toolbar.bold,Bold,Tebal,,Needs Review
+toolbar.bulletList,Bullet list,Daftar poin,,Needs Review
+toolbar.cite,Cite,Kutip,,Needs Review
+toolbar.heading,Heading,Judul,,Needs Review
+toolbar.italic,Italic,Miring,,Needs Review
+toolbar.link,Link,Pranala,,Needs Review
+toolbar.numberedList,Numbered list,Daftar bernomor,,Needs Review
+toolbar.redo,Redo,Ulangi,,Needs Review
+toolbar.undo,Undo,Batalkan,,Needs Review
+ui.addFromSource,Add from a source,Tambahkan dari sumber,,Needs Review
+ui.addFromSourceDesc,Open source dialog,Buka dialog sumber,,Needs Review
+ui.added,Added,Ditambahkan,,Needs Review
+ui.citeReliableSource,Cite a reliable source and insert content,Kutip sumber terpercaya dan sisipkan konten,,Needs Review
+ui.collapseToTop,Collapse to top suggestions,Tutup ke saran teratas,,Needs Review
+ui.goodIntroductions,"Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.","Pengantar yang baik secara singkat mendefinisikan topik dan merangkum poin-poin terpenting dengan nada netral, disertai sumber.",,Needs Review
+ui.hide,Hide,Sembunyikan,,Needs Review
+ui.insert,Insert,Sisipkan,,Needs Review
+ui.introduction,Introduction,Pendahuluan,,Needs Review
+ui.introductionDesc,Insert a simple opening sentence,Masukkan kalimat pembuka yang sederhana,,Needs Review
+ui.loadingSectionSuggestions,Loading section suggestions...,Memuat saran bagian...,,Needs Review
+ui.loadingSuggestions,Loading suggestions...,Memuat saran...,,Needs Review
+ui.openFullList,Open full list of suggested sections,Buka daftar lengkap bagian yang disarankan,,Needs Review
+ui.sections,Sections,Bagian,,Needs Review
+ui.showLess,Show less,Tampilkan sedikit,,Needs Review
+ui.showLessSections,Show less sections,Tampilkan sedikit bagian,,Needs Review
+ui.showMore,Show more,Tampilkan lebih,,Needs Review
+ui.showMoreSections,Show more sections,Tampilkan lebih banyak bagian,,Needs Review
+ui.suggested,Suggested,Disarankan,,Needs Review
+ui.suggestedSection,Suggested section,Bagian yang disarankan,,Needs Review
+ui.suggestedSectionDesc,Add a common section,Tambahkan bagian umum,,Needs Review
+ui.suggestedSections,Suggested Sections,Bagian yang Disarankan,,Needs Review
+ui.suggestions,Suggestions,Saran,,Needs Review
+ui.tryIntroTemplate,Try an intro template,Coba templat pengantar,,Needs Review
+ui.wikipediaExample,Wikipedia example,Contoh Wikipedia,,Needs Review

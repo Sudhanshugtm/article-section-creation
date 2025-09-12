@@ -401,7 +401,7 @@
         "actions": {
           "back": "Back",
           "skip": "Skip for now",
-          "continue": "Continue"
+          "continue": "Start editing"
         }
       }
     }
@@ -810,6 +810,11 @@
           "creative": "Karya Kreatif",
           "event": "Peristiwa",
           "other": "Lainnya"
+        }
+      },
+      "sourcesStep": {
+        "actions": {
+          "continue": "Mulai mengedit"
         }
       }
     }
