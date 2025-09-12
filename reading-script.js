@@ -443,7 +443,12 @@ function exitEditMode() {
 function initializeQuillEditor() {
   // Try different editor containers (VE uses #editor, simple editing uses #quillEditor)
   const editorContainer = document.getElementById('editor') || document.getElementById('quillEditor');
-  if (!editorContainer) return; // No editor container found
+  if (!editorContainer) {
+    console.log('No editor container found');
+    return; 
+  }
+  
+  console.log('Initializing Quill editor with container:', editorContainer.id);
   
   quill = new Quill(editorContainer, {
     modules: { 
@@ -485,31 +490,22 @@ function initializeQuillEditor() {
 function loadContentIntoEditor() {
   if (!quill) return;
   
-  let currentArticle;
-  
-  // Check if we have global articleData (English articles)
-  if (typeof articleData !== 'undefined') {
-    currentArticle = articleData;
+  // Simple approach: if we have articleBody content, extract text from it directly
+  const articleBody = document.getElementById('articleBody');
+  if (articleBody) {
+    // Get clean text content from the article
+    const textContent = articleBody.innerText || articleBody.textContent || '';
+    
+    // Set as plain text in Quill
+    quill.setText(textContent);
+    
+    console.log('Loaded content into editor:', textContent.substring(0, 100) + '...');
   } else {
-    // For Indonesian articles, extract content from the page HTML
-    const articleBody = document.getElementById('articleBody');
-    if (articleBody) {
-      // Create a fake article object with content from the HTML
-      currentArticle = {
-        id: document.querySelector('meta[name="article-id"]')?.content || 'unknown',
-        title: document.querySelector('h1.firstHeading')?.textContent || 'Unknown',
-        content: extractContentFromHTML(articleBody)
-      };
-    } else {
-      // Ultimate fallback to default article
-      currentArticle = defaultArticle;
-    }
+    // Fallback to default article processing
+    const currentArticle = (typeof articleData !== 'undefined') ? articleData : defaultArticle;
+    const content = convertArticleToQuillFormat(currentArticle);
+    quill.setContents(content);
   }
-  
-  // Convert the article content to a simplified Quill format
-  const content = convertArticleToQuillFormat(currentArticle);
-  
-  quill.setContents(content);
   
   // Position cursor at the beginning of the content (index 0)
   setTimeout(() => {
