@@ -102,8 +102,8 @@
       margin: 4px 0 6px 0;
     }
     #creation-stepSources .source-url-input {
-      flex: 1; width: auto; min-width: 0; height: 32px; box-sizing: border-box;
-      padding: 6px 12px; border: 1px solid #a2a9b1; border-radius: 8px;
+      flex: 1; width: auto; min-width: 0; height: 36px; box-sizing: border-box;
+      padding: 8px 12px; border: 1px solid #a2a9b1; border-radius: 8px;
       background: #fff; font-size: 14px;
     }
     #creation-stepSources .source-chip-row { display: flex; align-items: center; gap: 8px; position: relative; }
@@ -1319,7 +1319,7 @@
               row.__timer = setTimeout(function(){
                 var res = classifySource(domain);
                 if (res && res.reliable) {
-                  status.style.display='block'; status.innerHTML = '<span class="status-chip status-verified">Verified source</span>';
+                  status.style.display='block'; status.innerHTML = '<span class="status-chip status-verified">Likely reliable</span>';
                 } else { status.style.display='none'; status.textContent=''; }
                 updateNotabilityPreview();
               }, 300);
@@ -1343,7 +1343,7 @@
             var domain = extractDomain(canon);
             showRowStatus(status, 'validating');
             if (div.__timer) clearTimeout(div.__timer);
-            div.__timer = setTimeout(function(){ var res = classifySource(domain); if (res && res.reliable) { status.style.display='block'; status.innerHTML='<span class="status-chip status-verified">Verified source</span>'; } else { status.style.display='none'; status.textContent=''; } updateNotabilityPreview(); }, 300);
+            div.__timer = setTimeout(function(){ var res = classifySource(domain); if (res && res.reliable) { status.style.display='block'; status.innerHTML='<span class="status-chip status-verified">Likely reliable</span>'; } else { status.style.display='none'; status.textContent=''; } updateNotabilityPreview(); }, 300);
           });
           if (removeBtn) removeBtn.addEventListener('click', function(){ var g=div.parentNode; if (g && g.classList && g.classList.contains('source-group')) g.remove(); else div.remove(); updateNotabilityPreview(); });
         };
@@ -1355,7 +1355,7 @@
           try {
             var arr = [];
             var rows = document.querySelectorAll('#creation-sourcesList .source-chip-row');
-            rows.forEach(function(r){ var i = r.querySelector('input'); var raw = i ? (i.value||'').trim() : ''; if (!raw) return; var url = canonicalizeUrl(raw) || raw; var domain = extractDomain(url); var res = classifySource(domain||''); arr.push({ url: url, title: '', reliabilityHint: (res && res.reliable) ? 'Verified source' : '' }); });
+            rows.forEach(function(r){ var i = r.querySelector('input'); var raw = i ? (i.value||'').trim() : ''; if (!raw) return; var url = canonicalizeUrl(raw) || raw; var domain = extractDomain(url); var res = classifySource(domain||''); arr.push({ url: url, title: '', reliabilityHint: (res && res.reliable) ? 'Likely reliable' : '' }); });
             if (arr.length) window.creationSources = arr;
           } catch(_) {}
           goToEditor();
