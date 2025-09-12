@@ -3246,11 +3246,33 @@
       }
       try { saveSidebarSource(sourceUrl.value.trim()); buildSidebarSavedList(); } catch(_) {}
       
-      // Disable button and show loading
+      // If user picked a saved Q3 source marked as likely reliable, skip verification animation
+      if (window.__sourceSelectedFromSaved && window.__sourceSelectedFromSavedReliable) {
+        var url = sourceUrl.value.trim();
+        var resultDiv = document.getElementById('sidebarSourceResult');
+        var domain = extractDomain(url);
+        var sourceType = classifySource(domain);
+        var resultHTML = '';
+        if (!sourceType || sourceType.reliable) {
+          resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + (sourceType && sourceType.label ? sourceType.label : 'Likely reliable') + '</div>';
+          resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + ((sourceType && (sourceType.reliability||'')) || 'Likely reliable') + '</p>';
+        } else {
+          resultHTML += '<div class="sidebar-source-badge questionable">⚠️ ' + sourceType.label + '</div>';
+          resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.warning||'') + '</p>';
+        }
+        resultDiv.innerHTML = resultHTML;
+        resultDiv.style.display = 'block';
+        try { window.__suppressSourceNotice = true; } catch(_) {}
+        // Immediately generate draft
+        generateSidebarDraft(url);
+        // Reset selection flags
+        try { window.__sourceSelectedFromSaved = false; window.__sourceSelectedFromSavedReliable = false; } catch(_) {}
+        return;
+      }
+
+      // Otherwise run the verification steps (with animation)
       checkBtn.disabled = true;
       checkBtn.textContent = 'Checking...';
-      
-      // Show verification steps
       performSidebarVerificationSteps(sourceUrl.value.trim());
     }
 
@@ -3355,27 +3377,28 @@
       try { localStorage.setItem('articleCreatorSavedSources', JSON.stringify(arr.slice(0, 20))); } catch(_) {}
     }
     function normalizeUrl(u){ try { return new URL(u).href; } catch(_){ try { return new URL('https://'+u).href; } catch(__){ return (u||'').trim(); } } }
-    function addToSaved(arr, url, hint) {
+    function addToSaved(arr, url, hint, origin) {
       var canon = normalizeUrl(url);
       if (!canon) return arr;
       var exist = arr.find(function(s){ return (s && s.url) === canon; });
       if (exist) {
         if (hint && !exist.reliabilityHint) exist.reliabilityHint = hint;
+        if (origin && !exist.origin) exist.origin = origin;
         return arr;
       }
-      arr.unshift({ url: canon, title: '', reliabilityHint: hint||'' });
+      arr.unshift({ url: canon, title: '', reliabilityHint: hint||'', origin: origin||'manual' });
       return arr;
     }
     function mergeCreationSources(arr) {
       try {
         var seed = Array.isArray(window.creationSources) ? window.creationSources : (Array.isArray(window.__creationSources) ? window.__creationSources : []);
-        seed.forEach(function(s){ if (s && s.url) { addToSaved(arr, s.url, s.reliabilityHint||''); } });
+        seed.forEach(function(s){ if (s && s.url) { addToSaved(arr, s.url, s.reliabilityHint||'', 'q3'); } });
       } catch(_) {}
       return arr;
     }
     function saveSidebarSource(url, hint) {
       var arr = getSavedSourcesArray();
-      addToSaved(arr, url, hint);
+      addToSaved(arr, url, hint, 'manual');
       saveSavedSourcesArray(arr);
     }
     function buildSidebarSavedList() {
@@ -3391,7 +3414,9 @@
         var host = (function(u){ try { return new URL(u).host.replace(/^www\./,''); } catch(_) { return u; } })(url);
         var label = s.title && s.title.trim() ? s.title.trim() : host;
         var hint = (s.reliabilityHint||'').trim();
-        html += '<div class="source-item" data-url="'+ (url.replace(/"/g,'&quot;')) +'" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border:1px solid #eaecf0; border-radius:6px; margin-bottom:6px; cursor:pointer;">';
+        var reliable = /Likely\s+reliable|Verified\s*source/i.test(hint);
+        var origin = (s.origin||'').toString();
+        html += '<div class="source-item" data-url="'+ (url.replace(/"/g,'&quot;')) +'" data-reliable="'+(reliable?'true':'false')+'" data-origin="'+origin+'" style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border:1px solid #eaecf0; border-radius:6px; margin-bottom:6px; cursor:pointer;">';
         html += '  <div style="min-width:0;">';
         html += '    <div style="font-size:13px; font-weight:500; color:#202122; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ label +'</div>';
         html += '    <div style="font-size:12px; color:#72777d; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+ host + (hint? ' · '+ hint : '') +'</div>';
@@ -3406,11 +3431,20 @@
           var url = row.getAttribute('data-url') || '';
           var input = document.getElementById('sidebarSourceUrl');
           if (input) { input.value = url; input.focus(); }
-          try { window.__sourceSelectedFromSaved = true; } catch(_) {}
+          try {
+            window.__sourceSelectedFromSaved = true;
+            window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable') === 'true') && (row.getAttribute('data-origin') === 'q3');
+          } catch(_) {}
         });
       });
       Array.from(list.querySelectorAll('button[data-action="use"]')).forEach(function(btn){
-        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; } try { window.__sourceSelectedFromSaved = true; } catch(_) {} var check=document.getElementById('sidebarCheckBtn'); if (check){ check.click(); } });
+        btn.addEventListener('click', function(e){ e.stopPropagation(); var row = btn.closest('.source-item'); if (!row) return; var url=row.getAttribute('data-url')||''; var input=document.getElementById('sidebarSourceUrl'); if (input){ input.value=url; }
+          try {
+            window.__sourceSelectedFromSaved = true;
+            window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable') === 'true') && (row.getAttribute('data-origin') === 'q3');
+          } catch(_) {}
+          var check=document.getElementById('sidebarCheckBtn'); if (check){ check.click(); }
+        });
       });
     }
 
