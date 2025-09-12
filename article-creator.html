@@ -73,7 +73,34 @@
     .ac-step h3 { margin: 0 0 12px 0; font-size: 1.1rem; }
 
     /* Q3 (Sources) — styles copied from creation.html for consistency */
-    #creation-stepSources.ac-step { max-width: 600px; }
+    /* Center like other steps */
+    #creation-stepSources.ac-step {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      max-width: 600px;
+      width: 90%;
+      z-index: 100;
+    }
+    @media (max-width: 768px) {
+      #creation-stepSources.ac-step {
+        width: 95%;
+        padding: 20px;
+        top: 45%;
+        transform: translate(-50%, -45%);
+      }
+    }
+    #creation-stepSources h3 { font-size: 1.4rem; line-height: 1.35; margin-bottom: 8px; }
+    #creation-stepSources > .hint:first-of-type {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #202122;
+      margin: 4px 0 6px 0;
+    }
     #creation-stepSources .source-url-input {
       flex: 1; width: auto; height: 32px;
       padding: 6px 12px; border: 1px solid #a2a9b1; border-radius: 8px;
@@ -1312,10 +1339,13 @@
         function uniq(a){ return Array.from(new Set(a)); }
         var hosts = uniq(urls.map(function(u){ return extractDomain(u); }).filter(Boolean));
         var sources = urls.length; var independent = hosts.length;
-        if (sources === 0) { line.classList.add('is-hidden'); statusEl.textContent='Not ready'; countEl.textContent='(0 sources)'; return; }
+        if (sources === 0) { line.classList.add('is-hidden'); statusEl.textContent='Not ready'; countEl.textContent='(0 sources)'; statusEl.classList.remove('state-ready','state-mid','state-low'); statusEl.classList.add('state-low'); return; }
         line.classList.remove('is-hidden');
         var ready = (sources>=2 && independent>=2);
+        var stateKey = ready ? 'ready' : (sources>0 ? 'gettingThere' : 'notReady');
         statusEl.textContent = ready ? 'Ready' : (sources>0 ? 'Getting there' : 'Not ready');
+        statusEl.classList.remove('state-ready','state-mid','state-low');
+        statusEl.classList.add(stateKey==='ready' ? 'state-ready' : (stateKey==='gettingThere' ? 'state-mid' : 'state-low'));
         countEl.textContent = '('+sources+' sources · '+independent+' independent)';
       } catch(_){}
     }
