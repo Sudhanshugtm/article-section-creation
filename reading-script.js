@@ -799,11 +799,12 @@ function setupSharedHandlers() {
 
   // Insert actions from suggestions (delegated)
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.expand-suggestion__action--primary');
+    const btn = e.target.closest('[data-action]');
     if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    if (!action) return;
     e.preventDefault();
     e.stopPropagation();
-    const action = btn.getAttribute('data-action') || 'insert-section';
     if (action === 'insert-image') {
       insertImagePlaceholder();
       return;

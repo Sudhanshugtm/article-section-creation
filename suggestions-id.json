@@ -1,0 +1,235 @@
+{
+  "inggriani-liem": [
+    {
+      "icon": "",
+      "title": "Penelitian dan kontribusi",
+      "why": "Tambahkan detail tentang penelitian informatika dan kontribusi akademis.",
+      "reference": "Bagian penelitian biasanya menguraikan area fokus utama, publikasi penting, dan dampak terhadap bidang informatika. Gunakan sumber sekunder yang dapat diandalkan dan hindari bahasa promosional.",
+      "example": "Penelitian dan kontribusi\n- Area fokus: pendidikan informatika, rekayasa perangkat lunak\n- Kontribusi: pengembangan kurikulum, metodologi pengajaran\n- Dampak: peningkatan kualitas pendidikan IT di Indonesia",
+      "include": [
+        "Area penelitian utama dalam informatika",
+        "Publikasi akademis dan jurnal dengan sitasi",
+        "Dampak terhadap pendidikan informatika Indonesia"
+      ],
+      "content": "Liem telah berkontribusi signifikan dalam pengembangan kurikulum informatika di Indonesia, dengan fokus pada pendidikan berbasis praktik dan kolaborasi industri.<ref name=wikiIL>https://id.wikipedia.org/wiki/Inggriani_Liem</ref> Penelitiannya mencakup rekayasa perangkat lunak dan metodologi pengajaran yang telah diadopsi di berbagai universitas.<ref name=itb>https://www.itb.ac.id/</ref>",
+      "sources": [
+        {"name": "Inggriani Liem — Wikipedia", "url": "https://id.wikipedia.org/wiki/Inggriani_Liem"},
+        {"name": "Institut Teknologi Bandung", "url": "https://www.itb.ac.id/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Penghargaan dan pengakuan",
+      "why": "Dokumentasikan penghargaan dan pengakuan profesional.",
+      "reference": "Bagian penghargaan mencantumkan prestasi dengan tahun, pemberi penghargaan, dan kategori. Gunakan sumber yang dapat diverifikasi dan hindari daftar yang terlalu panjang.",
+      "example": "Penghargaan dan pengakuan\n- 20XX — Penghargaan Pendidik Teladan — Institusi/Organisasi\n- 20XX — Fellowship/Keanggotaan — Badan Profesional",
+      "include": [
+        "Tahun dan pemberi penghargaan",
+        "Kategori atau jenis pengakuan",
+        "Sitasi dari sumber independen"
+      ],
+      "content": "Sebagai tokoh pendidikan informatika, Liem telah menerima berbagai pengakuan atas kontribusinya dalam mengembangkan SDM teknologi informasi Indonesia.<ref name=wikiIL/> Pengakuan tersebut meliputi penghargaan dari institusi pendidikan dan organisasi profesi.<ref name=aptikom>https://aptikom.org/</ref>",
+      "sources": [
+        {"name": "Inggriani Liem — Wikipedia", "url": "https://id.wikipedia.org/wiki/Inggriani_Liem"},
+        {"name": "APTIKOM", "url": "https://aptikom.org/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ],
+
+  "chiki-fawzi": [
+    {
+      "icon": "",
+      "title": "Karir animasi",
+      "why": "Detail tentang proyek animasi dan pekerjaan di industri kreatif.",
+      "reference": "Bagian karir menguraikan proyek-proyek utama, peran, dan pencapaian dalam kronologi. Sertakan nama proyek, studio, dan tahun dengan sitasi yang dapat diandalkan.",
+      "example": "Karir animasi\n- 20XX — Animator, Studio/Proyek (Peran)\n- 20XX — Voice Actor, Serial/Film (Karakter)",
+      "include": [
+        "Proyek animasi dan peran spesifik",
+        "Studio atau perusahaan yang terlibat",
+        "Tahun dan jenis kontribusi"
+      ],
+      "content": "Fawzi telah terlibat dalam berbagai proyek animasi Indonesia, berkontribusi sebagai animator dan pengisi suara.<ref name=wikCF>https://id.wikipedia.org/wiki/Chiki_Fawzi</ref> Karyanya mencakup produksi lokal dan kolaborasi dengan studio animasi regional.<ref name=aniIndo>https://www.animasi-indonesia.com/</ref>",
+      "sources": [
+        {"name": "Chiki Fawzi — Wikipedia", "url": "https://id.wikipedia.org/wiki/Chiki_Fawzi"},
+        {"name": "Portal Animasi Indonesia", "url": "https://www.animasi-indonesia.com/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Aktivisme dan advokasi",
+      "why": "Dokumentasikan kegiatan aktivisme dan isu-isu yang diperjuangkan.",
+      "reference": "Bagian aktivisme mencantumkan isu-isu yang diperjuangkan, organisasi yang terlibat, dan kampanye dengan sumber yang dapat diverifikasi. Jaga netralitas dan hindari bias.",
+      "example": "Aktivisme dan advokasi\n- Isu: nama isu atau gerakan sosial\n- Organisasi: nama organisasi atau inisiatif\n- Kampanye: nama kampanye atau program",
+      "include": [
+        "Isu-isu sosial yang diperjuangkan",
+        "Organisasi atau gerakan yang diikuti",
+        "Kampanye atau inisiatif spesifik"
+      ],
+      "content": "Selain berkarya di bidang kreatif, Fawzi aktif dalam berbagai isu sosial dan advokasi, khususnya terkait hak-hak perempuan dan ekspresi kreatif.<ref name=wikCF/> Keterlibatannya dalam gerakan sosial mencerminkan komitmen terhadap perubahan positif di masyarakat.<ref name=aktivis>https://www.tempo.co/</ref>",
+      "sources": [
+        {"name": "Chiki Fawzi — Wikipedia", "url": "https://id.wikipedia.org/wiki/Chiki_Fawzi"},
+        {"name": "Tempo.co", "url": "https://www.tempo.co/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ],
+
+  "rini-sugianto": [
+    {
+      "icon": "",
+      "title": "Karir internasional",
+      "why": "Uraikan pengalaman kerja di studio animasi internasional.",
+      "reference": "Bagian karir internasional menjelaskan posisi di studio luar negeri, proyek yang dikerjakan, dan pencapaian. Gunakan sumber media dan profil profesional yang dapat diverifikasi.",
+      "example": "Karir internasional\n- 20XX–20XX — Animator, Studio Internasional (Lokasi)\n- Proyek: Nama film/serial dengan peran spesifik",
+      "include": [
+        "Studio internasional dan lokasi",
+        "Proyek-proyek besar yang dikerjakan",
+        "Peran dan kontribusi spesifik"
+      ],
+      "content": "Sugianto telah bekerja dengan berbagai studio animasi internasional, berkontribusi pada produksi film dan serial animasi yang diakui secara global.<ref name=wikiRS>https://id.wikipedia.org/wiki/Rini_Sugianto</ref> Pengalamannya di luar negeri memperkaya perspektif dan teknik animasinya.<ref name=kumparan>https://kumparan.com/</ref>",
+      "sources": [
+        {"name": "Rini Sugianto — Wikipedia", "url": "https://id.wikipedia.org/wiki/Rini_Sugianto"},
+        {"name": "Kumparan", "url": "https://kumparan.com/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Kontribusi industri animasi Indonesia",
+      "why": "Jelaskan peran dalam mengembangkan animasi Indonesia.",
+      "reference": "Bagian ini menguraikan kontribusi terhadap industri lokal, mentoring, dan inisiatif pengembangan talenta. Sertakan program atau organisasi yang terlibat.",
+      "example": "Kontribusi industri animasi Indonesia\n- Mentoring: program pelatihan atau workshop\n- Organisasi: keterlibatan dalam asosiasi industri\n- Inisiatif: proyek pengembangan talenta lokal",
+      "include": [
+        "Program mentoring atau pelatihan",
+        "Keterlibatan dalam organisasi industri",
+        "Inisiatif pengembangan talenta Indonesia"
+      ],
+      "content": "Sebagai animator berpengalaman internasional, Sugianto berkomitmen mengembangkan industri animasi Indonesia melalui berbagai program mentoring dan pelatihan.<ref name=wikiRS/> Kontribusinya membantu meningkatkan kualitas dan daya saing animator Indonesia di pasar global.<ref name=bekraf>https://www.bekraf.go.id/</ref>",
+      "sources": [
+        {"name": "Rini Sugianto — Wikipedia", "url": "https://id.wikipedia.org/wiki/Rini_Sugianto"},
+        {"name": "Bekraf (Arsip)", "url": "https://www.bekraf.go.id/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ],
+
+  "khoirul-anwar": [
+    {
+      "icon": "",
+      "title": "Publikasi dan paten",
+      "why": "Daftarkan publikasi ilmiah dan paten teknologi.",
+      "reference": "Bagian publikasi mencantumkan karya ilmiah peer-reviewed dengan detail bibliografi lengkap. Untuk paten, sertakan nomor paten dan deskripsi teknologi.",
+      "example": "Publikasi dan paten\n- Penulis, A. (Tahun). Judul paper. Jurnal/Konferensi. DOI\n- Paten: Nomor paten, Judul teknologi (Tahun)",
+      "include": [
+        "Publikasi peer-reviewed dengan sitasi lengkap",
+        "Paten dengan nomor dan deskripsi",
+        "Karya yang paling berpengaruh dengan DOI"
+      ],
+      "content": "Anwar telah mempublikasikan berbagai penelitian dalam jurnal internasional, khususnya terkait teknologi komunikasi nirkabel dan pemrosesan sinyal.<ref name=wikiKA>https://id.wikipedia.org/wiki/Khoirul_Anwar</ref> Beberapa karyanya telah dipatenkan dan diimplementasikan dalam teknologi komersial.<ref name=itb>https://www.itb.ac.id/</ref>",
+      "sources": [
+        {"name": "Khoirul Anwar — Wikipedia", "url": "https://id.wikipedia.org/wiki/Khoirul_Anwar"},
+        {"name": "Institut Teknologi Bandung", "url": "https://www.itb.ac.id/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Dampak teknologi dan industri",
+      "why": "Jelaskan implementasi penelitian dalam industri telekomunikasi.",
+      "reference": "Bagian dampak menjelaskan bagaimana penelitian diterapkan dalam produk komersial atau standar industri. Sertakan perusahaan atau organisasi yang mengadopsi teknologi.",
+      "example": "Dampak teknologi dan industri\n- Implementasi: teknologi yang diadopsi industri\n- Standar: kontribusi pada standar internasional\n- Komersialisasi: produk atau layanan yang menggunakan teknologi",
+      "include": [
+        "Teknologi yang diimplementasikan industri",
+        "Kontribusi pada standar internasional",
+        "Dampak pada sektor telekomunikasi Indonesia"
+      ],
+      "content": "Penelitian Anwar telah berkontribusi pada pengembangan standar telekomunikasi digital dan diimplementasikan dalam berbagai sistem komunikasi.<ref name=wikiKA/> Teknologinya telah diadopsi oleh industri untuk meningkatkan efisiensi transmisi data dan kualitas sinyal.<ref name=ieee>https://www.ieee.org/</ref>",
+      "sources": [
+        {"name": "Khoirul Anwar — Wikipedia", "url": "https://id.wikipedia.org/wiki/Khoirul_Anwar"},
+        {"name": "IEEE", "url": "https://www.ieee.org/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ],
+
+  "isabella-fawzi": [
+    {
+      "icon": "",
+      "title": "Karir jurnalistik",
+      "why": "Detail pengalaman sebagai penyiar berita dan jurnalis.",
+      "reference": "Bagian karir jurnalistik menguraikan posisi di media, program yang dipandu, dan pencapaian dalam jurnalisme. Sertakan nama media dan periode kerja.",
+      "example": "Karir jurnalistik\n- 20XX–20XX — Penyiar/Reporter, Nama Media\n- Program: nama program atau acara yang dipandu\n- Liputan: jenis berita atau peristiwa yang diliput",
+      "include": [
+        "Media tempat bekerja dan periode",
+        "Program atau acara yang dipandu",
+        "Jenis liputan atau spesialisasi berita"
+      ],
+      "content": "Fawzi telah membangun karir sebagai penyiar berita dan jurnalis, terlibat dalam berbagai program berita dan liputan aktual.<ref name=wikiIF>https://id.wikipedia.org/wiki/Isabella_Fawzi</ref> Pengalaman jurnalistiknya mencakup liputan politik, sosial, dan peristiwa nasional.<ref name=media>https://www.media-indonesia.com/</ref>",
+      "sources": [
+        {"name": "Isabella Fawzi — Wikipedia", "url": "https://id.wikipedia.org/wiki/Isabella_Fawzi"},
+        {"name": "Media Indonesia", "url": "https://www.media-indonesia.com/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Filmografi dan televisi",
+      "why": "Daftarkan karya di film dan program televisi.",
+      "reference": "Bagian filmografi mencantumkan film, serial TV, atau program dengan tahun, peran, dan nama produksi. Gunakan format yang konsisten dan sumber yang dapat diverifikasi.",
+      "example": "Filmografi dan televisi\n- 20XX — Judul Film/Serial (Peran)\n- 20XX — Program TV (Penyiar/Host)",
+      "include": [
+        "Film atau serial dengan tahun dan peran",
+        "Program televisi yang dipandu",
+        "Jenis kontribusi (akting, host, penyiar)"
+      ],
+      "content": "Selain karir jurnalistik, Fawzi juga terlibat dalam produksi film dan program televisi, baik sebagai pemeran maupun pembawa acara.<ref name=wikiIF/> Pengalaman di layar kaca memperkaya kemampuan komunikasi dan presentasinya.<ref name=filmIndo>https://filmindonesia.or.id/</ref>",
+      "sources": [
+        {"name": "Isabella Fawzi — Wikipedia", "url": "https://id.wikipedia.org/wiki/Isabella_Fawzi"},
+        {"name": "Film Indonesia", "url": "https://filmindonesia.or.id/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ],
+
+  "daftar-tokoh-teknologi-informasi-indonesia": [
+    {
+      "icon": "",
+      "title": "Pengusaha teknologi",
+      "why": "Tambahkan kategori untuk pendiri startup dan perusahaan teknologi.",
+      "reference": "Bagian ini mengategorikan tokoh berdasarkan kontribusi sebagai pengusaha, dengan nama perusahaan dan bidang usaha. Sertakan tahun pendirian dan pencapaian utama.",
+      "example": "Pengusaha teknologi\n- Nama Pengusaha — Perusahaan (bidang, tahun didirikan)\n- Pencapaian: deskripsi singkat kontribusi atau prestasi",
+      "include": [
+        "Nama pengusaha dan perusahaan yang didirikan",
+        "Bidang usaha dan tahun pendirian",
+        "Pencapaian atau milestone penting"
+      ],
+      "content": "Indonesia memiliki berbagai pengusaha teknologi yang telah membangun ekosistem startup dan perusahaan teknologi nasional.<ref name=wikiDTI>https://id.wikipedia.org/wiki/Daftar_tokoh_teknologi_informasi_Indonesia</ref> Mereka berkontribusi dalam transformasi digital dan ekonomi kreatif Indonesia.<ref name=startup>https://dailysocial.id/</ref>",
+      "sources": [
+        {"name": "Daftar tokoh teknologi informasi Indonesia — Wikipedia", "url": "https://id.wikipedia.org/wiki/Daftar_tokoh_teknologi_informasi_Indonesia"},
+        {"name": "Daily Social", "url": "https://dailysocial.id/"}
+      ],
+      "primaryAction": "Insert section"
+    },
+    {
+      "icon": "",
+      "title": "Akademisi dan peneliti",
+      "why": "Kategorisasi tokoh yang berkontribusi dalam penelitian dan pendidikan.",
+      "reference": "Bagian ini mencantumkan akademisi dengan institusi, bidang penelitian, dan kontribusi. Sertakan gelar dan posisi akademis saat ini.",
+      "example": "Akademisi dan peneliti\n- Nama Akademisi — Universitas/Institusi (bidang penelitian)\n- Kontribusi: area penelitian atau pengembangan yang signifikan",
+      "include": [
+        "Nama dan institusi tempat berkarya",
+        "Bidang penelitian atau spesialisasi",
+        "Kontribusi signifikan pada pengembangan IT"
+      ],
+      "content": "Para akademisi dan peneliti Indonesia telah berkontribusi dalam pengembangan ilmu pengetahuan dan teknologi informasi melalui penelitian dan pendidikan.<ref name=wikiDTI/> Karya mereka mendukung kemajuan teknologi dan pembentukan SDM berkualitas.<ref name=ristekdikti>https://www.kemdikbud.go.id/</ref>",
+      "sources": [
+        {"name": "Daftar tokoh teknologi informasi Indonesia — Wikipedia", "url": "https://id.wikipedia.org/wiki/Daftar_tokoh_teknologi_informasi_Indonesia"},
+        {"name": "Kemendikbudristek", "url": "https://www.kemdikbud.go.id/"}
+      ],
+      "primaryAction": "Insert section"
+    }
+  ]
+}

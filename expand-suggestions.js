@@ -108,23 +108,22 @@
       // example key removed
       return (
         '<li class="expand-suggestion">' +
-          '<div class="expand-suggestion__icon">' + icon + '</div>' +
+          '<div class="expand-suggestion__icon" aria-hidden="true" style="display:none">' + icon + '</div>' +
           '<div class="expand-suggestion__content">' +
-            '<h5>' + title + '</h5>' +
+            '<h5 class="suggestion-title">' + title + '</h5>' +
             '<p>' + why + '</p>' +
             '' +
             (include.length ? (
-              '<div class="include-guidance">' +
-                '<div class="include-guidance__title">What to include:</div>' +
+              '<div class="include-guidance no-bg">' +
+                '<div class="include-guidance__title">What to include</div>' +
                 '<ul class="include-guidance__list">' +
                   include.map(it => '<li>' + it + '</li>').join('') +
                 '</ul>' +
-                '' +
               '</div>'
             ) : '') +
-            '<div class="expand-suggestion__actions">' +
-              (primary ? '<button class="expand-suggestion__action expand-suggestion__action--primary" data-action="insert-section" data-title="' + attrTitle + '" data-include="' + includeAttr + '">' + primary + '</button>' : '') +
-            '</div>' +
+            (primary ? '<div class="suggestion-actions">'
+              + '<a href="#" class="wiki-link" data-action="insert-section" data-title="' + attrTitle + '" data-include="' + includeAttr + '">' + primary + '</a>'
+              + '</div>' : '') +
           '</div>' +
         '</li>'
       );
