@@ -1576,16 +1576,41 @@
           var at = (tEl && tEl.value ? tEl.value.trim() : '');
           if (!at) { return; }
           var sp = (typeof getSisterProjectData === 'function') ? getSisterProjectData(at) : null;
+          // Heuristics to ensure relevance to selected category + title tokens
+          function tokens(s){ try { return String(s||'').toLowerCase().split(/[^a-z0-9]+/).filter(function(w){ return w && w.length>3; }); } catch(_) { return []; } }
+          var titleTokens = tokens(at);
+          function hasTitleToken(text){ var t=tokens(text); for (var i=0;i<titleTokens.length;i++){ if (t.indexOf(titleTokens[i])!==-1) return true; } return false; }
+          var cat = (typeof selectedCat !== 'undefined' && selectedCat) ? selectedCat : 'other';
+          var catPatterns = {
+            person: /(born|died|biograph|career|occupation|writer|scientist|athlete|actor|singer|politician|award|notable)/i,
+            place: /(city|town|village|located|population|area|region|province|capital|geograph)/i,
+            species: /(species|habitat|taxonomy|genus|population|conservation|animal|plant|insect|marine)/i,
+            organization: /(company|organization|founded|headquarters|employees|non[- ]profit|institution|subsidiar|industry)/i,
+            academic: /(concept|theory|definition|term|framework|method|discipline|academic|research)/i,
+            creative: /(film|movie|book|novel|album|song|release|cast|director|author|publication)/i,
+            event: /(occurred|happened|date|timeline|impact|casualties|damage|magnitude|protest|election|festival)/i,
+            other: /(topic|subject|overview|background|context|notable)/i
+          };
+          function relevantFact(f){ var txt = String((f && f.text) || ''); return hasTitleToken(txt) && (catPatterns[cat] ? catPatterns[cat].test(txt) : true); }
+          function relevantImage(img){ var title = String((img && img.title) || ''); return hasTitleToken(title) || (catPatterns[cat] ? catPatterns[cat].test(title) : false); }
+
           var items = [];
           if (sp && Array.isArray(sp.facts)) {
             for (var i=0; i<sp.facts.length && items.length<2; i++) {
               var f = sp.facts[i];
-              items.push({ type: 'fact', text: f.text, source: f.source });
+              if (relevantFact(f)) {
+                items.push({ type: 'fact', text: f.text, source: f.source });
+              }
             }
           }
           if (sp && Array.isArray(sp.images) && items.length < 3 && sp.images.length > 0) {
-            var img = sp.images[0];
-            items.push({ type: 'image', title: img.title });
+            for (var j=0; j<sp.images.length && items.length<3; j++) {
+              var img = sp.images[j];
+              if (relevantImage(img)) {
+                items.push({ type: 'image', title: img.title });
+                break;
+              }
+            }
           }
           if (items.length) {
             content += '<div style="border-top: 1px solid #eaecf0; margin: 12px 0; padding-top: 12px;"></div>';
