@@ -9,7 +9,7 @@
     },
     "steps": {
       "step1": {
-        "title": "Step 1: Enter article title",
+        "title": "What article would you like to create?",
         "placeholder": "What is the article title?",
         "helper": "Enter the title of the article you want to create",
         "continue": "Continue"
