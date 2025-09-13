@@ -1963,11 +1963,13 @@
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
       content += '</div>';
       
-      // Saved sources from earlier (session/localStorage/Q3)
+      // Saved sources from earlier (session/Q3)
       content += '<div id="sidebarSavedSection" style="display:none; margin: 8px 0 12px 0;">';
       content += '  <p class="guide-note" style="margin: 0 0 6px 0; font-weight: 500;">Use sources you added earlier</p>';
       content += '  <div id="sidebarSavedList"></div>';
       content += '</div>';
+      // Minimal separator between saved list and manual input/verification
+      content += '<div class="source-separator" aria-hidden="true" style="border-top:1px solid #eaecf0; margin: 8px 0 12px 0;"></div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
@@ -3358,12 +3360,16 @@
       var sourceType = classifySource(domain);
       
       var resultHTML = '';
-      if (sourceType.reliable) {
+      var isExternal = (sourceType && sourceType.label === 'External source');
+      if (sourceType.reliable && !isExternal) {
         resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + sourceType.label + '</div>';
-        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.reliability + '</p>';
-      } else {
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.reliability||'') + '</p>';
+      } else if (!sourceType.reliable) {
         resultHTML += '<div class="sidebar-source-badge questionable">⚠️ ' + sourceType.label + '</div>';
         resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + sourceType.warning + '</p>';
+      } else {
+        // External source → do not show the label; show neutral domain line
+        resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">Domain: ' + domain + '</p>';
       }
       
       // Add explicit next actions
@@ -3475,28 +3481,28 @@
           e.stopPropagation();
           var row = btn.closest('.source-item'); if (!row) return;
           var url = row.getAttribute('data-url')||'';
-          var input = document.getElementById('sidebarSourceUrl');
-          if (input){ input.value=url; input.focus(); }
           try { window.__sourceSelectedFromSaved = true; window.__sourceSelectedFromSavedReliable = (row.getAttribute('data-reliable')==='true') && (row.getAttribute('data-origin')==='q3'); } catch(_) {}
-          // If Q3-likely reliable, show result with explicit action (no re-verification)
+          var resultDiv = document.getElementById('sidebarSourceResult');
+          var domain = extractDomain(url);
+          var sourceType = classifySource(domain) || { reliable: true, label: '', reliability: '' };
+          var resultHTML = '';
           if (window.__sourceSelectedFromSavedReliable) {
-            var resultDiv = document.getElementById('sidebarSourceResult');
-            var domain = extractDomain(url);
-            var sourceType = classifySource(domain) || { reliable: true, label: 'Likely reliable', reliability: 'Likely reliable' };
-            var resultHTML = '';
-            resultHTML += '<div class="sidebar-source-badge reliable">✓ ' + (sourceType.label || 'Likely reliable') + '</div>';
-            resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.reliability || 'Likely reliable') + ' • verified in Step 3</p>';
-            resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
-              + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
-              + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
-              + '</div>';
-            resultDiv.innerHTML = resultHTML;
-            resultDiv.style.display = 'block';
-            var gbtn = document.getElementById('sidebarGenerateBtn');
-            var cbtn = document.getElementById('sidebarCancelBtn');
-            if (gbtn) gbtn.addEventListener('click', function(){ generateSidebarDraft(url); });
-            if (cbtn) cbtn.addEventListener('click', function(){ resetSidebarSource(); });
+            resultHTML += '<div class="sidebar-source-badge reliable">✓ Likely reliable</div>';
+            resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">' + (sourceType.reliability || 'Verified in Step 3') + '</p>';
+          } else {
+            // Minimal, no "External source" label
+            resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">Selected: ' + domain + '</p>';
           }
+          resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
+            + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
+            + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+            + '</div>';
+          resultDiv.innerHTML = resultHTML;
+          resultDiv.style.display = 'block';
+          var gbtn = document.getElementById('sidebarGenerateBtn');
+          var cbtn = document.getElementById('sidebarCancelBtn');
+          if (gbtn) gbtn.addEventListener('click', function(){ generateSidebarDraft(url); });
+          if (cbtn) cbtn.addEventListener('click', function(){ resetSidebarSource(); });
         });
       });
       // No clear/remove controls to keep UI simple
