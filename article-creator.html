@@ -1196,6 +1196,20 @@
       } catch(_){}
     })();
 
+    // Simple translation helper for dynamic content
+    function __t(key, fallback, params){
+      try {
+        var lang = (window.currentLang || 'en');
+        var data = (window.translationsByLang && window.translationsByLang[lang]) || {};
+        var val = key.split('.').reduce(function(a,k){ return (a && a[k] != null) ? a[k] : undefined; }, data);
+        var out = (typeof val === 'string') ? val : (fallback || key);
+        if (params && typeof out === 'string') {
+          Object.keys(params).forEach(function(p){ out = out.replace(new RegExp('\\{' + p + '\\}','g'), params[p]); });
+        }
+        return out;
+      } catch(_) { return fallback || key; }
+    }
+
     // === Codex Icons via MW API ===
     async function loadCodexIcons(iconNames) {
       const url = 'https://www.mediawiki.org/w/api.php?action=query&list=codexicons&format=json&origin=*' +
@@ -1297,7 +1311,13 @@
       var safeTitle = (t || 'Untitled').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       var veTitle = document.getElementById('veTitle'); if (veTitle) veTitle.textContent = safeTitle;
       ed.innerHTML = '';
-      ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      try {
+        var ph = __t('editor.leadPlaceholder', 'Start writing about {topic}...', { topic: safeTitle });
+        ph = ph.replace(/<[^>]+>/g, ''); // strip any HTML
+        ed.setAttribute('data-placeholder', ph);
+      } catch(_) {
+        ed.setAttribute('data-placeholder', 'Start writing about ' + safeTitle + '...');
+      }
       ed.focus();
       try { if (typeof applyEligibilityAutoFromSources === 'function') applyEligibilityAutoFromSources(); } catch(_) {}
     }
@@ -1950,17 +1970,17 @@
       // Add from Source Accordion (simplified)
       content += '<div class="accordion-item" style="margin-top: 16px;">';
       content += '<div class="accordion-header" onclick="toggleAccordion(this)" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 8px 0; border-bottom: 1px solid #eaecf0;">';
-      content += '<h4 style="margin: 0;">Add from a source</h4>';
+      content += '<h4 style="margin: 0;">' + __t('ui.addFromSource','Add from a source') + '</h4>';
       content += '<span class="accordion-icon" style="font-size: 14px; transform: rotate(-90deg); transition: transform 0.2s;">▼</span>';
       content += '</div>';
       content += '<div class="accordion-content" style="display: none; padding-top: 12px;">';
-      content += '<p class="guide-note">Paste a reliable source URL (news, .edu, .gov). We’ll check it and help draft a paragraph you can edit.</p>';
+      content += '<p class="guide-note">' + __t('ui.citeReliableSource','Cite a reliable source and insert content') + '</p>';
       content += '<div id="sourceVerificationArea">';
       
       // Existing manual source entry
       content += '<div class="source-input-group">';
-      content += '<input type="url" id="sidebarSourceUrl" placeholder="e.g., bbc.com/article" class="source-url-input" aria-label="Source URL">';
-      content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
+      content += '<input type="url" id="sidebarSourceUrl" placeholder="' + __t('creation.sourcesStep.urlPlaceholder','https://example.com/article') + '" class="source-url-input" aria-label="Source URL">';
+      content += '<button class="source-check-btn" id="sidebarCheckBtn">' + __t('sourceModal.actions.check','Check source') + '</button>';
       content += '</div>';
       // Minimal separator between input and saved list
       content += '<div class="source-separator" aria-hidden="true" style="border-top:1px solid #eaecf0; margin: 8px 0 12px 0;"></div>';
@@ -3048,9 +3068,9 @@
             
             // Update text based on step
             if (currentStep === 0) {
-              text.textContent = 'Domain verified: ' + extractDomain(url);
+              text.textContent = __t('sourceModal.steps.domainVerified','Domain verified: {domain}', { domain: extractDomain(url) });
             } else if (currentStep === 1) {
-              text.textContent = 'Source reliability checked';
+              text.textContent = __t('sourceModal.steps.reliabilityChecked','Source reliability checked');
             }
             
             currentStep++;
@@ -3290,7 +3310,7 @@
 
       // Otherwise run the verification steps (with animation)
       checkBtn.disabled = true;
-      checkBtn.textContent = 'Checking...';
+      checkBtn.textContent = __t('creation.sourcesStep.status.checking','Checking...');
       performSidebarVerificationSteps(sourceUrl.value.trim());
     }
 
@@ -3375,8 +3395,8 @@
       
       // Add explicit next actions
       resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
-        + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
-        + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+        + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">' + __t('sourceModal.actions.generate','Create draft from source') + '</button>'
+        + '<button class="sidebar-action-btn" id="sidebarCancelBtn">' + __t('sourceModal.actions.cancel','Cancel') + '</button>'
         + '</div>';
       resultDiv.innerHTML = resultHTML;
       resultDiv.style.display = 'block';
@@ -3385,7 +3405,7 @@
 
       // Re-enable check button
       checkBtn.disabled = false;
-      checkBtn.textContent = 'Check source';
+      checkBtn.textContent = __t('sourceModal.actions.check','Check source');
       
       // Bind actions
       var gbtn = document.getElementById('sidebarGenerateBtn');
@@ -3495,8 +3515,8 @@
             resultHTML += '<p style="font-size: 12px; color: #72777d; margin: 0 0 8px 0;">Selected: ' + domain + '</p>';
           }
           resultHTML += '<div style="margin-top:8px; display:flex; gap:8px;">'
-            + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">Create draft from source</button>'
-            + '<button class="sidebar-action-btn" id="sidebarCancelBtn">Cancel</button>'
+            + '<button class="sidebar-action-btn primary" id="sidebarGenerateBtn">' + __t('sourceModal.actions.generate','Create draft from source') + '</button>'
+            + '<button class="sidebar-action-btn" id="sidebarCancelBtn">' + __t('sourceModal.actions.cancel','Cancel') + '</button>'
             + '</div>';
           resultDiv.innerHTML = resultHTML;
           resultDiv.style.display = 'block';
