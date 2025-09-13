@@ -1320,6 +1320,8 @@
       }
       ed.focus();
       try { if (typeof applyEligibilityAutoFromSources === 'function') applyEligibilityAutoFromSources(); } catch(_) {}
+      // Auto-open guidance sidebar on desktop by default
+      try { if (typeof isMobile === 'function' && typeof showGuide === 'function') { if (!isMobile()) { setTimeout(function(){ showGuide(); }, 50); } } } catch(_) {}
     }
 
     // === Q3 Sources Step (ported from creation.html) ===
