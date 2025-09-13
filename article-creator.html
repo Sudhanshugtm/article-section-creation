@@ -1962,6 +1962,8 @@
       content += '<input type="url" id="sidebarSourceUrl" placeholder="e.g., bbc.com/article" class="source-url-input" aria-label="Source URL">';
       content += '<button class="source-check-btn" id="sidebarCheckBtn">Check source</button>';
       content += '</div>';
+      // Minimal separator between input and saved list
+      content += '<div class="source-separator" aria-hidden="true" style="border-top:1px solid #eaecf0; margin: 8px 0 12px 0;"></div>';
       
       // Saved sources from earlier (session/Q3)
       content += '<div id="sidebarSavedSection" style="display:none; margin: 8px 0 12px 0;">';
@@ -1969,7 +1971,6 @@
       content += '  <div id="sidebarSavedList"></div>';
       content += '</div>';
       // Minimal separator between saved list and manual input/verification
-      content += '<div class="source-separator" aria-hidden="true" style="border-top:1px solid #eaecf0; margin: 8px 0 12px 0;"></div>';
       content += '<div id="sidebarVerificationSteps" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarSourceResult" style="display: none; margin-top: 12px;"></div>';
       content += '<div id="sidebarDraftPreview" style="display: none; margin-top: 12px;"></div>';
