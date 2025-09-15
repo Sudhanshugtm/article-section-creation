@@ -1338,7 +1338,7 @@
               </div>
             </div>
             <p id="creation-sources-readiness" class="readiness is-hidden" aria-live="polite" data-i18n="creation.sourcesStep.readiness.notReady">Readiness: Not ready</p>
-            <p id="creation-sources-hint" class="hint"></p>
+            <p id="creation-sources-hint" class="hint is-hidden"></p>
             <div style="margin:10px 0 2px 0;">
               <button class="add-source-btn" id="creation-addSourceChip" data-i18n="creation.sourcesStep.addAnother">Add another</button>
             </div>
@@ -2610,10 +2610,11 @@
         } else {
           countEl.textContent = '(' + sources + ' ' + srcLabel + ' · ' + independent + ' ' + indepLabel + ')';
         }
-        // Microcopy hint under CTA
-        hint.textContent = (stateKey==='ready')
-          ? __t('creation.sourcesStep.hint.good', null, 'Looks good. You can draft now and later publish to mainspace.')
-          : __t('creation.sourcesStep.hint.draft', null, 'We’ll start in Draft; add 2 independent sources to publish.');
+        // Microcopy hint under CTA (disabled to avoid confusion)
+        // hint.textContent = (stateKey==='ready')
+        //   ? __t('creation.sourcesStep.hint.good', null, 'Looks good. You can draft now and later publish to mainspace.')
+        //   : __t('creation.sourcesStep.hint.draft', null, 'We’ll start in Draft; add 2 independent sources to publish.');
+        hint.textContent = '';
       } catch(_){}
     }
 
