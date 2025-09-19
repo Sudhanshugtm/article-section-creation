@@ -393,7 +393,7 @@
       background: #fff;
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
-      max-height: 70vh;
+      max-height: 60vh; /* slightly shorter so it feels lighter on mobile */
       overflow-y: auto;
       transform: translateY(100%);
       transition: transform 0.3s ease;
@@ -1345,7 +1345,16 @@
       try { if (typeof isMobile === 'function') { if (!isMobile()) ed.focus(); } else { ed.focus(); } } catch(_) {}
       try { if (typeof applyEligibilityAutoFromSources === 'function') applyEligibilityAutoFromSources(); } catch(_) {}
       // Auto-open guidance sidebar on desktop by default
-      try { if (typeof isMobile === 'function' && typeof showGuide === 'function') { if (!isMobile()) { setTimeout(function(){ showGuide(); }, 50); } } } catch(_) {}
+      try {
+        if (typeof isMobile === 'function' && typeof showGuide === 'function') {
+          if (!isMobile()) {
+            setTimeout(function(){ showGuide(); }, 50);
+          } else if (!window.__mobileGuideOpenedOnce) {
+            window.__mobileGuideOpenedOnce = true;
+            setTimeout(function(){ showGuide(); }, 50);
+          }
+        }
+      } catch(_) {}
     }
 
     // === Q3 Sources Step (ported from creation.html) ===
@@ -1531,6 +1540,16 @@
           }, 100);
         }
       });
+
+      // Auto-open guidance on first mobile entry to editor (once)
+      try {
+        if (typeof isMobile === 'function' && typeof showGuide === 'function') {
+          if (isMobile() && !window.__mobileGuideOpenedOnce) {
+            window.__mobileGuideOpenedOnce = true;
+            setTimeout(function(){ showGuide(); }, 50);
+          }
+        }
+      } catch(_) {}
 
       // Intercept Enter/Backspace around H2 to avoid stray separators
       ed.addEventListener('keydown', function(e) {
