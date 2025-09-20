@@ -5166,8 +5166,11 @@
           sourceBlock += '</div>';
         })();
 
+        // Build header with optional inline Hide button (desktop only)
+        var headerBtns = '';
+        try { if (typeof isMobile === 'function' && !isMobile()) { headerBtns = ' <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">'+ __t('ui.hide','Hide') +'</button>'; } } catch(_) {}
         var html = ''+
-          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">'+ __t('ui.suggestions','Suggestions') +' <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">'+ __t('ui.hide','Hide') +'</button></div>'+
+          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">'+ __t('ui.suggestions','Suggestions') + headerBtns + '</div>'+
           contextBlock +
           leadSectionBlock +
           sectionBlock +
