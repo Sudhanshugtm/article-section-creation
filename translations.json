@@ -366,8 +366,8 @@
       }
       ,
       "sourcesStep": {
-        "title": "Do you have at least two independent, reliable sources for \"{Title}\"?",
-        "subtext": "Strong sources help articles survive review and deletion.",
+        "title": "Add key sources for \"{Title}\"",
+        "subtext": "Paste links about your topic; we’ll help you write.",
         "urlPlaceholder": "https://example.com/article",
         "badge": {
           "reliable": "✓ Reliable domain",
@@ -813,6 +813,8 @@
         }
       },
       "sourcesStep": {
+        "title": "Tambahkan sumber utama untuk \"{Title}\"",
+        "subtext": "Tempel tautan tentang topik Anda; kami akan membantu Anda menulis.",
         "actions": {
           "continue": "Mulai mengedit"
         }

@@ -1329,8 +1329,9 @@
         try {
           var h = sourcesStep.querySelector('h3');
           var userTopic = (titleInput.value || '').trim();
-          if (h && userTopic) {
-            h.textContent = 'Do you have at least two independent, reliable sources for "' + userTopic + '"?';
+          if (h) {
+            var txt = __t('creation.sourcesStep.title', 'Add key sources for "{Title}"', { Title: userTopic });
+            h.textContent = txt;
           }
         } catch(_) {}
         setupSourcesStep();
@@ -1475,8 +1476,9 @@
         try {
           var h = sourcesStep.querySelector('h3');
           var userTopic = (titleInput.value || '').trim();
-          if (h && userTopic) {
-            h.textContent = 'Do you have at least two independent, reliable sources for "' + userTopic + '"?';
+          if (h) {
+            var txt = __t('creation.sourcesStep.title', 'Add key sources for "{Title}"', { Title: userTopic });
+            h.textContent = txt;
           }
         } catch(_) {}
         setupSourcesStep();
