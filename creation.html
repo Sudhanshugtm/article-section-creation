@@ -1025,6 +1025,42 @@
       border-color: #36c;
     }
     
+    /* Mobile Suggestions Drawer (modal) */
+    .guide-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      overscroll-behavior: contain;
+    }
+    .guide-modal-backdrop.open { display: block; }
+    .guide-modal-drawer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      max-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform .3s ease;
+    }
+    .guide-modal-backdrop.open .guide-modal-drawer { transform: translateY(0); }
+    .guide-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid #eaecf0; background: #f8f9fa;
+      border-top-left-radius: 12px; border-top-right-radius: 12px;
+      position: sticky; top: 0; z-index: 1;
+    }
+    .guide-modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; color: #202122; }
+    .guide-modal-content { padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+    .close-btn { background: none; border: 1px solid #c8ccd1; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+    
+    /* Prevent background scroll when drawer is open */
+    body.modal-open { overflow: hidden; height: 100%; }
+    
     /* Hide modal on desktop */
     @media (min-width: 769px) {
       .guide-modal-backdrop {
@@ -1386,6 +1422,17 @@
       
     </div>
   </main>
+
+  <!-- Mobile Suggestions Modal Drawer -->
+  <div class="guide-modal-backdrop" id="assistModalBackdrop" aria-hidden="true">
+    <div class="guide-modal-drawer" id="assistModalDrawer" role="dialog" aria-modal="true" aria-labelledby="assistModalTitle">
+      <div class="guide-modal-header">
+        <h3 id="assistModalTitle">Suggestions</h3>
+        <button class="close-btn" id="closeAssistModal" title="Close">×</button>
+      </div>
+      <div class="guide-modal-content" id="assistModalContent"></div>
+    </div>
+  </div>
 
 
   <!-- Footer status (shown only in Step 3) -->
@@ -4048,6 +4095,12 @@
         try {
           var editor = document.getElementById('editor');
           if (!editor) return;
+          // On mobile, open suggestions as a modal drawer
+          try { if (typeof isMobile === 'function' && isMobile()) {
+            if (window.buildMainMenu) window.buildMainMenu();
+            openAssistModal();
+            return;
+          } } catch(_) {}
           // Toggle behavior: if a suggestion menu is already open, close it
           var chipMenu = document.getElementById('chipSuggestMenu');
           if (chipMenu && chipMenu.style.display !== 'none') {
@@ -4247,6 +4300,68 @@
           }
         });
       });
+    }
+
+    // === Mobile Suggestions Modal helpers ===
+    (function initAssistModal(){
+      var backdrop = document.getElementById('assistModalBackdrop');
+      var closeBtn = document.getElementById('closeAssistModal');
+      if (backdrop) {
+        backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeAssistModal(); });
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function(){ closeAssistModal(); });
+      }
+    })();
+
+    function openAssistModal() {
+      try {
+        var backdrop = document.getElementById('assistModalBackdrop');
+        var content = document.getElementById('assistModalContent');
+        var menu = document.getElementById('assistMenu');
+        if (!backdrop || !content || !menu) return;
+        // Preserve original placement and style to restore later
+        if (!menu.__origParent) menu.__origParent = menu.parentNode;
+        if (menu.__prevStyle == null) menu.__prevStyle = menu.getAttribute('style') || '';
+        // Move menu into modal content and normalize styling for drawer
+        content.innerHTML = '';
+        content.appendChild(menu);
+        try {
+          menu.style.position = 'static';
+          menu.style.left = '';
+          menu.style.top = '';
+          menu.style.width = '100%';
+          menu.style.display = 'block';
+          menu.style.maxHeight = 'none';
+        } catch(_) {}
+        // Open
+        backdrop.classList.add('open');
+        backdrop.setAttribute('aria-hidden','false');
+        try { document.body.classList.add('modal-open'); } catch(_) {}
+      } catch(_) {}
+    }
+
+    function closeAssistModal() {
+      try {
+        var backdrop = document.getElementById('assistModalBackdrop');
+        var menu = document.getElementById('assistMenu');
+        if (backdrop) {
+          backdrop.classList.remove('open');
+          backdrop.setAttribute('aria-hidden','true');
+        }
+        try { document.body.classList.remove('modal-open'); } catch(_) {}
+        // Move menu back to its original parent and restore style
+        if (menu && menu.__origParent) {
+          menu.__origParent.appendChild(menu);
+        }
+        if (menu && menu.__prevStyle != null) {
+          menu.setAttribute('style', menu.__prevStyle);
+        }
+        if (menu) {
+          menu.style.display = 'none';
+        }
+        try { window.__assistMenuOpen = false; } catch(_) {}
+      } catch(_) {}
     }
 
     // Smart Chips functionality
@@ -5397,6 +5512,12 @@
       // Slash command: open Suggestions (Notion-style)
       function showSlashSuggestions() {
         try {
+          // On mobile, render suggestions into the modal drawer instead of inline
+          try { if (typeof isMobile === 'function' && isMobile()) {
+            if (window.buildMainMenu) window.buildMainMenu();
+            openAssistModal();
+            return;
+          } } catch(_) {}
           const editorRect = editor.getBoundingClientRect();
           // Prefer active block; fallback to top-visible block
           let anchor = null;
