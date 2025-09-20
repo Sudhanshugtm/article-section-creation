@@ -6326,6 +6326,19 @@
         // One-time help below the inserted intro template (chip-style)
         try { showIntroHelp(el); } catch(_) {}
         try { window.lastIntroId = pid; } catch(_) {}
+        // Place caret after the Reference chip (end of paragraph), with retries for mobile
+        try {
+          function __placeAfterRef() {
+            try {
+              var rc = el.querySelector('.ref-chip');
+              if (rc) { placeCaretAfterNode(rc); }
+              else { placeCaretAtEnd(el); }
+            } catch(_) {}
+          }
+          __placeAfterRef();
+          setTimeout(__placeAfterRef, 60);
+          setTimeout(__placeAfterRef, 140);
+        } catch(_) {}
         // Feedback + undo
         try {
           showUndoToast('Inserted template starter', function(){ 
@@ -6389,9 +6402,16 @@
           try { showIntroHelp(el); } catch(_) {}
           // Place caret after the Reference chip (end of paragraph)
           try {
-            var refChip = el && el.querySelector('.ref-chip');
-            if (refChip) { placeCaretAfterNode(refChip); }
-            else { placeCaretAtEnd(el); }
+            function __placeAfterRef() {
+              try {
+                var refChip = el && el.querySelector('.ref-chip');
+                if (refChip) { placeCaretAfterNode(refChip); }
+                else { placeCaretAtEnd(el); }
+              } catch(_) {}
+            }
+            __placeAfterRef();
+            setTimeout(__placeAfterRef, 60);
+            setTimeout(__placeAfterRef, 140);
           } catch(_) {}
           try { window.lastIntroId = pid; } catch(_) {}
           // Feedback + undo
@@ -6413,6 +6433,18 @@
       // Keep chip visible; menu was already closed by the click handler
       try { closeAssistModal(); } catch(_) {}
       try { var ed = document.getElementById('editor'); if (ed) ed.focus(); } catch(_) {}
+      // Additional caret enforcement after modal/focus on mobile
+      try {
+        var el2Id = pid;
+        setTimeout(function(){
+          try {
+            var el2 = document.getElementById(el2Id);
+            if (!el2) return;
+            var rc2 = el2.querySelector('.ref-chip');
+            if (rc2) { placeCaretAfterNode(rc2); } else { placeCaretAtEnd(el2); }
+          } catch(_) {}
+        }, 160);
+      } catch(_) {}
     }
 
     function getIntroTemplateBase(title, category) {
