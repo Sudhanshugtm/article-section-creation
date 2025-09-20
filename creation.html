@@ -2166,6 +2166,37 @@
     var categoryList=document.getElementById('creation-categoryList');
     var selectedCat=null;
 
+    // Mobile toolbar Close (X): exit editor back to Sources (Q3) if available, else Step 2
+    (function bindCloseButton(){
+      try {
+        var closeBtn = document.getElementById('close');
+        if (!closeBtn) return;
+        closeBtn.addEventListener('click', function(){
+          try {
+            if (step3 && step3.classList && step3.classList.contains('active')) {
+              // Hide editor step
+              step3.classList.remove('active');
+              // Prefer returning to the Sources step if present
+              if (sourcesStep) {
+                sourcesStep.classList.add('active');
+                if (step2) step2.classList.remove('active');
+              } else if (step2) {
+                step2.classList.add('active');
+              }
+              // Close any guidance/assist UI
+              try { if (typeof hideGuide === 'function') hideGuide(); } catch(_) {}
+              try {
+                var menu = document.getElementById('assistMenu');
+                if (menu) menu.style.display = 'none';
+              } catch(_) {}
+              // Remove VE chrome
+              document.body.classList.remove('ve-in-step3');
+            }
+          } catch(_) {}
+        });
+      } catch(_) {}
+    })();
+
 
     titleInput.addEventListener('input', function(){ toStep2.disabled = !(titleInput.value.trim().length>0); });
     toStep2.onclick=function(){ 
