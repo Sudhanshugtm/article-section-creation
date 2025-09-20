@@ -153,7 +153,10 @@ function main() {
     html = html.replace(/Write a clear opening that summarizes the topic, explains why it\\'s important, and covers the main points readers will find in the article\./g, 
       'Tulis pembukaan yang jelas yang merangkum topik, menjelaskan mengapa penting, dan mencakup poin-poin utama yang akan ditemukan pembaca dalam artikel.');
     html = html.replace(/Examples from Wikipedia:/g, 'Contoh dari Wikipedia:');
-    html = html.replace(/Template structure:/g, 'Struktur templat:');
+    // Rename label to new terminology across variants
+    html = html.replace(/Template structure:/g, 'Paragraf contoh:');
+    html = html.replace(/Typical structure:/g, 'Paragraf contoh:');
+    html = html.replace(/Typical paragraph:/g, 'Paragraf contoh:');
     html = html.replace(/Quick check: Does your topic have what Wikipedia needs\?/g, 'Pemeriksaan cepat: Apakah topik Anda memiliki apa yang dibutuhkan Wikipedia?');
     html = html.replace(/Helper for citing reliable sources/g, 'Bantuan untuk mengutip sumber terpercaya');
     html = html.replace(/Manual source entry:/g, 'Entri sumber manual:');
