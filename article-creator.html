@@ -1842,7 +1842,7 @@
       // Collapsible examples block (hidden by default)
       if (categoryData.introduction && categoryData.introduction.examples) {
         var exId = 'introExamples';
-        content += '<a href="#" style="font-size: 12px;" onclick="var n=this.nextElementSibling; if(n && n.id===\'' + exId + '\'){ var v=n.style.display!=='none'; n.style.display=v?'none':'block'; this.textContent=v?\''+ __t('ui.showExamples','Show examples') +'\':\''+ __t('ui.hideExamples','Hide examples') +'\'; } return false;">' + __t('ui.showExamples','Show examples') + '</a>';
+        content += '<a href="#" style="font-size: 12px;" onclick="var n=this.nextElementSibling; if(n && n.id===\'' + exId + '\'){ var v=n.style.display!==\'none\'; n.style.display=v?\'none\':\'block\'; this.textContent=v?\''+ __t('ui.showExamples','Show examples') +'\':\''+ __t('ui.hideExamples','Hide examples') +'\'; } return false;">' + __t('ui.showExamples','Show examples') + '</a>';
         content += '<div id="' + exId + '" style="display:none; margin-top: 8px;">';
         content += '<p class="guide-note" style="margin: 8px 0; font-weight: 500;">' + __t('ui.examplesFromWikipedia','Examples from Wikipedia:') + '</p>';
         categoryData.introduction.examples.forEach(function(example) {
