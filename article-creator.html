@@ -1831,24 +1831,28 @@
       content += '<div class="accordion-content" style="display: block; padding-top: 12px;">';
       content += '<p class="guide-note">Write a clear opening that summarizes the topic, explains why it\'s important, and covers the main points readers will find in the article.</p>';
       
-      // Show introduction examples if available
+      // Introduction structure first
+      content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">' + __t('ui.introductionStructure','Introduction structure:') + '</p>';
+      var template = getIntroductionTemplate(selectedCat);
+      content += '<div class="intro-template" style="background: #f0f8ff; border-left: 3px solid #36c; padding: 12px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
+      content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Typically, introduction sections have this structure:</div>';
+      content += '<div style="color: #222; font-family: monospace; background: #fff; padding: 8px; border-radius: 3px; border: 1px solid #c8ccd1;">' + template + '</div>';
+      content += '</div>';
+
+      // Collapsible examples block (hidden by default)
       if (categoryData.introduction && categoryData.introduction.examples) {
-        content += '<p class="guide-note" style="margin-top: 12px; font-weight: 500;">Examples from Wikipedia:</p>';
+        var exId = 'introExamples';
+        content += '<a href="#" style="font-size: 12px;" onclick="var n=this.nextElementSibling; if(n && n.id===\'' + exId + '\'){ var v=n.style.display!=='none'; n.style.display=v?'none':'block'; this.textContent=v?\''+ __t('ui.showExamples','Show examples') +'\':\''+ __t('ui.hideExamples','Hide examples') +'\'; } return false;">' + __t('ui.showExamples','Show examples') + '</a>';
+        content += '<div id="' + exId + '" style="display:none; margin-top: 8px;">';
+        content += '<p class="guide-note" style="margin: 8px 0; font-weight: 500;">' + __t('ui.examplesFromWikipedia','Examples from Wikipedia:') + '</p>';
         categoryData.introduction.examples.forEach(function(example) {
           content += '<div class="intro-example" style="background: #f8f9fa; border-left: 3px solid #0645ad; padding: 10px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
           content += '<div class="example-title" style="font-weight: bold; color: #0645ad; margin-bottom: 4px;">' + example.title + '</div>';
           content += '<div class="example-text" style="color: #222;">' + example.text + '</div>';
           content += '</div>';
         });
+        content += '</div>';
       }
-      
-      // Show introduction template based on category
-      content += '<p class="guide-note" style="margin-top: 16px; font-weight: 500;">Template structure:</p>';
-      var template = getIntroductionTemplate(selectedCat);
-      content += '<div class="intro-template" style="background: #f0f8ff; border-left: 3px solid #36c; padding: 12px; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">';
-      content += '<div style="color: #54595d; font-style: italic; margin-bottom: 8px;">Typically, introduction sections have this structure:</div>';
-      content += '<div style="color: #222; font-family: monospace; background: #fff; padding: 8px; border-radius: 3px; border: 1px solid #c8ccd1;">' + template + '</div>';
-      content += '</div>';
       
       content += '</div>';
       content += '</div>';
