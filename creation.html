@@ -1079,6 +1079,14 @@
       padding: 0;
       border-radius: 8px;
     }
+    /* Flatten assist menu appearance inside mobile modal */
+    body.modal-open .assist-menu {
+      background: transparent !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+    body.modal-open .assist-menu-header { display: none !important; }
+    body.modal-open .assist-group { padding: 8px 8px; }
     /* removed icon styling to simplify headers */
     .assist-menu-header { font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #eaecf0; background: #f8f9fa; font-size: 13px; }
     .assist-item { display: block; width: 100%; text-align: left; padding: 12px 14px; background: #fff; border: none; cursor: pointer; }
@@ -2323,7 +2331,6 @@
       var assistHtml = ''+
         '<div id="assistChip" class="assist-chip" role="button" aria-label="'+ __t('ui.suggestions','Suggestions') +'" aria-expanded="false" tabindex="0" style="z-index:150;" contenteditable="false"><span class="icon">✨</span><span class="label">'+ __t('ui.suggestions','Suggestions') +'</span></div>'+
         '<div id="assistMenu" class="assist-menu" style="position:absolute; top:36px; left:4px; z-index:200; display:none; background:#fff; border:none; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,0.12); padding:0;" contenteditable="false">'+
-          '<div class="assist-menu-header">'+ __t('ui.suggestions','Suggestions') +'</div>'+
           '<button class="assist-item" data-assist="intro"><div class="template-option-title">'+ __t('ui.introduction','Introduction') +'</div><div class="template-option-desc">'+ __t('ui.introductionDesc','Insert a simple opening sentence') +'</div></button>'+ 
           '<div class="assist-sep"></div>'+
           '<button class="assist-item" data-assist="source"><div class="template-option-title">'+ __t('ui.addFromSource','Add from a source') +'</div><div class="template-option-desc">'+ __t('ui.addFromSourceDesc','Open source dialog') +'</div></button>'+ 
@@ -5167,10 +5174,14 @@
         })();
 
         // Build header with optional inline Hide button (desktop only)
-        var headerBtns = '';
-        try { if (typeof isMobile === 'function' && !isMobile()) { headerBtns = ' <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">'+ __t('ui.hide','Hide') +'</button>'; } } catch(_) {}
-        var html = ''+
-          '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">'+ __t('ui.suggestions','Suggestions') + headerBtns + '</div>'+
+        var html = '';
+        try {
+          if (typeof isMobile === 'function' && !isMobile()) {
+            var headerBtns = ' <button id="assistHideBtn" class="action-chip" style="border-radius:8px;">'+ __t('ui.hide','Hide') +'</button>';
+            html += '<div class="assist-menu-header" style="display:flex;justify-content:space-between;align-items:center;">'+ __t('ui.suggestions','Suggestions') + headerBtns + '</div>';
+          }
+        } catch(_) {}
+        html += ''+
           contextBlock +
           leadSectionBlock +
           sectionBlock +
