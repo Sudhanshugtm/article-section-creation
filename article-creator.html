@@ -379,6 +379,7 @@
       inset: 0;
       background: rgba(0,0,0,0.5);
       z-index: 2000;
+      overscroll-behavior: contain; /* prevent background scroll bounce */
     }
     
     .guide-modal-backdrop.open {
@@ -394,7 +395,8 @@
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
       max-height: 60vh; /* slightly shorter so it feels lighter on mobile */
-      overflow-y: auto;
+      display: flex;               /* make header sticky and content scroll */
+      flex-direction: column;
       transform: translateY(100%);
       transition: transform 0.3s ease;
     }
@@ -412,6 +414,9 @@
       background: #f8f9fa;
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
+      position: sticky;   /* keep visible while content scrolls */
+      top: 0;
+      z-index: 1;
     }
     
     .guide-modal-header h3 {
@@ -423,6 +428,9 @@
     
     .guide-modal-content {
       padding: 20px;
+      overflow-y: auto;                 /* scroll inside content only */
+      -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+      flex: 1;                          /* take remaining height */
     }
     
     /* Section suggestion buttons - simplified design */
@@ -867,6 +875,13 @@
     }
     /* Match vertical spacing between rows (Q3) */
     #creation-sourcesList { display: flex; flex-direction: column; gap: 16px; }
+  </style>
+  <style>
+    /* Prevent background scroll when any modal/drawer is open */
+    body.modal-open {
+      overflow: hidden;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
@@ -2889,22 +2904,24 @@
     }
 
     // Function to show guide interface
-    function showGuide() {
-      // Update content before showing
-      updateGuideContent();
-      
-      if (isMobile()) {
-        guideModalBackdrop.classList.add('open');
-      } else {
-        guideSidebar.classList.add('open');
-      }
+  function showGuide() {
+    // Update content before showing
+    updateGuideContent();
+    
+    if (isMobile()) {
+      guideModalBackdrop.classList.add('open');
+      try { document.body.classList.add('modal-open'); } catch(_) {}
+    } else {
+      guideSidebar.classList.add('open');
     }
+  }
 
     // Function to hide guide interface
-    function hideGuide() {
-      guideSidebar.classList.remove('open');
-      guideModalBackdrop.classList.remove('open');
-    }
+  function hideGuide() {
+    guideSidebar.classList.remove('open');
+    guideModalBackdrop.classList.remove('open');
+    try { document.body.classList.remove('modal-open'); } catch(_) {}
+  }
 
     // Function to bind article eligibility checker functionality
     function bindEligibilityChecker() {
