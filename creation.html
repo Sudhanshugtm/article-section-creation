@@ -4352,21 +4352,21 @@
       try {
         var backdrop = document.getElementById('assistModalBackdrop');
         var menu = document.getElementById('assistMenu');
+        var chipMenu = document.getElementById('chipSuggestMenu');
         if (backdrop) {
           backdrop.classList.remove('open');
           backdrop.setAttribute('aria-hidden','true');
         }
         try { document.body.classList.remove('modal-open'); } catch(_) {}
         // Move menu back to its original parent and restore style
-        if (menu && menu.__origParent) {
-          menu.__origParent.appendChild(menu);
-        }
-        if (menu && menu.__prevStyle != null) {
-          menu.setAttribute('style', menu.__prevStyle);
-        }
-        if (menu) {
-          menu.style.display = 'none';
-        }
+        [menu, chipMenu].forEach(function(m){
+          try {
+            if (!m) return;
+            if (m.__origParent) m.__origParent.appendChild(m);
+            if (m.__prevStyle != null) m.setAttribute('style', m.__prevStyle);
+            m.style.display = 'none';
+          } catch(_) {}
+        });
         try { window.__assistMenuOpen = false; } catch(_) {}
       } catch(_) {}
     }
@@ -5835,6 +5835,8 @@
 
     function showChipSuggestMenu(chipEl) {
       const menu = ensureChipMenu();
+      var onMobile = false;
+      try { onMobile = (typeof isMobile === 'function') ? isMobile() : (window.innerWidth <= 768); } catch(_) { onMobile = false; }
       const key = (chipEl.getAttribute('data-placeholder') || chipEl.getAttribute('data-key') || '').toLowerCase();
       const cat = (window.selectedCat || 'other');
       const td = window.templatesData || null;
@@ -5858,7 +5860,7 @@
         }
       };
       const customHint = getCustomHint(key);
-      let html = '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
+      let html = onMobile ? '' : '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
       suggestions.forEach(function(opt){
         if (normalize(opt) === 'custom...') {
           html += '<button class="chip-menu-item" data-chip-custom>Custom…</button>';
@@ -5876,12 +5878,37 @@
       }
       menu.innerHTML = html;
 
-      // Position near chip
-      const rect = chipEl.getBoundingClientRect();
-      menu.style.left = rect.left + 'px';
-      menu.style.top = (rect.bottom + 6) + 'px';
-      menu.style.display = 'block';
-      try { menu.style.zIndex = '5002'; } catch(_) {}
+      if (onMobile) {
+        // Render inside the mobile Suggestions drawer
+        try {
+          var backdrop = document.getElementById('assistModalBackdrop');
+          var content = document.getElementById('assistModalContent');
+          if (backdrop && content) {
+            if (!menu.__origParent) menu.__origParent = menu.parentNode || document.body;
+            if (menu.__prevStyle == null) menu.__prevStyle = menu.getAttribute('style') || '';
+            content.innerHTML = '';
+            content.appendChild(menu);
+            // Normalize styling for drawer
+            menu.style.position = 'static';
+            menu.style.left = '';
+            menu.style.top = '';
+            menu.style.width = '100%';
+            menu.style.maxWidth = 'none';
+            menu.style.display = 'block';
+            // Open drawer
+            backdrop.classList.add('open');
+            backdrop.setAttribute('aria-hidden','false');
+            try { document.body.classList.add('modal-open'); } catch(_) {}
+          }
+        } catch(_) {}
+      } else {
+        // Position near chip (desktop)
+        const rect = chipEl.getBoundingClientRect();
+        menu.style.left = rect.left + 'px';
+        menu.style.top = (rect.bottom + 6) + 'px';
+        menu.style.display = 'block';
+        try { menu.style.zIndex = '5002'; } catch(_) {}
+      }
 
       // Handlers
       menu.querySelectorAll('[data-chip-value]').forEach(function(btn){
@@ -5904,6 +5931,7 @@
               } catch(_) {}
             }
             menu.style.display = 'none';
+            if (onMobile) { try { closeAssistModal(); } catch(_) {} }
             return;
           }
           // Replace chip with a filled, editable value span
@@ -5937,6 +5965,7 @@
           try { if (key === 'occupation' || key === 'work_type') updateArticleHeuristic(filled); } catch(_) {}
           try { tidyLeadPunctuation(filled); } catch(_) {}
           menu.style.display = 'none';
+          if (onMobile) { try { closeAssistModal(); } catch(_) {} }
         });
       });
       const customBtns = menu.querySelectorAll('[data-chip-custom]');
@@ -5996,6 +6025,7 @@
               try { if (key === 'occupation' || key === 'work_type') updateArticleHeuristic(filled); } catch(_) {}
               try { tidyLeadPunctuation(filled); } catch(_) {}
               menu.style.display = 'none';
+              if (onMobile) { try { closeAssistModal(); } catch(_) {} }
             };
             var cancel = function(){
               var wrap = menu.querySelector('.chip-custom-entry');
@@ -6018,14 +6048,16 @@
         if (firstCustom) { try { firstCustom.click(); } catch(_) {} }
       }
 
-      // Close on outside click
-      const closeFn = function(ev){
-        if (!menu.contains(ev.target) && ev.target !== chipEl) {
-          menu.style.display = 'none';
-          document.removeEventListener('click', closeFn, true);
-        }
-      };
-      setTimeout(function(){ document.addEventListener('click', closeFn, true); }, 0);
+      // Close on outside click (desktop only)
+      if (!onMobile) {
+        const closeFn = function(ev){
+          if (!menu.contains(ev.target) && ev.target !== chipEl) {
+            menu.style.display = 'none';
+            document.removeEventListener('click', closeFn, true);
+          }
+        };
+        setTimeout(function(){ document.addEventListener('click', closeFn, true); }, 0);
+      }
     }
 
     function getChipSuggestions(key, category, templatesData) {
