@@ -189,6 +189,12 @@
     .chip-menu-item:hover { background:#f8f9fa; }
     .chip-menu-item[data-chip-submit] { background:#36c; color:#fff; border-radius:4px; }
     .chip-menu-item[data-chip-submit]:hover { background:#2a4b8d; }
+    /* Mobile drawer: flatten chip menu styling and improve tap targets */
+    body.modal-open #chipSuggestMenu { width: 100% !important; max-width: none !important; background: transparent !important; box-shadow: none !important; border: 0 !important; padding: 0 !important; }
+    body.modal-open .chip-menu-header { display: none !important; }
+    body.modal-open .chip-menu-item { background: transparent !important; padding: 14px 8px !important; font-size: 16px !important; }
+    body.modal-open .chip-custom-entry { padding: 12px 0 !important; }
+    body.modal-open .chip-custom-entry input { font-size: 16px !important; height: 44px !important; padding: 8px 10px !important; }
 
     /* Simplified Suggestions panel */
     /* Responsive sizing for assist menu */
@@ -5975,12 +5981,18 @@
           // Show inline custom input inside the menu instead of editing the chip
           var existing = menu.querySelector('.chip-custom-entry');
           if (!existing) {
+            var inputMode = 'text';
+            try {
+              var k = (key||'').toLowerCase();
+              if (k.indexOf('date') !== -1 || k === 'birth_date') inputMode = 'numeric';
+              if (k.indexOf('url') !== -1) inputMode = 'url';
+            } catch(_) {}
             menu.insertAdjacentHTML('beforeend',
               '<div class="assist-sep"></div>'+
               '<div class="chip-custom-entry" style="padding:10px 12px;">'+
                 '<div style="font-size:12px; color:#555; margin-bottom:6px;">Enter a custom value — '+ escapeHtml(customHint) +'</div>'+
-                '<input type="text" id="chipCustomInput" style="width:100%; height:32px; border:1px solid #c8ccd1; border-radius:4px; padding:6px 8px; font: inherit;" placeholder="'+ escapeHtml(customHint) +'" />'+
-                '<div style="display:flex; gap:8px; margin-top:8px;">'+
+                '<input type="text" id="chipCustomInput" inputmode="'+ inputMode +'" autocomplete="off" autocapitalize="none" style="width:100%; height:40px; border:1px solid #c8ccd1; border-radius:4px; padding:8px 10px; font: inherit; font-size:16px;" placeholder="'+ escapeHtml(customHint) +'" />'+
+                '<div style="display:flex; gap:8px; margin-top:10px;">'+
                   '<button class="chip-menu-item" data-chip-submit style="width:auto; display:inline-block;">Insert</button>'+
                   '<button class="chip-menu-item" data-chip-cancel style="width:auto; display:inline-block;">Cancel</button>'+
                 '</div>'+
@@ -5993,6 +6005,7 @@
             input.value = '';
             input.focus();
             input.select();
+            try { input.scrollIntoView({ block: 'center' }); } catch(_) {}
             var submit = function(){
               var val = (input.value || '').trim();
               if (!val) { input.focus(); return; }
@@ -6031,6 +6044,7 @@
               var wrap = menu.querySelector('.chip-custom-entry');
               if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
               input.removeEventListener('keydown', onKey);
+              if (onMobile) { try { closeAssistModal(); } catch(_) {} }
             };
             var onKey = function(ev){ if (ev.key === 'Enter') { ev.preventDefault(); submit(); } };
             input.addEventListener('keydown', onKey);
