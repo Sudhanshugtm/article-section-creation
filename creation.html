@@ -3941,7 +3941,15 @@
           if (!window.__suppressSourceNotice) {
             sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
           }
-          if (hasContent) { editor.innerHTML = currentContent + sectionHTML; } else { editor.innerHTML = sectionHTML; }
+          // Keep References as the last block: if present, insert before it
+          var refsHeader = editor.querySelector('#References');
+          if (refsHeader) {
+            refsHeader.insertAdjacentHTML('beforebegin', sectionHTML);
+          } else if (hasContent) {
+            editor.innerHTML = currentContent + sectionHTML;
+          } else {
+            editor.innerHTML = sectionHTML;
+          }
           try {
             var p = document.getElementById(pid);
             if (p) {
@@ -3951,6 +3959,8 @@
               if (u && typeof insertReferenceLink === 'function') insertReferenceLink(u, '');
             }
           } catch(_) {}
+          // Ensure References stays last and numbering is correct
+          try { ensureReferencesSection(); renumberReferences(); } catch(_) {}
         }
 
       // Clean up any extra BR tags or empty elements
