@@ -195,6 +195,24 @@
     body.modal-open .chip-menu-item { background: transparent !important; padding: 14px 8px !important; font-size: 16px !important; }
     body.modal-open .chip-custom-entry { padding: 12px 0 !important; }
     body.modal-open .chip-custom-entry input { font-size: 16px !important; height: 44px !important; padding: 8px 10px !important; }
+    /* Keep primary/secondary actions prominent in the drawer */
+    body.modal-open .chip-menu-item[data-chip-submit] {
+      background: #36c !important;
+      color: #fff !important;
+      border-radius: 8px !important;
+      padding: 12px 16px !important;
+      text-align: center !important;
+      font-weight: 600 !important;
+      margin-top: 8px !important;
+    }
+    body.modal-open .chip-menu-item[data-chip-cancel] {
+      background: #f8f9fa !important;
+      border: 1px solid #c8ccd1 !important;
+      border-radius: 8px !important;
+      padding: 12px 16px !important;
+      text-align: center !important;
+      color: #202122 !important;
+    }
 
     /* Simplified Suggestions panel */
     /* Responsive sizing for assist menu */
