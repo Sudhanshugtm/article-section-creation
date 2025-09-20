@@ -342,6 +342,7 @@
     },
     "editor": {
       "leadPlaceholder": "Start writing about {topic}...",
+      "leadPlaceholderWithSlash": "Start writing about {topic} or <strong>Press \"/\" for suggestions</strong>.",
       "sectionPlaceholder": "Click here to start writing about {section}."
     },
     "creation": {
@@ -794,6 +795,7 @@
     },
     "editor": {
       "leadPlaceholder": "Mulailah menulis tentang {topic}...",
+      "leadPlaceholderWithSlash": "Mulailah menulis tentang {topic} atau <strong>Tekan \"/\" untuk melihat saran</strong>.",
       "sectionPlaceholder": "Klik di sini untuk mulai menulis tentang {section}."
     },
     "creation": {

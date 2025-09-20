@@ -2236,8 +2236,8 @@
       if (veTitle) veTitle.textContent = safeTitle;
       
       // Initialize editor with a visible lead placeholder paragraph that holds the caret
-      // Includes inline guidance to use '/' for suggestions
-      (function(){ var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; }; var msg = __t('editor.leadPlaceholder', { topic: safeTitle }, 'Start writing about {topic} or <strong>Press "/" for suggestions</strong>.'); ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+ msg +'</p>'; })();
+      // Use the version that includes the '/' hint in this concept
+      (function(){ var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; }; var msg = __t('editor.leadPlaceholderWithSlash', { topic: safeTitle }, 'Start writing about {topic} or <strong>Press "/" for suggestions</strong>.'); ed.innerHTML = '<p id="leadPlaceholder" class="lead-placeholder" style="margin: 1.1em 0 2.25em 0; color: #72777d; font-style: italic;">'+ msg +'</p>'; })();
       ed.removeAttribute('data-placeholder');
       
       // Insert a single Assistance chip with inline menu (simple concept)
