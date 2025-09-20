@@ -337,7 +337,7 @@
       "addFromSource": "Add from source"
     },
     "editor": {
-      "leadPlaceholder": "Start writing about {topic} or <strong>Press \"/\" for suggestions</strong>.",
+      "leadPlaceholder": "Start writing about {topic}...",
       "sectionPlaceholder": "Click here to start writing about {section}."
     },
     "creation": {
@@ -785,7 +785,7 @@
       "addFromSource": "Tambahkan dari sumber"
     },
     "editor": {
-      "leadPlaceholder": "Mulailah menulis tentang {topic} atau <strong>Tekan \"/\" untuk melihat saran</strong>.",
+      "leadPlaceholder": "Mulailah menulis tentang {topic}...",
       "sectionPlaceholder": "Klik di sini untuk mulai menulis tentang {section}."
     },
     "creation": {
