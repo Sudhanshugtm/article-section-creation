@@ -445,7 +445,7 @@
       border: 1px solid #a2a9b1;
       border-radius: 8px;
       background: #fff;
-      font-size: 14px;
+      font-size: 16px; /* Prevent iOS zoom on focus */
     }
     #creation-stepSources .source-url-input:focus {
       border-color: #36c;
@@ -564,6 +564,11 @@
       background: transparent;
       min-height: 400px;
       padding: 16px 0;
+    }
+
+    /* Mobile: ensure readable base to discourage iOS zoom */
+    @media (max-width: 768px) {
+      .ve-in-step3 #editor { font-size: 16px; }
     }
 
     /* Comfortable reading line-height for content inside the editor */
@@ -861,7 +866,7 @@
       padding: 8px 12px;
       border: 1px solid #a2a9b1;
       border-radius: 2px;
-      font-size: 13px;
+      font-size: 16px; /* Prevent iOS zoom on focus */
       font-family: inherit;
     }
     
@@ -2257,8 +2262,8 @@
         }
       }, 200);
     
-      // Focus editor and place caret at the beginning of the lead placeholder paragraph
-      ed.focus();
+      // Focus editor on desktop only to avoid iOS zoom/scale jump
+      try { if (typeof isMobile === 'function') { if (!isMobile()) ed.focus(); } else { ed.focus(); } } catch(_) {}
       (function(){
         var lp = document.getElementById('leadPlaceholder');
         if (lp) {
