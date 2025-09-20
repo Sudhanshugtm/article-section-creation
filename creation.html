@@ -3892,44 +3892,66 @@
           }
         }
         
-        // Create Wikipedia-style section with proper formatting
-        var sectionHTML = '';
-        sectionHTML += '<h2 id="Section_title" style="';
-        sectionHTML += 'font-family: Georgia, serif; ';
-        sectionHTML += 'font-size: 1.5em; ';
-        sectionHTML += 'font-weight: normal; ';
-        sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; ';
-        sectionHTML += 'padding: 0; ';
-        sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
-        sectionHTML += 'padding-bottom: 0.25em;';
-        sectionHTML += '">' + sectionTitle + '</h2>';
-        
-        // Add content paragraph with proper styling
-        var pid = 'p_' + Date.now();
-        sectionHTML += '<p id="'+pid+'">' + content + '</p>';
-        
-        // Add minimal draft notice (non-editable)
-        if (!window.__suppressSourceNotice) {
-          sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
-        }
-        
-        // Check if References section already exists
-        // Do not build a custom references block. Use the unified references section instead.
-        
-      if (hasContent) { editor.innerHTML = currentContent + sectionHTML; } else { editor.innerHTML = sectionHTML; }
-
-      // Insert a proper citation at the end of the new paragraph and rebuild references
-      try {
-        var p = document.getElementById(pid);
-        if (p) {
-          placeCaretAtEnd(p);
-          var url = (document.getElementById('sidebarSourceUrl') || document.getElementById('sourceUrl'));
-          var u = url && url.value ? url.value.trim() : '';
-          if (u && typeof insertReferenceLink === 'function') {
-            insertReferenceLink(u, '');
+        // If a section paragraph is targeted (from Section Helper), fill that paragraph body only
+        var targetP = null;
+        try { if (window.__sourceTargetParagraph && editor.contains(window.__sourceTargetParagraph)) targetP = window.__sourceTargetParagraph; } catch(_) {}
+        if (targetP) {
+          try {
+            // Normalize placeholder styling and remove helper if present
+            targetP.removeAttribute('data-placeholder');
+            targetP.style.color = '';
+            targetP.style.fontStyle = '';
+            var ph = targetP.querySelector('.sh-placeholder'); if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+            var nxt = targetP.nextElementSibling; if (nxt && nxt.classList && nxt.classList.contains('section-helper')) nxt.parentNode.removeChild(nxt);
+          } catch(_) {}
+          // Replace paragraph content with generated content
+          targetP.innerHTML = escapeHtml(content);
+          // Optional: add a subtle notice below
+          if (!window.__suppressSourceNotice) {
+            var note = document.createElement('p');
+            note.className = 'source-notice';
+            note.setAttribute('contenteditable','false');
+            note.style.cssText = 'margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;';
+            note.textContent = 'Content added from source • You can refine this text';
+            try { targetP.insertAdjacentElement('afterend', note); } catch(_) {}
           }
+          // Insert citation at end of paragraph
+          try {
+            placeCaretAtEnd(targetP);
+            var urlEl = (document.getElementById('sidebarSourceUrl') || document.getElementById('sourceUrl'));
+            var u2 = urlEl && urlEl.value ? urlEl.value.trim() : '';
+            if (u2 && typeof insertReferenceLink === 'function') insertReferenceLink(u2, '');
+          } catch(_) {}
+          // Cleanup flags
+          try { window.__sourceTargetParagraph = null; window.__sourceTargetSectionName = null; } catch(_) {}
+        } else {
+          // Create a new Wikipedia-style section (independent use)
+          var sectionHTML = '';
+          sectionHTML += '<h2 id="Section_title" style="';
+          sectionHTML += 'font-family: Georgia, serif; ';
+          sectionHTML += 'font-size: 1.5em; ';
+          sectionHTML += 'font-weight: normal; ';
+          sectionHTML += 'margin: ' + (hasContent ? '2em' : '1em') + ' 0 0.25em 0; ';
+          sectionHTML += 'padding: 0; ';
+          sectionHTML += 'border-bottom: 1px solid #eaecf0; ';
+          sectionHTML += 'padding-bottom: 0.25em;';
+          sectionHTML += '">' + sectionTitle + '</h2>';
+          var pid = 'p_' + Date.now();
+          sectionHTML += '<p id="'+pid+'">' + escapeHtml(content) + '</p>';
+          if (!window.__suppressSourceNotice) {
+            sectionHTML += '<p class="source-notice" contenteditable="false" style="margin: 0.5em 0; font-size: 0.85em; color: #a2a9b1; font-style: italic; user-select: none;">Section added using source • Expand with additional content</p>';
+          }
+          if (hasContent) { editor.innerHTML = currentContent + sectionHTML; } else { editor.innerHTML = sectionHTML; }
+          try {
+            var p = document.getElementById(pid);
+            if (p) {
+              placeCaretAtEnd(p);
+              var url = (document.getElementById('sidebarSourceUrl') || document.getElementById('sourceUrl'));
+              var u = url && url.value ? url.value.trim() : '';
+              if (u && typeof insertReferenceLink === 'function') insertReferenceLink(u, '');
+            }
+          } catch(_) {}
         }
-      } catch(_) {}
 
       // Clean up any extra BR tags or empty elements
       cleanupExtraBreaks();
@@ -4038,6 +4060,7 @@
       var backdrop = document.getElementById('sourceModalBackdrop');
       backdrop.classList.remove('open');
       backdrop.setAttribute('aria-hidden', 'true');
+      try { window.__sourceTargetParagraph = null; window.__sourceTargetSectionName = null; } catch(_) {}
     }
 
     // Initialize source modal event handlers
@@ -7178,6 +7201,7 @@
               return;
             }
             if (kind === 'src') {
+              try { window.__sourceTargetParagraph = p; window.__sourceTargetSectionName = sectionName; } catch(_) {}
               try { if (typeof openSourceModalDialog === 'function') openSourceModalDialog(); else openReferenceDialog(); } catch(_) { openReferenceDialog(); }
               // Keep helper until user starts typing (auto-hide via input listener)
               return;
