@@ -5931,7 +5931,7 @@
       };
       const customHint = getCustomHint(key);
       const customLabel = __t('creation.assist.customLabel', null, 'Custom…');
-      let html = onMobile ? '' : '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
+      let html = onMobile ? '' : '<div class="chip-menu-header">'+ (headerHint || __t('creation.assist.suggestionsFor', { field: escapeHtml(key.replace(/_/g,' ')) }, 'Suggestions for {field}')) +'</div>';
       suggestions.forEach(function(opt){
         if (normalize(opt) === 'custom...') {
           html += '<button class="chip-menu-item" data-chip-custom>'+ customLabel +'</button>';

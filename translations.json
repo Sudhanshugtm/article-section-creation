@@ -205,7 +205,8 @@
         },
         "customHintDefault": "Type a value for this field, then click Insert",
         "customLabel": "Custom…",
-        "customEntryLead": "Enter a custom value — {hint}"
+        "customEntryLead": "Enter a custom value — {hint}",
+        "suggestionsFor": "Suggestions for {field}"
       }
     },
     "placeholders": {
@@ -936,7 +937,8 @@
         },
         "customHintDefault": "Ketik nilai untuk bidang ini, lalu klik Sisipkan",
         "customLabel": "Kustom…",
-        "customEntryLead": "Masukkan nilai kustom — {hint}"
+        "customEntryLead": "Masukkan nilai kustom — {hint}",
+        "suggestionsFor": "Saran untuk {field}"
       }
     }
   }
