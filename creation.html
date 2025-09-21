@@ -1079,11 +1079,22 @@
       position: sticky; top: 0; z-index: 1;
     }
     .guide-modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; color: #202122; }
-    .guide-modal-content { padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+    .guide-modal-content { padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; padding-bottom: calc(env(safe-area-inset-bottom) + 16px); }
     .close-btn { background: none; border: 1px solid #c8ccd1; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
     
     /* Prevent background scroll when drawer is open */
     body.modal-open { overflow: hidden; height: 100%; }
+
+    /* Mobile drawer button sizing for comfort (44px targets) */
+    body.modal-open .guide-modal-header .close-btn {
+      min-width: 44px; min-height: 36px; padding: 8px 12px; border-radius: 8px;
+    }
+    body.modal-open .assist-item {
+      padding: 14px 12px !important; font-size: 16px !important; min-height: 44px; border-bottom: 1px solid #eaecf0;
+    }
+    body.modal-open .assist-item .template-option-title { font-size: 16px !important; }
+    body.modal-open .assist-item .template-option-desc { font-size: 13px !important; color: #54595d; }
+    body.modal-open .action-chip { padding: 8px 12px !important; font-size: 14px !important; min-height: 36px; border-radius: 14px; }
     
     /* Hide modal on desktop */
     @media (min-width: 769px) {
@@ -5952,6 +5963,8 @@
             menu.style.width = '100%';
             menu.style.maxWidth = 'none';
             menu.style.display = 'block';
+            // Set contextual title
+            try { var tnode = document.getElementById('assistModalTitle'); if (tnode) tnode.textContent = fieldLabel; } catch(_) {}
             // Open drawer
             backdrop.classList.add('open');
             backdrop.setAttribute('aria-hidden','false');
@@ -6106,6 +6119,20 @@
           }
         });
       });
+
+      // Bind mobile filter if present
+      if (onMobile) {
+        var filter = menu.querySelector('#chipFilterInput');
+        if (filter) {
+          filter.addEventListener('input', function(){
+            var q = (this.value || '').toLowerCase();
+            menu.querySelectorAll('[data-chip-value]').forEach(function(btn){
+              var text = (btn.textContent || '').toLowerCase();
+              btn.style.display = text.indexOf(q) !== -1 ? 'block' : 'none';
+            });
+          });
+        }
+      }
 
       // Auto-open the custom input when there are no curated values, so users can type immediately
       if (nonCustomCount === 0) {
