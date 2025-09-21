@@ -1266,30 +1266,30 @@
     <div class="ve-bar">
       <!-- Mobile toolbar -->
       <div class="mobile-toolbar">
-        <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
-        <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+        <button class="btn" id="close" title="" data-i18n-title="ui.close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+        <button class="btn" id="undo" title="" data-i18n-title="ui.undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
         <div class="dropdown" id="dd-style-mobile">
           <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
           <span class="caret" aria-hidden="true"></span>
           <div class="menu" id="menu-style-mobile">
-            <button data-style="bold">Bold</button>
-            <button data-style="italic">Italic</button>
-            <button data-style="underline">Underline</button>
-            <button data-style="strike">Strikethrough</button>
-            <button data-style="clean">Clear styling</button>
+            <button data-style="bold" data-i18n="ui.bold">Bold</button>
+            <button data-style="italic" data-i18n="ui.italic">Italic</button>
+            <button data-style="underline" data-i18n="ui.underline">Underline</button>
+            <button data-style="strike" data-i18n="ui.strikethrough">Strikethrough</button>
+            <button data-style="clean" data-i18n="ui.clearStyling">Clear styling</button>
           </div>
         </div>
-        <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
-        <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
-        <button class="btn" id="guideMeMobile" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
-        <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
+        <button class="btn" id="quote" title="" data-i18n-title="ui.quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+        <button class="btn" id="btn-link-mobile" title="" data-i18n-title="ui.addLink"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+        <button class="btn" id="guideMeMobile" title="" data-i18n-title="ui.getSuggestions"><span style="font-size: 16px; filter: brightness(0.7);">✨</span></button>
+        <button class="btn submit-btn" id="submit" title="" data-i18n-title="ui.submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"></span></button>
       </div>
 
       <!-- Desktop toolbar -->
       <div class="desktop-toolbar">
         <div class="group tight">
-          <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
-          <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          <button class="btn" id="undo-desktop" title="" data-i18n-title="ui.undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          <button class="btn" id="redo" title="" data-i18n-title="ui.redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
         </div>
         <div class="group">
           <div class="dropdown" id="dd-paragraph">
@@ -1314,20 +1314,20 @@
             <span class="cdx-button__label">A</span>
             <span class="caret" aria-hidden="true"></span>
             <div class="menu" id="menu-style">
-              <button data-style="bold">Bold</button>
-              <button data-style="italic">Italic</button>
-              <button data-style="underline">Underline</button>
-              <button data-style="strike">Strikethrough</button>
-              <button data-style="clean">Clear styling</button>
+              <button data-style="bold" data-i18n="ui.bold">Bold</button>
+              <button data-style="italic" data-i18n="ui.italic">Italic</button>
+              <button data-style="underline" data-i18n="ui.underline">Underline</button>
+              <button data-style="strike" data-i18n="ui.strikethrough">Strikethrough</button>
+              <button data-style="clean" data-i18n="ui.clearStyling">Clear styling</button>
             </div>
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
-          <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+          <button class="btn" data-cmd="ol" title="" data-i18n-title="ui.numberedList"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+          <button class="btn" data-cmd="ul" title="" data-i18n-title="ui.bulletList"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
         </div>
         <div class="group">
-          <button class="btn" id="btn-link" title="Add link">
+          <button class="btn" id="btn-link" title="" data-i18n-title="ui.addLink">
             <span class="cdx-icon" data-icon="cdxIconLink"></span>
             <span class="cdx-button__label">Link</span>
           </button>
@@ -1355,10 +1355,10 @@
           </div>
         </div>
         <div class="group tight">
-          <button class="btn" id="addSectionBtn" title="Get suggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
+          <button class="btn" id="addSectionBtn" title="" data-i18n-title="ui.getSuggestions"><span style="font-size: 16px; filter: brightness(0.7); margin-right: 6px;">✨</span><span class="cdx-button__label">Suggestions</span></button>
           
-          <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
-          <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
+          <button class="btn" disabled title="" data-i18n-title="ui.pageOptions"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
+          <button class="btn" title="" data-i18n-title="ui.help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
         </div>
         <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
           <button class="btn publish-btn" id="publish" disabled>Publish</button>
@@ -1373,7 +1373,7 @@
         <div class="ac-steps">
           <section class="ac-step active" id="creation-step1">
             <h3 data-i18n="creation.step1.title">What article would you like to create?</h3>
-            <input id="creation-title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="Proposed title" data-i18n-placeholder="creation.step1.placeholder" data-i18n-attr="placeholder">
+            <input id="creation-title" class="title-input" placeholder="e.g., Jane Doe / Example Software" aria-label="" data-i18n-aria-label="creation.step1.ariaLabel" data-i18n-placeholder="creation.step1.placeholder" data-i18n-attr="placeholder">
             <div class="ac-actions">
               <button class="btn primary" id="creation-toStep2" disabled data-i18n="creation.step1.continue">Continue</button>
             </div>
@@ -1408,15 +1408,15 @@
             <div id="creation-sourcesList">
               <div class="source-group">
                 <div class="source-chip-row" data-index="0">
-                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL" />
-                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="" data-i18n-aria-label="ui.sourceUrl" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="" data-i18n-aria-label="ui.remove" title="" data-i18n-title="ui.remove">×</button>
                 </div>
                 <div class="source-status" aria-live="polite"></div>
               </div>
               <div class="source-group">
                 <div class="source-chip-row" data-index="1">
-                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="Source URL" />
-                  <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>
+                  <input type="url" class="source-url-input" placeholder="https://example.com/article" data-i18n-placeholder="creation.sourcesStep.urlPlaceholder" aria-label="" data-i18n-aria-label="ui.sourceUrl" />
+                  <button type="button" class="sidebar-action-btn remove-source" aria-label="" data-i18n-aria-label="ui.remove" title="" data-i18n-title="ui.remove">×</button>
                 </div>
                 <div class="source-status" aria-live="polite"></div>
               </div>
@@ -1471,7 +1471,7 @@
     <div class="guide-modal-drawer" id="assistModalDrawer" role="dialog" aria-modal="true" aria-labelledby="assistModalTitle">
       <div class="guide-modal-header">
         <h3 id="assistModalTitle">Suggestions</h3>
-        <button class="close-btn" id="closeAssistModal" title="Close">×</button>
+        <button class="close-btn" id="closeAssistModal" title="" data-i18n-title="ui.close">×</button>
       </div>
       <div class="guide-modal-content" id="assistModalContent"></div>
     </div>
@@ -1488,7 +1488,7 @@
     <div class="source-modal" role="dialog" aria-modal="true" aria-labelledby="sourceModalTitle">
       <div class="source-modal-header">
         <h3 id="sourceModalTitle" data-i18n="sourceModal.title">Add content from a reliable source</h3>
-        <button class="close-btn" id="closeSourceModal" title="Close">×</button>
+        <button class="close-btn" id="closeSourceModal" title="" data-i18n-title="ui.close">×</button>
       </div>
       <div class="source-modal-content">
         <div class="source-input-section">
@@ -1544,7 +1544,7 @@
             <h2 class="ref-title" id="refTitle">Add reference</h2>
             <span id="refHint" class="ref-status-badge">unclassified</span>
           </div>
-          <button class="ref-close" id="refCloseBtn" title="Close" aria-label="Close">✕</button>
+          <button class="ref-close" id="refCloseBtn" title="" data-i18n-title="ui.close" aria-label="" data-i18n-aria-label="ui.close">✕</button>
         </div>
         <p class="ref-desc" id="refSubtext">Use a source you added earlier or paste a new one.</p>
         <div class="ref-section" id="refSavedSection" style="display:none;">
@@ -1753,14 +1753,15 @@
       try {
         if (window.__introHelpShown) return;
         if (!afterEl || !afterEl.parentNode) return;
+        var __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
         // Create help block
         var help = document.createElement('div');
         help.id = 'introHelp';
         help.className = 'intro-help';
         help.setAttribute('role','note');
         help.setAttribute('contenteditable','false');
-        help.innerHTML = '<div class="title">Fill the details</div>'+
-                         '<p class="subtitle">Share a reference to fill automatically the details or add them manually</p>';
+        help.innerHTML = '<div class="title">'+ __t('creation.assist.fillDetailsTitle', null, 'Fill the details') +'</div>'+
+                         '<p class="subtitle">'+ __t('creation.assist.fillDetailsSubtitle', null, 'Share a reference to fill automatically the details or add them manually') +'</p>';
         afterEl.insertAdjacentElement('afterend', help);
         window.__introHelpShown = true;
       } catch(_) {}
@@ -2600,7 +2601,7 @@
             var div = document.createElement('div');
             div.className = 'source-chip-row';
             div.setAttribute('data-index', String(idx));
-            div.innerHTML = '\n              <input type="url" class="source-url-input" placeholder="'+(((typeof window.__i18nGet==='function')?window.__i18nGet('creation.sourcesStep.urlPlaceholder',null,'https://example.com/article'):'https://example.com/article'))+'" aria-label="Source URL" />\n              <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>';
+            div.innerHTML = '\n              <input type="url" class="source-url-input" placeholder="'+(((typeof window.__i18nGet==='function')?window.__i18nGet('creation.sourcesStep.urlPlaceholder',null,'https://example.com/article'):'https://example.com/article'))+'" aria-label="" data-i18n-aria-label="ui.sourceUrl" />\n              <button type="button" class="sidebar-action-btn remove-source" aria-label="Remove" title="Remove">×</button>';
             var status = document.createElement('div');
             status.className = 'source-status';
             status.setAttribute('aria-live','polite');
@@ -5916,28 +5917,30 @@
       // Determine if there are any curated (non-Custom) values
       const nonCustomCount = (suggestions || []).filter(function(s){ return normalize(s) !== 'custom...'; }).length;
       // Friendly guidance when only Custom is available
+      const __t = (typeof window.__i18nGet === 'function') ? window.__i18nGet : function(k,p,f){ return f || k; };
       const getCustomHint = function(k){
         switch(k){
-          case 'pronunciation': return 'Enter pronunciation (IPA or phonetic), e.g., EE-lon';
-          case 'birth_date': return 'Enter full birth date, e.g., June 28, 1971';
-          case 'birth_place': return 'Enter city, region, country';
-          case 'known_for': return 'Add a short phrase describing what they are known for';
-          case 'current_status': return 'Describe current role/status in present tense';
-          case 'recognition': return 'Add notable awards, honors, or rankings';
-          default: return 'Type a value for this field, then click Insert';
+          case 'pronunciation': return __t('creation.assist.customHints.pronunciation', null, 'Enter pronunciation (IPA or phonetic), e.g., EE-lon');
+          case 'birth_date': return __t('creation.assist.customHints.birth_date', null, 'Enter full birth date, e.g., June 28, 1971');
+          case 'birth_place': return __t('creation.assist.customHints.birth_place', null, 'Enter city, region, country');
+          case 'known_for': return __t('creation.assist.customHints.known_for', null, 'Add a short phrase describing what they are known for');
+          case 'current_status': return __t('creation.assist.customHints.current_status', null, 'Describe current role/status in present tense');
+          case 'recognition': return __t('creation.assist.customHints.recognition', null, 'Add notable awards, honors, or rankings');
+          default: return __t('creation.assist.customHintDefault', null, 'Type a value for this field, then click Insert');
         }
       };
       const customHint = getCustomHint(key);
+      const customLabel = __t('creation.assist.customLabel', null, 'Custom…');
       let html = onMobile ? '' : '<div class="chip-menu-header">'+ (headerHint || ('Suggestions for '+ escapeHtml(key.replace(/_/g,' ')))) +'</div>';
       suggestions.forEach(function(opt){
         if (normalize(opt) === 'custom...') {
-          html += '<button class="chip-menu-item" data-chip-custom>Custom…</button>';
+          html += '<button class="chip-menu-item" data-chip-custom>'+ customLabel +'</button>';
         } else {
           html += '<button class="chip-menu-item" data-chip-value="'+ escapeHtml(opt) +'">'+ escapeHtml(opt) +'</button>';
         }
       });
       if (!hasCustom) {
-        html += '<div class="assist-sep"></div><button class="chip-menu-item" data-chip-custom>Custom…</button>';
+        html += '<div class="assist-sep"></div><button class="chip-menu-item" data-chip-custom>'+ customLabel +'</button>';
       }
       // If no curated suggestions, show a friendly hint block
       if (nonCustomCount === 0) {
@@ -6054,11 +6057,11 @@
             menu.insertAdjacentHTML('beforeend',
               '<div class="assist-sep"></div>'+
               '<div class="chip-custom-entry" style="padding:10px 12px;">'+
-                '<div style="font-size:12px; color:#555; margin-bottom:6px;">Enter a custom value — '+ escapeHtml(customHint) +'</div>'+
+                '<div style="font-size:12px; color:#555; margin-bottom:6px;">'+ escapeHtml(__t('creation.assist.customEntryLead', { hint: customHint }, 'Enter a custom value — {hint}')) +'</div>'+
                 '<input type="text" id="chipCustomInput" inputmode="'+ inputMode +'" autocomplete="off" autocapitalize="none" style="width:100%; height:40px; border:1px solid #c8ccd1; border-radius:4px; padding:8px 10px; font: inherit; font-size:16px;" placeholder="'+ escapeHtml(customHint) +'" />'+
                 '<div style="display:flex; gap:8px; margin-top:10px;">'+
-                  '<button class="chip-menu-item" data-chip-submit style="width:auto; display:inline-block;">Insert</button>'+
-                  '<button class="chip-menu-item" data-chip-cancel style="width:auto; display:inline-block;">Cancel</button>'+
+                  '<button class="chip-menu-item" data-chip-submit style="width:auto; display:inline-block;">'+ __t('ui.insert', null, 'Insert') +'</button>'+
+                  '<button class="chip-menu-item" data-chip-cancel style="width:auto; display:inline-block;">'+ __t('ui.cancel', null, 'Cancel') +'</button>'+
                 '</div>'+
               '</div>'
             );
@@ -6867,7 +6870,7 @@
         para = para.replace('<p ', '<p id="'+newParaId+'" ');
       }
       var html = '<div class="section-block" data-section="'+escapeHtml(name)+'" data-section-id="'+id+'">'+
-                   '<button class="section-dismiss" title="Remove section" aria-label="Remove section" contenteditable="false">×</button>'+
+                   '<button class="section-dismiss" title="" data-i18n-title="ui.removeSection" aria-label="" data-i18n-aria-label="ui.removeSection" contenteditable="false">×</button>'+
                    heading + para +
                  '</div>';
       // Placement: respect templates.json defaultSections order when available

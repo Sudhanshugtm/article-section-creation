@@ -160,6 +160,7 @@
       "showMore": "Show more",
       "showLess": "Show less",
       "insert": "Insert",
+      "cancel": "Cancel",
       "added": "Added",
       "goodIntroductions": "Good introductions briefly define the topic and summarize the most important points in a neutral tone, with sources.",
       "openFullList": "Open full list of suggested sections",
@@ -169,7 +170,43 @@
       "suggested": "Suggested",
       "sections": "Sections",
       "showLessSections": "Show less sections",
-      "collapseToTop": "Collapse to top suggestions"
+      "collapseToTop": "Collapse to top suggestions",
+      "close": "Close",
+      "undo": "Undo",
+      "redo": "Redo",
+      "quote": "Quote",
+      "addLink": "Add link",
+      "getSuggestions": "Get suggestions",
+      "submit": "Submit",
+      "numberedList": "Numbered list",
+      "bulletList": "Bullet list",
+      "pageOptions": "Page options",
+      "help": "Help",
+      "remove": "Remove",
+      "sourceUrl": "Source URL",
+      "removeSection": "Remove section",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "clearStyling": "Clear styling"
+    },
+    "creation": {
+      "assist": {
+        "fillDetailsTitle": "Fill the details",
+        "fillDetailsSubtitle": "Share a reference to fill automatically the details or add them manually",
+        "customHints": {
+          "pronunciation": "Enter pronunciation (IPA or phonetic), e.g., EE-lon",
+          "birth_date": "Enter full birth date, e.g., June 28, 1971",
+          "birth_place": "Enter city, region, country",
+          "known_for": "Add a short phrase describing what they are known for",
+          "current_status": "Describe current role/status in present tense",
+          "recognition": "Add notable awards, honors, or rankings"
+        },
+        "customHintDefault": "Type a value for this field, then click Insert",
+        "customLabel": "Custom…",
+        "customEntryLead": "Enter a custom value — {hint}"
+      }
     },
     "placeholders": {
       "pronunciation": "pronunciation",
@@ -351,7 +388,8 @@
       "step1": {
         "title": "What article would you like to create?",
         "placeholder": "e.g., Jane Doe / Example Software",
-        "continue": "Continue"
+        "continue": "Continue",
+        "ariaLabel": "Proposed title"
       },
       "step2": {
         "title_static": "Assign a topic category",
@@ -624,7 +662,26 @@
       "suggested": "Disarankan",
       "sections": "Bagian",
       "showLessSections": "Tampilkan sedikit bagian",
-      "collapseToTop": "Tutup ke saran teratas"
+      "collapseToTop": "Tutup ke saran teratas",
+      "close": "Tutup",
+      "undo": "Batalkan",
+      "redo": "Ulangi",
+      "quote": "Kutip",
+      "addLink": "Tambahkan pranala",
+      "getSuggestions": "Dapatkan saran",
+      "submit": "Kirim",
+      "numberedList": "Daftar bernomor",
+      "bulletList": "Daftar poin",
+      "pageOptions": "Opsi halaman",
+      "help": "Bantuan",
+      "remove": "Hapus",
+      "sourceUrl": "URL sumber",
+      "removeSection": "Hapus bagian",
+      "bold": "Tebal",
+      "italic": "Miring",
+      "underline": "Garis bawah",
+      "strikethrough": "Coret",
+      "clearStyling": "Hapus gaya"
     },
     "placeholders": {
       "pronunciation": "pengucapan",
@@ -806,7 +863,8 @@
       "step1": {
         "title": "Artikel apa yang ingin Anda buat?",
         "placeholder": "mis., Jane Doe / Contoh Perangkat Lunak",
-        "continue": "Lanjutkan"
+        "continue": "Lanjutkan",
+        "ariaLabel": "Judul yang diusulkan"
       },
       "step2": {
         "title_static": "Tetapkan kategori topik",
@@ -864,6 +922,21 @@
           "skip": "Lewati dulu",
           "continue": "Mulai mengedit"
         }
+      },
+      "assist": {
+        "fillDetailsTitle": "Isi detailnya",
+        "fillDetailsSubtitle": "Bagikan referensi untuk mengisi detail secara otomatis atau tambahkan secara manual",
+        "customHints": {
+          "pronunciation": "Masukkan pengucapan (IPA atau fonetik), contoh: EE-lon",
+          "birth_date": "Masukkan tanggal lahir lengkap, contoh: 28 Juni 1971",
+          "birth_place": "Masukkan kota, wilayah, negara",
+          "known_for": "Tambahkan frasa singkat yang menjelaskan apa yang membuat mereka terkenal",
+          "current_status": "Jelaskan peran/status saat ini dalam bentuk sekarang",
+          "recognition": "Tambahkan penghargaan, kehormatan, atau peringkat yang menonjol"
+        },
+        "customHintDefault": "Ketik nilai untuk bidang ini, lalu klik Sisipkan",
+        "customLabel": "Kustom…",
+        "customEntryLead": "Masukkan nilai kustom — {hint}"
       }
     }
   }
