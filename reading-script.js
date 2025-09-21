@@ -489,24 +489,32 @@ function initializeQuillEditor() {
 
 function loadContentIntoEditor() {
   if (!quill) return;
-  
-  // Simple approach: if we have articleBody content, extract text from it directly
+
+  // For Indonesian articles with pre-populated content, extract proper MediaWiki format
   const articleBody = document.getElementById('articleBody');
-  if (articleBody) {
-    // Get clean text content from the article
-    const textContent = articleBody.innerText || articleBody.textContent || '';
-    
-    // Set as plain text in Quill
-    quill.setText(textContent);
-    
-    console.log('Loaded content into editor:', textContent.substring(0, 100) + '...');
+  if (articleBody && articleBody.children.length > 0) {
+    // Extract content using the existing MediaWiki extraction function
+    const mediaWikiContent = extractContentFromHTML(articleBody);
+
+    if (mediaWikiContent) {
+      // Convert to Quill format and load
+      const currentArticle = { content: mediaWikiContent };
+      const content = convertArticleToQuillFormat(currentArticle);
+      quill.setContents(content);
+
+      console.log('Loaded Indonesian content into editor:', mediaWikiContent.substring(0, 100) + '...');
+    } else {
+      // Fallback to plain text if extraction fails
+      const textContent = articleBody.innerText || articleBody.textContent || '';
+      quill.setText(textContent);
+    }
   } else {
-    // Fallback to default article processing
+    // Fallback to default article processing for English articles
     const currentArticle = (typeof articleData !== 'undefined') ? articleData : defaultArticle;
     const content = convertArticleToQuillFormat(currentArticle);
     quill.setContents(content);
   }
-  
+
   // Position cursor at the beginning of the content (index 0)
   setTimeout(() => {
     quill.focus();
