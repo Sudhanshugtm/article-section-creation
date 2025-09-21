@@ -143,6 +143,8 @@
       "introduction": "Introduction",
       "introductionDesc": "Insert a simple opening sentence",
       "introductionStructure": "Introduction structure:",
+      "exampleStructure": "Example structure:",
+      "fromSisterProjects": "From Wikipedia and sister projects",
       "showExamples": "Show examples",
       "hideExamples": "Hide examples",
       "examplesFromWikipedia": "Examples from Wikipedia:",
@@ -595,6 +597,8 @@
       "introduction": "Pendahuluan",
       "introductionDesc": "Masukkan kalimat pembuka yang sederhana",
       "introductionStructure": "Struktur pendahuluan:",
+      "exampleStructure": "Contoh struktur:",
+      "fromSisterProjects": "Dari Wikipedia dan proyek saudara",
       "showExamples": "Tampilkan contoh",
       "hideExamples": "Sembunyikan contoh",
       "examplesFromWikipedia": "Contoh dari Wikipedia:",
@@ -825,7 +829,39 @@
       "sourcesStep": {
         "title": "Tambahkan sumber utama untuk \"{Title}\"",
         "subtext": "Tempel tautan tentang topik Anda; kami akan membantu Anda menulis.",
+        "urlPlaceholder": "https://contoh.com/artikel",
+        "badge": {
+          "reliable": "✓ Domain tepercaya",
+          "questionable": "⚠️ Mungkin promosi",
+          "unknown": "ℹ️ Sumber tidak dikenal"
+        },
+        "readiness": {
+          "label": "Kesiapan:",
+          "notReady": "Belum siap",
+          "gettingThere": "Hampir siap",
+          "ready": "Siap",
+          "countSuffix": "sumber terverifikasi",
+          "sourcesLabel": "sumber",
+          "independentLabel": "independen"
+        },
+        "toggle": {
+          "independent": "Independen dari subjek?",
+          "significant": "Liputan signifikan?",
+          "yes": "Ya",
+          "notSure": "Tidak yakin"
+        },
+        "addAnother": "Tambahkan lagi",
+        "hint": {
+          "good": "Bagus. Anda dapat membuat draf sekarang dan menerbitkannya ke ruang utama nanti.",
+          "draft": "Kita akan mulai di Draf; tambahkan 2 sumber independen untuk menerbitkan."
+        },
+        "status": {
+          "checking": "Memeriksa...",
+          "verified": "Kemungkinan tepercaya"
+        },
         "actions": {
+          "back": "Kembali",
+          "skip": "Lewati dulu",
           "continue": "Mulai mengedit"
         }
       }

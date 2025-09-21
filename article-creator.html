@@ -1446,7 +1446,7 @@
     function canonicalizeUrl(u){
       try { if (!u) return ''; return new URL(u).href; } catch(_){ try { if (u && u.indexOf(' ')===-1 && /\./.test(u) && !/^\w[\w.+-]*:/.test(u)) return new URL('https://'+u).href; } catch(__){} return ''; }
     }
-    function showRowStatus(container, state){ if (!container) return; if (state==='validating'){ container.style.display='block'; container.innerHTML='<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>Checking...</span></span>'; } }
+    function showRowStatus(container, state){ if (!container) return; if (state==='validating'){ container.style.display='block'; container.innerHTML='<span class="status-chip status-validating"><span class="spinner" aria-hidden="true"></span><span>'+ __t('creation.sourcesStep.status.checking','Checking...') +'</span></span>'; } }
     function updateNotabilityPreview(){
       try {
         var list = document.getElementById('creation-sourcesList'); var line = document.getElementById('creation-readiness-line'); var statusEl = document.getElementById('creation-readiness-status'); var countEl = document.getElementById('creation-readiness-count');
@@ -1457,14 +1457,14 @@
         function uniq(a){ return Array.from(new Set(a)); }
         var hosts = uniq(urls.map(function(u){ return extractDomain(u); }).filter(Boolean));
         var sources = urls.length; var independent = hosts.length;
-        if (sources === 0) { line.classList.add('is-hidden'); statusEl.textContent='Not ready'; countEl.textContent='(0 sources)'; statusEl.classList.remove('state-ready','state-mid','state-low'); statusEl.classList.add('state-low'); return; }
+        if (sources === 0) { line.classList.add('is-hidden'); statusEl.textContent=__t('creation.sourcesStep.readiness.notReady','Not ready'); countEl.textContent='(0 '+ __t('creation.sourcesStep.readiness.sourcesLabel','sources') +')'; statusEl.classList.remove('state-ready','state-mid','state-low'); statusEl.classList.add('state-low'); return; }
         line.classList.remove('is-hidden');
         var ready = (sources>=2 && independent>=2);
         var stateKey = ready ? 'ready' : (sources>0 ? 'gettingThere' : 'notReady');
-        statusEl.textContent = ready ? 'Ready' : (sources>0 ? 'Getting there' : 'Not ready');
+        statusEl.textContent = (stateKey==='ready') ? __t('creation.sourcesStep.readiness.ready','Ready') : ((stateKey==='gettingThere') ? __t('creation.sourcesStep.readiness.gettingThere','Getting there') : __t('creation.sourcesStep.readiness.notReady','Not ready'));
         statusEl.classList.remove('state-ready','state-mid','state-low');
         statusEl.classList.add(stateKey==='ready' ? 'state-ready' : (stateKey==='gettingThere' ? 'state-mid' : 'state-low'));
-        countEl.textContent = '('+sources+' sources · '+independent+' independent)';
+        countEl.textContent = '('+sources+' '+ __t('creation.sourcesStep.readiness.sourcesLabel','sources') +' · '+independent+' '+ __t('creation.sourcesStep.readiness.independentLabel','independent') +')';
       } catch(_){}
     }
     toStep3 && (toStep3.onclick=function(){
@@ -1884,7 +1884,7 @@
         // Always show template structure for this section
         var sectionTemplate = getSectionTemplate(sectionName, selectedCat);
         content += '<div style="margin-top: 6px; padding: 6px; background: #f0f8ff; border-left: 2px solid #36c; border-radius: 2px;">';
-        content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">Example structure:</div>';
+        content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">'+ __t('ui.exampleStructure','Example structure:') +'</div>';
         content += '<div style="font-size: 10px; color: #222; font-family: monospace; line-height: 1.3;">' + sectionTemplate.substring(0, 100) + '...</div>';
         content += '</div>';
         
@@ -1892,13 +1892,13 @@
         var wikipediaExample = getWikipediaExample(sectionName, selectedCat);
         if (wikipediaExample) {
           content += '<div style="margin-top: 6px; padding: 6px; background: #f8f9fa; border-left: 2px solid #72777d; border-radius: 2px;">';
-          content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">Wikipedia example:</div>';
+          content += '<div style="font-size: 10px; color: #54595d; margin-bottom: 3px; font-style: italic;">'+ __t('ui.wikipediaExample','Wikipedia example') +':</div>';
           content += '<div style="font-size: 10px; color: #222; line-height: 1.4;">' + wikipediaExample.substring(0, 120) + '...</div>';
           content += '</div>';
         }
         
         content += '</div>';
-        content += '<span class="section-action">' + (isAdded ? 'Added ✓' : 'Insert') + '</span>';
+        content += '<span class="section-action">' + (isAdded ? (__t('ui.added','Added') + ' ✓') : __t('ui.insert','Insert')) + '</span>';
         content += '</button>';
       });
       // Sister projects (compact) under suggested sections
@@ -1960,7 +1960,7 @@
           }
           if (items.length) {
             content += '<div style="border-top: 1px solid #eaecf0; margin: 12px 0; padding-top: 12px;"></div>';
-            content += '<p class="guide-note" style="margin: 0 0 8px 0; font-weight: 500;">From Wikipedia and sister projects</p>';
+            content += '<p class="guide-note" style="margin: 0 0 8px 0; font-weight: 500;">'+ __t('ui.fromSisterProjects','From Wikipedia and sister projects') +'</p>';
             items.forEach(function(it){
               if (it.type === 'fact') {
                 content += '<div style="background:#f8f9fa; border:1px solid #eaecf0; border-radius:4px; padding:8px;">'+
