@@ -33,12 +33,24 @@ function extractContentFromHTML(articleBody) {
           content += p.textContent + '\n\n';
         });
         
-        // Process lists within the section
-        const lists = sectionContent.querySelectorAll('ul');
-        lists.forEach(list => {
+        // Process lists within the section (both unordered and ordered)
+        const uls = sectionContent.querySelectorAll('ul');
+        uls.forEach(list => {
           const items = list.querySelectorAll('li');
           items.forEach(li => {
             content += '* ' + li.textContent + '\n';
+          });
+          content += '\n';
+        });
+
+        const ols = sectionContent.querySelectorAll('ol');
+        ols.forEach(list => {
+          const items = list.querySelectorAll('li');
+          let i = 1;
+          items.forEach(li => {
+            // Use a simple numbered prefix to preserve item text in editor
+            content += i + '. ' + li.textContent + '\n';
+            i++;
           });
           content += '\n';
         });
