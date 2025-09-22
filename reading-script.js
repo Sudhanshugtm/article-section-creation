@@ -1066,22 +1066,41 @@ function insertSectionIntoEditor(title, includeItems = []) {
     // Move caret just after the heading line
     index = index + safeTitle.length + 1; // title + newline
   } else {
-    // Append at end
-    index = quill.getLength();
+    // Insert before References/Referensi section when present; otherwise append at end
+    let beforeIdx = -1;
+    try {
+      const bottomTitles = [ 'References', 'Referensi' ];
+      for (const t of bottomTitles) {
+        const idx = findExistingSectionStartIndex(t);
+        if (idx !== -1) {
+          beforeIdx = beforeIdx === -1 ? idx : Math.min(beforeIdx, idx);
+        }
+      }
+    } catch (_) {}
+
+    const insertingBeforeReferences = beforeIdx !== -1;
+    index = insertingBeforeReferences ? beforeIdx : quill.getLength();
     try {
       const prev1 = index > 0 ? quill.getText(index - 1, 1) : '\n';
       if (prev1 !== '\n') { quill.insertText(index, '\n', 'user'); index += 1; }
     } catch (_) {}
-    // Insert heading and format
-    quill.insertText(index, safeTitle, 'user');
-    quill.insertText(index + safeTitle.length, '\n', 'user');
-    quill.formatLine(index, 1, 'header', 2, 'user');
-    index += safeTitle.length + 1;
-    // Insert placeholder paragraph below heading and remember caret pos here
+    // Robust: insert the heading with header attr, then a new blank line for placeholder
+    const headingText = safeTitle + '\n';
+    quill.insertText(index, headingText, { header: 2 }, 'user');
+    index += headingText.length; // now at start of the line after the heading
+
+    // Create a dedicated blank line for the placeholder (so we don't touch existing lines)
+    quill.insertText(index, '\n', 'user');
+    // Ensure this blank line is not a header
+    try { quill.formatLine(index, 1, 'header', false, 'user'); } catch (_) {}
+
+    // Insert placeholder paragraph on that blank line
     const placeholder = 'Start adding ' + safeTitle.toLowerCase() + '…';
     quill.insertText(index, placeholder, { italic: true }, 'user');
-    const caretAfterPlaceholder = index + placeholder.length; // caret should blink here
+    let caretAfterPlaceholder = index + placeholder.length; // caret should blink here
     quill.insertText(caretAfterPlaceholder, '\n', 'user');
+
+    // Optional: add spacing before References for readability (single blank line already added)
     index = caretAfterPlaceholder + 1;
   }
 

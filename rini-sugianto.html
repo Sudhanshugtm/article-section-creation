@@ -84,16 +84,189 @@
     </article>
     </div>
 
-    <!-- Editing mode content (hidden by default) -->
-    <div id="editing-content" style="display: none;">
-      <div id="quillEditor" style="height: 400px;"></div>
-      <div class="editor-controls">
-        <button class="editor-button primary">Terbitkan perubahan</button>
-        <button class="editor-button" id="cancelEdit">Batalkan</button>
+  </main>
+
+  <!-- Visual Editor (hidden by default) -->
+  <div class="ve-interface" id="veInterface" style="display: none;">
+    
+    <!-- Page header (duplicated for VE mode) -->
+    <header class="container page-header" role="banner">
+      <h1 class="firstHeading">Rini Sugianto</h1>
+      <div class="page-tabs-wrapper">
+        <nav class="ns-tabs" aria-label="Tab namespace">
+          <button class="ns-tab active">Artikel</button>
+          <button class="ns-tab">Pembicaraan</button>
+        </nav>
+        <nav class="page-actions" aria-label="Tindakan halaman">
+          <button class="action-tab">Baca</button>
+          <button class="action-tab active" id="editTabVE">Sunting</button>
+          <button class="action-tab">Lihat riwayat</button>
+          <button class="action-tab star">⭐</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- VE toolbar (positioned below tabs) -->
+    <div class="ve-strip" role="region" aria-label="Editing toolbar">
+      <div class="ve-bar">
+
+        <!-- Mobile toolbar -->
+        <div class="mobile-toolbar">
+          <!-- Close -->
+          <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+          
+          <!-- Undo -->
+          <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          
+          <!-- Text Style (A with dropdown) -->
+          <div class="dropdown" id="dd-style-mobile">
+            <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-style-mobile">
+              <button data-style="bold">Bold</button>
+              <button data-style="italic">Italic</button>
+              <button data-style="underline">Underline</button>
+              <button data-style="strike">Strikethrough</button>
+              <button data-style="script-sup">Superscript</button>
+              <button data-style="script-sub">Subscript</button>
+              <button data-style="clean">Clear styling</button>
+            </div>
+          </div>
+          
+          <!-- Quote -->
+          <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+          
+          <!-- Link -->
+          <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+          
+          <!-- Edit with dropdown -->
+          <div class="dropdown" id="dd-edit-mobile">
+            <span class="cdx-icon" data-icon="cdxIconEdit"></span>
+            <span class="caret" aria-hidden="true"></span>
+            <div class="menu" id="menu-edit-mobile">
+              <button data-insert="image">Media…</button>
+              <button data-insert="template">Template… (mock)</button>
+              <button data-insert="math">Math… (mock)</button>
+              <button data-insert="table">Table… (mock)</button>
+            </div>
+          </div>
+          
+          <!-- Submit (next icon) -->
+          <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;"><span class="cdx-icon" data-icon="cdxIconNext"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"></path></svg></span></button>
+        </div>
+
+        <!-- Desktop toolbar (hidden on mobile) -->
+        <div class="desktop-toolbar">
+          <!-- History -->
+          <div class="group tight">
+            <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+            <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          </div>
+
+          <!-- Paragraph -->
+          <div class="group">
+            <div class="dropdown" id="dd-paragraph">
+              <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
+              <span class="cdx-button__label">Paragraph</span>
+              <span class="caret" aria-hidden="true"></span>
+              <div class="menu" id="menu-paragraph">
+                <button data-header="">Paragraph</button>
+                <button data-header="1">Heading 1</button>
+                <button data-header="2">Heading 2</button>
+                <button data-header="3">Heading 3</button>
+                <button data-header="4">Heading 4</button>
+                <button data-header="5">Heading 5</button>
+                <button data-header="6">Heading 6</button>
+                <button data-header="code">Preformatted</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Styles -->
+          <div class="group">
+            <div class="dropdown" id="dd-style">
+              <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+              <span class="cdx-button__label">A</span>
+              <span class="caret" aria-hidden="true"></span>
+              <div class="menu" id="menu-style">
+                <button data-style="bold">Bold</button>
+                <button data-style="italic">Italic</button>
+                <button data-style="underline">Underline</button>
+                <button data-style="strike">Strikethrough</button>
+                <button data-style="script-sup">Superscript</button>
+                <button data-style="script-sub">Subscript</button>
+                <button data-style="clean">Clear styling</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lists -->
+          <div class="group tight">
+            <button class="btn" data-cmd="ol" title="Numbered list"><span class="cdx-icon" data-icon="cdxIconListNumbered"></span></button>
+            <button class="btn" data-cmd="ul" title="Bullet list"><span class="cdx-icon" data-icon="cdxIconListBullet"></span></button>
+          </div>
+
+          <!-- Cite / Insert -->
+          <div class="group">
+            <button class="btn" id="btn-link" title="Add link">
+              <span class="cdx-icon" data-icon="cdxIconLink"></span>
+              <span class="cdx-button__label">Link</span>
+            </button>
+
+            <div class="dropdown" id="dd-cite">
+              <span class="cdx-icon" data-icon="cdxIconReference"></span>
+              <span class="cdx-button__label">Cite</span>
+              <span class="caret"></span>
+              <div class="menu" id="menu-cite">
+                <button data-cite="web">Cite web… (mock)</button>
+                <button data-cite="book">Cite book… (mock)</button>
+                <button data-cite="news">Cite news… (mock)</button>
+              </div>
+            </div>
+
+            <div class="dropdown" id="dd-insert">
+              <span class="cdx-icon" data-icon="cdxIconAdd"></span>
+              <span class="cdx-button__label">Insert</span>
+              <span class="caret"></span>
+              <div class="menu" id="menu-insert">
+                <button data-insert="image">Media…</button>
+                <button data-insert="template">Template… (mock)</button>
+                <button data-insert="math">Math… (mock)</button>
+                <button data-insert="table">Table… (mock)</button>
+                <button data-insert="char">Special character…</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tools / Help -->
+          <div class="group tight">
+            <button class="btn" id="addSectionBtn" title="Open suggestions"><span class="cdx-icon" data-icon="cdxIconAdd"></span><span class="cdx-button__label">Suggestions</span></button>
+            <button class="btn" disabled title="Page options"><span class="cdx-icon" data-icon="cdxIconSettings"></span></button>
+            <button class="btn" title="Help"><span class="cdx-icon" data-icon="cdxIconHelp"></span></button>
+          </div>
+
+          <!-- Publish -->
+          <div class="group" style="margin-left:auto;border-left:none;padding-right:0">
+            <button class="btn publish-btn" id="publish" disabled>Publish</button>
+          </div>
+        </div>
+
       </div>
     </div>
-    
-  </main>
+
+    <!-- VE Content -->
+    <main class="ve-content-wrap">
+      <p class="tagline">Dari Wikipedia, ensiklopedia bebas</p>
+      <div class="surface">
+        <div id="editor"></div>
+        <div class="status">
+          <span>Perubahan hanya pratinjau dalam demo ini.</span>
+          <span class="badge">VE toolbar mock (Codex icons)</span>
+        </div>
+      </div>
+    </main>
+
+  </div>
 
   <!-- Expand Sidebar (sidebar concept) -->
   <div class="expand-sidebar" id="expandSidebar" style="display: none;">
@@ -112,11 +285,8 @@
   </div>
 
   <!-- Scripts -->
-  <!-- Quill.js for rich text editing -->
-  <script src="https://unpkg.com/quill@2.0.0/dist/quill.js" 
-          onerror="console.warn('Quill failed to load from CDN, using fallback'); loadQuillFallback()"></script>
-  <link href="https://unpkg.com/quill@2.0.0/dist/quill.snow.css" rel="stylesheet"
-        onerror="console.warn('Quill CSS failed to load from CDN')">
+  <!-- Match EN prototype Quill version for parity -->
+  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
   <!-- Main reading script -->
   <script src="reading-script.js"></script>
