@@ -74,16 +74,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadArticleContent() {
   const articleBody = document.getElementById('articleBody');
-  
-  // Skip loading if content already exists (e.g., for Indonesian articles with pre-populated content)
+
+  // For Indonesian articles with pre-populated content, content is already properly formatted
   if (articleBody && articleBody.children.length > 0) {
+    // Content already exists and is properly formatted, no need to process
     return;
   }
-  
-  // Use global articleData if available, otherwise fall back to defaultArticle
+
+  // For English articles, use global articleData if available, otherwise fall back to defaultArticle
   const currentArticle = (typeof articleData !== 'undefined') ? articleData : defaultArticle;
   const htmlContent = convertMediaWikiToHTML(currentArticle.content);
-  articleBody.innerHTML = htmlContent;
+  if (articleBody) {
+    articleBody.innerHTML = htmlContent;
+  }
 }
 
 function convertMediaWikiToHTML(mediaWikiText) {
@@ -347,19 +350,23 @@ function toggleEditMode() {
 
 function enterEditMode() {
   isEditMode = true;
-  
-  // Hide reading content
-  const readingContent = document.getElementById('readingContent');
-  if (readingContent) readingContent.style.display = 'none';
-  
+
   // Show VE interface (if it exists) or simple editing interface as fallback
   const veInterface = document.getElementById('veInterface');
   if (veInterface) {
+    // English articles: Hide reading content and show separate VE interface
+    const readingContent = document.getElementById('readingContent');
+    if (readingContent) readingContent.style.display = 'none';
     veInterface.style.display = 'block';
   } else {
-    // Fallback for articles without full VE interface (like Indonesian articles)
+    // Indonesian articles: Keep readingContent visible but hide article content, show editor
+    const readingContent = document.getElementById('readingContent');
+    const articleContent = document.querySelector('#readingContent .article-content');
     const editingContent = document.getElementById('editing-content');
-    if (editingContent) editingContent.style.display = 'block';
+
+    if (readingContent) readingContent.style.display = 'block'; // Keep container visible
+    if (articleContent) articleContent.style.display = 'none'; // Hide article content
+    if (editingContent) editingContent.style.display = 'block'; // Show editor
   }
   
   // Update tab states in main interface
@@ -406,19 +413,23 @@ function enterEditMode() {
 
 function exitEditMode() {
   isEditMode = false;
-  
-  // Show reading content
-  const readingContent = document.getElementById('readingContent');
-  if (readingContent) readingContent.style.display = 'block';
-  
-  // Hide VE interface (if it exists) and simple editing interface
+
+  // Handle VE interface (English articles) vs simple editing (Indonesian articles)
   const veInterface = document.getElementById('veInterface');
   if (veInterface) {
+    // English articles: Show reading content and hide VE interface
+    const readingContent = document.getElementById('readingContent');
+    if (readingContent) readingContent.style.display = 'block';
     veInterface.style.display = 'none';
   } else {
-    // Hide simple editing interface for articles without full VE
+    // Indonesian articles: Show article content and hide editor
+    const readingContent = document.getElementById('readingContent');
+    const articleContent = document.querySelector('#readingContent .article-content');
     const editingContent = document.getElementById('editing-content');
-    if (editingContent) editingContent.style.display = 'none';
+
+    if (readingContent) readingContent.style.display = 'block'; // Keep container visible
+    if (articleContent) articleContent.style.display = 'block'; // Show article content
+    if (editingContent) editingContent.style.display = 'none'; // Hide editor
   }
   
   // Hide smart widget (if it exists)
