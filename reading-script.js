@@ -4,6 +4,43 @@
 let quill = null;
 let isEditMode = false;
 
+// Serialize text content from a DOM node while preserving external links as
+// MediaWiki-style external link markup: [URL Text]. This allows our
+// convertArticleToQuillFormat() to turn them into Quill link attributes.
+function serializeTextWithLinks(node) {
+  if (!node) return '';
+  const parts = [];
+  function walk(n) {
+    if (!n) return;
+    if (n.nodeType === 3) { // Text
+      parts.push(n.nodeValue || '');
+      return;
+    }
+    if (n.nodeType === 1) { // Element
+      const el = n;
+      const tag = (el.tagName || '').toUpperCase();
+      if (tag === 'A') {
+        const href = el.getAttribute('href') || '';
+        const text = (el.textContent || '').trim();
+        const isExternal = /^https?:\/\//i.test(href);
+        if (isExternal && text) {
+          parts.push('[' + href + ' ' + text + ']');
+        } else {
+          // Not an external link; keep just the visible text
+          parts.push(text);
+        }
+        return;
+      }
+      // Recurse children for other elements
+      const children = el.childNodes || [];
+      for (let i = 0; i < children.length; i++) walk(children[i]);
+      return;
+    }
+  }
+  walk(node);
+  return parts.join('');
+}
+
 // Extract MediaWiki-style content from HTML for Indonesian articles
 function extractContentFromHTML(articleBody) {
   let content = '';
@@ -15,8 +52,8 @@ function extractContentFromHTML(articleBody) {
     const element = elements[i];
     
     if (element.tagName === 'P') {
-      // Regular paragraphs
-      content += element.textContent + '\n\n';
+      // Regular paragraphs (preserve external links)
+      content += serializeTextWithLinks(element) + '\n\n';
     } else if (element.tagName === 'SECTION' && element.classList.contains('article-section')) {
       // Section with title
       const title = element.querySelector('.article-section__title');
@@ -30,7 +67,7 @@ function extractContentFromHTML(articleBody) {
         // Process paragraphs within the section
         const paragraphs = sectionContent.querySelectorAll('p');
         paragraphs.forEach(p => {
-          content += p.textContent + '\n\n';
+          content += serializeTextWithLinks(p) + '\n\n';
         });
         
         // Process lists within the section (both unordered and ordered)
@@ -38,7 +75,7 @@ function extractContentFromHTML(articleBody) {
         uls.forEach(list => {
           const items = list.querySelectorAll('li');
           items.forEach(li => {
-            content += '* ' + li.textContent + '\n';
+            content += '* ' + serializeTextWithLinks(li) + '\n';
           });
           content += '\n';
         });
@@ -48,8 +85,8 @@ function extractContentFromHTML(articleBody) {
           const items = list.querySelectorAll('li');
           let i = 1;
           items.forEach(li => {
-            // Use a simple numbered prefix to preserve item text in editor
-            content += i + '. ' + li.textContent + '\n';
+            // Use a simple numbered prefix to preserve item text and links in editor
+            content += i + '. ' + serializeTextWithLinks(li) + '\n';
             i++;
           });
           content += '\n';
