@@ -461,18 +461,27 @@ function initializeQuillEditor() {
   
   console.log('Initializing Quill editor with container:', editorContainer.id);
   
-  quill = new Quill(editorContainer, {
-    modules: { 
-      toolbar: false, 
-      history: { 
-        delay: 250, 
-        maxStack: 100, 
-        userOnly: true 
-      } 
+  // Configure editor based on container type
+  const isIndonesianEditor = editorContainer.id === 'quillEditor';
+  const editorConfig = {
+    modules: {
+      toolbar: isIndonesianEditor ? [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['link', 'clean']
+      ] : false,
+      history: {
+        delay: 250,
+        maxStack: 100,
+        userOnly: true
+      }
     },
     placeholder: 'Start editing the article…',
     theme: 'snow'
-  });
+  };
+
+  quill = new Quill(editorContainer, editorConfig);
 
   // Enable publish button when user starts typing
   quill.on('text-change', function(delta, oldDelta, source) {
@@ -531,7 +540,7 @@ function loadContentIntoEditor() {
     quill.focus();
     quill.setSelection(0, 0);
     // Ensure the editor container is focused
-    const editor = document.getElementById('editor');
+    const editor = document.getElementById('editor') || document.getElementById('quillEditor');
     if (editor) {
       editor.focus();
     }
@@ -540,7 +549,7 @@ function loadContentIntoEditor() {
 
 // Inline hints: show placeholder + chips on empty new line (prototype UI)
 function setupInlineHints() {
-  const container = document.getElementById('editor');
+  const container = document.getElementById('editor') || document.getElementById('quillEditor');
   if (!container || !quill) return;
 
   // Overlay element positioned to look inline at caret
