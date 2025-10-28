@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variant A — Onboarding Overlay</title>
+  <link rel="stylesheet" href="./chrome.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="./variant-a.css">
+</head>
+<body>
+  <header class="ve-toolbar" role="toolbar" aria-label="VisualEditor toolbar">
+    <button data-ve-close aria-label="Close">×</button>
+    <button aria-label="Undo">↺</button>
+    <button aria-label="Formatting">A˅</button>
+    <button aria-label="Link">🔗</button>
+    <button aria-label="Insert">＋˅</button>
+    <button aria-label="More">✎˅</button>
+    <button data-ve-next aria-label="Next" class="ve-next">➜</button>
+  </header>
+  <main class="ve-canvas" id="canvas" contenteditable="true" aria-label="Article editor">
+    <p class="placeholder">Your article outline will appear here.</p>
+  </main>
+
+  <div class="overlay" id="onboarding" role="dialog" aria-modal="true">
+    <div class="overlay-content">
+      <header class="overlay-header">
+        <h1 class="overlay-title">Let’s set up your outline</h1>
+        <p class="overlay-subtitle">Pick an article type to tailor the sections and tips.</p>
+      </header>
+      <div class="type-carousel" id="typeCarousel" role="listbox" aria-label="Article types"></div>
+      <section class="tip-card" id="tipCard" aria-live="polite"></section>
+      <div class="overlay-actions">
+        <button class="cdx-button cdx-button--progressive" id="insertOutline">Insert outline</button>
+        <button class="cdx-button cdx-button--quiet" id="skipOnboarding">Skip for now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>Outline added — start drafting each section.</div>
+
+  <script type="module" src="./variant-a.js"></script>
+</body>
+</html>
