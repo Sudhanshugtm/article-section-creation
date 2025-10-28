@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variant B — Bottom Sheet Guide</title>
+  <link rel="stylesheet" href="./chrome.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="./variant-b.css">
+</head>
+<body>
+  <header class="ve-toolbar" role="toolbar" aria-label="VisualEditor toolbar">
+    <button data-ve-close aria-label="Close">×</button>
+    <button aria-label="Undo">↺</button>
+    <button aria-label="Formatting">A˅</button>
+    <button aria-label="Link">🔗</button>
+    <button aria-label="Insert">＋˅</button>
+    <button aria-label="More">✎˅</button>
+    <button data-ve-next aria-label="Next" class="ve-next">➜</button>
+  </header>
+  <div class="guide-banner" id="guideBanner" role="button" tabindex="0" aria-expanded="false">
+    Need an outline? Tap to choose type ▾
+  </div>
+  <main class="ve-canvas" id="canvas" contenteditable="true" aria-label="Article editor">
+    <p class="placeholder">Start typing or open the outline guide to add structure.</p>
+  </main>
+  <button class="guide-pill" id="guidePill" aria-expanded="false">Outline guide</button>
+
+  <section class="bottom-sheet" id="bottomSheet" aria-hidden="true" role="dialog" aria-label="Outline guidance">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-body">
+      <div class="type-tabs" id="typeTabs" role="tablist"></div>
+      <div class="outline-preview" id="outlinePreview"></div>
+      <ul class="tip-list" id="tipList"></ul>
+      <button class="cdx-button cdx-button--progressive" id="applyOutline">Apply outline</button>
+      <a class="policy-link" id="policyLink" target="_blank" rel="noopener">View notability guidance</a>
+    </div>
+  </section>
+
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+
+  <script type="module" src="./variant-b.js"></script>
+</body>
+</html>
