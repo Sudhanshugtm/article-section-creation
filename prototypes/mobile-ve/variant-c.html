@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variant C — Inline Section Cards</title>
+  <link rel="stylesheet" href="./chrome.css">
+  <link rel="stylesheet" href="https://unpkg.com/@wikimedia/codex@2.3.0/dist/codex.style.css">
+  <link rel="stylesheet" href="./variant-c.css">
+</head>
+<body>
+  <header class="ve-toolbar" role="toolbar" aria-label="VisualEditor toolbar">
+    <button data-ve-close aria-label="Close">×</button>
+    <button aria-label="Undo">↺</button>
+    <button aria-label="Formatting">A˅</button>
+    <button aria-label="Link">🔗</button>
+    <button aria-label="Insert">＋˅</button>
+    <button aria-label="More">✎˅</button>
+    <button data-ve-next aria-label="Next" class="ve-next">➜</button>
+  </header>
+  <div class="type-selector">
+    <span class="type-label">Article type:</span>
+    <button id="typeToggle" class="type-toggle" aria-haspopup="true" aria-expanded="false">Biography ▾</button>
+  </div>
+  <main class="ve-canvas" id="canvas" aria-live="polite"></main>
+  <script type="module" src="./variant-c.js"></script>
+</body>
+</html>
