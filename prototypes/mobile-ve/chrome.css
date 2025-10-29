@@ -37,8 +37,27 @@ body {
 }
 
 .ve-interface--prototype {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
   max-width: var(--max-width, 1100px);
   margin: 0 auto;
+  background: transparent;
+  z-index: auto;
+  overflow: visible;
+}
+
+.ve-interface--prototype .page-header,
+.ve-interface--prototype .ve-strip {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.ve-interface--prototype .ve-strip {
+  margin-bottom: 0;
 }
 
 .ve-prototype-body {
