@@ -9,21 +9,111 @@
   <link rel="stylesheet" href="./variant-b.css">
 </head>
 <body>
-  <header class="ve-toolbar" role="toolbar" aria-label="VisualEditor toolbar">
-    <button data-ve-close aria-label="Close">×</button>
-    <button aria-label="Undo">↺</button>
-    <button aria-label="Formatting">A˅</button>
-    <button aria-label="Link">🔗</button>
-    <button aria-label="Insert">＋˅</button>
-    <button aria-label="More">✎˅</button>
-    <button data-ve-next aria-label="Next" class="ve-next">➜</button>
-  </header>
-  <div class="guide-banner" id="guideBanner" role="button" tabindex="0" aria-expanded="false">
-    Need an outline? Tap to choose type ▾
+  <nav class="prototype-links">
+    <a href="variant-a.html">Variant A — Onboarding overlay</a>
+    <a href="variant-b.html">Variant B — Bottom sheet guide</a>
+    <a href="variant-c.html">Variant C — Inline outline cards</a>
+  </nav>
+
+  <div class="ve-interface ve-interface--prototype">
+    <header class="container page-header" role="banner">
+      <h1 class="firstHeading">New Article</h1>
+      <div class="page-tabs-wrapper">
+        <nav class="ns-tabs" aria-label="Namespace tabs">
+          <button class="ns-tab active">Article</button>
+          <button class="ns-tab">Talk</button>
+        </nav>
+        <nav class="page-actions" aria-label="Page actions">
+          <button class="action-tab">
+            <span class="action-tab-text">Read</span>
+            <span class="action-tab-icon cdx-icon" data-icon="cdxIconArticle"></span>
+          </button>
+          <button class="action-tab active">
+            <span class="action-tab-text">Edit</span>
+            <span class="action-tab-icon cdx-icon" data-icon="cdxIconEdit"></span>
+          </button>
+          <button class="action-tab">
+            <span class="action-tab-text">View history</span>
+            <span class="action-tab-icon cdx-icon" data-icon="cdxIconHistory"></span>
+          </button>
+          <button class="action-tab star">
+            <span class="action-tab-text">⭐</span>
+            <span class="action-tab-icon cdx-icon" data-icon="cdxIconStar"></span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <div class="ve-strip" role="region" aria-label="Editing toolbar">
+      <div class="ve-bar">
+        <div class="mobile-toolbar">
+          <button class="btn" id="close" title="Close"><span class="cdx-icon" data-icon="cdxIconClose"></span></button>
+          <button class="btn" id="undo" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+          <div class="dropdown" id="dd-style-mobile">
+            <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+            <span class="caret" aria-hidden="true"></span>
+          </div>
+          <button class="btn" id="quote" title="Quote"><span class="cdx-icon" data-icon="cdxIconQuotes"></span></button>
+          <button class="btn" id="btn-link-mobile" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+          <div class="dropdown" id="dd-edit-mobile">
+            <span class="cdx-icon" data-icon="cdxIconEdit"></span>
+            <span class="caret" aria-hidden="true"></span>
+          </div>
+          <button class="btn submit-btn" id="submit" title="Submit" style="margin-left: auto;">
+            <span class="cdx-icon" data-icon="cdxIconNext">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"></path></svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="desktop-toolbar">
+          <div class="group tight">
+            <button class="btn" id="undo-desktop" title="Undo"><span class="cdx-icon" data-icon="cdxIconUndo"></span></button>
+            <button class="btn" id="redo" title="Redo"><span class="cdx-icon" data-icon="cdxIconRedo"></span></button>
+          </div>
+          <div class="group">
+            <div class="dropdown" id="dd-paragraph">
+              <span class="cdx-icon" data-icon="cdxIconTextHeading"></span>
+              <span class="cdx-button__label">Paragraph</span>
+              <span class="caret" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="group">
+            <div class="dropdown" id="dd-style">
+              <span class="cdx-icon" data-icon="cdxIconTextStyle"></span>
+              <span class="caret" aria-hidden="true"></span>
+            </div>
+            <button class="btn" id="bold" title="Bold"><strong>B</strong></button>
+            <button class="btn" id="italic" title="Italic"><em>I</em></button>
+            <button class="btn" id="underline" title="Underline"><span class="cdx-icon" data-icon="cdxIconUnderline"></span></button>
+          </div>
+          <div class="group">
+            <button class="btn" id="desktop-link" title="Add link"><span class="cdx-icon" data-icon="cdxIconLink"></span></button>
+            <button class="btn" id="media" title="Insert media"><span class="cdx-icon" data-icon="cdxIconImage"></span></button>
+            <button class="btn" id="template" title="Insert template"><span class="cdx-icon" data-icon="cdxIconPuzzle"></span></button>
+          </div>
+          <div class="group">
+            <button class="btn submit-btn" id="submit-desktop" title="Publish changes">
+              <span class="cdx-icon" data-icon="cdxIconNext">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"></path></svg>
+              </span>
+              <span class="cdx-button__label">Publish</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <main class="ve-canvas" id="canvas" contenteditable="true" aria-label="Article editor">
-    <p class="placeholder">Start typing or open the outline guide to add structure.</p>
+
+  <main class="ve-prototype-body">
+    <div class="guide-banner" id="guideBanner" role="button" tabindex="0" aria-expanded="false">
+      Need an outline? Tap to choose type ▾
+    </div>
+    <div id="canvas" class="ve-prototype-editor" contenteditable="true" aria-label="Article editor">
+      <p class="placeholder">Start typing or open the outline guide to add structure.</p>
+    </div>
   </main>
+
   <button class="guide-pill" id="guidePill" aria-expanded="false">Outline guide</button>
 
   <section class="bottom-sheet" id="bottomSheet" aria-hidden="true" role="dialog" aria-label="Outline guidance">
