@@ -14,11 +14,11 @@ body {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(32, 33, 36, 0.25);
+  background: rgba(32, 33, 36, 0.2);
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 96px 16px 32px;
+  padding: calc(64px + env(safe-area-inset-top, 0px)) 16px 24px;
 }
 
 .overlay-content {
@@ -30,6 +30,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .overlay-header {
@@ -141,13 +143,24 @@ body {
 
 @media (max-width: 480px) {
   .overlay {
-    padding: 80px 12px 24px;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) 12px 20px;
   }
 
   .overlay-content {
     width: 100%;
     max-width: none;
     border-radius: 12px;
+    max-height: calc(100vh - 100px);
+  }
+}
+
+@media (max-height: 620px) {
+  .overlay {
+    padding-top: calc(48px + env(safe-area-inset-top, 0px));
+  }
+
+  .overlay-content {
+    max-height: calc(100vh - 90px);
   }
 }
 
