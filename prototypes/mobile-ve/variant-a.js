@@ -60,6 +60,7 @@ function insertOutline() {
   const canvas = document.getElementById('canvas');
   canvas.innerHTML = '';
   progressBar.hidden = false;
+  progressBar.classList.remove('is-hidden');
   progressTypeLabel.textContent = `${state.selected.name} outline`;
   sectionMeta = {};
 
@@ -92,7 +93,27 @@ function insertOutline() {
 
     const referenceLink = tip.querySelector('.outline-block__reference');
     referenceLink.hidden = true;
-    const triggerReference = () => alert('Reference dialog (prototype)');
+
+    const meta = {
+      status: 'not-started',
+      hasReference: false,
+      wrapper,
+      statusEl: status,
+      referenceLink,
+      bodyEl: body
+    };
+
+    sectionMeta[section.id] = meta;
+
+    const triggerReference = () => {
+      alert('Reference dialog (prototype)');
+      if (!meta.hasReference) {
+        meta.hasReference = true;
+        updateSectionVisuals(section.id);
+        updateProgressSummary();
+      }
+    };
+
     referenceLink.addEventListener('click', triggerReference);
     referenceLink.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -105,14 +126,6 @@ function insertOutline() {
 
     wrapper.append(header, tip, body);
     canvas.appendChild(wrapper);
-
-    sectionMeta[section.id] = {
-      status: 'not-started',
-      wrapper,
-      statusEl: status,
-      referenceLink,
-      bodyEl: body
-    };
   });
 
   overlay.classList.add('hidden');
@@ -130,7 +143,9 @@ function skipOnboarding() {
   overlay.classList.add('hidden');
   showToast('Outline skipped — start writing when ready.');
   progressBar.hidden = true;
+  progressBar.classList.add('is-hidden');
   sectionMeta = {};
+  reopenButton?.classList.remove('is-hidden');
 }
 
 function handleSectionInput(event) {
@@ -147,6 +162,11 @@ function handleSectionInput(event) {
   if (text.length >= 120) status = 'ready';
 
   meta.status = status;
+  if (text.length > 0) {
+    reopenButton?.classList.add('is-hidden');
+    progressBar.classList.remove('is-hidden');
+  }
+
   updateSectionVisuals(sectionId);
   updateProgressSummary();
 }
@@ -154,19 +174,49 @@ function handleSectionInput(event) {
 function updateSectionVisuals(sectionId) {
   const meta = sectionMeta[sectionId];
   if (!meta) return;
-  const { wrapper, statusEl, referenceLink, status } = meta;
+  const { wrapper, statusEl, referenceLink } = meta;
 
-  wrapper.classList.remove('outline-block--not-started', 'outline-block--drafting', 'outline-block--ready');
-  wrapper.classList.add(`outline-block--${status}`);
+  let stateClass = 'not-started';
+  let label = 'Not started';
+
+  if (meta.status === 'drafting') {
+    stateClass = meta.hasReference ? 'reference' : 'drafting';
+    label = meta.hasReference ? 'Drafting • ref added' : 'Drafting';
+  }
+
+  if (meta.status === 'ready') {
+    if (meta.hasReference) {
+      stateClass = 'ready';
+      label = 'Ready';
+    } else {
+      stateClass = 'needs-reference';
+      label = 'Needs reference';
+    }
+  }
+
+  wrapper.classList.remove(
+    'outline-block--not-started',
+    'outline-block--drafting',
+    'outline-block--ready',
+    'outline-block--reference',
+    'outline-block--needs-reference'
+  );
+  wrapper.classList.add(`outline-block--${stateClass}`);
 
   if (statusEl) {
-    statusEl.classList.remove('outline-block__status--not-started', 'outline-block__status--drafting', 'outline-block__status--ready');
-    statusEl.classList.add(`outline-block__status--${status}`);
-    statusEl.textContent = status === 'ready' ? 'Ready' : status === 'drafting' ? 'In progress' : 'Not started';
+    statusEl.classList.remove(
+      'outline-block__status--not-started',
+      'outline-block__status--drafting',
+      'outline-block__status--ready',
+      'outline-block__status--reference',
+      'outline-block__status--needs-reference'
+    );
+    statusEl.classList.add(`outline-block__status--${stateClass}`);
+    statusEl.textContent = label;
   }
 
   if (referenceLink) {
-    referenceLink.hidden = status === 'not-started';
+    referenceLink.hidden = meta.status === 'not-started';
   }
 }
 
@@ -178,19 +228,26 @@ function updateProgressSummary() {
   }
 
   const total = entries.length;
-  const ready = entries.filter((meta) => meta.status === 'ready').length;
+  const ready = entries.filter((meta) => meta.status === 'ready' && meta.hasReference).length;
+  const needsReference = entries.filter((meta) => meta.status === 'ready' && !meta.hasReference).length;
   const drafting = entries.filter((meta) => meta.status === 'drafting').length;
-  const remaining = total - ready - drafting;
+  const remaining = entries.filter((meta) => meta.status === 'not-started').length;
+  const references = entries.filter((meta) => meta.hasReference).length;
 
   if (ready === total) {
-    progressSummary.textContent = 'All sections ready for review';
+    progressSummary.textContent = 'All sections ready with references';
   } else {
-    progressSummary.textContent = `${ready}/${total} ready • ${drafting} in progress • ${remaining} to start`;
+    progressSummary.textContent = `${ready}/${total} ready • ${needsReference} need references • ${references}/${total} references added`;
   }
 }
 
 function reopenOverlay() {
+  if (Object.values(sectionMeta).some((meta) => meta.status !== 'not-started')) {
+    alert('Switching outline would reset your draft. (Prototype prevents change once drafting begins.)');
+    return;
+  }
   overlay.classList.remove('hidden');
+  progressBar.classList.add('is-hidden');
 }
 
 function noop() {}

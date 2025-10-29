@@ -122,7 +122,14 @@ body {
   border: 1px solid #c8d7ff;
   border-radius: 12px;
   padding: 12px 16px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.outline-progress.is-hidden {
+  transform: translateY(-16px);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .outline-progress__primary {
@@ -148,8 +155,9 @@ body {
   cursor: pointer;
 }
 
-.outline-progress__button:hover {
-  background: #eaf3ff;
+.outline-progress__button[disabled],
+.outline-progress__button.is-hidden {
+  display: none;
 }
 
 .outline-progress__summary {
@@ -195,6 +203,14 @@ body {
   color: #14866d;
 }
 
+.outline-block__status--reference {
+  color: #14866d;
+}
+
+.outline-block__status--needs-reference {
+  color: #ac6600;
+}
+
 .outline-block__tip {
   margin: 0 0 12px;
   color: #54595d;
@@ -206,6 +222,7 @@ body {
   cursor: pointer;
   font-weight: 600;
   margin-left: 6px;
+  display: none;
 }
 
 .outline-block__reference:hover,
@@ -221,9 +238,9 @@ body {
 }
 
 .outline-block__body {
-  min-height: 120px;
+  min-height: 140px;
   margin: 0 0 24px;
-  padding: 4px 0;
+  padding: 8px 0;
   font-size: 1rem;
   line-height: 1.6;
   font-family: inherit;
@@ -241,6 +258,21 @@ body {
   color: #72777d;
   font-style: italic;
   pointer-events: none;
+}
+
+.outline-block--drafting .outline-block__reference,
+.outline-block--ready .outline-block__reference,
+.outline-block--reference .outline-block__reference,
+.outline-block--needs-reference .outline-block__reference {
+  display: inline;
+}
+
+.outline-block--ready .outline-block__body {
+  border-bottom: 2px solid rgba(20, 134, 109, 0.45);
+}
+
+.outline-block--needs-reference .outline-block__body {
+  border-bottom: 2px solid rgba(172, 102, 0, 0.45);
 }
 
 .overlay-actions {
