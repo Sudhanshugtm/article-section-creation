@@ -17,8 +17,8 @@ body {
   background: rgba(32, 33, 36, 0.2);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: calc(64px + env(safe-area-inset-top, 0px)) 16px 24px;
+  align-items: flex-end;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
 .overlay-content {
@@ -30,7 +30,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  max-height: calc(100vh - 120px);
+  max-height: clamp(320px, 65vh, calc(100vh - 120px));
   overflow-y: auto;
 }
 
@@ -143,24 +143,20 @@ body {
 
 @media (max-width: 480px) {
   .overlay {
-    padding: calc(56px + env(safe-area-inset-top, 0px)) 12px 20px;
+    padding: calc(32px + env(safe-area-inset-top, 0px)) 12px calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
   .overlay-content {
     width: 100%;
     max-width: none;
     border-radius: 12px;
-    max-height: calc(100vh - 100px);
+    max-height: clamp(300px, 70vh, calc(100vh - 96px));
   }
 }
 
 @media (max-height: 620px) {
-  .overlay {
-    padding-top: calc(48px + env(safe-area-inset-top, 0px));
-  }
-
   .overlay-content {
-    max-height: calc(100vh - 90px);
+    max-height: clamp(280px, 72vh, calc(100vh - 80px));
   }
 }
 
