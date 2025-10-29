@@ -53,21 +53,58 @@ function insertOutline() {
   const canvas = document.getElementById('canvas');
   canvas.innerHTML = '';
   state.selected.outline.forEach((section) => {
-    const heading = document.createElement('h2');
-    heading.textContent = section.title;
-    const paragraph = document.createElement('p');
-    paragraph.className = 'guidance-placeholder';
-    paragraph.textContent = section.guidance;
-    canvas.append(heading, paragraph);
+    canvas.appendChild(buildOutlineSection(section));
   });
   overlay.classList.add('hidden');
   showToast('Outline added — start drafting each section.');
-  canvas.focus();
+  setTimeout(() => {
+    const firstEditable = canvas.querySelector('.outline-section__editable');
+    if (firstEditable) {
+      firstEditable.focus();
+    }
+  }, 120);
 }
 
 function skipOnboarding() {
   overlay.classList.add('hidden');
   showToast('Outline skipped — start writing when ready.');
+}
+
+function buildOutlineSection(section) {
+  const wrapper = document.createElement('section');
+  wrapper.className = 'outline-section';
+  wrapper.dataset.sectionId = section.id;
+
+  const header = document.createElement('div');
+  header.className = 'outline-section__header';
+
+  const title = document.createElement('h2');
+  title.className = 'outline-section__title';
+  title.textContent = section.title;
+
+  const actions = document.createElement('div');
+  actions.className = 'outline-section__actions';
+
+  const referenceBtn = document.createElement('button');
+  referenceBtn.type = 'button';
+  referenceBtn.className = 'outline-section__action';
+  referenceBtn.textContent = 'Add reference';
+  referenceBtn.addEventListener('click', () => alert('Reference dialog (prototype)'));
+
+  actions.appendChild(referenceBtn);
+  header.append(title, actions);
+
+  const hint = document.createElement('p');
+  hint.className = 'outline-section__hint';
+  hint.textContent = section.guidance;
+
+  const editor = document.createElement('div');
+  editor.className = 'outline-section__editable';
+  editor.contentEditable = 'true';
+  editor.dataset.placeholder = section.guidance;
+
+  wrapper.append(header, hint, editor);
+  return wrapper;
 }
 
 renderTypes();
