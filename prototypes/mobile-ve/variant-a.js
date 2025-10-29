@@ -52,15 +52,44 @@ function showToast(message) {
 function insertOutline() {
   const canvas = document.getElementById('canvas');
   canvas.innerHTML = '';
-  state.selected.outline.forEach((section) => {
-    canvas.appendChild(buildOutlineSection(section));
+  state.selected.outline.forEach((section, index) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'outline-block';
+    wrapper.dataset.sectionId = section.id;
+
+    const heading = document.createElement(index === 0 ? 'h1' : 'h2');
+    heading.textContent = section.title;
+    heading.className = 'outline-block__title';
+
+    const tip = document.createElement('p');
+    tip.className = 'outline-block__tip';
+    tip.innerHTML = `${section.guidance} <span class="outline-block__reference" role="button" tabindex="0">Add reference</span>`;
+
+    const body = document.createElement('p');
+    body.className = 'outline-block__body';
+    body.contentEditable = 'true';
+    body.dataset.placeholder = 'Tap to start writing…';
+
+    const referenceLink = tip.querySelector('.outline-block__reference');
+    const triggerReference = () => alert('Reference dialog (prototype)');
+    referenceLink.addEventListener('click', triggerReference);
+    referenceLink.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        triggerReference();
+      }
+    });
+
+    wrapper.append(heading, tip, body);
+    canvas.appendChild(wrapper);
   });
+
   overlay.classList.add('hidden');
   showToast('Outline added — start drafting each section.');
   setTimeout(() => {
-    const firstEditable = canvas.querySelector('.outline-section__editable');
-    if (firstEditable) {
-      firstEditable.focus();
+    const firstBody = canvas.querySelector('.outline-block__body');
+    if (firstBody) {
+      firstBody.focus();
     }
   }, 120);
 }
@@ -70,42 +99,7 @@ function skipOnboarding() {
   showToast('Outline skipped — start writing when ready.');
 }
 
-function buildOutlineSection(section) {
-  const wrapper = document.createElement('section');
-  wrapper.className = 'outline-section';
-  wrapper.dataset.sectionId = section.id;
-
-  const header = document.createElement('div');
-  header.className = 'outline-section__header';
-
-  const title = document.createElement('h2');
-  title.className = 'outline-section__title';
-  title.textContent = section.title;
-
-  header.appendChild(title);
-
-  const hint = document.createElement('p');
-  hint.className = 'outline-section__hint';
-  hint.innerHTML = `${section.guidance} <span class="outline-section__hint-action" role="button" tabindex="0">Add a reference</span>`;
-
-  const hintAction = hint.querySelector('.outline-section__hint-action');
-  const triggerReference = () => alert('Reference dialog (prototype)');
-  hintAction.addEventListener('click', triggerReference);
-  hintAction.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      triggerReference();
-    }
-  });
-
-  const editor = document.createElement('textarea');
-  editor.className = 'outline-section__editable';
-  editor.rows = 4;
-  editor.placeholder = section.guidance;
-
-  wrapper.append(header, hint, editor);
-  return wrapper;
-}
+function noop() {}
 
 renderTypes();
 renderTips();
