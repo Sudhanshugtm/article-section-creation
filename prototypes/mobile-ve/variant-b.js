@@ -1,4 +1,5 @@
 import { initToolbarInteractions } from './chrome.js';
+import { applyCodexIcons } from './icons.js';
 import { ARTICLE_TYPES } from './shared-data.js';
 
 const state = {
@@ -93,3 +94,4 @@ initToolbarInteractions();
 buildTabs();
 renderOutline();
 initInteractions();
+applyCodexIcons();

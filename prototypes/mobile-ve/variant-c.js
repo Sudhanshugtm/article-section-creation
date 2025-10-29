@@ -1,4 +1,5 @@
 import { initToolbarInteractions } from './chrome.js';
+import { applyCodexIcons } from './icons.js';
 import { ARTICLE_TYPES } from './shared-data.js';
 
 const canvas = document.getElementById('canvas');
@@ -101,6 +102,7 @@ function openTypeMenu() {
 function init() {
   initToolbarInteractions();
   renderCards();
+  applyCodexIcons();
   toggle.addEventListener('click', () => {
     const alreadyExpanded = toggle.getAttribute('aria-expanded') === 'true';
     if (alreadyExpanded) {

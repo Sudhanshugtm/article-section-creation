@@ -1,4 +1,5 @@
 import { initToolbarInteractions } from './chrome.js';
+import { applyCodexIcons } from './icons.js';
 import { ARTICLE_TYPES } from './shared-data.js';
 
 const state = {
@@ -73,6 +74,8 @@ renderTypes();
 renderTips();
 
 initToolbarInteractions();
+
+applyCodexIcons();
 
 document.getElementById('insertOutline').addEventListener('click', insertOutline);
 document.getElementById('skipOnboarding').addEventListener('click', skipOnboarding);
