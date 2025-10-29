@@ -65,7 +65,7 @@ function insertOutline() {
     tip.className = 'outline-block__tip';
     tip.innerHTML = `${section.guidance} <span class="outline-block__reference" role="button" tabindex="0">Add reference</span>`;
 
-    const body = document.createElement('p');
+    const body = document.createElement('div');
     body.className = 'outline-block__body';
     body.contentEditable = 'true';
     body.dataset.placeholder = 'Tap to start writing…';

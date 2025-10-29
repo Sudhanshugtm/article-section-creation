@@ -156,20 +156,19 @@ body {
 }
 
 .outline-block__body {
-  min-height: 140px;
-  margin: 0 0 16px;
-  padding: 12px;
-  border: 1px solid #c8ccd1;
-  border-radius: 12px;
+  min-height: 120px;
+  margin: 0 0 24px;
+  padding: 4px 0;
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.6;
   font-family: inherit;
+  border: none;
+  outline: none;
 }
 
 .outline-block__body:focus {
-  border-color: #36c;
-  box-shadow: 0 0 0 2px rgba(54, 102, 204, 0.18);
   outline: none;
+  border-bottom: 2px solid rgba(54, 102, 204, 0.35);
 }
 
 .outline-block__body[contenteditable="true"]:empty::before {
