@@ -1,5 +1,5 @@
-@import url("../styles.css");
-@import url("../reading-styles.css");
+@import url("/styles.css");
+@import url("/reading-styles.css");
 
 /* Shared adjustments for prototype playground */
 * {
