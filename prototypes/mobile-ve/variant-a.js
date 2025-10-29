@@ -98,10 +98,10 @@ function buildOutlineSection(section) {
     }
   });
 
-  const editor = document.createElement('div');
+  const editor = document.createElement('textarea');
   editor.className = 'outline-section__editable';
-  editor.contentEditable = 'true';
-  editor.dataset.placeholder = section.guidance;
+  editor.rows = 4;
+  editor.placeholder = section.guidance;
 
   wrapper.append(header, hint, editor);
   return wrapper;

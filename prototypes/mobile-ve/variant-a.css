@@ -158,24 +158,22 @@ body {
 }
 
 .outline-section__editable {
-  min-height: 120px;
-  padding: 0 16px 16px;
-  border-top: 1px solid #eaecf0;
+  width: calc(100% - 32px);
+  margin: 0 16px 16px;
+  min-height: 96px;
+  padding: 12px;
+  border: 1px solid #c8ccd1;
+  border-radius: 12px;
   font-size: 1rem;
   line-height: 1.5;
-  white-space: pre-wrap;
+  resize: vertical;
+  font-family: inherit;
 }
 
 .outline-section__editable:focus {
-  outline: 2px solid #36c;
-  outline-offset: -2px;
-  border-radius: 0 0 12px 12px;
-}
-
-.outline-section__editable:empty::before {
-  content: attr(data-placeholder);
-  color: #72777d;
-  font-style: italic;
+  border-color: #36c;
+  box-shadow: 0 0 0 2px rgba(54, 102, 204, 0.2);
+  outline: none;
 }
 
 .overlay-actions {
