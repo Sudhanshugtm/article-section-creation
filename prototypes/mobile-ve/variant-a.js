@@ -82,21 +82,21 @@ function buildOutlineSection(section) {
   title.className = 'outline-section__title';
   title.textContent = section.title;
 
-  const actions = document.createElement('div');
-  actions.className = 'outline-section__actions';
-
-  const referenceBtn = document.createElement('button');
-  referenceBtn.type = 'button';
-  referenceBtn.className = 'outline-section__action';
-  referenceBtn.textContent = 'Add reference';
-  referenceBtn.addEventListener('click', () => alert('Reference dialog (prototype)'));
-
-  actions.appendChild(referenceBtn);
-  header.append(title, actions);
+  header.appendChild(title);
 
   const hint = document.createElement('p');
   hint.className = 'outline-section__hint';
-  hint.textContent = section.guidance;
+  hint.innerHTML = `${section.guidance} <span class="outline-section__hint-action" role="button" tabindex="0">Add a reference</span>`;
+
+  const hintAction = hint.querySelector('.outline-section__hint-action');
+  const triggerReference = () => alert('Reference dialog (prototype)');
+  hintAction.addEventListener('click', triggerReference);
+  hintAction.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      triggerReference();
+    }
+  });
 
   const editor = document.createElement('div');
   editor.className = 'outline-section__editable';

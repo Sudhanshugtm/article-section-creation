@@ -123,10 +123,6 @@ body {
 }
 
 .outline-section__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
   padding: 16px 16px 8px;
 }
 
@@ -136,29 +132,29 @@ body {
   font-weight: 600;
 }
 
-.outline-section__actions {
-  display: flex;
-  gap: 8px;
-}
-
-.outline-section__action {
-  border: 1px solid #36c;
-  background: #fff;
-  color: #36c;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  padding: 4px 10px;
-  cursor: pointer;
-}
-
-.outline-section__action:hover {
-  background: #eef3ff;
-}
-
 .outline-section__hint {
   margin: 0 16px 12px;
   color: #54595d;
   font-size: 0.9rem;
+}
+
+.outline-section__hint-action {
+  color: #36c;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.outline-section__hint-action:hover,
+.outline-section__hint-action:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+.outline-section__hint-action:focus-visible {
+  outline: 2px solid #36c;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .outline-section__editable {
