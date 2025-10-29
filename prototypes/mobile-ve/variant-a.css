@@ -87,15 +87,17 @@ body {
 }
 
 .tip-card {
-  background: #f1f2f3;
-  border-radius: 12px;
-  padding: 16px;
+  border-top: 1px solid #eaecf0;
+  margin-top: 12px;
+  padding-top: 12px;
   font-size: 0.9rem;
 }
 
 .tip-card h2 {
-  margin: 0 0 8px;
-  font-size: 1rem;
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: #202122;
+  text-align: left;
 }
 
 .tip-card ul {
@@ -104,12 +106,13 @@ body {
 }
 
 .tip-card li {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  color: #54595d;
 }
 
 .tip-card a {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.85rem;
 }
 
