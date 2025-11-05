@@ -1,0 +1,379 @@
+.concept-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #eef3ff;
+  border-radius: 999px;
+  color: #3366cc;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.blueprint-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.44);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 20;
+}
+
+.blueprint-backdrop.pinned {
+  background: transparent;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.blueprint-backdrop.pinned .blueprint-modal {
+  margin: 16px;
+  pointer-events: auto;
+}
+
+.blueprint-modal {
+  max-width: 360px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.blueprint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.blueprint-dismiss {
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: #54595d;
+}
+
+.blueprint-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.blueprint-tab {
+  border-radius: 12px;
+  border: none;
+  padding: 10px;
+  background: #eef3ff;
+  color: #3366cc;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.blueprint-tab.active {
+  background: #3366cc;
+  color: #fff;
+}
+
+.blueprint-panel.hidden {
+  display: none;
+}
+
+.blueprint-summary {
+  margin: 0;
+  color: #202122;
+}
+
+.blueprint-facts {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.blueprint-facts li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #202122;
+}
+
+.blueprint-facts span {
+  color: #54595d;
+}
+
+.blueprint-outline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.blueprint-outline li {
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #202122;
+  display: grid;
+  gap: 4px;
+}
+
+.blueprint-outline span {
+  color: #54595d;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.blueprint-sources {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.blueprint-sources li {
+  display: grid;
+  gap: 2px;
+}
+
+.blueprint-sources a {
+  color: #3366cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.blueprint-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.blueprint-pin input {
+  margin-right: 6px;
+}
+
+.blueprint-primary {
+  border: none;
+  border-radius: 999px;
+  padding: 12px;
+  background: #3366cc;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.blueprint-secondary {
+  border: none;
+  background: transparent;
+  color: #3366cc;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.drawer-shell {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  background: #fff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.16);
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+  z-index: 15;
+  transition: transform 0.3s ease;
+}
+
+.drawer-shell.collapsed {
+  transform: translateY(calc(100% - 48px));
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-collapse {
+  border: none;
+  background: #eef3ff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #3366cc;
+  font-weight: 600;
+}
+
+.drawer-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.drawer-step {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.drawer-step-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #eef3ff;
+  color: #3366cc;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.drawer-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #eaecf0;
+  display: grid;
+  gap: 6px;
+}
+
+.drawer-outline {
+  display: grid;
+  gap: 6px;
+}
+
+.drawer-checkbox {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eaecf0;
+  font-size: 13px;
+}
+
+.drawer-checkbox span {
+  font-weight: 600;
+  color: #202122;
+}
+
+.drawer-checkbox small {
+  color: #54595d;
+}
+
+.drawer-facts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.drawer-facts li {
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #eaecf0;
+  display: grid;
+  gap: 4px;
+}
+
+.drawer-action {
+  margin-top: 8px;
+  border: none;
+  background: #3366cc;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.drawer-action--secondary {
+  background: #eef3ff;
+  color: #3366cc;
+}
+
+.drawer-action--done {
+  background: #2753a5;
+  color: #fff;
+}
+
+.inline-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.inline-overlay.collapsed {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.inline-section {
+  background: rgba(238, 243, 255, 0.88);
+  border: 1px dashed #a2a9b1;
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.inline-section header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inline-heading {
+  font-weight: 600;
+  color: #3366cc;
+}
+
+.inline-info {
+  pointer-events: auto;
+  border: none;
+  background: #fff;
+  color: #3366cc;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inline-tip {
+  margin: 0;
+  color: #54595d;
+  font-size: 13px;
+}
+
+.inline-section--expanded {
+  border-style: solid;
+}
