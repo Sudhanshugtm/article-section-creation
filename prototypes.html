@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VE Article Creation Prototypes - 5 Experimental Versions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Lato', 'Helvetica', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #202122;
+            background: #f8f9fa;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #54595d;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #eaecf0;
+        }
+
+        .intro {
+            margin-bottom: 3rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #202122;
+        }
+
+        .versions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .version-card {
+            border: 2px solid #eaecf0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .version-card:hover {
+            border-color: #3366cc;
+            box-shadow: 0 4px 12px rgba(51, 102, 204, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .version-number {
+            display: inline-block;
+            background: #3366cc;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .version-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #000;
+        }
+
+        .version-description {
+            color: #54595d;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .version-link {
+            display: inline-block;
+            background: #3366cc;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .version-link:hover {
+            background: #2a54b3;
+        }
+
+        .design-principles {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 3rem;
+        }
+
+        .design-principles h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .design-principles ul {
+            list-style-position: inside;
+            color: #54595d;
+        }
+
+        .design-principles li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eaecf0;
+            color: #72777d;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .versions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 VE Article Creation Prototypes</h1>
+        <div class="subtitle">5 Experimental Versions for Mobile Wikipedia Visual Editor</div>
+
+        <div class="intro">
+            <p><strong>Test Subject:</strong> Tiger Cricket Academy (Cricket organization)</p>
+            <p><strong>Purpose:</strong> Explore different approaches to reduce friction in article type discovery and template loading on mobile devices.</p>
+        </div>
+
+        <div class="versions-grid">
+            <div class="version-card">
+                <span class="version-number">VERSION 1</span>
+                <div class="version-title">🎯 Smart Guess Banner</div>
+                <div class="version-description">
+                    Proactive confirmation approach. Shows intelligent guess banner on page load with "Yes, use template" or "Choose different type" options.
+                </div>
+                <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/v1-smart-guess/variant-d.html" class="version-link">Try Version 1 →</a>
+            </div>
+
+            <div class="version-card">
+                <span class="version-number">VERSION 2</span>
+                <div class="version-title">📌 Floating Smart Bar</div>
+                <div class="version-description">
+                    Persistent ambient approach. Auto-loads template with floating bar showing article type. Click to change type anytime.
+                </div>
+                <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/v2-floating-bar/variant-d.html" class="version-link">Try Version 2 →</a>
+            </div>
+
+            <div class="version-card">
+                <span class="version-number">VERSION 3</span>
+                <div class="version-title">💬 Conversational Canvas</div>
+                <div class="version-description">
+                    Friendly dialogue approach. In-canvas conversation bubble asks for confirmation in natural language with visual avatar.
+                </div>
+                <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/v3-conversational-canvas/variant-d.html" class="version-link">Try Version 3 →</a>
+            </div>
+
+            <div class="version-card">
+                <span class="version-number">VERSION 4</span>
+                <div class="version-title">⚡ Zero-Tap Intelligence</div>
+                <div class="version-description">
+                    Completely invisible approach. Template loads silently in background. Subtle toast notification appears on first interaction.
+                </div>
+                <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/v4-zero-tap/variant-d.html" class="version-link">Try Version 4 →</a>
+            </div>
+
+            <div class="version-card">
+                <span class="version-number">VERSION 5</span>
+                <div class="version-title">🔀 Hybrid Shortcuts</div>
+                <div class="version-description">
+                    Best of both worlds. Smart shortcut chips appear on load, but "/" command still available for power users.
+                </div>
+                <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/v5-hybrid/variant-d.html" class="version-link">Try Version 5 →</a>
+            </div>
+        </div>
+
+        <div class="design-principles">
+            <h2>🎨 Design Principles</h2>
+            <ul>
+                <li><strong>Canvas as Sacred Space:</strong> Mobile writing space should remain clean with minimal UI clutter</li>
+                <li><strong>1-2 Tap Maximum:</strong> Minimize friction to start writing with intelligent defaults</li>
+                <li><strong>Smart Detection:</strong> Leverage article title + language from URL (simulating Wikidata lookup)</li>
+                <li><strong>Template-based:</strong> Show fillable templates with placeholders, not examples to study</li>
+                <li><strong>Mobile-first:</strong> All interactions optimized for touch and small screens</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Wikipedia Visual Editor • Article Creation Research • 5 Experimental Treatments</p>
+            <p>For full documentation, see <a href="prototypes/mobile-ve/variant-d-standalone/.worktrees/VERSIONS-SUMMARY.md">VERSIONS-SUMMARY.md</a></p>
+        </div>
+    </div>
+</body>
+</html>
